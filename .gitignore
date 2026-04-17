@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.env/
+
+# Django
+*.log
+db.sqlite3
+media/
+
+# Static files (si collectstatic utilisé)
+staticfiles/
+
+# Secrets
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+srcs/backend/api/migrations/*
