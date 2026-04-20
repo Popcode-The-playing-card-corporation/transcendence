@@ -50,6 +50,35 @@ services:
     networks:
       - transcendence
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - django
+    networks:
+      - transcendence
+
+  #frontend:
+  #  build:
+  #    context: ./frontend
+  #    dockerfile: Dockerfile
+  #  container_name: frontend
+  #  ports:
+  #    - "3000:80"
+  #  depends_on:
+  #    - django
+  #  networks:
+  #    - transcendence
+
 networks:
   transcendence:
     driver: bridge
