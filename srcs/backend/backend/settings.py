@@ -16,6 +16,9 @@ import os
 
 load_dotenv()
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/app/media"
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -91,6 +94,8 @@ DATABASES = {
         'PORT': os.getenv("DB_PORT"),
     }
 }
+
+AUTH_USER_MODEL = "api.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
