@@ -26,4 +26,4 @@ staticfiles/
 .DS_Store
 Thumbs.db
 
-srcs/backend/api/migrations/*
+*/*/*/migrations/*
