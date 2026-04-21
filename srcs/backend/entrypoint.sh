@@ -2,7 +2,7 @@
 
 set -e
 
-python manage.py makemigrations
-python manage.py migrate
 
-exec python manage.py runserver 0.0.0.0:8000
+python manage.py migrate --noinput
+
+exec daphne -b 0.0.0.0 -p 8000 backend.asgi:application
