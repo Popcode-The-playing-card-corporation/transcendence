@@ -1,6 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .db import add_player_to_room, remove_player_from_room, get_room_with_host  # adapte le path
+from .db import add_player_to_room, remove_player_from_room, get_room_with_host, start_room
 from .models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
 
@@ -134,12 +134,28 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "message": "Game already started"
             }))
             return
-    
-        # update DB
-        room.is_started = True
-        await sync_to_async(room.save)()
-    
-        # broadcast à tout le monde
+        game_state = {
+            "players": {
+                "0": {
+                    "cards": [{"color": "diamond", "value": 6}],
+                    "taken": [],
+                    "points": 0
+                },
+                "1": {
+                    "cards": [{"color": "heart", "value": 6}],
+                    "taken": [],
+                    "points": 0
+				}
+            },
+            "lastCard": {"color": "club", "value": 7},
+            "playing": 0,
+            "board": {
+                "2": {"color": "spade", "value": 6},
+                "3": {"color": "spade", "value": 9}
+            }
+        }
+        await start_room(room.uuid, game_state)
+        
         await self.channel_layer.group_send(
             self.group_name,
             {

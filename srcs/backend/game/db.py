@@ -73,4 +73,10 @@ def remove_player_from_room(user, code):
 def get_room_with_host(code):
     return Room.objects.select_related("host").get(code=code)
 
+@sync_to_async
+def start_room(uuid, data):
+    room = Room.objects.get(uuid=uuid)
+    room.game_state = data
+    room.is_started = True
+    room.save()
 

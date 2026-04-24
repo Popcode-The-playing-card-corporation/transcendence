@@ -2,6 +2,14 @@ from django.db import models
 from api.models import User
 import uuid
 
+def default_state():
+    return {
+        "players": {},
+        "lastCard": None,
+        "playing": 0,
+        "board": {}
+    }
+
 # Create your models here.
 
 class Room(models.Model):
@@ -10,6 +18,7 @@ class Room(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_started = models.BooleanField(default=False)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    game_state = models.JSONField(default=default_state)
     def __str__(self):
         return f"{self.code}"
 
