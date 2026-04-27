@@ -1,5 +1,4 @@
 from game import GameEngine
-from player import Player
 import json
 
 def main():

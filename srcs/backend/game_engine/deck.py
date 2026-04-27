@@ -1,4 +1,4 @@
-from card import Card
+from .card import Card
 import random
 
 class Deck:
@@ -16,9 +16,7 @@ class Deck:
 		lenCards = len(self.cards)
 		if lenCards > 0:
 			index = random.randint(0, lenCards - 1)
-			ret = self.cards[index]
-			self.cards.remove(ret)
-			return ret
+			return self.cards.pop(index)
 		else:
 			return Card("-1", "other")
 

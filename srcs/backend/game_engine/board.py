@@ -1,5 +1,5 @@
-from card import Card
-from player import Hand
+from .card import Card
+from .player import Hand
 
 class Board:
 	def __init__(self, fold, asked: Card):
