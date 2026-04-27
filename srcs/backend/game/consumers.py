@@ -1,8 +1,9 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .db import add_player_to_room, remove_player_from_room, get_room_with_host, start_room
+from .db import add_player_to_room, remove_player_from_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
 from .models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
+from game_engine.game import GameEngine
 
 class RoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -25,6 +26,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room=room
             ).exists
         )()
+        
+        await sync_to_async(PlayerPresence.objects.filter(
+            player=self.user,
+            room=room
+        ).update)(
+            channel_name=self.channel_name
+        )
         
         if room.is_started and not is_member:
             await self.accept()
@@ -62,7 +70,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         if user and code:
             await remove_player_from_room(user, code)
-            
+            await sync_to_async(PlayerPresence.objects.filter(
+                player=self.user,
+                room__code=self.code
+            ).update)(
+                channel_name=None
+            )
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -86,14 +99,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 if action == "start_game":
                     await self.handle_start_game()
                 if action == "play_card":
-                    await self.channel_layer.group_send(
-                        self.group_name,
-                        {
-                            "type": "room_event",
-                            "event": "play_card",
-                            "payload": payload
-                        }
-                    )
+                    await self.handle_play_card(payload)
+                if action == "legal":
+                    await self.handle_legal()
         
             else:
                 await self.send(text_data=json.dumps({
@@ -109,6 +117,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
 
 
+    async def private_event(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "private",
+            "event": event["event"],
+            "payload": event["payload"]
+        }))
 
     async def room_event(self, event):
         await self.send(text_data=json.dumps({
@@ -134,26 +148,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "message": "Game already started"
             }))
             return
-        game_state = {
-            "players": {
-                "0": {
-                    "cards": [{"color": "diamond", "value": 6}],
-                    "taken": [],
-                    "points": 0
-                },
-                "1": {
-                    "cards": [{"color": "heart", "value": 6}],
-                    "taken": [],
-                    "points": 0
-				}
-            },
-            "lastCard": {"color": "club", "value": 7},
-            "playing": 0,
-            "board": {
-                "2": {"color": "spade", "value": 6},
-                "3": {"color": "spade", "value": 9}
-            }
-        }
+        
+        game = GameEngine(room.uuid)
+        game_state = game.handleAction("start", room.game_state, await count_player(room.code))
+        
         await start_room(room.uuid, game_state)
         
         await self.channel_layer.group_send(
@@ -166,6 +164,74 @@ class RoomConsumer(AsyncWebsocketConsumer):
 				}
             }
         )
+        await self.send_cards()
+        await self.send_board()
+    
+    async def handle_play_card(self, payload: dict):
+        room = await get_room_with_host(self.code)
+        position = await get_player_pos(self.user, room.code)
+        if position != room.game_state["playing"]:
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(position)
+            )
+            await self.channel_layer.send(
+                p.channel_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "ce n'est pas à toi de jouer"
+					}
+                }
+            )
+            return
+
+        game = GameEngine(room.uuid)
+        game_state = game.handleAction("play", room.game_state, idPlayer= str(position), idCard= payload["cardId"])
+        #print(json.dumps(game_state, indent=6))
+        await save_room_state(room.uuid, game_state)
+
+        await self.send_cards()
+        await self.send_board()
+
+
+    async def send_cards(self):
+        room = await get_room_with_host(self.code)
+        game_state = room.game_state
+        
+        for player_id, player_data in game_state["players"].items():
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(player_id)
+            )
+        
+            await self.channel_layer.send(
+                p.channel_name,
+                {
+                    "type": "private_event",
+                    "event": "init_cards",
+                    "payload": {
+                        "cards": player_data["cards"]
+                    }
+                }
+            )
+    
+    async def send_board(self):
+        room = await get_room_with_host(self.code)
+        game_state = room.game_state
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "send_board",
+                "payload": {
+                    "cards": game_state["board"],
+				}
+            }
+        )
+        
+        
     
     def get_username(self):
         user = self.scope.get("user")

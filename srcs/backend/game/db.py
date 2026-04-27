@@ -3,6 +3,28 @@ from .models import PlayerPresence, Room
 from django.db.models import Max
 
 @sync_to_async
+def count_player(code):
+    try:
+        room = Room.objects.get(code=code)
+        count = PlayerPresence.objects.filter(room=room).count()
+        return count
+    except Room.DoesNotExist:
+        return False
+
+@sync_to_async
+def get_player_pos(user, code):
+    try:
+        room = Room.objects.get(code=code)
+        player = PlayerPresence.objects.filter(
+                player=user.id,
+                room=room
+            ).first()
+        return player.position
+    except Room.DoesNotExist:
+        return False
+    
+
+@sync_to_async
 def add_player_to_room(user, code):
     try:
         room = Room.objects.get(code=code)
@@ -78,5 +100,11 @@ def start_room(uuid, data):
     room = Room.objects.get(uuid=uuid)
     room.game_state = data
     room.is_started = True
+    room.save()
+    
+@sync_to_async
+def save_room_state(uuid, data):
+    room = Room.objects.get(uuid=uuid)
+    room.game_state = data
     room.save()
 

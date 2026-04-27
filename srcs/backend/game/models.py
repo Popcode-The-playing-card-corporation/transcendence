@@ -38,6 +38,7 @@ class PlayerPresence(models.Model):
     is_in_game = models.BooleanField(default=False)
     position = models.IntegerField(default=0)
     last_seen = models.DateTimeField(auto_now=True)
+    channel_name = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         unique_together = ['player', 'room']
