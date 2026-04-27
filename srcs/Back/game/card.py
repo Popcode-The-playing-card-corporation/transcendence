@@ -21,6 +21,3 @@ class Card:
 	
 	def __ge__(self, other):
 		return self.cardValue[self.values] >= self.cardValue[other.values]
-
-	def print(self):
-		print("\t", self.values, "|", self.colors)

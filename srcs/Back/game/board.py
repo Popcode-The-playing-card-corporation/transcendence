@@ -37,12 +37,3 @@ class Board:
 				continue
 			legal.append(False)
 		return legal
-
-	def playCard(self, card: Card):
-		self.fold.append(card)
-
-	def printFold(self, tricks: str):
-		print("fold:", "\ttricks: ", tricks)
-		for c in self.fold:
-			c.print()
-		print("\n")

@@ -7,123 +7,18 @@ import json
 class GameEngine:
 	def __init__(self, roomID: int):
 		self.indexPlayer = -1
-		self.tricks = "none"
-		self.players = []
 		self.roomID = roomID
 		self.trickValue = {"6": 0, "7": 1, "8": 2, "10": 3, "Q": 4, "K": 5, "A": 6, "9": 7, "J": 8}
 		self.cardValue = {"6": 0, "7": 1, "8": 2, "9": 3, "10": 4, "J": 5, "Q": 6, "K": 7, "A": 8}
-
 		
-	def __find7Diamond(self):
-		for p in self.players:
-			for c in p.hands.cards:
-				if c.colors == "diamond" and c.values == "7":
-					return p
-
-	def setupGame(self, nbPlayer: int):
-		i = 0
-		while i < nbPlayer:
-			self.players.append(Player(i))
-			i += 1
-		self.lastCard = self.__cardDistribution()
-		while self.lastCard.values == "7" and self.lastCard.colors == "diamond":
-			for p in self.players:
-				p.clearHand
-			self.__cardDistribution()
-		p = self.__find7Diamond()
-		self.indexPlayer = self.players.index(p)
-		self.startingPlayer = self.indexPlayer
-		
-		ret = {}
-		for p in self.players:
-			cards = []
-			for c in p.hands.cards:
-				card = {"value": c.values, "color": c.colors}
-				cards.append(card)
-			ret[p.id] = cards
-		ret["starting_player"] = self.startingPlayer
-		return json.dumps(ret)
-
-	def chooseCard(self, player: Player):
-		player.print()
-		legal = self.board.legalCard(player.hands, self.tricks)
-		print("choose a card to play")
-		while True:
-			index = input()
-			try:
-				index = int(index)
-			except ValueError:
-				print("not a card choose another one")
-			else:
-				if (index >= 0 and index < player.remainingCard() and legal[index]):
-					return player.hands.cards[index]
-				else:
-					player.print()
-					print("not a card choose another one")
-
-	def strongestCard(self, asked, fold, tricks):
-		strongest = {"value": "-1", "color": "none"}
-		for c in fold:
-			if (c == fold[0]):
-				strongest = c
-				continue
-			if (c["color"] != tricks and c["color"] != asked["color"]):
-				continue
-			if (c["color"] == tricks):
-				if (strongest["color"] == tricks):
-					if (self.trickValue[c["value"]] > self.trickValue[strongest["value"]]):
-						strongest = c
-					continue
-				strongest = c
-				continue
-			else:
-				if (strongest["color"] == tricks):
-					continue
-				if (self.cardValue[c["value"]] > self.cardValue[strongest["value"]]):
-					strongest = c
-				continue
-		return strongest
-
-	def gameLoop(self):
-		while True:
-			if (self.indexPlayer == len(self.players)):
-				self.indexPlayer = 0
-
-			if (len(self.board.fold) == len(self.players)):
-				winner = self.strongestCard()
-				self.indexPlayer = winner
-				self.players[winner].takeFold(self.board.fold)
-				self.board.fold.clear()
-				if (len(self.players[winner].hands.cards) == 0):
-					self.players[winner].points += 5
-					break
-
-			playedCard = self.chooseCard(self.players[self.indexPlayer])
-			if (self.tricks == "none" and len(self.board.fold) != 0):
-				if (playedCard.colors != self.board.fold[0].colors):
-					self.tricks = playedCard.colors
-
-			self.players[self.indexPlayer].playCard(playedCard)
-			self.board.playCard(playedCard)
-			self.board.printFold(self.tricks)
-			self.indexPlayer += 1
-
-		print("lastCard = ")
-		self.lastCard.print()
-		print("point among player = ")
-		totalPoint = 0
-		for p in self.players:
-			p.countPoint(self.tricks)
-			totalPoint += p.points
-		print(totalPoint)
-
 	def initPlayer(self, data: dict, nbrPlayer: int):
 		i = 0
 		while (i < nbrPlayer):
 			data["players"][i] = {}
 			data["players"][i]["cards"] = []
 			data["players"][i]["taken"] = []
-			data["players"][i]["puntos"] = 0
+			if ("puntos" not in data["players"][i].keys()):
+				data["players"][i]["puntos"] = 0
 			i += 1
 
 		return data
@@ -224,11 +119,3 @@ class GameEngine:
 			return self.legal(data, idPlayer)
 		
 		return data
-
-	def printGameInfo(self):
-		for p in self.players:
-			p.print()
-		print("last card:")
-		self.lastCard.print()
-		print("player who start:")
-		print(self.startingPlayer)

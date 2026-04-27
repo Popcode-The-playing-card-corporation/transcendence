@@ -10,49 +10,10 @@ class Hand:
 			self.numbers[card.colors] += 1
 			self.cards.append(card)
 
-	def remove(self, card: Card):
-		try:
-			self.cards.remove(card)
-		except ValueError:
-			print("Error: card not found in hand")
-		else:
-			if card.colors in self.numbers:
-				if self.numbers[card.colors] > 0:
-					self.numbers[card.colors] -= 1
-
-	def remaining(self):
-		return len(self.cards)
-
-	def print(self):
-		for c in self.cards:
-			c.print()
-		print("\n")
-
 class Player:
 	def __init__(self):
-		self.takenFold = []
-		self.points = 0
-		self.hands = Hand()
-		self.trickPoints = {"6": 0, "7": 0, "8": 0, "10": 10, "Q": 3, "K": 4, "A": 11, "9": 14, "J": 20}
-		self.cardPoints = {"6": 0, "7": 0, "8": 0, "9": 0, "10": 10, "J": 2, "Q": 3, "K": 4, "A": 11}
 		self.cardValue = {"6": 0, "7": 1, "8": 2, "9": 3, "10": 4, "J": 5, "Q": 6, "K": 7, "A": 8}
 		self.suitePoint = {3: 20, 4: 50, 5: 100, 6: 150, 7: 200, 8: 250, 9: 300}
-
-	def drawCard(self, card: Card):
-		self.hands.draw(card)
-
-	def playCard(self, card: Card):
-		self.hands.remove(card)
-
-	def clearHand(self):
-		self.hands = Hand()
-
-	def remainingCard(self):
-		return self.hands.remaining()
-
-	def takeFold(self, fold: list[Card]):
-		copy = fold.copy()
-		self.takenFold.append(copy)
 
 	def findSuit(self, bucket: dict[str, Card]):
 		ret = 0
@@ -107,8 +68,3 @@ class Player:
 					self.points += self.trickPoints[c.values]
 				else:
 					self.points += self.cardPoints[c.values]
-
-	def print(self):
-		print("Player ", self.id, ", points = ", self.points, " :")
-		self.hands.print()
-		# print("\n")
