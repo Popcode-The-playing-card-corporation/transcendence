@@ -26,6 +26,7 @@ def main():
 	print(json.dumps(data, indent=6))
 	legal = game.handleAction("legal", data, idPlayer=data["playing"])
 	print(legal)
+	game.handleAction("meld", data, idPlayer=0, meldIndex=[0, 1, 2, 3])
 
 if __name__ == "__main__":
 	main()

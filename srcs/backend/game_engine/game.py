@@ -131,8 +131,18 @@ class GameEngine:
 	
 		return board.legalCard(cardHand, data["tricks"])
 
-	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1):
+	def melds(self, data, idPlayer, meldIndex):
+		hand = []
+		for i in meldIndex:
+			hand.append(data["players"][idPlayer]["cards"][i])
+		meld = Player.countMelds(Player(), hand)
+		if (meld != 0):
+			data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] + meld
+			return True
+		
+		return False
 
+	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1, meldIndex=[]):
 		if (action == "start"):
 			return self.startGame(data, nbPlayer)
 
@@ -142,4 +152,8 @@ class GameEngine:
 		if (action == "legal"):
 			return self.legal(data, idPlayer)
 		
+		if (action == "meld"):
+			return self.melds(data, idPlayer, meldIndex)
+
+
 		return data
