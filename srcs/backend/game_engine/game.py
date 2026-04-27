@@ -43,11 +43,34 @@ class GameEngine:
 					index = i
 				data["players"][i]["cards"].append({"value": card.values, "color": card.colors})
 				i += 1
-			
+
 		data["lastCard"] = {"value": last.values, "color": last.colors}
 		data["tricks"] = "none"
 		data["playing"] = index
 		return data
+
+	def strongestCard(self, asked, fold, tricks):
+		strongest = {"value": "-1", "color": "none"}
+		for c in fold:
+			if (c == fold[0]):
+				strongest = c
+				continue
+			if (c["color"] != tricks and c["color"] != asked["color"]):
+				continue
+			if (c["color"] == tricks):
+				if (strongest["color"] == tricks):
+					if (self.trickValue[c["value"]] > self.trickValue[strongest["value"]]):
+						strongest = c
+					continue
+				strongest = c
+				continue
+			else:
+				if (strongest["color"] == tricks):
+					continue
+				if (self.cardValue[c["value"]] > self.cardValue[strongest["value"]]):
+					strongest = c
+				continue
+		return strongest
 
 	def play(self, data: dict, idPlayer: int , idCard: int):
 		card = data["players"][idPlayer]["cards"][idCard].copy()
@@ -93,6 +116,7 @@ class GameEngine:
 		hand = data["players"][idPlayer]["cards"]
 		fold = []
 		cardBoard = data["board"].copy()
+		asked = {"color": "none", "value": "-1"}
 		if ("asked" in cardBoard.keys()):
 			asked = cardBoard.pop("asked")
 

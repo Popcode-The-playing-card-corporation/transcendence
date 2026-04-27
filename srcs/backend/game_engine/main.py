@@ -20,9 +20,9 @@ def main():
 	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
 	# breakpoint()
 	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
-	print(json.dumps(data, indent=6))	
-	# data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
-	# print(json.dumps(data, indent=6))
+	print(json.dumps(data, indent=6))
+	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
+	print(json.dumps(data, indent=6))
 	legal = game.handleAction("legal", data, idPlayer=data["playing"])
 	print(legal)
 
