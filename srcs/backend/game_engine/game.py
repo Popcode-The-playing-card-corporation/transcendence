@@ -78,7 +78,7 @@ class GameEngine:
 		if (len(data["board"]) == 0):
 			data["board"]["asked"] = card
 		data["board"][idPlayer] = card
-		s = data["playing"]
+		s = int(data["playing"])
 
 		if (card["color"] != data["board"]["asked"]["color"] and data["tricks"] == "none"):
 			data["tricks"] = card["color"]
@@ -103,7 +103,7 @@ class GameEngine:
 				data["players"][index]["taken"].append(c)
 			
 			data["board"].clear()
-			s = index
+			s = int(index)
 		else:
 			s += 1
 			if (s == len(data["players"])):

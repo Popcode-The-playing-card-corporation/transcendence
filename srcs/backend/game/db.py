@@ -32,7 +32,6 @@ def add_player_to_room(user, code):
         last_position = PlayerPresence.objects.filter(
             room=room
         ).aggregate(Max("position"))["position__max"]
-        print(last_position)
         next_position = 0
         if last_position != None:
             next_position = (last_position or 0) + 1
