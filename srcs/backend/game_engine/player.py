@@ -12,7 +12,7 @@ class Hand:
 
 class Player:
 	def __init__(self):
-		self.cardValue = {"6": 0, "7": 1, "8": 2, "9": 3, "10": 4, "J": 5, "Q": 6, "K": 7, "A": 8}
+		self.cardValue = {"6": 1, "7": 2, "8": 3, "9": 4, "10": 5, "J": 6, "Q": 7, "K": 8, "A": 9}
 		self.suitePoint = {3: 20, 4: 50, 5: 100, 6: 150, 7: 200, 8: 250, 9: 300}
 
 	def findSuit(self, bucket: dict[str, Card]):
@@ -33,7 +33,7 @@ class Player:
 						if (suite > 2):
 							ret += self.suitePoint[suite]
 						value = 0
-						value = 1
+						suite = 1
 				if (suite > 2):
 					ret += self.suitePoint[suite]
 		return ret
