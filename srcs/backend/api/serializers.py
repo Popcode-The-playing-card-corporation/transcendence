@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Friendship
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -36,3 +36,26 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+class FriendSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    status = serializers.CharField()
+
+    class Meta:
+        model = Friendship
+        fields = ["id", "user", "status"]
+
+    def get_user(self, obj):
+        request = self.context["request"]
+
+        # trouver "l'autre" user
+        if obj.from_user == request.user:
+            friend = obj.to_user
+        else:
+            friend = obj.from_user
+
+        return {
+            "id": friend.id,
+            "username": friend.username,
+            "is_online": friend.is_online
+        }
