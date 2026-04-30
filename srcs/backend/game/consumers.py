@@ -34,7 +34,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             channel_name=self.channel_name
         )
         
-        if room.is_started and not is_member:
+        if room.status == "start" and not is_member:
             await self.accept()
             await self.send(text_data=json.dumps({
                 "event": "game_started",
@@ -56,7 +56,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
 				}
             }
         )
-        if room.is_started:
+        if room.status == "start":
             await self.send_data()
 
     async def disconnect(self, close_code):
@@ -141,7 +141,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }))
             return
     
-        if room.is_started:
+        print(room.status)
+        if room.status == "start":
             await self.send(json.dumps({
                 "event": "error",
                 "message": "Game already started"

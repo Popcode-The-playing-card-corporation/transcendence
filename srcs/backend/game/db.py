@@ -36,7 +36,7 @@ def add_player_to_room(user, code):
         if last_position != None:
             next_position = (last_position or 0) + 1
 
-        if room.is_started:
+        if room.status == "start":
             exists = PlayerPresence.objects.filter(
                 player=user,
                 room=room
@@ -74,7 +74,7 @@ def add_player_to_room(user, code):
 def remove_player_from_room(user, code):
     try:
         room = Room.objects.get(code=code)
-        if room.is_started:
+        if room.status == "start" or room.status == "end":
             PlayerPresence.objects.filter(
                 player=user,
                 room=room
@@ -98,7 +98,7 @@ def get_room_with_host(code):
 def start_room(uuid, data):
     room = Room.objects.get(uuid=uuid)
     room.game_state = data
-    room.is_started = True
+    room.status = "start"
     room.save()
     
 @sync_to_async
