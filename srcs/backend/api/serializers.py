@@ -36,7 +36,18 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-    
+
+class FriendProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "avatar",
+            "date_joined",
+            "is_online",
+            "last_login",
+        ]
+ 
 class FriendSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     status = serializers.CharField()
