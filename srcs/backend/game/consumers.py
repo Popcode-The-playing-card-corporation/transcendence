@@ -27,13 +27,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             ).exists
         )()
         
-        await sync_to_async(PlayerPresence.objects.filter(
-            player=self.user,
-            room=room
-        ).update)(
-            channel_name=self.channel_name
-        )
-        
         if room.status == "start" and not is_member:
             await self.accept()
             await self.send(text_data=json.dumps({
@@ -45,6 +38,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         await add_player_to_room(self.user, self.code)
+        
+        await sync_to_async(PlayerPresence.objects.filter(
+            player=self.user,
+            room=room
+        ).update)(
+            channel_name=self.channel_name
+        )
         
         await self.channel_layer.group_send(
             self.group_name,
