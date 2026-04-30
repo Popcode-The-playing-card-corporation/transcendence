@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from .models import User, Friendship
+from game.models import Stat
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -38,6 +39,7 @@ def register(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
+        Stat.objects.create(user=user)
         return Response({
 			"message": "User created",
             "user": UserSerializer(user).data
