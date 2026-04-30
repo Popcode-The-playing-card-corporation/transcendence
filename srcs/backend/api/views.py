@@ -131,7 +131,6 @@ def accept_friend_request(request, request_id):
             to_user=request.user,
             status="pending"
         )
-        print(friendship)
         friendship.status = "accepted"
         friendship.save()
 

@@ -1,9 +1,11 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import add_player_to_room, remove_player_from_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from .models import PlayerPresence, Room
+from .models import PlayerPresence, Room, PlayerScore
+from api.models import User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
+from api.serializers import UserSerializer
 
 class RoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -141,7 +143,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }))
             return
     
-        print(room.status)
         if room.status == "start":
             await self.send(json.dumps({
                 "event": "error",
@@ -151,6 +152,19 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         game = GameEngine(room.uuid)
         game_state = game.handleAction("start", room.game_state, await count_player(room.code))
+        
+        for player_id, player_data in game_state["players"].items():
+            presence = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(player_id)
+            )
+            
+            user = await sync_to_async(lambda: presence.player)()
+        
+            await sync_to_async(PlayerScore.objects.get_or_create)(
+                player=user,
+                room=room
+            )
         
         await start_room(room.uuid, game_state)
         
