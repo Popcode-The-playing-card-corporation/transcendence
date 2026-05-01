@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from .models import User, Friendship
-from game.models import Stat
+from game.models import Stat, PlayerScore
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -166,3 +166,15 @@ def deny_friend_request(request, request_id):
 
     except Friendship.DoesNotExist:
         return Response({"error": "Request not found"}, status=404)
+    
+    
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def leaderboard(request):
+    leaderboard = (
+        User.objects
+        .order_by("-elo")
+        .values("id", "username", "elo")
+	)
+
+    return Response(leaderboard[:10])

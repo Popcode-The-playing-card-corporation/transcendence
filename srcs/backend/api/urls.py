@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register, login, user, get_friends, accept_friend_request, send_friend_request, deny_friend_request, user_data
+from .views import register, login, user, get_friends, accept_friend_request, send_friend_request, leaderboard, deny_friend_request, user_data
 
 urlpatterns = [
     #user part
@@ -12,4 +12,6 @@ urlpatterns = [
     path("friends/add/<int:user_id>/", send_friend_request),
     path("friends/accept/<int:request_id>/", accept_friend_request),
     path("friends/deny/<int:request_id>/", deny_friend_request),
+    
+    path("leaderboard/", leaderboard)
 ]
