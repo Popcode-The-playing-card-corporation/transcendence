@@ -14,7 +14,6 @@ class CreateRoomView(APIView):
             code=room_code,
             host=request.user
         )
-        PlayerScore.objects.create(player=request.user, room=room)  # Add host to leaderboard
         return Response(RoomSerializer(room).data, status=201)
 
 class JoinRoomView(APIView):
