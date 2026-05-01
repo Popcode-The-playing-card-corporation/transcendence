@@ -7,6 +7,7 @@ class User(AbstractUser):
 
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     is_online = models.BooleanField(default=False)
+    elo = models.IntegerField(default=0)
     
 class Friendship(models.Model):
     STATUS_CHOICES = [

@@ -13,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
             "date_joined",
             "is_online",
             "last_login",
+            "elo",
         ]
         extra_kwargs = {
             "password": {"write_only": True}
@@ -46,6 +47,7 @@ class FriendProfileSerializer(serializers.ModelSerializer):
             "date_joined",
             "is_online",
             "last_login",
+            "elo",
         ]
  
 class FriendSerializer(serializers.ModelSerializer):
