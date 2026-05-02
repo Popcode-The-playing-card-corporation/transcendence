@@ -1,6 +1,33 @@
+import { profileRequest } from "../api/profile";
 import type { accountT } from "../utils/accountType";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
+
+	const [failure, setFailure] = useState(false);
+	const [success, setSuccess] = useState(false);
+	const navigate = useNavigate();
+
+	async function getProfile() {
+		setFailure(false);
+		setSuccess(false);
+		accountCurr = await profileRequest();
+		if (accountCurr.username === "") {
+			setFailure(true);
+			return ;
+		}
+		setSuccess(true);
+		return ;
+	}
+
+	if(!success && !failure) {
+		getProfile();
+	}
+	
+	if (failure) {
+		navigate('/login')
+	}
   return (
     <div>
       <div className="avatar mt-8 flex-col">

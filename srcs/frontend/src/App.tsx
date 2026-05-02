@@ -8,7 +8,6 @@ import { Settings } from "./pages/Settings";
 import { Rules } from "./pages/Rules";
 import { Login } from "./pages/Login";
 import { generateFakeAccount } from "./utils/generateTestAccount";
-
 const current_account = generateFakeAccount();
 
 function App() {
