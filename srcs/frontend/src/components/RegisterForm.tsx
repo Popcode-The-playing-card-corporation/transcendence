@@ -15,6 +15,7 @@ export function RegisterForm({
 	const [repassword,setrePassword] = useState("");
 	const [success, setSuccess] = useState(false);
 	const [failure, setFailure] = useState(false);
+	const navigate = useNavigate();
 	const emailChange = (e: React.ChangeEvent<HTMLInputElement>) => {setEmail(e.target.value);};
 	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
 	const passChange = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword(e.target.value);};
@@ -37,14 +38,13 @@ export function RegisterForm({
 	}
 
 	if (success) {
-		const navigate = useNavigate();
 		navigate('/profile')
 	}
 	
   return (
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
       <legend className="fieldset-legend">Register</legend>
-	  {failure ? <label className="label">Login Failure!</label>: <div></div> } // to improve
+	  {failure ? <label className="label">Login Failure!</label>: <div></div> } // to improve.
       <label className="label">Username</label>
       <input type="text" value={name} onChange={nameChange} className="input" placeholder="Username" />
 

@@ -8,7 +8,7 @@ export async function registerRequest(in_email:string, in_user:string, in_pass:s
 	}
 	in_avatar = "";
 	try {
-		const res = await fetch('/register', requestOptions);
+		const res = await fetch('http://localhost:8000/register/', requestOptions);
 		if (!res.ok)
 			return null;
 		const parse = await res.json();
@@ -17,7 +17,8 @@ export async function registerRequest(in_email:string, in_user:string, in_pass:s
 			refresh: parse['refresh'],
 		}
 		return response;
-	} catch {
+	} catch (err) {
+		console.error('registration error:', err)
 		return null;
 	}
 }
