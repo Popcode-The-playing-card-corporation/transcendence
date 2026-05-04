@@ -20,7 +20,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-        room = await sync_to_async(Room.objects.get)(code=self.code)
+        try:
+            room = await sync_to_async(Room.objects.get)(code=self.code)
+        except Room.DoesNotExist:
+            await self.accept()
+            await self.send(text_data=json.dumps({
+                "event": "error",
+                "message": "La room n'existe pas ou a été supprimée"
+            }))
+            await self.close(code=4004)
+            return
         
         is_member = await sync_to_async(
             PlayerPresence.objects.filter(
@@ -74,7 +83,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         group_name = getattr(self, "group_name", None)
         code = getattr(self, "code", None)
         user = getattr(self, "user", None)
-        #TODO change host if actual host disconnect
+        
+        room = await get_room_with_host(self.code)
         if group_name:
             await self.channel_layer.group_discard(
                 group_name,
@@ -100,6 +110,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
 				}
             }
         )
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "host_changed",
+                "payload": {
+                    "new_host": room.host.username
+                }
+            }
+)
 
     async def receive(self, text_data):
         try:
