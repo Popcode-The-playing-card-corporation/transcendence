@@ -1,5 +1,5 @@
 class Card:
-	def __init__(self, values, colors, id):
+	def __init__(self, values, colors, id=-1):
 		self.values = values
 		self.colors = colors
 		self.id = id
@@ -24,4 +24,4 @@ class Card:
 		return self.cardValue[self.values] >= self.cardValue[other.values]
 
 	def __repr__(self):
-		return f"value = {self.values} - color = {self.colors}\n"
+		return f"value = {self.values} - color = {self.colors} - id = {self.id}\n"

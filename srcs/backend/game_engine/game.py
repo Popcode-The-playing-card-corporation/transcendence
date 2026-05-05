@@ -13,7 +13,7 @@ class GameEngine:
 		
 	def initPlayer(self, data: dict, nbrPlayer: int):
 		if (len(data["players"]) > 0):
-			for p in data["players"]:
+			for p in data["players"].values():
 				p["cards"].clear()
 				p["taken"].clear()
 			return data
@@ -39,12 +39,12 @@ class GameEngine:
 
 		for c in hand:
 			cList = bucket[c["color"]]
-			cList.append(Card(c["value"], c["color"]))
+			cList.append(Card(c["value"], c["color"], c["id"]))
 
 		for color in bucket.values():
 			sort = sorted(color)
 			for c in sort:
-				ret.append({"color": c.colors, "value": c.values})
+				ret.append({"color": c.colors, "value": c.values, "id": c.id})
 
 		return ret
 
@@ -72,7 +72,7 @@ class GameEngine:
 
 		while (deck.remaining() != 0):
 			i = 0
-			for p in data["players"]:
+			for p in data["players"].values():
 				card = deck.drawRandom()
 				if (card.values == "-1"):
 					break
@@ -82,11 +82,11 @@ class GameEngine:
 				i += 1
 
 		i = 0
-		for p in data["players"]:
+		for p in data["players"].values():
 			p["cards"] = self.order(p["cards"])
-			i += 1
+			print(p["cards"])
 
-		for p in data["players"]:
+		for p in data["players"].values():
 			p["shtokr"] = self.shtokr(p["cards"])
 
 		data["lastCard"] = {"value": last.values, "color": last.colors, "id": last.id}
@@ -170,13 +170,13 @@ class GameEngine:
 		hand = data["players"][idPlayer]["cards"]
 		fold = []
 		cardBoard = data["board"].copy()
-		asked = {"color": "none", "value": "-1"}
+		asked = {"color": "none", "value": "-1", "id": -1}
 		if ("asked" in cardBoard.keys()):
 			asked = cardBoard.pop("asked")
 
 		for c in data["board"].values():
 			fold.append(Card(c["value"], c["color"]))
-		board = Board(fold, Card(asked["value"], asked["color"]))
+		board = Board(fold, Card(asked["value"], asked["color"], asked["id"]))
 
 		cardHand = Hand()
 		for c in hand:
@@ -188,7 +188,7 @@ class GameEngine:
 		hand = []
 		for i in meldIndex:
 			hand.append(data["players"][idPlayer]["cards"][i])
-		meld = Player.countMelds(Player(), hand)
+		meld = Player.countMelds(Player(), hand, data["tricks"])
 		if (meld != 0):
 			data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] + meld
 			return True
