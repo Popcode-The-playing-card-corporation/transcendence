@@ -310,6 +310,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }))
             return
         
+        for player_id, player_data in room.game_state["players"].items():
+            if len(player_data["cards"]) != 0:
+                return
+        
         game = GameEngine(room.uuid)
         game_state = game.handleAction("start", room.game_state, await count_player(room.code))
                 
@@ -425,11 +429,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
                                 "taken": player_data["taken"],
                                 "puntos": player_data["puntos"],
                                 "legal": legal,
-                                
                             }
                         }
                     )
             else:
+                player_puntos = {}
+
+                for player_id, player_data in game_state["players"].items():
+                    player_puntos[player_id] = player_data["puntos"]
+                
                 await self.channel_layer.group_send(
                     self.group_name,
                     {
@@ -437,7 +445,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
                         "event": "board_data",
                         "payload": {
                             "board": game_state["board"],
-		        		}
+                            "puntos": player_puntos
+                        }
                     }
                 )
     
