@@ -78,7 +78,7 @@ class GameEngine:
 					break
 				if (card.values == "7" and card.colors == "diamond"):
 					index = i
-				p["cards"].append({"value": card.values, "color": card.colors})
+				p["cards"].append({"value": card.values, "color": card.colors, "id": card.id})
 				i += 1
 
 		i = 0
@@ -89,7 +89,7 @@ class GameEngine:
 		for p in data["players"]:
 			p["shtokr"] = self.shtokr(p["cards"])
 
-		data["lastCard"] = {"value": last.values, "color": last.colors}
+		data["lastCard"] = {"value": last.values, "color": last.colors, "id": last.id}
 		data["tricks"] = "none"
 
 		if ("start" in data.keys()):
@@ -155,7 +155,7 @@ class GameEngine:
 
 			for c in data["board"].values():
 				data["players"][index]["taken"].append(c)
-			
+
 			data["board"].clear()
 			s = int(index)
 		else:
