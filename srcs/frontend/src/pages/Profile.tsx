@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Friends } from "../components/FriendsPart";
 import { History } from "../components/HistoryPart";
 import { ProfilePart } from "../components/ProfilePart";
@@ -8,15 +9,16 @@ export function Profile({ accountCurr }: { accountCurr: accountT }) {
   return (
     <div className=" page-content mt-10">
       <h1>Profile</h1>
-      <div className="bordered collapse">
-        <input type="radio" name="profile-radio" />
-        <div className="collapse-title">
-          <h2>Your profile:</h2>
-        </div>
-        <div className="collapse-content">
-          <ProfilePart accountCurr={accountCurr} />
-        </div>
-      </div>
+      {/*   <div className="bordered collapse"> */}
+      {/*     <input type="radio" name="profile-radio" /> */}
+      {/*     <div className="collapse-title flex items-center gap-6 justify-center"> */}
+      {/*       <h2 className="text-center">Your profile</h2> */}
+      {/* <IoIosArrowDown className="text-3xl" /> */}
+      {/*     </div> */}
+      {/*     <div className="collapse-content"> */}
+      <ProfilePart accountCurr={accountCurr} />
+      {/* </div> */}
+      {/* </div> */}
       <div className="bordered collapse">
         <input type="radio" name="profile-radio" />
         <div className="collapse-title">
