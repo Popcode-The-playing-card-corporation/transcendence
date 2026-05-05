@@ -91,9 +91,11 @@ class GameEngine:
 
 		data["lastCard"] = {"value": last.values, "color": last.colors}
 		data["tricks"] = "none"
-		
+
 		if ("start" in data.keys()):
 			data["start"] = int(data["start"]) + 1
+			if (data["start"] == len(data["players"])):
+				data["start"] = 0
 			data["playing"] = data["start"]
 		else:
 			data["playing"] = index
