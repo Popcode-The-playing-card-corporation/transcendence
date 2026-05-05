@@ -155,7 +155,7 @@ class GameEngine:
 
 			for c in data["board"].values():
 				data["players"][index]["taken"].append(c)
-			
+
 			data["board"].clear()
 			s = int(index)
 		else:
