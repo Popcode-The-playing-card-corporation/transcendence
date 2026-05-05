@@ -11,7 +11,8 @@ export async function refreshAuth() : Promise<boolean> {
 		return true;
 	} catch {
 		status.logged_in = false;
-		localStorage.clear();
+		localStorage.removeItem('access');
+		localStorage.removeItem('refresh');
 		return false;
 	}
 }

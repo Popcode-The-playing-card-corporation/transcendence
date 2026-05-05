@@ -4,7 +4,6 @@ import { TbCards } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
-import { logout } from '../api/logout'
 import { useNavigate } from "react-router-dom";
 
 
@@ -14,8 +13,9 @@ export function Navbar() {
   const isActive = (path: string) => path === current_location.pathname;
 
 
-  function handleLogout() {
-		logout();
+ function handleLogout() {
+		localStorage.removeItem('access');
+		localStorage.removeItem('refresh');
 		navigate('/login');
   }
 
