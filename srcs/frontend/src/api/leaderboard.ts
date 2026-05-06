@@ -5,9 +5,15 @@ import type { leaderboardRetT } from '../utils/leaderboardApiType';
 import type { userLB, leaderboardT, currentLB } from '../utils/leaderboardType';
 
 export async function getLeaderboard() { //: Promise<friendT | errorT>
+	
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', { 'headers': { 'Authorization': AuthStr}});
+		let res;
+		if (localStorage.getItem('access')) {
+			res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', { 'headers': {'Authorization': AuthStr}});
+			return res;
+		}
+		res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/');
 		return res;
 	} catch (err) {
 		const error = err as AxiosError;
@@ -31,7 +37,10 @@ export function leaderboardArray(board:AxiosResponse<leaderboardRetT>) {
 		}
 		leaderboardarr.push(user);
 	}
-	const curr:currentLB = {username:board.data.user_rank.username, score:board.data.user_rank.elo, rank:board.data.user_rank.rank};
+	let curr:currentLB = {username:"", score:0, rank:0};
+	if (board.data.user_rank) {
+		curr = {username:board.data.user_rank.username, score:board.data.user_rank.elo, rank:board.data.user_rank.rank};
+	}
 	const res:leaderboardT = {leaderboard: leaderboardarr, current: curr};
 	return res;
 }

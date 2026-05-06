@@ -50,11 +50,11 @@ export function LeaderboardPart() {
         <th className="w-1/3">Score</th>
       </thead>
       <tbody className="bg-(--hover-color)">
-        <tr className="bg-(--nav-color) h-12 border-b-4 border-(--bg-color)">
+        {current.username==="" && current.score===0 && current.rank ===0?null : <tr className="bg-(--nav-color) h-12 border-b-4 border-(--bg-color)">
           <td className="text-center">{current.rank}</td>
           <td className="text-center">{current.username}</td>
           <td className="text-center">{current.score}</td>
-        </tr>
+        </tr>}
         {sortedLB.map((player) => (
           <tr className="h-10 border-y border-(--bg-color)">
             <td className="text-center">{leaderboard.indexOf(player) + 1}</td>
