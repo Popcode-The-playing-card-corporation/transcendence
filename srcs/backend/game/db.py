@@ -2,6 +2,7 @@ from asgiref.sync import sync_to_async
 from .models import PlayerPresence, Room, PlayerScore
 from api.models import User
 from django.db.models import Max
+from django.utils import timezone
 
 @sync_to_async
 def count_player(code):
@@ -129,6 +130,7 @@ def start_room(uuid, data):
     room = Room.objects.get(uuid=uuid)
     room.game_state = data
     room.status = "start"
+    room.started_at = timezone.now()
     room.save()
     
 @sync_to_async
@@ -171,4 +173,5 @@ def end_room(uuid, data):
         ).update(rank=rank)
 
     room.status = "end"
+    room.ended_at = timezone.now()
     room.save()

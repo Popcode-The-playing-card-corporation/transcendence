@@ -16,13 +16,3 @@ class CreateRoomView(APIView):
         )
         return Response(RoomSerializer(room).data, status=201)
 
-class JoinRoomView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, code):
-        try:
-            room = Room.objects.get(code=code)
-            PlayerScore.objects.get_or_create(player=request.user, room=room)
-            return Response({"message": "Joined room"}, status=200)
-        except Room.DoesNotExist:
-            return Response({"error": "Room not found"}, status=404)

@@ -33,6 +33,8 @@ class Room(models.Model):
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
     game_state = models.JSONField(default=default_state)
     created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True)
+    ended_at = models.DateTimeField(null=True)
     nb_player = models.IntegerField(default=0)
     
     def __str__(self):
@@ -48,6 +50,12 @@ class PlayerScore(models.Model):
         unique_together = ['player', 'room']
         
 class PlayerPresence(models.Model):
+    DIFFICULTY_CHOICES = [
+        ("easy", "Easy"),
+        ("medium", "Medium"),
+        ("hard", "Hard"),
+    ]
+        
     player = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='presences')
 
@@ -56,6 +64,7 @@ class PlayerPresence(models.Model):
     position = models.IntegerField(default=0)
     last_seen = models.DateTimeField(auto_now=True)
     channel_name = models.CharField(max_length=255, null=True, blank=True)
+    difficulty = models.CharField(max_length=6, choices=DIFFICULTY_CHOICES, default="medium")
 
     class Meta:
         unique_together = ['player', 'room']
