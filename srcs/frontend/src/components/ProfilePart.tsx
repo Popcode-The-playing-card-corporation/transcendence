@@ -12,19 +12,19 @@ export function ProfilePart() {
 	const [realAccount, setAccount] = useState< accountT | errorT>({code: 0, response: ''});
 	const navigate = useNavigate();
 
-	async function getProfile() {
-		setFailure(false);
-		setSuccess(false);
-		const result = await profileRequest();
-		if ('code' in result) {
-			setAccount(result);
-			setFailure(true);
-			return ;
-		}
-		setAccount(result);
-		setSuccess(true);
-		return ;
-	}
+  async function getProfile() {
+    setFailure(false);
+    setSuccess(false);
+    const result = await profileRequest();
+    if ("code" in result) {
+      setAccount(result);
+      setFailure(true);
+      return;
+    }
+    setAccount(result);
+    setSuccess(true);
+    return;
+  }
 
 	useEffect(() => {
 		if(!success && !failure) {
@@ -63,7 +63,9 @@ export function ProfilePart() {
         </tr>
         <tr>
           <th className="th-profile">Password:</th>
-          <td>*******<a className="link"> change</a></td>
+          <td>
+            *******<a className="link"> change</a>
+          </td>
         </tr>
         <tr>
           <th className="th-profile">Joined on:</th>

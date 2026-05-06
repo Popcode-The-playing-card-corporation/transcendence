@@ -3,9 +3,10 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
 
-    email = models.EmailField(unique=True)  # 🔥 IMPORTANT
+    email = models.EmailField(unique=True)
 
-    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    #avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    avatar = models.CharField(max_length=255, default="avatars/avatar.jpg")
     is_online = models.BooleanField(default=False)
     elo = models.IntegerField(default=0)
     
@@ -21,7 +22,8 @@ class Friendship(models.Model):
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
+    accepted_at = models.DateField(null=True)
 
     class Meta:
         unique_together = ("from_user", "to_user")

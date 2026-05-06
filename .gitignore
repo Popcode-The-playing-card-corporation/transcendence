@@ -25,3 +25,6 @@ staticfiles/
 # OS
 .DS_Store
 Thumbs.db
+
+#Docker compose
+srcs/docker-compose.override.yml

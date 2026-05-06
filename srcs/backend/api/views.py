@@ -169,12 +169,26 @@ def deny_friend_request(request, request_id):
     
     
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def leaderboard(request):
-    leaderboard = (
+    top = list(
         User.objects
         .order_by("-elo")
-        .values("id", "username", "elo")
-	)
+        .values("id", "username", "elo")[:15]
+    )
 
-    return Response(leaderboard[:10])
+    user = request.user
+
+    rank = User.objects.filter(elo__gt=user.elo).count() + 1
+
+    me = {
+        "id": user.id,
+        "username": user.username,
+        "elo": user.elo,
+        "rank": rank
+    }
+
+    return Response({
+        "leaderboard": top,
+        "user_rank": me
+    })

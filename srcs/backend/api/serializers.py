@@ -56,12 +56,11 @@ class FriendSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Friendship
-        fields = ["id", "user", "status"]
+        fields = ["id", "user", "status", "accepted_at"]
 
     def get_user(self, obj):
         request = self.context["request"]
 
-        # trouver "l'autre" user
         if obj.from_user == request.user:
             friend = obj.to_user
         else:
