@@ -189,11 +189,9 @@ class GameEngine:
 		for i in meldIndex:
 			hand.append(data["players"][idPlayer]["cards"][i])
 		meld = Player.countMelds(Player(), hand, data["tricks"])
-		if (meld != 0):
-			data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] + meld
-			return True
+		data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] + meld
 		
-		return False
+		return data
 
 	def points(self, data: dict):
 		for p in data["players"].values():
@@ -219,6 +217,7 @@ class GameEngine:
 
 		if (action == "play"):
 			return self.play(data, idPlayer, idCard)
+		
 		if (action == "legal"):
 			return self.legal(data, idPlayer)
 		
