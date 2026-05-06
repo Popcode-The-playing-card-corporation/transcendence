@@ -1,5 +1,6 @@
 from asgiref.sync import sync_to_async
-from .models import PlayerPresence, Room
+from .models import PlayerPresence, Room, PlayerScore
+from api.models import User
 from django.db.models import Max
 
 @sync_to_async
@@ -76,18 +77,45 @@ def add_player_to_room(user, code):
 def remove_player_from_room(user, code):
     try:
         room = Room.objects.get(code=code)
-        if room.status == "start" or room.status == "end":
+
+        if room.host == user:
+            next_player = PlayerPresence.objects.filter(
+                room=room
+            ).exclude(player=user).order_by("position").first()
+
+            if next_player:
+                room.host = next_player.player
+                room.save()
+            else:
+                room.delete()
+                return
+
+        if room.status in ["start", "end"]:
             PlayerPresence.objects.filter(
                 player=user,
                 room=room
             ).update(is_online=False)
             return
-        pos = PlayerPresence.objects.filter(player=user, room=room).values_list("position", flat=True).first()
-        players = PlayerPresence.objects.filter(room=room, position__gt=pos).all()
+
+        pos = PlayerPresence.objects.filter(
+            player=user,
+            room=room
+        ).values_list("position", flat=True).first()
+
+        players = PlayerPresence.objects.filter(
+            room=room,
+            position__gt=pos
+        )
+
         for p in players:
             p.position -= 1
             p.save()
-        PlayerPresence.objects.filter(player=user, room=room).delete()
+
+        PlayerPresence.objects.filter(
+            player=user,
+            room=room
+        ).delete()
+
     except Room.DoesNotExist:
         pass
 
@@ -109,3 +137,38 @@ def save_room_state(uuid, data):
     room.game_state = data
     room.save()
 
+@sync_to_async
+def end_room(uuid, data):
+    room = Room.objects.get(uuid=uuid)
+
+    scores = []
+
+    for player_id, player_data in data["players"].items():
+        pp = PlayerPresence.objects.get(
+            room=room,
+            position=int(player_id)
+        )
+
+        p, _ = PlayerScore.objects.get_or_create(
+            room=room,
+            player_id=pp.player_id
+        )
+
+        p.score = player_data["puntos"]
+        p.save()
+
+        scores.append({
+            "player_id": pp.player_id,
+            "score": p.score
+        })
+
+    scores.sort(key=lambda x: x["score"], reverse=False)
+
+    for rank, entry in enumerate(scores, start=1):
+        PlayerScore.objects.filter(
+            room=room,
+            player_id=entry["player_id"]
+        ).update(rank=rank)
+
+    room.status = "end"
+    room.save()
