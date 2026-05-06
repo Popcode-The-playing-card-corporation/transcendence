@@ -1,7 +1,8 @@
 class Card:
-	def __init__(self, values, colors):
+	def __init__(self, values, colors, id=-1):
 		self.values = values
 		self.colors = colors
+		self.id = id
 		self.cardValue = {"6": 0, "7": 1, "8": 2, "9": 3, "10": 4, "J": 5, "Q": 6, "K": 7, "A": 8}
 
 	def __eq__(self, other):
@@ -21,3 +22,6 @@ class Card:
 	
 	def __ge__(self, other):
 		return self.cardValue[self.values] >= self.cardValue[other.values]
+
+	def __repr__(self):
+		return f"value = {self.values} - color = {self.colors} - id = {self.id}\n"
