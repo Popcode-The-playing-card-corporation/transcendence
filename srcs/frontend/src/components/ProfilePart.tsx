@@ -4,42 +4,40 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 
-export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
-  const [failure, setFailure] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [realAccount, setAccount] = useState<accountT | errorT>({
-    code: 0,
-    response: "",
-  });
-  const navigate = useNavigate();
+export function ProfilePart() {
 
-  async function getProfile() {
-    setFailure(false);
-    setSuccess(false);
-    const result = await profileRequest();
-    if ("code" in result) {
-      setAccount(result);
-      setFailure(true);
-      return;
-    }
-    setAccount(result);
-    setSuccess(true);
-    return;
-  }
+	// const [failure, setFailure] = useState(false);
+	// const [success, setSuccess] = useState(false);
+	const [realAccount, setAccount] = useState< accountT | errorT>({code: 0, response: ''});
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!success && !failure) {
-      getProfile();
-    }
-  }, []);
+	useEffect(() => {
 
-  if ("code" in realAccount) {
-    if (realAccount.code === 401) {
-      navigate("/login");
-      return;
-    }
-    return <p>Error: {realAccount.response}</p>; // improve message
-  }
+		async function getProfile() {
+			const result = await profileRequest();
+			if ("code" in result) {
+				setAccount(result);
+			return ;
+			}
+			setAccount(result);
+			return ;
+		}
+
+		getProfile();
+	
+	}, [navigate]);
+
+	if ('code' in realAccount) {
+		if (realAccount.code === 401) {
+			localStorage.removeItem('access');
+			localStorage.removeItem('refresh');
+			navigate('/login');
+			return ;
+		}
+		return <p>Error: {realAccount.response}</p>; // improve message
+	}
+
+
 
   return (
     <div>
@@ -58,7 +56,7 @@ export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
         </tr>
         <tr>
           <th className="th-profile">Email:</th>
-          <td>{realAccount.mail}</td>
+          <td>{realAccount.email}</td>
         </tr>
         <tr>
           <th className="th-profile">Password:</th>

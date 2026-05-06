@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { registerRequest } from '../api/register'
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
+import avatar from "../assets/avatar_test.png"
 
 
 export function RegisterForm({
@@ -29,7 +30,7 @@ export function RegisterForm({
 		setSuccess(false);
 		setFailure(false);
 		if (email !== "" && password !== "" && name !== "" && password === repassword) {
-			const result = await registerRequest(email, name, password, "");
+			const result = await registerRequest(email, name, password, avatar);
 			if (result) {
 				localStorage.setItem('access', result.access);
 				localStorage.setItem('refresh', result.refresh);

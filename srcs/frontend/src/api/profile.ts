@@ -1,14 +1,15 @@
 import type { accountT } from '../utils/accountType'
 import axios, { AxiosError } from 'axios'
 import type { errorT } from '../utils/errorType';
+import host from '../api/host'
 
 export async function profileRequest(): Promise<accountT | errorT> {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.get('http://localhost:8000/user/', { 'headers': { 'Authorization': AuthStr}});
+		const res = await axios.get('http://' + host.host_ip + ':8000/user/', { 'headers': { 'Authorization': AuthStr}});
 		const result : accountT = {
 			username: res.data['username'],
-			mail: res.data['email'],
+			email: res.data['email'],
 			password: res.data['password'],
 			avatar: res.data['avatar'],
 			date_joined: res.data['date_joined'],

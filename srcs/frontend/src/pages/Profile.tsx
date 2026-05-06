@@ -2,9 +2,8 @@ import { Friends } from "../components/FriendsPart";
 import { History } from "../components/HistoryPart";
 import { ProfilePart } from "../components/ProfilePart";
 import { StatisticsPart } from "../components/StatisticPart";
-import type { accountT } from "../utils/accountType";
 
-export function Profile({ accountCurr }: { accountCurr: accountT }) {
+export function Profile() {
   return (
     <div className=" page-content mt-10">
       <h1>Profile</h1>
@@ -14,7 +13,7 @@ export function Profile({ accountCurr }: { accountCurr: accountT }) {
           <h2 className="text-center">Your profile</h2>
         </div>
         <div className="collapse-content">
-          <ProfilePart accountCurr={accountCurr} />
+          <ProfilePart />
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

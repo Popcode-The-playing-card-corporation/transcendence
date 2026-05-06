@@ -3,7 +3,7 @@ import { LoginForm } from "../components/LoginForm";
 import { RegisterForm } from "../components/RegisterForm";
 
 export function Login() {
-  const [created, setCreated] = useState(true);
+  const [created, setCreated] = useState(false);
   return (
     <div className="page-content">
       <h1>Login / Register</h1>

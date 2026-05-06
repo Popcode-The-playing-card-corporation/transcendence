@@ -4,11 +4,20 @@ import { TbCards } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
+import { useNavigate } from "react-router-dom";
+
 
 export function Navbar() {
+  const navigate = useNavigate();
   const current_location = useLocation();
-
   const isActive = (path: string) => path === current_location.pathname;
+
+
+ function handleLogout() {
+		localStorage.removeItem('access');
+		localStorage.removeItem('refresh');
+		navigate('/login');
+  }
 
   return (
     <div className="navbar bg-(--nav-color)">
@@ -61,14 +70,13 @@ export function Navbar() {
               <GoLaw /> Rules
             </a>
           </li>
-          <li>
-            <a
-              className={(isActive("/login") ? "active " : "") + "item-menu"}
-              href="/login"
-            >
-              <MdLogin fontSize={20} />
-            </a>
-          </li>
+		  <li>
+			<button
+				onClick={handleLogout} className={(isActive("/login") ? "active " : "") + "item-menu"}
+			>
+				<MdLogin fontSize={20} />
+			</button>
+		  </li>
         </ul>
       </div>
     </div>

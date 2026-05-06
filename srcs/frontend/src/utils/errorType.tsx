@@ -1,4 +1,4 @@
 export type errorT = {
   code: number,
-  response: unknown,
+  response: any,
 };
