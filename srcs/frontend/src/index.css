@@ -32,6 +32,7 @@
   h3 {
     @apply text-2xl font-bold;
   }
+
   /* table { */
   /*   border-collapse: separate; */
   /*   border-spacing: 0; */
@@ -39,10 +40,10 @@
   /* } */
   /**/
   /* tbody { */
-  /*   display: block; /* Required */ 
+  /*   display: block; /* Required */
   /*   border-radius: 15px; */
   /*   border: 1px solid #ccc; */
-  /*   overflow: hidden; /* Ensures background/borders follow radius */ 
+  /*   overflow: hidden; /* Ensures background/borders follow radius */
   /* } */
 }
 

@@ -30,6 +30,7 @@ up:
 	else \
 		echo "❌ Missing ./srcs/.env file"; \
 	fi
+	
 
 down:
 	@echo "$(YELLOW)Stopping docker container...$(RESET)"

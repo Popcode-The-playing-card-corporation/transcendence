@@ -1,4 +1,4 @@
-type userLB = {
+export type userLB = {
   username: string;
   score: number;
 };

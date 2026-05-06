@@ -7,9 +7,7 @@ import { Navbar } from "./components/Navbar";
 import { Settings } from "./pages/Settings";
 import { Rules } from "./pages/Rules";
 import { Login } from "./pages/Login";
-import { generateFakeAccount } from "./utils/generateTestAccount";
-
-const current_account = generateFakeAccount();
+import { Footer } from "./components/Footer";
 
 function App() {
   return (
@@ -20,11 +18,15 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/profile" element={<Profile accountCurr={current_account}/>} />
+          <Route
+            path="/profile"
+            element={<Profile />}
+          />
           <Route path="/settings" element={<Settings />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/login" element={<Login />} />
         </Routes>
+		<Footer />
       </BrowserRouter>
     </main>
   );
