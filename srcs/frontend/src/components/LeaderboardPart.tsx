@@ -1,10 +1,35 @@
-import { generateFakeLeaderboard } from "../utils/generateTestLeaderboard";
-import type {  userLB } from "../utils/leaderboardType";
+import { useEffect, useState } from "react";
+import { getLeaderboard, leaderboardArray } from "../api/leaderboard";
+// import { generateFakeLeaderboard } from "../utils/generateTestLeaderboard";
+import type { leaderboardT, userLB } from "../utils/leaderboardType";
+import type { errorT } from "../utils/errorType";
 
 export function LeaderboardPart() {
-  const data = generateFakeLeaderboard();
-  const leaderboard = data.leaderboard;
-  const current = data.current;
+//   const data = generateFakeLeaderboard();
+//   const leaderboard = data.leaderboard;
+//   const current = data.current;
+  const [leaderboard_gen, setLeaderboard] = useState< leaderboardT | errorT>({code: 0, response:""});
+  
+  useEffect(() => {
+	async function requestLeaderboard() {
+		const result = await getLeaderboard();
+		if ("code" in result) {
+			setLeaderboard(result);
+			return ;
+		}
+		setLeaderboard(leaderboardArray(result));
+		return ;
+	}
+
+	requestLeaderboard();
+  }, [])
+
+  if ('code' in leaderboard_gen) {
+	return <p>Error: {leaderboard_gen.response}</p>; // improve message
+  }
+
+  const current = leaderboard_gen.current;
+  const leaderboard = leaderboard_gen.leaderboard;
 
   function compare(a: userLB, b: userLB) {
     if (a.score > b.score) {

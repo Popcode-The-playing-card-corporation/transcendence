@@ -17,7 +17,7 @@ export function ProfilePart() {
 			const result = await profileRequest();
 			if ("code" in result) {
 				setAccount(result);
-			return ;
+				return ;
 			}
 			setAccount(result);
 			return ;
