@@ -41,7 +41,7 @@ export function ProfilePart() {
   return (
     <div>
       <div className="avatar mt-8 flex-col">
-        <AvatarSelection currentAvatar={realAccount.avatar}/>
+        <AvatarSelection currentAvatar={realAccount.avatar} />
         <p className="text-green-200 font-extrabold my-2 mx-auto">
           {realAccount.is_online ? "Online" : ""}
         </p>
@@ -58,7 +58,55 @@ export function ProfilePart() {
         <tr>
           <th className="th-profile">Password:</th>
           <td>
-            *******<a className="link"> change</a>
+            *******
+            <a className="link" href="#change_pswd_modal">
+              {" "}
+              change
+            </a>
+            <div
+              className="modal modal-top"
+              role="dialog"
+              id="change_pswd_modal"
+            >
+              <div className="modal-box bg-(--bg-color)">
+                <h3 className="text-lg font-bold">Change password</h3>
+                <p className="py-4">
+                  Enter your password and choose your new one
+                </p>
+                <div className="modal-action">
+                  <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
+                    <legend className="fieldset-legend">Change password</legend>
+
+                    <label className="label">Old password</label>
+                    <input
+                      type="password"
+                      className="input"
+                      placeholder="old password"
+                    />
+
+                    <label className="label">New password</label>
+                    <input
+                      type="password"
+                      className="input"
+                      placeholder="new password"
+                    />
+                    <label className="label">Confirm new password</label>
+                    <input
+                      type="password"
+                      className="input"
+                      placeholder="confirm new password"
+                    />
+
+                    <a className="btn bg-(--nav-color) mt-4" href="#">
+                      change
+                    </a>
+                    <a className="btn bg-(--nav-color) mt-4" href="#">
+                      cancel
+                    </a>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
           </td>
         </tr>
         <tr>
