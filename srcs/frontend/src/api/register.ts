@@ -16,7 +16,7 @@ export async function registerRequest(in_email:string, in_user:string, in_pass:s
 		// const blob = await img_response.blob();
 		// const img = new File([blob], "avatar.png", { type: "image/png"});
 		// formData.set('avatar', img);
-		const res = await axios.post('http://' + host.host_ip + ':8000/register/', formData,);
+		const res = await axios.post('http://' + host.host_ip + ':8000/register/', formData);
 		const response : accessT = {
 			access: res.data['access'],
 			refresh: res.data['refresh'],
@@ -24,7 +24,7 @@ export async function registerRequest(in_email:string, in_user:string, in_pass:s
 		status.logged_in = true;
 		return response;
 	} catch (err) {
-		console.error('registration error:', err)
+		console.error('registration error:', err);
 		status.logged_in = false;
 		return null;
 	}

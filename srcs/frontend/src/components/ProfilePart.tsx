@@ -1,4 +1,4 @@
-import { profileRequest } from "../api/profile";
+import { changeEmail, changePassword, changeUsername, profileRequest } from "../api/profile";
 import type { accountT } from "../utils/accountType";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,13 +6,12 @@ import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
 
 export function ProfilePart() {
-  // const [failure, setFailure] = useState(false);
-  // const [success, setSuccess] = useState(false);
   const [realAccount, setAccount] = useState<accountT | errorT>({
     code: 0,
     response: "",
   });
   const navigate = useNavigate();
+  const [updatedProfile, setUpdate] = useState(false);
 
   useEffect(() => {
     async function getProfile() {
@@ -26,7 +25,7 @@ export function ProfilePart() {
     }
 
     getProfile();
-  }, [navigate]);
+  }, [navigate, updatedProfile]);
 
   if ("code" in realAccount) {
     if (realAccount.code === 401) {
@@ -36,6 +35,36 @@ export function ProfilePart() {
       return;
     }
     return <p>Error: {realAccount.response}</p>; // improve message
+  }
+
+  async function updateUser(in_name:string) {
+	const res = await changeUsername(in_name);
+	if (!res) {
+		console.error('user failure');
+		return ;
+	}
+	setUpdate(!updatedProfile);
+	return ;
+  }
+
+  async function updateEmail(in_email:string) {
+	const res = await changeEmail(in_email);
+	if (!res) {
+		console.error('email failure');
+		return ;
+	}
+	setUpdate(!updatedProfile);
+	return ;
+  }
+
+  async function updatePass(in_pass:string) {
+	const res = await changePassword(in_pass);
+	if (!res) {
+		console.error('password failure');
+		return ;
+	}
+	setUpdate(!updatedProfile);
+	return ;
   }
 
   return (

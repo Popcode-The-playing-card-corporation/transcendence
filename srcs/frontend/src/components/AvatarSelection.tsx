@@ -17,6 +17,7 @@ import avatar14 from "../assets/avatars/avatar14.jpg";
 import avatar15 from "../assets/avatars/avatar15.jpg";
 import avatar16 from "../assets/avatars/avatar16.jpg";
 import avatar17 from "../assets/avatars/avatar17.jpg";
+import { changeAvatar } from "../api/profile";
 
 export function AvatarSelection({
   currentAvatar,
@@ -27,10 +28,14 @@ export function AvatarSelection({
   const [tempAvatar, setTempAvatar] = useState(currentAvatar);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  function handleAvatarChange(newPath: string, e: React.MouseEvent) {
+  async function handleAvatarChange(newPath: string, e: React.MouseEvent) {
     e.stopPropagation();
     setTempAvatar(newPath);
     dialogRef.current?.close();
+	const ok = await changeAvatar(newPath);
+	if (!ok) {
+		console.error('fuck');
+	}
   }
   return (
     <div
