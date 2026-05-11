@@ -14,34 +14,6 @@ export function ProfilePart() {
   });
   const navigate = useNavigate();
 
-	// const [failure, setFailure] = useState(false);
-	// const [success, setSuccess] = useState(false);
-	const [realAccount, setAccount] = useState< accountT | errorT>({code: 0, response: ''});
-	const navigate = useNavigate();
-
-  useEffect(() => {
-    async function getProfile() {
-      const result = await profileRequest();
-      if ("code" in result) {
-        setAccount(result);
-	        return;
-      }
-      setAccount(result);
-      return;
-    }
-
-    getProfile();
-  }, [navigate]);
-
-	if ('code' in realAccount) {
-		if (realAccount.code === 401) {
-			localStorage.removeItem('access');
-			localStorage.removeItem('refresh');
-			navigate('/login');
-			return ;
-		}
-		return <p>Error: {realAccount.response}</p>; // improve message
-	}
   useEffect(() => {
     async function getProfile() {
       const result = await profileRequest();

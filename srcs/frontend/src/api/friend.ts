@@ -53,39 +53,3 @@ export async function friendRequest(id:number) {
 		return result;
 	}
 }
-
-
-
-// // Ready for FriendsPart.tsx
-
-// import { friendArray, getFriends } from "../api/friend";
-// import { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// import type { errorT } from "../utils/errorType";
-
-// // in function friends instead of const generatefakefriends
-// const [friends, setFriends] = useState< friendT[] | errorT>({code: 0, response: ''});
-// const navigate = useNavigate();
-
-// 	useEffect(() => {
-// 	async function retrieveFriends() {
-// 		const data = await getFriends();
-// 		if ("code" in data) {
-// 			setFriends(data);
-// 			return ;
-// 		}
-// 		setFriends(friendArray(data));
-// 	}
-// 	retrieveFriends();
-// 	}, [])
-
-
-// 	if ('code' in friends) {
-// 		if (friends.code === 401) {
-// 			localStorage.removeItem('access');
-// 			localStorage.removeItem('refresh');
-// 			navigate('/login');
-// 			return ;
-// 		}
-// 		return <p>Error: {friends.response}</p>; // improve message
-// 	}

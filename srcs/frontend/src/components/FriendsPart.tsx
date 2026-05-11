@@ -1,11 +1,37 @@
 import { TbPointFilled } from "react-icons/tb";
 import type { friendT } from "../utils/friendType";
-import { generateFakeFriends } from "../utils/generateArrayTestFriends";
-
+import { friendArray, getFriends } from "../api/friend";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import type { errorT } from "../utils/errorType";
 
 export function Friends() {
 
-  const friends = generateFakeFriends();
+	const [friends, setFriends] = useState< friendT[] | errorT>({code: 0, response: ''});
+	const navigate = useNavigate();
+
+	useEffect(() => {
+	async function retrieveFriends() {
+		const data = await getFriends();
+		if ("code" in data) {
+			setFriends(data);
+			return ;
+		}
+		setFriends(friendArray(data));
+	}
+	retrieveFriends();
+	}, [])
+
+
+	if ('code' in friends) {
+		if (friends.code === 401) {
+			localStorage.removeItem('access');
+			localStorage.removeItem('refresh');
+			navigate('/login');
+			return ;
+		}
+		return <p>Error: {friends.response}</p>; // improve message
+	}
 
   return (
     <table>
