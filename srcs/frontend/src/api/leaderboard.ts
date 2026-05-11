@@ -3,13 +3,14 @@ import type { errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { leaderboardRetT } from '../utils/leaderboardApiType';
 import type { userLB, leaderboardT, currentLB } from '../utils/leaderboardType';
+import { checkAuth } from './checkAuth';
 
 export async function getLeaderboard() { //: Promise<friendT | errorT>
 	
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
 		let res;
-		if (localStorage.getItem('access')) {
+		if (await checkAuth()) { // Need to actualy check authentication rather than if access exists
 			res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', { 'headers': {'Authorization': AuthStr}});
 			return res;
 		}

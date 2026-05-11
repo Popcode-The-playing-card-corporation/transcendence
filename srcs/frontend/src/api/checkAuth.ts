@@ -20,8 +20,7 @@ export async function refreshAuth() : Promise<boolean> {
 export async function checkAuth() : Promise<boolean> {
 
 	try {
-		const res = await axios.post('http://' + host.host_ip + ':8000/api/token/verify/', { 'token': localStorage.getItem('access')});
-		res;
+		await axios.post('http://' + host.host_ip + ':8000/api/token/verify/', { 'token': localStorage.getItem('access')});
 		status.logged_in = true;
 		return true;
 	} catch {
