@@ -86,3 +86,10 @@
 .th-stats {
   @apply w-50 h-8;
 }
+
+.announce {
+  width: 380px;
+  border: true;
+  border-collapse: collapse;
+  border-color: #6f7dda;
+}
