@@ -1,5 +1,5 @@
 from asgiref.sync import sync_to_async
-from .models import PlayerPresence, Room, PlayerScore
+from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
@@ -158,6 +158,10 @@ def end_room(uuid, data):
 
         p.score = player_data["puntos"]
         p.save()
+        
+        stat = Stat.objects.get(user_id=p.player_id)
+        stat.total_points += p.score
+        stat.save()
 
         scores.append({
             "player_id": pp.player_id,
@@ -174,11 +178,24 @@ def end_room(uuid, data):
             player_id=entry["player_id"]
         ).update(rank=rank)
         user = User.objects.get(id=entry["player_id"])
+        stat = Stat.objects.get(user_id=user.id)
+        
         user.elo += elo
+        if elo > 0:
+            stat.win += 1
+        else:
+            stat.lose += 1
+            
+        stat.played += 1
+        
         elo -= 2
         if elo == 0:
             elo -= 2
+            
+        if room.host_id == user.id:
+            stat.nb_host += 1
         user.save()
+        stat.save()
 
     room.status = "end"
     room.ended_at = timezone.now()

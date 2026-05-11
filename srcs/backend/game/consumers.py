@@ -1,11 +1,12 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from .models import PlayerPresence, Room, PlayerScore
+from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from api.serializers import UserSerializer
+import copy
 
 CARD_VALUES = {
     "6": 6,
@@ -287,9 +288,37 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
             return
-        
-        game_state = game.handleAction("play", room.game_state, idPlayer= str(position), idCard= int(idx))
+        taker = -1
+        state = copy.deepcopy(room.game_state)
+        if len(state["board"]) == room.nb_player:
+            melds = game.handleAction("board_meld", state, idPlayer= str(position), idCard= int(idx))
+            taker = game.handleAction("who_take", state, idPlayer= str(position), idCard= int(idx))
+
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(taker)
+            )
+            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+            stat.board_meld_points = stat.board_meld_points + melds
+            if stat.highest_board_meld < melds:
+                stat.highest_board_meld = melds
+            stat.nb_taken += 1
+            await sync_to_async(stat.save)()
+
+        tricks = copy.deepcopy(state["tricks"])
+        game_state = game.handleAction("play", state, idPlayer= str(position), idCard= int(idx))
         await save_room_state(room.uuid, game_state)
+        if game_state["tricks"] != tricks and game_state["tricks"] != "none":
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(taker)
+            )
+            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+            stat.nb_trick_choose += 1
+            stat.tricks[game_state["tricks"]] += 1
+            preferred = max(stat.tricks, key=stat.tricks.get)
+            stat.prefered_trick = preferred
+            await sync_to_async(stat.save)()
 
         player_finished = 0
         for player_id, player_data in game_state["players"].items():
@@ -299,7 +328,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
             if len(player_data["cards"]) == 0:
                 player_finished += 1
+                
         if player_finished == room.nb_player:
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(taker)
+            )
+            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+            stat.nb_last_take += 1
+            await sync_to_async(stat.save)()
             game_state = game.handleAction("point", game_state)
             await save_room_state(room.uuid, game_state)
             await self.channel_layer.group_send(
@@ -314,7 +351,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
             return
         await self.send_data()
-
+#TODO insert stat in table
     async def handle_melds(self, payload: dict):
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
@@ -417,6 +454,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if all_cards_used:
             game = GameEngine(room.uuid)
             game_state = game.handleAction("meld", room.game_state, idPlayer=str(position), meldIndex=selected_cards_idx )
+            
+            melds = game.handleAction("point_meld", room.game_state, idPlayer=str(position), meldIndex=selected_cards_idx )
+            stat = await sync_to_async(Stat.objects.get)(user_id=self.user.id)
+            stat.hand_meld_points = stat.hand_meld_points + melds
+            if stat.highest_hand_meld < melds:
+                stat.highest_hand_meld = melds
+            await sync_to_async(stat.save)()
+            
             await save_room_state(room.uuid, game_state)
         else:
             await self.send(json.dumps({
