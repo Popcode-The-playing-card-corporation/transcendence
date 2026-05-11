@@ -71,6 +71,8 @@ class FriendProfileSerializer(serializers.ModelSerializer):
  
 class FriendSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
+    can_accept = serializers.SerializerMethodField()
+
     status = serializers.CharField()
 
     accepted_at = serializers.DateTimeField(
@@ -79,7 +81,13 @@ class FriendSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Friendship
-        fields = ["id", "user", "status", "accepted_at"]
+        fields = [
+            "id",
+            "user",
+            "status",
+            "accepted_at",
+            "can_accept"
+        ]
 
     def get_user(self, obj):
         request = self.context["request"]
@@ -94,3 +102,11 @@ class FriendSerializer(serializers.ModelSerializer):
             "username": friend.username,
             "is_online": friend.is_online
         }
+
+    def get_can_accept(self, obj):
+        request = self.context["request"]
+
+        return (
+            obj.status == "pending"
+            and obj.to_user == request.user
+        )
