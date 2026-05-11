@@ -16,5 +16,6 @@ urlpatterns = [
     #stat part
     path("leaderboard/", leaderboard),
     path("history/", game_history),
-    path("room/<str:uuid>/", room_data)
+    path("room/<str:uuid>/", room_data),
+    path("user/stats/<int:user_id>/", get_stat)
 ]

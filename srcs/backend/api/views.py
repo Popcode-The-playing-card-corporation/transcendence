@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
 from .models import User, Friendship
-from game.models import Stat, PlayerScore, Room, PlayerPresence
+from game.models import Stat, PlayerScore, Room, PlayerPresence, Stat
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import UserSerializer, FriendSerializer, FriendProfileSerializer
+from game.serializers import StatSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -255,7 +256,6 @@ def game_history(request):
 @permission_classes([IsAuthenticated])
 def room_data(request, uuid):
     room = Room.objects.get(uuid=uuid)
-    print(room)
     players = (
         PlayerScore.objects
         .filter(room=room)
@@ -272,4 +272,15 @@ def room_data(request, uuid):
             "rank": ps.rank
 		})
     return Response(users)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_stat(request, user_id):
+    #user = User.objects.get(id=user_id)
+    stats = Stat.objects.get(user_id=user_id)
+    
+    serializer = StatSerializer(stats)
+
+    return Response(serializer.data)
+    
     

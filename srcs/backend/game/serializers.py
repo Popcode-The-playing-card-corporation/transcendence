@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Room, PlayerScore
+from .models import Room, PlayerScore, Stat
 from api.serializers import UserSerializer
 
 
@@ -17,3 +17,10 @@ class PlayerScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerScore
         fields = ['player', 'score']
+        
+class StatSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Stat
+        fields = "__all__"
+    
