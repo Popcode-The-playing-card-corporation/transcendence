@@ -1,21 +1,31 @@
 import { useLocation } from "react-router";
-import { MdLogin, MdOutlineLeaderboard } from "react-icons/md";
+import { MdLogout, MdLogin, MdOutlineLeaderboard } from "react-icons/md";
 import { TbCards } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 
 export function Navbar() {
+  const [logged_in, setLog] = useState(!!localStorage.getItem('access'));
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
 
 
- function handleLogout() {
+	useEffect(() => {
+		async function update_logo() { // Anouar is lazy and hates ESLINT!!!!! :( 8====D
+			setLog(!!localStorage.getItem('access'));
+		}
+		update_logo();
+	}, [current_location.pathname])
+
+  function handleLogout() {
 		localStorage.removeItem('access');
 		localStorage.removeItem('refresh');
+		setLog(false);
 		navigate('/login');
   }
 
@@ -72,10 +82,11 @@ export function Navbar() {
           </li>
 		  <li>
 			<button
-				onClick={handleLogout} className={(isActive("/login") ? "active " : "") + "item-menu"}
-			>
-				<MdLogin fontSize={20} />
-			</button>
+                onClick={handleLogout} className={(isActive("/login") ? "active " : "") + "item-menu"}
+            >
+        		{logged_in ? <MdLogout fontSize={20}/> : <MdLogin fontSize={20} />}
+
+            </button>
 		  </li>
         </ul>
       </div>

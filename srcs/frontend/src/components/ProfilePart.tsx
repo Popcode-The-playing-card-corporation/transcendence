@@ -1,4 +1,4 @@
-import { profileRequest } from "../api/profile";
+import { changeEmail, changePassword, changeUsername, profileRequest } from "../api/profile";
 import type { accountT } from "../utils/accountType";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
 import { PswdChange } from "./PswdChange";
 import { PseudoChange } from "./PseudoChange";
+import { refreshAuth } from "../api/checkAuth";
 
 export function ProfilePart() {
   const [realAccount, setAccount] = useState<accountT | errorT>({
@@ -13,31 +14,61 @@ export function ProfilePart() {
     response: "",
   });
   const navigate = useNavigate();
+  const [updatedProfile, setUpdate] = useState(false);
   const dialogPswdRef = useRef<HTMLDialogElement>(null);
   const dialogPseudoRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     async function getProfile() {
-      const result = await profileRequest();
-      if ("code" in result) {
-        setAccount(result);
-        return;
+      let result = await profileRequest();
+
+	  if ("code" in result) {
+		if (result.code === 401) {
+			if (!(await refreshAuth())) {
+				navigate('/login');
+			}
+			result = await profileRequest();
+		}
       }
-      setAccount(result);
+	  setAccount(result);
       return;
     }
 
     getProfile();
-  }, [navigate]);
+  }, [updatedProfile, navigate]);
 
   if ("code" in realAccount) {
-    if (realAccount.code === 401) {
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      navigate("/login");
-      return;
-    }
-    return <p>Error: {realAccount.response}</p>; // improve message
+    return <p>Error: {String(realAccount.response)}</p>; // improve message
+  }
+
+  async function updateUser(in_name:string) {
+	const res = await changeUsername(in_name);
+	if (!res) {
+		console.error('user failure');
+		return ;
+	}
+	setUpdate(!updatedProfile);
+	return ;
+  }
+
+  async function updateEmail(in_email:string) {
+	const res = await changeEmail(in_email);
+	if (!res) {
+		console.error('email failure');
+		return ;
+	}
+	setUpdate(!updatedProfile);
+	return ;
+  }
+
+  async function updatePass(in_pass:string) {
+	const res = await changePassword(in_pass);
+	if (!res) {
+		console.error('password failure');
+		return ;
+	}
+	setUpdate(!updatedProfile);
+	return ;
   }
 
   return (

@@ -55,7 +55,9 @@ export function RegisterForm({
     return;
   }
 
-  async function checkAccess() {
+
+  useEffect(() => {
+	async function checkAccess() {
     const authed = await checkAuth();
     if (authed) {
       setAccess(true);
@@ -65,7 +67,6 @@ export function RegisterForm({
     return;
   }
 
-  useEffect(() => {
     checkAccess();
   }, []);
 

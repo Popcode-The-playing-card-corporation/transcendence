@@ -1,8 +1,10 @@
 export type userLB = {
   username: string;
   score: number;
+  id: number
 };
-type currentLB = {
+
+export type currentLB = {
 	username: string,
 	score: number;
 	rank: number;

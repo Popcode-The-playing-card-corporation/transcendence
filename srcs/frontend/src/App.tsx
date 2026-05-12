@@ -10,6 +10,7 @@ import { Login } from "./pages/Login";
 import { Footer } from "./components/Footer";
 
 function App() {
+
   return (
     <main className="bg-(--bg-color) font-[Cause] text-(--font-color) h-full">
       <BrowserRouter>

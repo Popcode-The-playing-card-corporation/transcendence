@@ -1,15 +1,52 @@
-import { useState } from "react";
-import type { accountT } from "../utils/accountType";
-import { generateFakeHistory } from "../utils/generateTestHistory";
+import { useState, useEffect } from "react";
 import type { historyT } from "../utils/historyType";
+import type { errorT } from "../utils/errorType";
+import { getHistory, historyArray } from "../api/history";
+import type { playerT } from "../utils/playerType";
+import { useNavigate } from "react-router-dom";
+import { refreshAuth } from "../api/checkAuth";
 
 export function History() {
-  const gameHistory = generateFakeHistory();
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10)
+  const [gameHistory, setHistory] = useState< historyT[] | errorT>({code: 0, response: ''});
+  const navigate = useNavigate();
 
+  	useEffect(() => {
+		async function retrieveHistory() {
+			let res = await getHistory();
+			if ('code' in res) {
+				if (res.code === 401) {
+					if (!(await refreshAuth())) {
+						navigate('/login');
+					}
+					res = await getHistory();
+				}
+				if ('code' in res) {
+					setHistory(res);
+				}
+				else {
+					const arr = await historyArray(res);
+					setHistory(arr);
+				}
+			} else {
+				const arr = await historyArray(res);
+				setHistory(arr);
+			}	
+		}
+
+		retrieveHistory();
+
+	}, [navigate])
+
+	if ('code' in gameHistory) {
+		return <p>Error: {String(gameHistory.response)}</p>;
+	} 
 
   function handleMoreLessBtn() {
+	  if ('code' in gameHistory) {
+		return ;
+	  }
 	  if (isMore) {
 		  setIsMore(false);
 		  setNbSlice(10);
@@ -33,18 +70,18 @@ export function History() {
       {gameHistory.slice(0, nbSlice).map((game: historyT) => (
         <tr
           className={
-            (game.winned ? "bg-(--green-color)" : "bg-(--accent-color)") +
+            (game.won ? "bg-(--green-color)" : "bg-(--accent-color)") +
             " text-black h-16 border-b-2 border-(--bg-color)"
           }
         >
           <td>
-            <p className="ml-2">{game.gameId} </p>
+            <p className="ml-2">{game.game_id} </p>
           </td>
-          <td>{game.date}</td>
+          <td>{game.start}</td>
           <td>{game.points}</td>
-          <td>{game.winned ? "winner" : "looser"}</td>
-          <td>{game.timePlayed}</td>
-          <td>{game.nbPlayers}</td>
+          <td>{game.won ? "winner" : "loooser"}</td>
+          <td>{game.duration}</td>
+          <td>{game.nb_player}</td>
           <td>
             <div className="dropdown">
               <div
@@ -58,7 +95,7 @@ export function History() {
                 tabIndex={-1}
                 className="dropdown-content menu bg-(--hover-color) rounded-box z-1 w-52 p-2 shadow-sm"
               >
-                {game.players.map((player: accountT) => (
+                {game.players.map((player: playerT) => (
                   <li>
                     <a className="text-(--font-color)">{player.username}</a>
                   </li>

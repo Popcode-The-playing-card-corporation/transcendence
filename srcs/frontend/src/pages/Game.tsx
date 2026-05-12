@@ -1,4 +1,7 @@
+import status from "../api/login_status"
+
 export function Game() {
+	console.debug(status.logged_in)
   return (
     <div className="page-content mt-5">
       <h1>Game</h1>

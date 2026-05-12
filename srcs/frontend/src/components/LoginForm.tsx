@@ -37,7 +37,8 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		return ;
 	}
 
-	async function checkAccess() {
+	useEffect(() => {
+		async function checkAccess() {
 		const authed = await checkAuth();
 		if (authed) {
 			setAccess(true);
@@ -46,8 +47,6 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		setAccess(false);
 		return ;
 	}
-
-	useEffect(() => {
 		checkAccess();
 	}, [])
 
