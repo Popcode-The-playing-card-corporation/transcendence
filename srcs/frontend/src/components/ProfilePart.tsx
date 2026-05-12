@@ -3,48 +3,45 @@ import type { accountT } from "../utils/accountType";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
+import { AvatarSelection } from "./AvatarSelection";
 
 export function ProfilePart() {
+  // const [failure, setFailure] = useState(false);
+  // const [success, setSuccess] = useState(false);
+  const [realAccount, setAccount] = useState<accountT | errorT>({
+    code: 0,
+    response: "",
+  });
+  const navigate = useNavigate();
 
-	// const [failure, setFailure] = useState(false);
-	// const [success, setSuccess] = useState(false);
-	const [realAccount, setAccount] = useState< accountT | errorT>({code: 0, response: ''});
-	const navigate = useNavigate();
+  useEffect(() => {
+    async function getProfile() {
+      const result = await profileRequest();
+      if ("code" in result) {
+        setAccount(result);
+        return;
+      }
+      setAccount(result);
+      return;
+    }
 
-	useEffect(() => {
+    getProfile();
+  }, [navigate]);
 
-		async function getProfile() {
-			const result = await profileRequest();
-			if ("code" in result) {
-				setAccount(result);
-			return ;
-			}
-			setAccount(result);
-			return ;
-		}
-
-		getProfile();
-	
-	}, [navigate]);
-
-	if ('code' in realAccount) {
-		if (realAccount.code === 401) {
-			localStorage.removeItem('access');
-			localStorage.removeItem('refresh');
-			navigate('/login');
-			return ;
-		}
-		return <p>Error: {realAccount.response}</p>; // improve message
-	}
-
-
+  if ("code" in realAccount) {
+    if (realAccount.code === 401) {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      navigate("/login");
+      return;
+    }
+    return <p>Error: {realAccount.response}</p>; // improve message
+  }
 
   return (
     <div>
       <div className="avatar mt-8 flex-col">
-        <div className="rounded-4xl w-24">
-          <img src={realAccount.avatar} />
-        </div>
+        <AvatarSelection currentAvatar={realAccount.avatar}/>
         <p className="text-green-200 font-extrabold my-2 mx-auto">
           {realAccount.is_online ? "Online" : ""}
         </p>
