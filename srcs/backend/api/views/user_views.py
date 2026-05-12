@@ -38,14 +38,24 @@ def user_data(request, user_id):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def register(request):
+    password = request.data.get("password")
+    try:
+        validate_password(password)
+        
+    except ValidationError as e:
+        for error in e.messages:
+            return Response(
+                {"error": (f"Password validation error: {error}")},
+                status=400
+            )
+            
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
         Stat.objects.create(user=user)
         
         username = user.username
-        password = request.data.get("password")
-        
+
         user = authenticate(username=username, password=password)
         if user is not None:
             user.last_login = timezone.now()
@@ -125,23 +135,23 @@ def check_new_password(request):
 
     if password == password2:
         try:
-            # Check if password meets the validation criteria
-            print(validate_password(password, user))
+            validate_password(password, user)
             return Response(
-            {"valid": True},
-            status=200
+                {"valid": True},
+                status=200
             )
+            
         except ValidationError as e:
             for error in e.messages:
                 return Response(
                     {"error": (f"Password validation error: {error}")},
                     status=400
-                    )
+                )
 
     else:
         return Response(
             {"error": "Not the same password"},
             status=400
-            )
+        )
 
         
