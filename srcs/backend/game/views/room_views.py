@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from ..models import Room, PlayerScore
+from ..models import Room, PlayerScore, PlayerPresence
+from api.models import User
 from ..serializers import RoomSerializer
+from db import add_player_to_room
 import uuid
 
 class CreateRoomView(APIView):
@@ -16,13 +18,13 @@ class CreateRoomView(APIView):
         )
         return Response(RoomSerializer(room).data, status=201)
 
-class JoinRoomView(APIView):
+class AddBotView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, code):
-        try:
-            room = Room.objects.get(code=code)
-            PlayerScore.objects.get_or_create(player=request.user, room=room)
-            return Response({"message": "Joined room"}, status=200)
-        except Room.DoesNotExist:
-            return Response({"error": "Room not found"}, status=404)
+        room = Room.objects.get(
+            code=code
+        )
+        if (room.host == request.user):
+            user = User.objects.get(username="BOT")
+            add_player_to_room(user, code)

@@ -120,7 +120,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "new_host": room.host.username
                 }
             }
-)
+        )
+        position = get_player_pos(user, room.code)
+        if (int(position) == int(room.game_state["playing"])):
+            game = GameEngine(room.uuid)
+            legal = game.handleAction("legal", room.game_state, idPlayer= str(position))
+            payload = {
+                "cardId": bot(room.game_state, int(position), legal)
+            }
+            self.handle_play_card(payload)
 
     async def receive(self, text_data):
         try:
@@ -214,6 +222,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
         await self.send_init()
+
+        p = await sync_to_async(PlayerPresence.objects.get)(
+            room=room,
+            position= game_state["playing"]
+        )
+        if (not p.is_human):
+            position = str(game_state["playing"])
+            legal = game.handleAction("legal", idPlayer= position)
+            card = bot(game_state, position, legal, p.diffuculty)
+            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
     
     async def end(self, room, game):
         player_finished = 0
