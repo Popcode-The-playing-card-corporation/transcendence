@@ -17,6 +17,14 @@ import avatar14 from "../assets/avatars/avatar14.jpg";
 import avatar15 from "../assets/avatars/avatar15.jpg";
 import avatar16 from "../assets/avatars/avatar16.jpg";
 import avatar17 from "../assets/avatars/avatar17.jpg";
+import avatar18 from "../assets/avatars/avatar18.webp";
+import avatar19 from "../assets/avatars/avatar19.webp";
+import avatar20 from "../assets/avatars/avatar20.webp";
+import avatar21 from "../assets/avatars/avatar21.webp";
+import avatar22 from "../assets/avatars/avatar22.webp";
+import avatar23 from "../assets/avatars/avatar23.webp";
+import avatar24 from "../assets/avatars/avatar24.webp";
+import avatar25 from "../assets/avatars/avatar25.webp";
 import { changeAvatar } from "../api/profile";
 
 export function AvatarSelection({
@@ -153,6 +161,54 @@ export function AvatarSelection({
               onClick={(e) => handleAvatarChange(avatar17, e)}
             >
               <img src={avatar17} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar18, e)}
+            >
+              <img src={avatar18} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar19, e)}
+            >
+              <img src={avatar19} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar20, e)}
+            >
+              <img src={avatar20} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar21, e)}
+            >
+              <img src={avatar21} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar22, e)}
+            >
+              <img src={avatar22} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar23, e)}
+            >
+              <img src={avatar23} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar24, e)}
+            >
+              <img src={avatar24} className="rounded-4xl" />
+            </li>
+            <li
+              className="li-avatars"
+              onClick={(e) => handleAvatarChange(avatar25, e)}
+            >
+              <img src={avatar25} className="rounded-4xl" />
             </li>
           </ul>
         </div>

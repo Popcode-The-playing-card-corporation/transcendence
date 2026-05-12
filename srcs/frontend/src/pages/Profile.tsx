@@ -19,7 +19,7 @@ export function Profile() {
       <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
-          <h2 className="mb-5 text-center">Friends</h2>
+          <h2 className="text-center">Friends</h2>
         </div>
         <div className="collapse-content">
           <Friends />

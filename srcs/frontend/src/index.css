@@ -75,6 +75,10 @@
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
 }
 
+.table tr{
+  @apply p-1 ;
+}
+
 .th-profile {
   @apply text-left w-30;
 }
