@@ -1,6 +1,9 @@
 from django.urls import path
-from .views import register, login, user, get_stat, get_friends, room_data, game_history, accept_friend_request, delete_friend_request, send_friend_request, leaderboard, deny_friend_request, user_data
-#TODO change that to have like game part
+from .views.user_views import register, login, user, user_data
+from .views.friend_view import get_friends, accept_friend_request, delete_friend_request, send_friend_request, deny_friend_request
+from .views.stat_view import get_stat, room_data, game_history, leaderboard
+
+
 urlpatterns = [
     #user part
     path("login/", login),
@@ -13,6 +16,9 @@ urlpatterns = [
     path("friends/accept/<int:request_id>/", accept_friend_request),
     path("friends/deny/<int:request_id>/", deny_friend_request),
     path("friends/delete/<int:request_id>/", delete_friend_request),
+    #TODO add block friends (no profile, no friend request, no party)
+    #TODO add report
+    
     #stat part
     path("leaderboard/", leaderboard),
     path("history/", game_history),
