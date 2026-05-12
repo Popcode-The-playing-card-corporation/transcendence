@@ -351,7 +351,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
             return
         await self.send_data()
-#TODO insert stat in table
+
     async def handle_melds(self, payload: dict):
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
