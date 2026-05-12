@@ -20,7 +20,7 @@ export async function profileRequest(): Promise<accountT | errorT> {
 	}
 }
 
-export async function changeUsername(in_user:string) {
+export async function changeUsername(in_user:string, old_pass:string) {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	const formData = new FormData();
 	formData.set('username', in_user);

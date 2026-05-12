@@ -1,4 +1,4 @@
-import { changeEmail, changePassword, changeUsername, profileRequest } from "../api/profile";
+import { changePassword, changeUsername, profileRequest } from "../api/profile"; // changeEmail
 import type { accountT } from "../utils/accountType";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -41,25 +41,15 @@ export function ProfilePart() {
     return <p>Error: {String(realAccount.response)}</p>; // improve message
   }
 
-  async function updateUser(in_name:string) {
-	const res = await changeUsername(in_name);
-	if (!res) {
-		console.error('user failure');
-		return ;
-	}
-	setUpdate(!updatedProfile);
-	return ;
-  }
-
-  async function updateEmail(in_email:string) {
-	const res = await changeEmail(in_email);
-	if (!res) {
-		console.error('email failure');
-		return ;
-	}
-	setUpdate(!updatedProfile);
-	return ;
-  }
+//   async function updateEmail(in_email:string) {
+// 	const res = await changeEmail(in_email);
+// 	if (!res) {
+// 		console.error('email failure');
+// 		return ;
+// 	}
+// 	setUpdate(!updatedProfile);
+// 	return ;
+//   }
 
   async function updatePass(in_pass:string) {
 	const res = await changePassword(in_pass);
@@ -89,7 +79,7 @@ export function ProfilePart() {
               className="modal"
               ref={dialogPseudoRef}
             >
-			<PseudoChange />
+			<PseudoChange dialogRef={dialogPseudoRef} />
             </dialog>
           </td>
         </tr>
