@@ -1,8 +1,8 @@
 
   export type accountT = {
+	id: number,
     username: string,
     email: string,
-    password: string,
     avatar: string,
     date_joined: string,
     is_online: boolean,

@@ -8,9 +8,9 @@ export async function profileRequest(): Promise<accountT | errorT> {
 	try {
 		const res = await axios.get('http://' + host.host_ip + ':8000/user/', { 'headers': { 'Authorization': AuthStr}});
 		const result : accountT = {
+			id: res.data['id'],
 			username: res.data['username'],
 			email: res.data['email'],
-			password: res.data['password'],
 			avatar: res.data['avatar'],
 			date_joined: res.data['date_joined'],
 			is_online: res.data['is_online'],
