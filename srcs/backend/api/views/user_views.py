@@ -80,3 +80,23 @@ def login(request):
         {"error": "Invalid credentials"},
         status=401
     )
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def verify_password(request):
+    password = request.data.get("password")
+    
+    if not password:
+        return Response(
+            {"error": "Password required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = authenticate(
+        username=request.user.username,
+        password=password
+    )
+
+    return Response({
+        "valid": user is not None
+    })
