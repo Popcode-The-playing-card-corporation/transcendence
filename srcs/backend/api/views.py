@@ -1,15 +1,17 @@
 from django.shortcuts import get_object_or_404
 from .models import User, Friendship
-from game.models import Stat, PlayerScore
+from game.models import Stat, PlayerScore, Room, PlayerPresence, Stat
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import UserSerializer, FriendSerializer, FriendProfileSerializer
+from game.serializers import StatSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils import timezone
 from django.db.models import Q
+from datetime import timedelta
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -143,6 +145,7 @@ def accept_friend_request(request, request_id):
             status="pending"
         )
         friendship.status = "accepted"
+        friendship.accepted_at = timezone.now()
         friendship.save()
 
         return Response({"message": "Friend request accepted"})
@@ -155,8 +158,8 @@ def accept_friend_request(request, request_id):
 def deny_friend_request(request, request_id):
     try:
         friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
             id=request_id,
-            to_user=request.user,
             status="pending"
         )
 
@@ -166,10 +169,26 @@ def deny_friend_request(request, request_id):
 
     except Friendship.DoesNotExist:
         return Response({"error": "Request not found"}, status=404)
-    
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def delete_friend_request(request, request_id):
+    try:
+        friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            id=request_id,
+            status="accepted"
+        )
+
+        friendship.delete()
+
+        return Response({"message": "Friend request delete"})
+
+    except Friendship.DoesNotExist:
+        return Response({"error": "Request not found"}, status=404)
     
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def leaderboard(request):
     top = list(
         User.objects
@@ -177,18 +196,92 @@ def leaderboard(request):
         .values("id", "username", "elo")[:15]
     )
 
-    user = request.user
+    if request.user.is_authenticated:
+        user = request.user
 
-    rank = User.objects.filter(elo__gt=user.elo).count() + 1
+        rank = User.objects.filter(elo__gt=user.elo).count() + 1
 
-    me = {
-        "id": user.id,
-        "username": user.username,
-        "elo": user.elo,
-        "rank": rank
-    }
+        me = {
+            "id": user.id,
+            "username": user.username,
+            "elo": user.elo,
+            "rank": rank
+        }
+    else:
+        me = None
 
     return Response({
         "leaderboard": top,
         "user_rank": me
     })
+
+
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def game_history(request):
+
+    scores = (
+        PlayerScore.objects
+        .filter(player=request.user, room__status="end")
+        .select_related("room")
+        .order_by("-room__started_at")
+    )
+
+    history = []
+
+    for ps in scores:
+        room = ps.room
+
+        duration = None
+
+        if room.started_at and room.ended_at:
+            duration = int(
+                (room.ended_at - room.started_at).total_seconds()
+            )
+
+        history.append({
+            "game_id": room.code,
+            "uuid": str(room.uuid),
+            "start": room.started_at.strftime("%d/%m/%Y %H:%M"),
+            "points": ps.score,
+            "rank": ps.rank,
+            "duration": duration,
+            "nb_player": room.nb_player
+        })
+
+    return Response(history)
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def room_data(request, uuid):
+    room = Room.objects.get(uuid=uuid)
+    players = (
+        PlayerScore.objects
+        .filter(room=room)
+        .order_by("rank")
+	)
+    
+    users = []
+    for ps in players:
+        u = User.objects.get(id=ps.player_id)
+        users.append({
+			"id": ps.player_id,
+            "username": u.username,
+            "score": ps.score,
+            "rank": ps.rank
+		})
+    return Response(users)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_stat(request, user_id):
+    #user = User.objects.get(id=user_id)
+    stats = Stat.objects.get(user_id=user_id)
+    
+    serializer = StatSerializer(stats)
+
+    return Response(serializer.data)
+    
+    

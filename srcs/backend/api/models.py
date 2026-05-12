@@ -8,6 +8,7 @@ class User(AbstractUser):
     #avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     avatar = models.CharField(max_length=255, default="avatars/avatar.jpg")
     is_online = models.BooleanField(default=False)
+    is_bot = models.BooleanField(default=False)
     elo = models.IntegerField(default=0)
     
 class Friendship(models.Model):

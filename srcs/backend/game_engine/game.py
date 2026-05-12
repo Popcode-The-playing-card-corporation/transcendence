@@ -189,9 +189,17 @@ class GameEngine:
 		for i in meldIndex:
 			hand.append(data["players"][idPlayer]["cards"][i])
 		meld = Player.countMelds(Player(), hand, data["tricks"])
-		data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] + meld
+		data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] - meld
 		
 		return data
+
+	def point_melds(self, data, idPlayer, meldIndex):
+		hand = []
+		for i in meldIndex:
+			hand.append(data["players"][idPlayer]["cards"][i])
+		meld = Player.countMelds(Player(), hand, data["tricks"])
+		
+		return meld
 
 	def points(self, data: dict):
 		for p in data["players"].values():
@@ -211,6 +219,56 @@ class GameEngine:
 
 		return data
 
+	def board_melds(self, data: dict, idPlayer: int , idCard: int):
+		card = data["players"][idPlayer]["cards"][idCard].copy()
+		del data["players"][idPlayer]["cards"][idCard]
+		if (len(data["board"]) == 0):
+			data["board"]["asked"] = card
+		data["board"][idPlayer] = card
+		s = int(data["playing"])
+
+		if (len(data["board"]) - 1 == len(data["players"])):
+			asked = data["board"].pop("asked")
+
+			fold = []
+			for c in data["board"].values():
+				fold.append(c)
+	
+			strongest = self.strongestCard(asked, fold, data["tricks"])
+			index = 0
+			for i in data["board"].keys():
+				if (data["board"][i] == strongest):
+					index = i
+					break
+			
+			melds = Player.countMelds(Player(), fold, data["tricks"])
+			data["board"]["asked"] = asked
+			return melds
+
+	def who_take(self, data: dict, idPlayer: int , idCard: int):
+		card = data["players"][idPlayer]["cards"][idCard].copy()
+		del data["players"][idPlayer]["cards"][idCard]
+		if (len(data["board"]) == 0):
+			data["board"]["asked"] = card
+		data["board"][idPlayer] = card
+		s = int(data["playing"])
+
+		if (len(data["board"]) - 1 == len(data["players"])):
+			asked = data["board"].pop("asked")
+			fold = []
+			for c in data["board"].values():
+				fold.append(c)
+	
+			strongest = self.strongestCard(asked, fold, data["tricks"])
+			index = 0
+			for i in data["board"].keys():
+				if (data["board"][i] == strongest):
+					index = i
+					break
+			data["board"]["asked"] = asked
+			return index
+
+   
 	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1, meldIndex=[]):
 		if (action == "start"):
 			return self.startGame(data, nbPlayer)
@@ -226,5 +284,14 @@ class GameEngine:
 
 		if (action == "point"):
 			return self.points(data)
+
+		if (action == "point_meld"):
+			return self.point_melds(data, idPlayer, meldIndex)
+        
+		if (action == "board_meld"):
+			return self.board_melds(data, idPlayer, idCard)
+
+		if (action == "who_take"):
+			return self.who_take(data, idPlayer, idCard)
 
 		return data

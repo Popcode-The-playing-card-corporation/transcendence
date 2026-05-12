@@ -3,6 +3,15 @@ from .models import User, Friendship
 
 class UserSerializer(serializers.ModelSerializer):
 
+    date_joined = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M"
+    )
+
+    last_login = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M",
+        allow_null=True
+    )
+
     class Meta:
         model = User
         fields = [
@@ -15,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
             "last_login",
             "elo",
         ]
+
         extra_kwargs = {
             "password": {"write_only": True}
         }
@@ -39,6 +49,15 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 class FriendProfileSerializer(serializers.ModelSerializer):
+    date_joined = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M"
+    )
+    
+    last_login = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M",
+        allow_null=True
+    )
+
     class Meta:
         model = User
         fields = [
@@ -52,11 +71,27 @@ class FriendProfileSerializer(serializers.ModelSerializer):
  
 class FriendSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
+    can_accept = serializers.SerializerMethodField()
+
     status = serializers.CharField()
+
+    accepted_at = serializers.DateField(
+        format="%d/%m/%Y"
+    )
+    created_at = serializers.DateField(
+        format="%d/%m/%Y"
+    )
 
     class Meta:
         model = Friendship
-        fields = ["id", "user", "status", "accepted_at"]
+        fields = [
+            "id",
+            "user",
+            "status",
+            "accepted_at",
+            "created_at",
+            "can_accept"
+        ]
 
     def get_user(self, obj):
         request = self.context["request"]
@@ -71,3 +106,11 @@ class FriendSerializer(serializers.ModelSerializer):
             "username": friend.username,
             "is_online": friend.is_online
         }
+
+    def get_can_accept(self, obj):
+        request = self.context["request"]
+
+        return (
+            obj.status == "pending"
+            and obj.to_user == request.user
+        )

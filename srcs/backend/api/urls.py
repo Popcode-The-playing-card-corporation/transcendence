@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import register, login, user, get_friends, accept_friend_request, send_friend_request, leaderboard, deny_friend_request, user_data
-
+from .views import register, login, user, get_stat, get_friends, room_data, game_history, accept_friend_request, delete_friend_request, send_friend_request, leaderboard, deny_friend_request, user_data
+#TODO change that to have like game part
 urlpatterns = [
     #user part
     path("login/", login),
@@ -12,6 +12,11 @@ urlpatterns = [
     path("friends/add/<int:user_id>/", send_friend_request),
     path("friends/accept/<int:request_id>/", accept_friend_request),
     path("friends/deny/<int:request_id>/", deny_friend_request),
-    
-    path("leaderboard/", leaderboard)
+    path("friends/delete/<int:request_id>/", delete_friend_request),
+    #stat part
+    path("leaderboard/", leaderboard),
+    path("history/", game_history),
+    path("room/<str:uuid>/", room_data),
+    path("user/<int:user_id>/stats/", get_stat)
+    #TODO add achivment models et table to connect to user
 ]

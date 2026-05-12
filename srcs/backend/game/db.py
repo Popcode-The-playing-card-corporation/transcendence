@@ -1,7 +1,8 @@
 from asgiref.sync import sync_to_async
-from .models import PlayerPresence, Room, PlayerScore
+from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
+from django.utils import timezone
 
 @sync_to_async
 def count_player(code):
@@ -129,6 +130,7 @@ def start_room(uuid, data):
     room = Room.objects.get(uuid=uuid)
     room.game_state = data
     room.status = "start"
+    room.started_at = timezone.now()
     room.save()
     
 @sync_to_async
@@ -156,6 +158,10 @@ def end_room(uuid, data):
 
         p.score = player_data["puntos"]
         p.save()
+        
+        stat = Stat.objects.get(user_id=p.player_id)
+        stat.total_points += p.score
+        stat.save()
 
         scores.append({
             "player_id": pp.player_id,
@@ -163,12 +169,34 @@ def end_room(uuid, data):
         })
 
     scores.sort(key=lambda x: x["score"], reverse=False)
-
+    elo = room.nb_player
+    if room.nb_player % 2 == 1:
+        elo = room.nb_player + 1
     for rank, entry in enumerate(scores, start=1):
         PlayerScore.objects.filter(
             room=room,
             player_id=entry["player_id"]
         ).update(rank=rank)
+        user = User.objects.get(id=entry["player_id"])
+        stat = Stat.objects.get(user_id=user.id)
+        
+        user.elo += elo
+        if elo > 0:
+            stat.win += 1
+        else:
+            stat.lose += 1
+            
+        stat.played += 1
+        
+        elo -= 2
+        if elo == 0:
+            elo -= 2
+            
+        if room.host_id == user.id:
+            stat.nb_host += 1
+        user.save()
+        stat.save()
 
     room.status = "end"
+    room.ended_at = timezone.now()
     room.save()

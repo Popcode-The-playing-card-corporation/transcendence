@@ -1,12 +1,25 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from .models import PlayerPresence, Room, PlayerScore
+from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from api.serializers import UserSerializer
 from game_engine.bot.bot import bot
+import copy
+
+CARD_VALUES = {
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "10": 10,
+    "J": 11,
+    "Q": 12,
+    "K": 13,
+    "A": 14   # ou 1 selon ton jeu
+}
 
 class RoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -147,7 +160,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     await self.handle_continue_game()
                 if action == "end_game":
                     await self.handle_end_game()
-        
+                if action == "melds":
+                    await self.handle_melds(payload)
+                if action == "verify_melds":
+                    await self.handle_verify_melds(payload)
             else:
                 await self.send(text_data=json.dumps({
                     "type": "error",
@@ -278,8 +294,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game = GameEngine(room.uuid)
         
         legal = game.handleAction("legal", room.game_state, idPlayer=str(position))
-
-        if payload["cardId"] >= len(legal) or payload["cardId"] < 0:
+        idx = await self.get_position(payload["cardId"])
+        if idx >= len(legal) or idx < 0:
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
                 position=int(position)
@@ -296,7 +312,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
             return
         
-        if not legal[payload["cardId"]]:
+        if not legal[idx]:
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
                 position=int(position)
@@ -313,8 +329,37 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
             return
 
-        game_state = game.handleAction("play", room.game_state, idPlayer= str(position), idCard= int(payload["cardId"]))
+        taker = -1
+        state = copy.deepcopy(room.game_state)
+        if len(state["board"]) == room.nb_player:
+            melds = game.handleAction("board_meld", state, idPlayer= str(position), idCard= int(idx))
+            taker = game.handleAction("who_take", state, idPlayer= str(position), idCard= int(idx))
+
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(taker)
+            )
+            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+            stat.board_meld_points = stat.board_meld_points + melds
+            if stat.highest_board_meld < melds:
+                stat.highest_board_meld = melds
+            stat.nb_taken += 1
+            await sync_to_async(stat.save)()
+
+        tricks = copy.deepcopy(state["tricks"])
+        game_state = game.handleAction("play", state, idPlayer= str(position), idCard= int(idx))
         await save_room_state(room.uuid, game_state)
+        if game_state["tricks"] != tricks and game_state["tricks"] != "none":
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(taker)
+            )
+            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+            stat.nb_trick_choose += 1
+            stat.tricks[game_state["tricks"]] += 1
+            preferred = max(stat.tricks, key=stat.tricks.get)
+            stat.prefered_trick = preferred
+            await sync_to_async(stat.save)()
 
         if (self.end(room, game)):
             return 
@@ -339,7 +384,263 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room=room,
                 position= await get_player_pos(self.user, room.code)
             )
+            if len(player_data["cards"]) == 0:
+                player_finished += 1
+                
+        if player_finished == room.nb_player:
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(taker)
+            )
+            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+            stat.nb_last_take += 1
+            await sync_to_async(stat.save)()
+            game_state = game.handleAction("point", game_state)
+            await save_room_state(room.uuid, game_state)
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "game finished do you want continue or stop ?"
+					}
+                }
+            )
+            return
+        await self.send_data()
 
+    async def handle_melds(self, payload: dict):
+        room = await get_room_with_host(self.code)
+        position = await get_player_pos(self.user, room.code)
+
+        if int(position) != int(room.game_state["playing"]):
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(position)
+            )
+            await self.channel_layer.send(
+                p.channel_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "ce n'est pas à toi de jouer"
+					}
+                }
+            )
+            return
+
+        first_round = 0
+        for player_id, player_data in room.game_state["players"].items():
+            if len(player_data["taken"]) != 0:
+                first_round += 1
+        if first_round != 0:
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(position)
+            )
+            await self.channel_layer.send(
+                p.channel_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "tu ne peux plus faire d'annonce"
+					}
+                }
+            )
+            return 
+
+        if len(payload["cards"]) < 3:
+            return
+        
+        player_cards = room.game_state["players"][str(position)]["cards"]
+
+        selected_cards = []
+        selected_cards_idx = []
+        
+        for card in payload["cards"]:
+            idx = await self.get_position(card["cardId"])
+            if idx == -1:
+                await self.send(json.dumps({
+                    "type": "meld_result",
+                    "valid": False,
+                    "message": "Carte invalide ou non présente dans la main"
+                }))
+                return
+            selected_cards.append(player_cards[idx])
+            selected_cards_idx.append(idx)
+        
+        values_cards = [
+            {
+                "value": CARD_VALUES[card["value"]],
+                "color": card["color"],
+                "raw": card
+            }
+            for card in selected_cards
+        ]
+        
+        values_cards.sort(key=lambda x: x["value"])
+        
+        sequences = []
+        current_seq = [values_cards[0]]
+        
+        for i in range(1, len(values_cards)):
+            prev = values_cards[i - 1]
+            curr = values_cards[i]
+        
+            if curr["value"] == prev["value"] + 1 and curr["color"] == prev["color"]:
+                current_seq.append(curr)
+            else:
+                sequences.append(current_seq)
+                current_seq = [curr]
+        
+        sequences.append(current_seq)
+        valid_sequences = []
+
+        for seq in sequences:
+            if len(seq) >= 3:
+                valid_sequences.append(seq)
+
+        used_cards_count = sum(len(seq) for seq in valid_sequences)
+        
+        total_selected = len(selected_cards)
+        
+        all_cards_used = used_cards_count == total_selected
+        
+        if all_cards_used:
+            game = GameEngine(room.uuid)
+            game_state = game.handleAction("meld", room.game_state, idPlayer=str(position), meldIndex=selected_cards_idx )
+            
+            melds = game.handleAction("point_meld", room.game_state, idPlayer=str(position), meldIndex=selected_cards_idx )
+            stat = await sync_to_async(Stat.objects.get)(user_id=self.user.id)
+            stat.hand_meld_points = stat.hand_meld_points + melds
+            if stat.highest_hand_meld < melds:
+                stat.highest_hand_meld = melds
+            await sync_to_async(stat.save)()
+            
+            await save_room_state(room.uuid, game_state)
+        else:
+            await self.send(json.dumps({
+                "type": "meld_result",
+                "valid": False,
+                "message": "Toutes les cartes doivent appartenir à des suites valides"
+            }))
+
+    async def handle_verify_melds(self, payload: dict):
+        room = await get_room_with_host(self.code)
+        position = await get_player_pos(self.user, room.code)
+
+        if int(position) != int(room.game_state["playing"]):
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(position)
+            )
+            await self.channel_layer.send(
+                p.channel_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "ce n'est pas à toi de jouer"
+					}
+                }
+            )
+            return
+
+        first_round = 0
+        for player_id, player_data in room.game_state["players"].items():
+            if len(player_data["taken"]) != 0:
+                first_round += 1
+        if first_round != 0:
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(position)
+            )
+            await self.channel_layer.send(
+                p.channel_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "tu ne peux plus faire d'annonce"
+					}
+                }
+            )
+            return 
+
+        if len(payload["cards"]) < 3:
+            return
+        
+        player_cards = room.game_state["players"][str(position)]["cards"]
+
+        selected_cards = []
+        
+        for card in payload["cards"]:
+            idx = await self.get_position(card["cardId"])
+            if idx == -1:
+                await self.send(json.dumps({
+                    "type": "meld_result",
+                    "valid": False,
+                    "message": "Carte invalide ou non présente dans la main"
+                }))
+                return
+            selected_cards.append(player_cards[idx])
+        
+        values_cards = [
+            {
+                "value": CARD_VALUES[card["value"]],
+                "color": card["color"],
+                "raw": card
+            }
+            for card in selected_cards
+        ]
+        
+        values_cards.sort(key=lambda x: x["value"])
+        
+        sequences = []
+        current_seq = [values_cards[0]]
+        
+        for i in range(1, len(values_cards)):
+            prev = values_cards[i - 1]
+            curr = values_cards[i]
+        
+            if curr["value"] == prev["value"] + 1 and curr["color"] == prev["color"]:
+                current_seq.append(curr)
+            else:
+                sequences.append(current_seq)
+                current_seq = [curr]
+        
+        sequences.append(current_seq)
+        valid_sequences = []
+
+        for seq in sequences:
+            if len(seq) >= 3:
+                valid_sequences.append(seq)
+
+        used_cards_count = sum(len(seq) for seq in valid_sequences)
+        
+        total_selected = len(selected_cards)
+        
+        all_cards_used = used_cards_count == total_selected
+        
+        if all_cards_used:
+            await self.send(json.dumps({
+                "type": "meld_result",
+                "valid": True,
+                "valid_sequences": [
+                    [card["raw"] for card in seq]
+                    for seq in valid_sequences
+                ]
+            }))
+        else:
+            await self.send(json.dumps({
+                "type": "meld_result",
+                "valid": False,
+                "message": "Toutes les cartes doivent appartenir à des suites valides"
+            }))
+        
     async def handle_continue_game(self):
         room = await get_room_with_host(self.code)
     
@@ -400,6 +701,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
 				}
             }
         )
+
+    async def get_position(self, cardId):
+        room = await get_room_with_host(self.code)
+        position = await get_player_pos(self.user, room.code)
+        i = 0
+        for card in room.game_state["players"][str(position)]["cards"]:
+            if card["id"] == cardId:
+                return i
+            i += 1
+        return -1
 
     async def send_init(self):
         room = await get_room_with_host(self.code)
