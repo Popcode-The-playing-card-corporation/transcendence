@@ -8,6 +8,8 @@ import { Settings } from "./pages/Settings";
 import { Rules } from "./pages/Rules";
 import { Login } from "./pages/Login";
 import { Footer } from "./components/Footer";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import { TermsOfService } from "./pages/TermsOfService";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+          <Route path="/termsOfService" element={<TermsOfService />} />
         </Routes>
 		<Footer />
       </BrowserRouter>

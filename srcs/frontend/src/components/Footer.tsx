@@ -22,6 +22,10 @@ export function Footer() {
           </a>
         </div>
       </nav>
+      <div>
+        <a href="/PrivacyPolicy" >Privacy Policy</a>
+        <a href="/TermsOfService" >Terms of service</a>
+      </div>
     </footer>
   );
 }

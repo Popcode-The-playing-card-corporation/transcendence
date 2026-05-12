@@ -29,6 +29,13 @@ export function generateFakeFriends() : friendT[] {
 			status: "pending",
 			date: "24.10.2024",
 			online: true,
+		},
+		{
+			id: 4,
+			username: "Alex le boiteux",
+			status: "pending",
+			date: "23.06.2024",
+			online: true,
 		}
 	])
 }

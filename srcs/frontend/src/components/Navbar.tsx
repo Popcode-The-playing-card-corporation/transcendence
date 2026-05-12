@@ -1,10 +1,11 @@
 import { useLocation } from "react-router";
-import { MdLogin, MdOutlineLeaderboard } from "react-icons/md";
+import { MdLogin, MdOutlineLeaderboard, MdLogout } from "react-icons/md";
 import { TbCards } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import status from "../api/login_status";
 
 
 export function Navbar() {
@@ -16,6 +17,7 @@ export function Navbar() {
  function handleLogout() {
 		localStorage.removeItem('access');
 		localStorage.removeItem('refresh');
+    status.logged_in = false;
 		navigate('/login');
   }
 
@@ -74,7 +76,8 @@ export function Navbar() {
 			<button
 				onClick={handleLogout} className={(isActive("/login") ? "active " : "") + "item-menu"}
 			>
-				<MdLogin fontSize={20} />
+        {status.logged_in ? <MdLogout fontSize={20}/> : <MdLogin fontSize={20} />}
+				
 			</button>
 		  </li>
         </ul>
