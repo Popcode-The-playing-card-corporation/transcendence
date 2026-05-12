@@ -38,6 +38,10 @@
   @apply bg-(--hover-color);
 }
 
+@utility btn {
+	@apply bg-(--hover-color);
+}
+
 .avatar-hovered {
   @apply opacity-30;
 }
