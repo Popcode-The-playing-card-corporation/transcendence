@@ -14,6 +14,7 @@ export function Friends() {
 	const [updatedFriends, setUpdate] = useState(false);
 
 	useEffect(() => {
+	
 	async function retrieveFriends() {
 		let res = await getFriends();
 		if ('code' in res) {
