@@ -75,8 +75,11 @@ class FriendSerializer(serializers.ModelSerializer):
 
     status = serializers.CharField()
 
-    accepted_at = serializers.DateTimeField(
-        format="%d/%m/%Y %H:%M"
+    accepted_at = serializers.DateField(
+        format="%d/%m/%Y"
+    )
+    created_at = serializers.DateField(
+        format="%d/%m/%Y"
     )
 
     class Meta:
@@ -86,6 +89,7 @@ class FriendSerializer(serializers.ModelSerializer):
             "user",
             "status",
             "accepted_at",
+            "created_at",
             "can_accept"
         ]
 

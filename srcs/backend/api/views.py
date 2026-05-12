@@ -145,6 +145,7 @@ def accept_friend_request(request, request_id):
             status="pending"
         )
         friendship.status = "accepted"
+        friendship.accepted_at = timezone.now()
         friendship.save()
 
         return Response({"message": "Friend request accepted"})
