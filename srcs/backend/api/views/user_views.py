@@ -50,6 +50,14 @@ def register(request):
             )
             
     serializer = UserSerializer(data=request.data)
+    if not serializer.is_valid():
+
+        errors = {}
+    
+        for field, messages in serializer.errors.items():
+            errors[field] = messages[0]
+    
+        return Response(errors, status=400)
     if serializer.is_valid():
         user = serializer.save()
         Stat.objects.create(user=user)
