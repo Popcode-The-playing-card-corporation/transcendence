@@ -1,5 +1,5 @@
 import { TbPointFilled } from "react-icons/tb";
-import type { friendT } from "../utils/friendType";
+import type { friendT, requestT } from "../utils/friendType";
 import {
   acceptRequest,
   deleteRequest,
@@ -14,37 +14,33 @@ import { refreshAuth } from "../api/checkAuth";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
-import { generateFakeFriends } from "../utils/test_funcs/generateArrayTestFriends";
 import { AddFriends } from "./AddFriends";
 
 export function Friends() {
-  const fakeRequest = [
-    {
-      id: 0,
-      username: "crampus",
-    },
-    {
-      id: 1,
-      username: "babar",
-    },
-    {
-      id: 2,
-      username: "chepa",
-    },
-    {
-      id: 3,
-      username: "danaLaQueen",
-    },
-  ];
 
   const [friends, setFriends] = useState<friendT[] | errorT>({
     code: 0,
     response: "",
   });
   const navigate = useNavigate();
+  const [requests, setRequests] = useState<requestT[] | null>(null);
   const [updatedFriends, setUpdate] = useState(false);
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("")
+
+  function getRequests(friend_list:friendT[]) : {friends:friendT[], requests:requestT[]} {
+	const friends:friendT[] = [];
+	const requests:requestT[] = [];
+	for (const friend of friend_list) {
+		if (friend.can_accept) {
+			requests.push({id: friend.id, username: friend.user.username});
+		} else {
+			friends.push(friend);
+		}
+	}
+	return {friends: friends, requests: requests};
+  }
+
 
   useEffect(() => {
     async function retrieveFriends() {
@@ -60,22 +56,29 @@ export function Friends() {
           setFriends(res);
         } else {
           const arr = friendArray(res);
-          setFriends(arr);
+		  const filter = getRequests(arr);
+	      setRequests(filter.requests);
+		  setFriends(filter.friends);
         }
       } else {
         const arr = friendArray(res);
-        setFriends(arr);
+		const filter = getRequests(arr);
+		setRequests(filter.requests);
+		setFriends(filter.friends);
       }
     }
-    // retrieveFriends();
-    setFriends(generateFakeFriends());
+    retrieveFriends();
   }, [navigate, updatedFriends]);
 
+
   if ("code" in friends) {
-    return <p>Error: {String(friends.response)}</p>; // improve message
+    return <p>Error: {String(friends.response)}</p>;
   }
 
-  //todo: add to button when it exists: onClick={() => changeHandler(friend.req_id, 'accept')}
+  if (requests === null) {
+	return <p>Error: I'm not sure how you got here...</p>;
+  }
+
   async function changeHandler(req_id: number, func: string) {
     if (func === "accept") {
       const res = await acceptRequest(req_id);
@@ -121,7 +124,7 @@ export function Friends() {
           <div className="dropdown dropdown-end">
             <div className="indicator">
               <span className="indicator-item badge bg-(--nav-color)">
-                {fakeRequest.length}
+                {requests.length}
               </span>
               <div tabIndex={0} className="btn" role="button">
                 <IoNotificationsOutline />
@@ -131,7 +134,7 @@ export function Friends() {
               tabIndex={-1}
               className="dropdown-content bg-(--hover-color) rounded-box z-1 p-2 shadow-sm h-fit overflow-scroll"
             >
-              {fakeRequest.map((request: { id: number; username: string }) => {
+              {requests.map((request: { id: number; username: string }) => {
                 return (
                   <li className="flex w-full my-3" key={request.id}>
                     <div className="flex gap-6 w-full">
@@ -185,7 +188,7 @@ export function Friends() {
                 : friend.accepted_at}
             </td>
             <td>
-              <button className="btn del ">
+              <button onClick={() => changeHandler(friend.id, "delete")} className="btn del ">
                 {" "}
                 <FaRegTrashAlt />{" "}
               </button>
