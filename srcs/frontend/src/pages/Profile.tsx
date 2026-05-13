@@ -21,7 +21,7 @@ export function Profile() {
         <div className="collapse-title">
           <h2 className="text-center">Friends</h2>
         </div>
-        <div className="collapse-content">
+        <div className="collapse-content overflow-auto">
           <Friends />
         </div>
       </div>
