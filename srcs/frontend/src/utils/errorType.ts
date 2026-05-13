@@ -18,19 +18,26 @@ export function getError(data: unknown): string {
 		return data;
 
 	if (typeof data === "object") {
-		const obj = data as Record<string, unknown>;
-		if (Object.keys(obj).length === 1) {
-			const key = Object.keys(obj)[0];
-			console.debug(obj[key]);
-			return String(obj[key]);
-		}
+
 		if ("error" in data)
 			return String(data.error);
 
 		if ("detail" in data)
 			return String(data.detail);
 
-		return JSON.stringify(data);
+		const obj = data as Record<string, unknown>;
+		const keys = Object.keys(obj);
+
+		let res:string = "";
+		let count:number = 0;
+		for (const key of keys) {
+			if (count != 0) {
+				res += '\n';
+			}
+			res += key + ': ' + String(obj[key]);
+			count += 1;
+		}
+		return res;
 	}
 
 	return "Unknown error";

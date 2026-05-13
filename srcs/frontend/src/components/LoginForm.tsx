@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { loginRequest } from '../api/login'
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
+import type { errorT } from "../utils/errorType";
 
 
 export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<boolean>>}) {
@@ -13,6 +14,7 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 	const [success, setSuccess] = useState(false);
 	const [failure, setFailure] = useState(false);
 	const [access, setAccess] = useState(false);
+	const [reason, setReason] = useState<errorT>({code:200, response:""});
 	const navigate = useNavigate();
 	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
 	const passChange = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword(e.target.value);};
@@ -20,19 +22,22 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 	async function loginClick() {
 		setSuccess(false);
 		setFailure(false);
-		if (password !== "" && name !== "") {
+		setReason({code:200, response:""});
+		if (password !== "" && name.trim().length !== 0) {
 			const result = await loginRequest(name, password);
-			if (result) {
+			if (!('code' in result)) {
 				localStorage.setItem('access', result.access);
 				localStorage.setItem('refresh', result.refresh);
 				setFailure(false);
 				setSuccess(true);
 				return ;
 			}
+			setReason(result);
 			setSuccess(false);
 			setFailure(true);
 			return ;
 		}
+		setReason({code:-1, response:"Username and Password cannot be empty!"})
 		setFailure(true);
 		return ;
 	}
@@ -58,7 +63,7 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
   return (
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
       <legend className="fieldset-legend">Login</legend>
-	  {failure ? <label className="label">Login Failure!</label>: <div></div> }
+	  {failure ? <label className="label">{reason.response}</label>: <div></div> }
       <label className="label">Username</label>
       <input type="text" value={name} onChange={nameChange} className="input" placeholder="Username" />
 

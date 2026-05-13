@@ -79,7 +79,7 @@ export function ProfilePart() {
               className="modal"
               ref={dialogPseudoRef}
             >
-			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} />
+			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} old_user={realAccount.username}/>
             </dialog>
           </td>
         </tr>

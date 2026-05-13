@@ -4,6 +4,7 @@ import { registerRequest } from "../api/register";
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
 import avatar from "../assets/avatars/avatar1.png";
+import type { errorT } from "../utils/errorType";
 
 export function RegisterForm({
   setCreated,
@@ -17,6 +18,7 @@ export function RegisterForm({
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
   const [access, setAccess] = useState(false);
+  const [reason, setReason] = useState<errorT>({code:200, response:""});
   const navigate = useNavigate();
   const emailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -34,6 +36,7 @@ export function RegisterForm({
   async function registerClick() {
     setSuccess(false);
     setFailure(false);
+	setReason({code:200, response:""});
     if (
       email !== "" &&
       password !== "" &&
@@ -41,16 +44,18 @@ export function RegisterForm({
       password === repassword
     ) {
       const result = await registerRequest(email, name, password, avatar);
-      if (result) {
+      if (!('code' in result)) {
         localStorage.setItem("access", result.access);
         localStorage.setItem("refresh", result.refresh);
         setSuccess(true);
         return;
       }
+	  setReason(result);
       setSuccess(false);
       setFailure(true);
       return;
     }
+	setReason({code:-1,response:"All fields must be filled in!"})
     setFailure(true);
     return;
   }
@@ -78,7 +83,7 @@ export function RegisterForm({
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
       <legend className="fieldset-legend">Register</legend>
       {failure ? (
-        <label className="label">Registration Failure!</label>
+        <label className="label">{reason.response}</label>
       ) : (
         <div></div>
       )}
