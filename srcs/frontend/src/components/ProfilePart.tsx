@@ -1,4 +1,4 @@
-import { changePassword, changeUsername, profileRequest } from "../api/profile"; // changeEmail
+import { profileRequest } from "../api/profile"; // changeEmail
 import type { accountT } from "../utils/accountType";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -51,16 +51,6 @@ export function ProfilePart() {
 // 	return ;
 //   }
 
-  async function updatePass(in_pass:string) {
-	const res = await changePassword(in_pass);
-	if (!res) {
-		console.error('password failure');
-		return ;
-	}
-	setUpdate(!updatedProfile);
-	return ;
-  }
-
   return (
     <div>
       <div className="avatar mt-8 flex-col">
@@ -103,7 +93,7 @@ export function ProfilePart() {
               className="modal"
               ref={dialogPswdRef}
             >
-              <PswdChange />
+              <PswdChange dialogRef={dialogPswdRef} />
             </dialog>
           </td>
         </tr>

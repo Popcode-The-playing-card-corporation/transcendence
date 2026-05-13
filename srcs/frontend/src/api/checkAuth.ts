@@ -46,3 +46,22 @@ export async function checkPass(old_pass:string) : Promise<errorT> {
 		return result;
 	}
 }
+
+export async function check2Pass(pass1:string, pass2:string) : Promise<errorT> {
+	const AuthStr = 'Bearer ' + localStorage.getItem('access');
+	try {
+		const res = await axios.post('http://' + host.host_ip + ':8000/user/check/',{ 'token': localStorage.getItem('access'), 'password':pass1, 'password2':pass2}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		if (res.data.valid === false) {
+			return {code:-1, response:"New passwords don't match!"};
+		}
+		return {code:200, response:""};
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+

@@ -37,18 +37,21 @@ export function RegisterForm({
 	const emailPattern = /\w+@\w+\.\w+/;
 	if (in_email.trim().length === 0 || in_name.trim().length === 0 || in_pass.length === 0 || re_pass.length === 0) {
 		setReason({code: -1, response: "All fields must be filled!"});
+		return false;
 	} else if (!emailPattern.test(in_email)) {
 		setReason({code: -1, response: "Please enter a valid email!"});
+		return false;
 	} else if (in_pass !== re_pass){
 		setReason({code: -1, response: "Passwords do not match!"});
+		return false;
 	} else if (in_pass.length < 8) {
 		setReason({code: -1, response: "Password must be at least 8 characters!"})
+		return false;
 	} else if (!(/[A-Z]/.test(in_pass)) || !(/[a-z]/.test(in_pass)) || !/[^a-zA-Z0-9]/.test(in_pass)) {
 		setReason({code: -1, response: "Password must contain at least: 1 uppercase, 1 lowercase and 1 special character"})
+		return false;
 	}
 
-	if (reason.code !== 200)
-		return false;
 	return true;
   }
 
