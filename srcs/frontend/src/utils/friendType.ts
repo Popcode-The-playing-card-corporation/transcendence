@@ -8,4 +8,10 @@ export type friendT = {
 	status: string;
 	accepted_at: string;
 	created_at: string;
+	can_accept: boolean;
 };
+
+export type requestT = {
+	id: number;
+	username: string;
+}
