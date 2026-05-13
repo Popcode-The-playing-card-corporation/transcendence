@@ -81,7 +81,8 @@ def remove_player_from_room(user, code):
 
         if room.host == user:
             next_player = PlayerPresence.objects.filter(
-                room=room
+                room=room,
+                is_human=True
             ).exclude(player=user).order_by("position").first()
 
             if next_player:
