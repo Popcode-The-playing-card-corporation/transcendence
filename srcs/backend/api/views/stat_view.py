@@ -174,8 +174,21 @@ def room_data(request, uuid):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_stat(request, user_id):
-    #user = User.objects.get(id=user_id)
-    stats = Stat.objects.get(user_id=user_id)
+    user = None
+    try:
+        user = User.objects.get(id=user_id)
+
+    except User.DoesNotExist:
+        return Response(
+            {
+                "code": "user_not_found",
+                "error": f"No user found with id {user_id}"
+            },
+            status=404
+        )
+    
+    
+    stats = Stat.objects.get(user=user)
     
     serializer = StatSerializer(stats)
 
