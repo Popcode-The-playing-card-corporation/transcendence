@@ -26,6 +26,7 @@ import avatar23 from "../assets/avatars/avatar23.webp";
 import avatar24 from "../assets/avatars/avatar24.webp";
 import avatar25 from "../assets/avatars/avatar25.webp";
 import { changeAvatar } from "../api/profile";
+import type { errorT } from "../utils/errorType";
 
 export function AvatarSelection({
   currentAvatar,
@@ -34,17 +35,23 @@ export function AvatarSelection({
 }) {
   const [hovered, setHovered] = useState(false);
   const [tempAvatar, setTempAvatar] = useState(currentAvatar);
+  const [isError, setError] = useState<{code: number} | errorT>({code:200});
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   async function handleAvatarChange(newPath: string, e: React.MouseEvent) {
     e.stopPropagation();
-    setTempAvatar(newPath);
-    dialogRef.current?.close();
-	const ok = await changeAvatar(newPath);
-	if (!ok) {
-		console.error('fuck');
+	const res = await changeAvatar(newPath);
+	if (res.code === 200) {
+		setError(res);
+		setTempAvatar(newPath);
+    	dialogRef.current?.close();
+	}
+	else {
+		setError(res);
+		// console.debug(isError.code);
 	}
   }
+
   return (
     <div
       className="rounded-4xl w-24 bg-(--hover-color) flex items-center justify-center cursor-pointer"
@@ -59,6 +66,7 @@ export function AvatarSelection({
       <FaPen className={hovered ? "pen-hovered" : "hidden"} />
       <dialog id="my_modal_2" className="modal" ref={dialogRef}>
         <div className="modal-box rounded-xl bg-(--hover-color) w-full">
+		  {isError.code !== 200 ? "Unexpected error: " + isError.code + " - Please try again or reload" : ""}
           <ul className="flex w-fit">
             <li
               className="li-avatars"
