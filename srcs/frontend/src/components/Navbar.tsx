@@ -7,30 +7,29 @@ import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-
 export function Navbar() {
-  const [logged_in, setLog] = useState(!!localStorage.getItem('access'));
+  const [logged_in, setLog] = useState(!!localStorage.getItem("access"));
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
 
-
-	useEffect(() => {
-		async function update_logo() { // Anouar is lazy and hates ESLINT!!!!! :( 8====D
-			setLog(!!localStorage.getItem('access'));
-		}
-		update_logo();
-	}, [current_location.pathname])
+  useEffect(() => {
+    async function update_logo() {
+      // Anouar is lazy and hates ESLINT!!!!! :( 8====D
+      setLog(!!localStorage.getItem("access"));
+    }
+    update_logo();
+  }, [current_location.pathname]);
 
   function handleLogout() {
-		localStorage.removeItem('access');
-		localStorage.removeItem('refresh');
-		setLog(false);
-		navigate('/login');
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setLog(false);
+    navigate("/login");
   }
 
   return (
-    <div className="navbar bg-(--nav-color) fixed top-0 z-100">
+    <div className="navbar bg-(--nav-color) fixed top-0 z-100 ">
       <div className="flex-1">
         <a className="text-xl item-menu p-2" href="/">
           PopCards
@@ -80,14 +79,18 @@ export function Navbar() {
               <GoLaw /> Rules
             </a>
           </li>
-		  <li>
-			<button
-                onClick={handleLogout} className={(isActive("/login") ? "active " : "") + "item-menu"}
+          <li>
+            <button
+              onClick={handleLogout}
+              className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
-        		{logged_in ? <MdLogout fontSize={20}/> : <MdLogin fontSize={20} />}
-
+              {logged_in ? (
+                <MdLogout fontSize={20} />
+              ) : (
+                <MdLogin fontSize={20} />
+              )}
             </button>
-		  </li>
+          </li>
         </ul>
       </div>
     </div>
