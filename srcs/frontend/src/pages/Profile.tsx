@@ -5,7 +5,7 @@ import { StatisticsPart } from "../components/StatisticPart";
 
 export function Profile() {
   return (
-    <div className=" page-content mt-10">
+    <div className=" page-content mt-17">
       <h1>Profile</h1>
       <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />
@@ -21,7 +21,7 @@ export function Profile() {
         <div className="collapse-title">
           <h2 className="text-center">Friends</h2>
         </div>
-        <div className="collapse-content">
+        <div className="collapse-content overflow-auto">
           <Friends />
         </div>
       </div>

@@ -4,12 +4,14 @@ from .models import User, Friendship
 class UserSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(
-        format="%d/%m/%Y %H:%M"
+        format="%d/%m/%Y %H:%M",
+        read_only=True
     )
-
+    
     last_login = serializers.DateTimeField(
         format="%d/%m/%Y %H:%M",
-        allow_null=True
+        allow_null=True,
+        read_only=True
     )
 
     class Meta:

@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
-import type { errorT } from '../utils/errorType';
+import { getError, type backendErrorT, type errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { leaderboardRetT } from '../utils/leaderboardApiType';
 import type { userLB, leaderboardT, currentLB } from '../utils/leaderboardType';
@@ -11,17 +11,16 @@ export async function getLeaderboard() { //: Promise<friendT | errorT>
 	try {
 		let res;
 		if (await checkAuth()) { // Need to actualy check authentication rather than if access exists
-			res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', { 'headers': {'Authorization': AuthStr}});
+			res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', { 'headers': {'Authorization': AuthStr}, timeout: 2000});
 			return res;
 		}
-		res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/');
+		res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', {timeout: 2000});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
 		}
 		return result;
 	}

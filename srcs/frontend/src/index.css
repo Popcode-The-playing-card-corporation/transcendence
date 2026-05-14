@@ -38,6 +38,18 @@
   @apply bg-(--hover-color);
 }
 
+@utility btn {
+  @apply bg-(--hover-color);
+}
+
+.del {
+  @apply bg-(--accent-color);
+}
+
+.validate {
+	@apply bg-(--green-color)
+}
+
 .avatar-hovered {
   @apply opacity-30;
 }
@@ -75,8 +87,8 @@
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
 }
 
-.table tr{
-  @apply p-1 ;
+.table tr {
+  @apply p-1;
 }
 
 .th-profile {
