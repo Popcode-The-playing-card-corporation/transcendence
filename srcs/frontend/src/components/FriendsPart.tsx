@@ -15,6 +15,7 @@ import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
+import MiniProfile from "./MiniProfile"
 
 export function Friends() {
 
@@ -26,6 +27,7 @@ export function Friends() {
   const [requests, setRequests] = useState<requestT[] | null>(null);
   const [updatedFriends, setUpdate] = useState(false);
   const addFriendsRef = useRef<HTMLDialogElement>(null);
+  const showMiniProfileRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("")
 
   function getRequests(friend_list:friendT[]) : {friends:friendT[], requests:requestT[]} {
@@ -180,7 +182,10 @@ export function Friends() {
             >
               <TbPointFilled />
             </td>
-            <td>{friend.user.username}</td>
+            <button onClick={() => showMiniProfileRef.current?.showModal()}>{friend.user.username}</button>
+            <div id="showMiniProfile" className="modal" ref={showMiniProfileRef}>
+              <MiniProfile />
+            </div>
             <td>{friend.status}</td>
             <td>
               {friend.status === "pending"
