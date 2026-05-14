@@ -3,5 +3,6 @@ const pos = ip.search(/:/);
 const res = ip.substring(0, pos);
 
 export default {
-	host_ip:  res,
+	http: 'http://' + res + ':8000/',
+	ws:  'ws://' + res + ':8000/',
 }

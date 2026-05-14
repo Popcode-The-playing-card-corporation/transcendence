@@ -13,7 +13,7 @@ export async function registerRequest(in_email:string, in_user:string, in_pass:s
 
 	try {
 
-		const res = await axios.post('http://' + host.host_ip + ':8000/register/', formData, { timeout: 2000});
+		const res = await axios.post(host.http + 'register/', formData, { timeout: 2000});
 		const response : accessT = {
 			access: res.data.access,
 			refresh: res.data.refresh,
