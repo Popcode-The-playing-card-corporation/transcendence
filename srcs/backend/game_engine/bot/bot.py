@@ -1,7 +1,6 @@
-from easy import easy
-from medium import medium
-from hard import hard
-
+from .easy import easy
+from .medium import medium
+from .hard import hard
 
 def bot(data: dict, idPlayer, legal, difficulty="medium"):
 
