@@ -28,3 +28,58 @@ class Friendship(models.Model):
 
     class Meta:
         unique_together = ("from_user", "to_user")
+        
+class Achievement(models.Model):
+
+    code = models.CharField(
+        max_length=50,
+        unique=True
+    )
+
+    title = models.CharField(
+        max_length=100
+    )
+
+    description = models.TextField()
+
+    condition = models.TextField()
+
+    icon = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+    
+    is_hidden = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.title
+
+
+class UserAchievement(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="user_achievements"
+    )
+
+    achievement = models.ForeignKey(
+        Achievement,
+        on_delete=models.CASCADE,
+        related_name="users"
+    )
+
+    unlocked_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        unique_together = ("user", "achievement")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.achievement.title}"
