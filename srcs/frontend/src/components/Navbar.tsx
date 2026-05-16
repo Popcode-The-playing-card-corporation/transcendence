@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 export function Navbar() {
   const [logged_in, setLog] = useState(!!localStorage.getItem('access'));
   const navigate = useNavigate();
+  const location = useLocation();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
 
@@ -26,7 +27,7 @@ export function Navbar() {
 		localStorage.removeItem('access');
 		localStorage.removeItem('refresh');
 		setLog(false);
-		navigate('/login');
+		navigate('/login',{state : location.pathname});
   }
 
   return (
