@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useState, useEffect } from "react";
 import { loginRequest } from '../api/login'
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
 import type { errorT } from "../utils/errorType";
 
@@ -15,6 +15,7 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 	const [failure, setFailure] = useState(false);
 	const [access, setAccess] = useState(false);
 	const [reason, setReason] = useState<errorT>({code:200, response:""});
+	const location = useLocation();
 	const navigate = useNavigate();
 	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
 	const passChange = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword(e.target.value);};
@@ -53,13 +54,19 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		setAccess(false);
 		return ;
 	}
-		checkAccess();
-	}, [])
-
-
 	if (success || access) {
-		navigate('/profile')
+		if (location.state) {
+			navigate(location.state);
+			return ;
+		}
+		navigate('/');
+		return ;
 	}
+		checkAccess();
+	}, [access, navigate, success, location])
+
+
+
 
   return (
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
