@@ -78,7 +78,7 @@ fclean:
 	@$(COMPOSE) --profile "*" down -v --rmi local --remove-orphans
 
 prod-build: down
-	@$(COMPOSE) --no-cache build django
+	@$(COMPOSE) build --no-cache django
 	@$(MAKE) prod-up
 
 dev-build: down

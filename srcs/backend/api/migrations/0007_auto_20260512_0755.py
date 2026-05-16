@@ -65,6 +65,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('api', '0006_user_is_bot'),
+        ("game", "0004_rename_channelname_playerpresence_channel_name_and_more"),
     ]
 
     operations = [
