@@ -45,6 +45,7 @@ npm-build:
 	@$(PROD_BUILD)
 
 prod-up:
+	@$(COMPOSE) --profile "*" down
 	@if [ -f ./srcs/.env ]; then \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(PROD_COMPOSE) up -d; \
@@ -54,6 +55,7 @@ prod-up:
 	fi
 
 dev-up:
+	@$(COMPOSE) --profile "*" down
 	@if [ -f ./srcs/.env ]; then \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(DEV_COMPOSE) up -d; \

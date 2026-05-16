@@ -9,6 +9,7 @@ export default defineConfig({
   build: {
   outDir: '../Docker/nginx/prod_nginx/dist',
   assetsDir: 'assets',
+  emptyOutDir: true,
 },
 });
 
