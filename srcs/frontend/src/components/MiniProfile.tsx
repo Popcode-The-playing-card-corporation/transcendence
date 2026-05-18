@@ -1,3 +1,4 @@
+import { FaPlus } from "react-icons/fa";
 import { generateFakeAccount } from "../utils/test_funcs/generateTestAccount";
 
 export default function MiniProfile() {
@@ -14,9 +15,9 @@ export default function MiniProfile() {
           {fakeAccount.is_online ? "Online" : ""}
           </p>
         </div>
-        <div className="top-0 right-0">
+        <div className="w-full flex justify-end">
           <button className="btn ">
-            Add this friend
+            <FaPlus />
           </button>
         </div>
       </div>
@@ -35,6 +36,10 @@ export default function MiniProfile() {
 				</tr>
 				<tr>
 				<th className="th-profile">Last login:</th>
+				<td>{fakeAccount.is_online ? "now" : fakeAccount.last_login}</td>
+				</tr>
+				<tr>
+				<th className="th-profile">History :</th>
 				<td>{fakeAccount.is_online ? "now" : fakeAccount.last_login}</td>
 				</tr>
 			</table>
