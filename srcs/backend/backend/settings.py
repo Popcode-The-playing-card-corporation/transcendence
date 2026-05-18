@@ -53,11 +53,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'django.contrib.sites',
     "rest_framework",
+	'rest_framework.authtoken',
+	'allauth',
+	'allauth.account',
+	'allauth.socialaccount',
+	'allauth.socialaccount.providers.google',
+	'dj_rest_auth.registration',
 	"api",
 	"game",
 ]
 
+# django.contrib.sites
+SITE_ID = 1
 
 CHANNEL_LAYERS = {
     "default": {
@@ -76,10 +85,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'allauth.account.middleware.AccountMiddleware',
 ]
 
-BASE_APP_URL=os.getenv("BASE_APP_URL")
-BASE_API_URI=os.getenv("BASE_API_URI")
+#Following guide for google login, need to doublecheck ..
+# how it would impact us if we want to have email verification later
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFCATION = "none"
+
+# BASE_APP_URL=os.getenv("BASE_APP_URL")
+# BASE_API_URI=os.getenv("BASE_API_URI")
+GOOGLE_OAUTH_CALLBACK_URL=os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
 GOOGLE_OAUTH2_CLIENT_ID=os.getenv("GOOGLE_OAUTH2_CLIENT_ID") ## Needs to be in env
 GOOGLE_OAUTH2_CLIENT_SECRET=os.getenv("GOOGLE_OAUTH2_CLIENT_SECRET") ## Needs to be in env
 
