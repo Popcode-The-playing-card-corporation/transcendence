@@ -158,3 +158,52 @@ def list_user(request, name):
     ]
 
     return Response(data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_propal(request):
+
+    friendships = Friendship.objects.filter(
+        Q(from_user=request.user) | Q(to_user=request.user),
+        status="accepted"
+    )
+
+    my_friend_ids = set()
+
+    for friendship in friendships:
+        if friendship.from_user == request.user:
+            my_friend_ids.add(friendship.to_user.id)
+        else:
+            my_friend_ids.add(friendship.from_user.id)
+
+    my_friend_ids.add(request.user.id)
+
+    suggestions = []
+
+    for friend_id in my_friend_ids.copy():
+
+        propals = Friendship.objects.filter(
+            Q(from_user_id=friend_id) |
+            Q(to_user_id=friend_id),
+            status="accepted"
+        )
+
+        for friendship in propals:
+
+            if friendship.from_user.id == friend_id:
+                suggested_user = friendship.to_user
+            else:
+                suggested_user = friendship.from_user
+
+            if suggested_user.id not in my_friend_ids:
+
+                suggestions.append({
+                    "id": suggested_user.id,
+                    "username": suggested_user.username,
+                    "is_online": suggested_user.is_online,
+                })
+
+                my_friend_ids.add(suggested_user.id)
+
+    return Response(suggestions)
