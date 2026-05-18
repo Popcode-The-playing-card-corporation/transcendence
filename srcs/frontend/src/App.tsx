@@ -15,7 +15,7 @@ function App() {
     <main className="bg-(--bg-color) font-[Cause] text-(--font-color) h-full w-full">
       <BrowserRouter>
         <Navbar />
-		<NotifPopUp />
+		<NotifPopUp isEnabled={false} title="Tu es seul" body="Et tu dois l'accepter"/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
@@ -24,7 +24,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/login" element={<Login />} />
-        </Routes>
+		  </Routes>
         <Footer />
       </BrowserRouter>
     </main>
