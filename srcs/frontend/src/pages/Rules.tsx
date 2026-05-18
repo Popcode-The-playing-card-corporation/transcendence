@@ -1,5 +1,3 @@
-import "../index.css"
-
 export function Rules() {
   return (
     <div className="page-content mt-17">
