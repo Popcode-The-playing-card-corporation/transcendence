@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
 import type { errorT } from "../utils/errorType";
 
-
 export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<boolean>>}) {
 
 

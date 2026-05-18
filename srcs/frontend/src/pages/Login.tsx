@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LoginForm } from "../components/LoginForm";
 import { RegisterForm } from "../components/RegisterForm";
+import { Google_login} from "../api/GoogleLogin"
 
 export function Login() {
   const [created, setCreated] = useState(false);
@@ -13,6 +14,8 @@ export function Login() {
         ) : (
           <LoginForm setCreated={setCreated} />
         )}
+		<div> <Google_login /> </div>
+		
       </div>
     </div>
   );

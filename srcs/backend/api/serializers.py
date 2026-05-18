@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from .models import User, Friendship
 
+class AuthSerializer(serializers.Serializer):
+    code = serializers.CharField(required=False)
+    error = serializers.CharField(required=False)
+
 class UserSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(
