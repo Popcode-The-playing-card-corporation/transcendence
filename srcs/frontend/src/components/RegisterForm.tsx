@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useState, useEffect } from "react";
 import { registerRequest } from "../api/register";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
 import avatar from "../assets/avatars/avatar1.png";
 import type { errorT } from "../utils/errorType";
@@ -20,6 +20,7 @@ export function RegisterForm({
   const [access, setAccess] = useState(false);
   const [reason, setReason] = useState<errorT>({code:200, response:""});
   const navigate = useNavigate();
+  const location = useLocation();
   const emailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
@@ -81,21 +82,27 @@ export function RegisterForm({
 
   useEffect(() => {
 	async function checkAccess() {
-    const authed = await checkAuth();
-    if (authed) {
-      setAccess(true);
-      return;
-    }
-    setAccess(false);
-    return;
-  }
+		const authed = await checkAuth();
+		if (authed) {
+		setAccess(true);
+		return;
+		}
+		setAccess(false);
+		return;
+  	}
 
     checkAccess();
-  }, []);
 
-  if (success || access) {
-    navigate("/profile");
-  }
+	if (success || access) {
+		if (location.state) {
+			navigate(location.state);
+			return ;
+		}
+		navigate('/');
+		return ;
+	}
+  }, [navigate, success, access, location]);
+
 
   return (
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">

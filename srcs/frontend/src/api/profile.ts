@@ -7,7 +7,7 @@ import { check2Pass, checkPass } from './checkAuth';
 export async function profileRequest(): Promise<accountT | errorT> {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.get('http://' + host.host_ip + ':8000/user/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.get(host.http + 'user/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		const result : accountT = res.data;
 		return result;
 	} catch (err) {
@@ -30,7 +30,7 @@ export async function changeUsername(in_user:string, old_pass:string) {
 	formData.set('username', in_user);
 
 	try {
-		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		await axios.patch(host.http + 'user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return {code:200, response:""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -59,7 +59,7 @@ export async function changePassword(old_pass:string, in_pass:string, re_pass:st
 	formData.set('password', in_pass);
 
 	try {
-		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		await axios.patch(host.http + 'user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return {code:200, response:""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -77,7 +77,7 @@ export async function changeAvatar(in_avatar:string) {
 	formData.set('avatar', in_avatar);
 
 	try {
-		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		await axios.patch(host.http + 'user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return {code:200};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
