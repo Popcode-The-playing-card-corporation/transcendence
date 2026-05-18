@@ -29,19 +29,17 @@ def get_friends(request):
 @permission_classes([IsAuthenticated])
 def send_friend_request(request, user_id):
     try:
-        target = User.objects.get(id=user_id)
+        target = User.objects.get(id=user_id, is_bot=False,)
 
         if target == request.user:
             return Response({"error": "You can't add yourself"}, status=400)
 
-        # déjà existant ?
         if Friendship.objects.filter(
             from_user=request.user,
             to_user=target
         ).exists():
             return Response({"error": "Request already sent"}, status=400)
 
-        # inverse déjà existant ?
         if Friendship.objects.filter(
             from_user=target,
             to_user=request.user
@@ -112,7 +110,7 @@ def block_friend(request, request_id):
     except Friendship.DoesNotExist:
         return Response({"error": "Request not found"}, status=404)
     
-    
+#TODO savoir qui a bloquer l'ami
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_blocked(request):
