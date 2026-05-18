@@ -184,7 +184,6 @@ export function Friends() {
             </td>
             <td>
             <button onClick={() => showMiniProfileRef.current?.showModal()}>{friend.user.username}</button>
-
             <dialog id="showMiniProfile" className="modal" ref={showMiniProfileRef}>
               <MiniProfile />
             </dialog>
