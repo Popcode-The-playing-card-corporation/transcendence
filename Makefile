@@ -2,10 +2,16 @@ COMPOSE = docker compose -f ./srcs/docker-compose.yml
 
 RM = rm -rf
 
-GREEN = \033[1;32m
-CYAN = \033[1;36m
-YELLOW = \033[1;33m
-RESET = \033[0m
+RESET := $(shell printf "\033[0m")
+WHITE    := $(shell printf "\033[1;37m")
+NC       := $(shell printf "\033[0m")
+PINK     := $(shell printf "\033[1;35m")
+GREEN    := $(shell printf "\033[32m")
+BOLD     := $(shell printf "\033[1m")
+L_PURPLE := $(shell printf "\033[38;5;55m")
+YELLOW   := $(shell printf "\033[33m")
+BLUE     := $(shell printf "\033[34m")
+BLACK    := $(shell printf "\033[1;90m")
 
 # Règles
 all: header up

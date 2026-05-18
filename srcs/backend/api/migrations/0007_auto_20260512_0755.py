@@ -4,20 +4,68 @@ from django.db import migrations
 
 def create_bot(apps, schema_editor):
     User = apps.get_model("api", "User")
+    Stat = apps.get_model("game", "Stat")
 
-    if not User.objects.filter(username="BOT").exists():
-        User.objects.create(
-            username="BOT",
-            email="bot@bot.com",
+    if not User.objects.filter(username="BOT0").exists():
+        user = User.objects.create(
+            username="BOT0",
+            email="bot0@bot.com",
             is_bot=True,
             is_online=False,
             avatar="avatars/bot.jpg",
         )
+        Stat.objects.create(user=user)
+    if not User.objects.filter(username="BOT1").exists():
+        user = User.objects.create(
+            username="BOT1",
+            email="bot1@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+        Stat.objects.create(user=user)
+    if not User.objects.filter(username="BOT2").exists():
+        user = User.objects.create(
+            username="BOT2",
+            email="bot2@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+        Stat.objects.create(user=user)
+    if not User.objects.filter(username="BOT3").exists():
+        user = User.objects.create(
+            username="BOT3",
+            email="bot3@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+        Stat.objects.create(user=user)
+    if not User.objects.filter(username="BOT4").exists():
+        user = User.objects.create(
+            username="BOT4",
+            email="bot4@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+        Stat.objects.create(user=user)
+    if not User.objects.filter(username="BOT5").exists():
+        user = User.objects.create(
+            username="BOT5",
+            email="bot5@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+        Stat.objects.create(user=user)
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ('api', '0006_user_is_bot'),
+        ('game', '0007_playerpresence_difficulty_room_ended_at_and_more')
     ]
 
     operations = [

@@ -32,23 +32,34 @@
   h3 {
     @apply text-2xl font-bold;
   }
-
-  /* table { */
-  /*   border-collapse: separate; */
-  /*   border-spacing: 0; */
-  /*   width: 100%; */
-  /* } */
-  /**/
-  /* tbody { */
-  /*   display: block; /* Required */
-  /*   border-radius: 15px; */
-  /*   border: 1px solid #ccc; */
-  /*   overflow: hidden; /* Ensures background/borders follow radius */
-  /* } */
 }
 
 @utility input {
   @apply bg-(--hover-color);
+}
+
+@utility btn {
+  @apply bg-(--hover-color);
+}
+
+.del {
+  @apply bg-(--accent-color);
+}
+
+.validate {
+	@apply bg-(--green-color)
+}
+
+.avatar-hovered {
+  @apply opacity-30;
+}
+
+.pen-hovered {
+  @apply absolute text-3xl z-10;
+}
+
+.li-avatars {
+  @apply w-24 m-3 h-24 hover:scale-110 transition-all;
 }
 
 .item-menu {
@@ -57,6 +68,10 @@
 
 @utility link-hover {
   @apply cursor-pointer;
+}
+
+.modal-box {
+  scrollbar-color: var(--accent-color) var(--hover-color);
 }
 
 .item-menu:hover {
@@ -70,6 +85,10 @@
 
 .bordered {
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
+}
+
+.table tr {
+  @apply p-1;
 }
 
 .th-profile {

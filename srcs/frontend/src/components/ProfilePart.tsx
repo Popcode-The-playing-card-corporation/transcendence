@@ -1,50 +1,60 @@
-import { profileRequest } from "../api/profile";
+import { profileRequest } from "../api/profile"; // changeEmail
 import type { accountT } from "../utils/accountType";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
+import { AvatarSelection } from "./AvatarSelection";
+import { PswdChange } from "./PswdChange";
+import { PseudoChange } from "./PseudoChange";
+import { refreshAuth } from "../api/checkAuth";
 
 export function ProfilePart() {
+  const [realAccount, setAccount] = useState<accountT | errorT>({
+    code: 0,
+    response: "",
+  });
+  const navigate = useNavigate();
+  const [updatedProfile, setUpdate] = useState(false);
+  const dialogPswdRef = useRef<HTMLDialogElement>(null);
+  const dialogPseudoRef = useRef<HTMLDialogElement>(null);
 
-	// const [failure, setFailure] = useState(false);
-	// const [success, setSuccess] = useState(false);
-	const [realAccount, setAccount] = useState< accountT | errorT>({code: 0, response: ''});
-	const navigate = useNavigate();
+  useEffect(() => {
+    async function getProfile() {
+      let result = await profileRequest();
 
-	useEffect(() => {
-
-		async function getProfile() {
-			const result = await profileRequest();
-			if ("code" in result) {
-				setAccount(result);
-			return ;
+	  if ("code" in result) {
+		if (result.code === 401) {
+			if (!(await refreshAuth())) {
+				navigate('/login');
 			}
-			setAccount(result);
-			return ;
+			result = await profileRequest();
 		}
+      }
+	  setAccount(result);
+      return;
+    }
 
-		getProfile();
-	
-	}, [navigate]);
+    getProfile();
+  }, [updatedProfile, navigate]);
 
-	if ('code' in realAccount) {
-		if (realAccount.code === 401) {
-			localStorage.removeItem('access');
-			localStorage.removeItem('refresh');
-			navigate('/login');
-			return ;
-		}
-		return <p>Error: {realAccount.response}</p>; // improve message
-	}
+  if ("code" in realAccount) {
+    return <p>Error: {realAccount.response}</p>; // improve message
+  }
 
-
+//   async function updateEmail(in_email:string) {
+// 	const res = await changeEmail(in_email);
+// 	if (!res) {
+// 		console.error('email failure');
+// 		return ;
+// 	}
+// 	setUpdate(!updatedProfile);
+// 	return ;
+//   }
 
   return (
     <div>
       <div className="avatar mt-8 flex-col">
-        <div className="rounded-4xl w-24">
-          <img src={realAccount.avatar} />
-        </div>
+        <AvatarSelection currentAvatar={realAccount.avatar} />
         <p className="text-green-200 font-extrabold my-2 mx-auto">
           {realAccount.is_online ? "Online" : ""}
         </p>
@@ -52,7 +62,16 @@ export function ProfilePart() {
       <table className="mt-5">
         <tr>
           <th className="th-profile">Username:</th>
-          <td>{realAccount.username}</td>
+          <td>
+            {realAccount.username} <button className="link ml-5" onClick={() => dialogPseudoRef.current?.showModal()}>change</button>
+            <dialog
+              id="change_pseudo_modal"
+              className="modal"
+              ref={dialogPseudoRef}
+            >
+			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} old_user={realAccount.username}/>
+            </dialog>
+          </td>
         </tr>
         <tr>
           <th className="th-profile">Email:</th>
@@ -61,7 +80,21 @@ export function ProfilePart() {
         <tr>
           <th className="th-profile">Password:</th>
           <td>
-            *******<a className="link"> change</a>
+            *******
+            <button
+              className="link ml-5"
+              onClick={() => dialogPswdRef.current?.showModal()}
+            >
+              {" "}
+              change
+            </button>
+            <dialog
+              id="change_pswd_modal"
+              className="modal"
+              ref={dialogPswdRef}
+            >
+              <PswdChange dialogRef={dialogPswdRef} />
+            </dialog>
           </td>
         </tr>
         <tr>
