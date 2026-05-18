@@ -1,6 +1,5 @@
-from django.shortcuts import get_object_or_404
 from .models import User, Friendship
-from game.models import Stat, PlayerScore, Room, PlayerPresence, Stat
+from game.models import PlayerScore, Room, Stat
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -11,7 +10,6 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils import timezone
 from django.db.models import Q
-from datetime import timedelta
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])

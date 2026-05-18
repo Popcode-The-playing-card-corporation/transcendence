@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('api', '0007_auto_20260512_0755'),
-        ('game', '0001_initial'),
+        ('game', '0007_playerpresence_difficulty_room_ended_at_and_more'),
     ]
 
     operations = [
