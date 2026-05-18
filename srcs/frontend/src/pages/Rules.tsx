@@ -1,8 +1,6 @@
-import "../index.css"
-
 export function Rules() {
   return (
-    <div className="page-content mt-10">
+    <div className="page-content mt-17">
       <h1>Rules</h1>
       <div className="mt-10">
         <p>La misère est une variante du Jass. Il s'agit d'un jeu à pli, qui se joue avec un jeu de 36 cartes.</p>

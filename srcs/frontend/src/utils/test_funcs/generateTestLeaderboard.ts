@@ -49,7 +49,7 @@ export function generateFakeLeaderboard(): leaderboardT {
       },
       {
         username: "Jean-Paul",
-        score: 242,
+        score: 345,
       },
       {
         username: "Jean-Fabrice",

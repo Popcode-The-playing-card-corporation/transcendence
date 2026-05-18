@@ -1,5 +1,5 @@
-import type { accountT } from "./accountType";
-import avatar_test from "../assets/avatar_test.png";
+import type { accountT } from "../accountType";
+import avatar_test from "../../assets/avatars/avatar1.png";
 
 export function generateFakeAccount(): accountT {
   return {

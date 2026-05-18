@@ -5,7 +5,7 @@ import { StatisticsPart } from "../components/StatisticPart";
 
 export function Profile() {
   return (
-    <div className=" page-content mt-10">
+    <div className=" page-content mt-17">
       <h1>Profile</h1>
       <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />

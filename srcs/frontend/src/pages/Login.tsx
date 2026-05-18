@@ -6,7 +6,7 @@ import { Google_login} from "../api/GoogleLogin"
 export function Login() {
   const [created, setCreated] = useState(false);
   return (
-    <div className="page-content">
+    <div className="page-content mt-17">
       <h1>Login / Register</h1>
       <div className="log-container">
         {created ? (

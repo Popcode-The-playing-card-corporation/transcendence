@@ -89,6 +89,15 @@ class FriendSerializer(serializers.ModelSerializer):
     created_at = serializers.DateField(
         format="%d/%m/%Y"
     )
+    blocked_at = serializers.DateField(
+        format="%d/%m/%Y",
+        allow_null=True
+    )
+    blocked_by = serializers.PrimaryKeyRelatedField(
+        read_only=True, 
+        allow_null=True
+    )
+
 
     class Meta:
         model = Friendship
@@ -98,7 +107,9 @@ class FriendSerializer(serializers.ModelSerializer):
             "status",
             "accepted_at",
             "created_at",
-            "can_accept"
+            "can_accept",
+            "blocked_by",
+            "blocked_at"
         ]
 
     def get_user(self, obj):
