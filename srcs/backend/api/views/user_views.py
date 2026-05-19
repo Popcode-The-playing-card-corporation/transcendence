@@ -46,7 +46,10 @@ def user_data(request, user_id):
             status=404
         )
 
-    serializer = FriendProfileSerializer(user)
+    serializer = FriendProfileSerializer(
+        user,
+        context={"request": request}
+    )
 
     return Response(serializer.data)
     

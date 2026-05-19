@@ -2,10 +2,9 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
 from .models import PlayerPresence, Room, PlayerScore, Stat
-from api.models import User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
-from api.serializers import UserSerializer
+from game_engine.bot.bot import bot
 import copy
 
 CARD_VALUES = {
@@ -142,7 +141,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "new_host": room.host.username
                 }
             }
-)
+        )
+        position = get_player_pos(user, room.code)
+        if (int(position) == int(room.game_state["playing"])):
+            game = GameEngine(room.uuid)
+            legal = game.handleAction("legal", room.game_state, idPlayer= str(position))
+            payload = {
+                "cardId": bot(room.game_state, int(position), legal)
+            }
+            self.handle_play_card(payload)
 
     async def receive(self, text_data):
         try:
@@ -239,7 +246,47 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
         await self.send_init()
-    
+
+        p = await sync_to_async(PlayerPresence.objects.get)(
+            room=room,
+            position= game_state["playing"]
+        )
+        while (not p.is_human):
+            position = game_state["playing"]
+            legal = game.handleAction("legal", game_state, idPlayer= position)
+            card = bot(game_state, position, legal, p.difficulty)
+            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
+            await save_room_state(room.uuid, game_state)
+
+            await self.send_data()
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position= game_state["playing"]
+            )
+        self.send_data()
+
+    async def end(self, room, game):
+        player_finished = 0
+        game_state = room.game_states
+        for player_id, player_data in game_state["players"].items():
+            if len(player_data["cards"]) == 0:
+                player_finished += 1
+        if player_finished == room.nb_player:
+            game_state = game.handleAction("point", game_state)
+            await save_room_state(room.uuid, game_state)
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "game finished do you want continue or stop ?"
+					}
+                }
+            )
+            return True
+        return False
+        
     async def handle_play_card(self, payload: dict):
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
@@ -298,6 +345,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
             return
+
         taker = -1
         state = copy.deepcopy(room.game_state)
         if len(state["board"]) == room.nb_player:
@@ -330,20 +378,41 @@ class RoomConsumer(AsyncWebsocketConsumer):
             stat.prefered_trick = preferred
             await sync_to_async(stat.save)()
 
-        player_finished = 0
-        for player_id, player_data in game_state["players"].items():
+        if (self.end(room, game)):
+            return 
+
+        await self.send_data()
+
+        p = await sync_to_async(PlayerPresence.objects.get)(
+            room=room,
+            position= await get_player_pos(self.user, room.code)
+        )
+        while (not p.is_human or not p.is_online):
+            position = str(game_state["playing"])
+            card = bot(game_state, position, legal, p.difficulty)
+            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
+            await save_room_state(room.uuid, game_state)
+
+            if (self.end(room, game)):
+                return
+
+            await self.send_data()
+
+            player_finished = 0
+            for player_id, player_data in game_state["players"].items():
+                p = await sync_to_async(PlayerPresence.objects.get)(
+                    room=room,
+                    position= await get_player_pos(self.user, room.code)
+                )
+                if len(player_data["cards"]) == 0:
+                    player_finished += 1
+
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
-                position=int(player_id)
+                position=int(game_state["playing"])
             )
-            if len(player_data["cards"]) == 0:
-                player_finished += 1
                 
         if player_finished == room.nb_player:
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(taker)
-            )
             stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
             stat.nb_last_take += 1
             await sync_to_async(stat.save)()
@@ -603,9 +672,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }))
             return
         
-        for player_id, player_data in room.game_state["players"].items():
-            if len(player_data["cards"]) != 0:
-                return
+        # for player_id, player_data in room.game_state["players"].items():
+        #     if len(player_data["cards"]) != 0:
+        #         return
         
         game = GameEngine(room.uuid)
         game_state = game.handleAction("start", room.game_state, await count_player(room.code))
@@ -623,6 +692,23 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
         await self.send_data()
+
+        p = await sync_to_async(PlayerPresence.objects.get)(
+            room=room,
+            position= game_state["playing"]
+        )
+        while (not p.is_human):
+            position = str(game_state["playing"])
+            legal = game.handleAction("legal", game_state, idPlayer= position)
+            card = bot(game_state, position, legal, p.difficulty)
+            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
+            await save_room_state(room.uuid, game_state)
+
+            await self.send_data()
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position= game_state["playing"]
+            )
 
     async def handle_end_game(self):
         room = await get_room_with_host(self.code)
