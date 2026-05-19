@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Friendship
+from django.db.models import Q
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -60,6 +61,10 @@ class FriendProfileSerializer(serializers.ModelSerializer):
         format="%d/%m/%Y %H:%M",
         allow_null=True
     )
+    
+    is_friend = serializers.SerializerMethodField()
+    is_blocked = serializers.SerializerMethodField()
+    blocked_by_me = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -71,7 +76,66 @@ class FriendProfileSerializer(serializers.ModelSerializer):
             "is_online",
             "last_login",
             "elo",
+            "is_friend",
+            "is_blocked",
+            "blocked_by_me",
         ]
+    
+    def get_is_friend(self, obj):
+
+        request = self.context.get("request")
+
+        if not request or not request.user.is_authenticated:
+            return False
+
+        user = request.user
+
+        return Friendship.objects.filter(
+            status="accepted"
+        ).filter(
+            Q(from_user=user, to_user=obj) |
+            Q(from_user=obj, to_user=user)
+        ).exists()
+    
+    def get_is_blocked(self, obj):
+
+        request = self.context.get("request")
+
+        if not request or not request.user.is_authenticated:
+            return False
+
+        user = request.user
+
+        return Friendship.objects.filter(
+            status="blocked"
+        ).filter(
+            Q(from_user=user, to_user=obj) |
+            Q(from_user=obj, to_user=user)
+        ).exists()
+        
+    def get_blocked_by_me(self, obj):
+    
+        request = self.context.get("request")
+    
+        if not request or not request.user.is_authenticated:
+            return None
+    
+        user = request.user
+    
+        friendship = Friendship.objects.filter(
+            status="blocked"
+        ).filter(
+            Q(from_user=user, to_user=obj) |
+            Q(from_user=obj, to_user=user)
+        ).first()
+    
+        if not friendship:
+            return None
+    
+        if friendship.blocked_by.id == user.id:
+            return True
+        elif friendship.blocked_by.id == obj.id:
+            return False
  
 class FriendSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
