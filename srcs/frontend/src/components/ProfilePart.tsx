@@ -6,7 +6,7 @@ import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
 import { PswdChange } from "./PswdChange";
 import { PseudoChange } from "./PseudoChange";
-import { refreshAuth } from "../api/checkAuth";
+import { checkAuth } from "../api/checkAuth";
 
 export function ProfilePart() {
   const [realAccount, setAccount] = useState<accountT | errorT>({
@@ -24,7 +24,7 @@ export function ProfilePart() {
 
 	  if ("code" in result) {
 		if (result.code === 401) {
-			if (!(await refreshAuth())) {
+			if (!(await checkAuth())) {
 				navigate('/login');
 			}
 			result = await profileRequest();

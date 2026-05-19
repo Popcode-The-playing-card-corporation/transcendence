@@ -5,27 +5,42 @@ import { CgProfile } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../api/login";
+import { logged_in, setLoggedIn } from "../api/login_status";
 import { useEffect, useState } from "react";
+import { setLogging } from "../api/login_status";
 
 export function Navbar() {
-  const [logged_in, setLog] = useState(!!localStorage.getItem("access"));
   const navigate = useNavigate();
   const current_location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(logged_in);
   const isActive = (path: string) => path === current_location.pathname;
+  
+  	useEffect(() => {
+		async function update_logo() {
+			setIsLoggedIn(logged_in);
+		}
+		update_logo();
+	}, [current_location.pathname])
 
-  useEffect(() => {
-    async function update_logo() {
-      // Anouar is lazy and hates ESLINT!!!!! :( 8====D
-      setLog(!!localStorage.getItem("access"));
-    }
-    update_logo();
-  }, [current_location.pathname]);
 
-  function handleLogout() {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    setLog(false);
-    navigate("/login");
+  async function handleLogout() {
+	if (logged_in) {
+		setLogging(true);
+		const res = await logout();
+		if (res.code !== 200) {
+			//error popup
+			setLogging(false);
+			return ;
+		}
+		navigate("/login");
+		setTimeout(() => {
+			setLogging(false);
+		}, (1000));
+		setLoggedIn(false);
+		return ;
+	}
+	navigate("/login");
   }
 
   return (
@@ -84,7 +99,7 @@ export function Navbar() {
               onClick={handleLogout}
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
-              {logged_in ? (
+              {isLoggedIn ? (
                 <MdLogout fontSize={20} />
               ) : (
                 <MdLogin fontSize={20} />

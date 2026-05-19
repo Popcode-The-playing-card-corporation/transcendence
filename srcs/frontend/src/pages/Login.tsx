@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { LoginForm } from "../components/LoginForm";
 import { RegisterForm } from "../components/RegisterForm";
-import { Google_login} from "../api/GoogleLogin"
+import { GoogleLogin} from "../api/GoogleLogin"
+import { FortyTwoLogin } from "../api/42Login";
 
 export function Login() {
   const [created, setCreated] = useState(false);
@@ -14,7 +15,8 @@ export function Login() {
         ) : (
           <LoginForm setCreated={setCreated} />
         )}
-		<div> <Google_login /> </div>
+		<div> <GoogleLogin /> </div>
+		<div> <FortyTwoLogin /> </div>
 		
       </div>
     </div>

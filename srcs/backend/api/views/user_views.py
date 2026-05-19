@@ -14,6 +14,7 @@ from django.utils import timezone
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from datetime import datetime
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -113,6 +114,18 @@ def register(request):
         return res
         
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def logout(request):
+	res = Response()
+	res.data = {'success': True}
+    
+	res.delete_cookie(key="access_token")
+	res.delete_cookie(key="refresh_token")
+    
+	return res
+    
 
 @api_view(["POST"])
 @permission_classes([AllowAny])

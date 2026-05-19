@@ -65,8 +65,50 @@ INSTALLED_APPS = [
 	"game",
 ]
 
+#Following guide for google login, need to doublecheck ..
+# how it would impact us if we want to have email verification later
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_VERIFCATION = "none"
+
+# BASE_APP_URL=os.getenv("BASE_APP_URL")
+# BASE_API_URI=os.getenv("BASE_API_URI")
+GOOGLE_OAUTH_CALLBACK_URL=os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
+GOOGLE_OAUTH_CLIENT_ID=os.getenv("GOOGLE_OAUTH_CLIENT_ID") 
+GOOGLE_OAUTH_CLIENT_SECRET=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET") 
+
+FORTYTWO_OAUTH_CALLBACK_URL=os.getenv("FORTYTWO_OAUTH_CALLBACK_URL")
+FORTYTWO_OAUTH_CLIENT_ID=os.getenv("FORTYTWO_OAUTH_CLIENT_ID")
+FORTYTWO_OAUTH_CLIENT_SECRET=os.getenv("FORTYTWO_OAUTH_CLIENT_SECRET") ## Needs to be in env
+
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_PROVIDERS = {
+	"google": {
+		"APPS": [
+			{
+				"client_id": GOOGLE_OAUTH_CLIENT_ID,
+				"secret": GOOGLE_OAUTH_CLIENT_SECRET,
+				"key": "",
+			},
+		],
+		"SCOPE": ["profile", "email"],
+		"AUTH_PARAMS": {
+			"access_type": "online",
+		},
+	}
+}
+
 # django.contrib.sites
 SITE_ID = 1
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "access",
+    "JWT_AUTH_REFRESH_COOKIE": "refresh",
+    "JWT_AUTH_HTTPONLY": True,
+}
 
 CHANNEL_LAYERS = {
     "default": {
@@ -87,19 +129,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	'allauth.account.middleware.AccountMiddleware',
 ]
-
-#Following guide for google login, need to doublecheck ..
-# how it would impact us if we want to have email verification later
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFCATION = "none"
-
-# BASE_APP_URL=os.getenv("BASE_APP_URL")
-# BASE_API_URI=os.getenv("BASE_API_URI")
-GOOGLE_OAUTH_CALLBACK_URL=os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
-GOOGLE_OAUTH2_CLIENT_ID=os.getenv("GOOGLE_OAUTH2_CLIENT_ID") ## Needs to be in env
-GOOGLE_OAUTH2_CLIENT_SECRET=os.getenv("GOOGLE_OAUTH2_CLIENT_SECRET") ## Needs to be in env
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

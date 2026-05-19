@@ -6,7 +6,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
 
     #avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
-    avatar = models.CharField(max_length=255, default="avatars/avatar.jpg")
+    avatar = models.CharField(max_length=255, default="")  ## changed to blank, it's easier for front to handle this
     is_online = models.BooleanField(default=False)
     is_bot = models.BooleanField(default=False)
     elo = models.IntegerField(default=0)
