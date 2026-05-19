@@ -3,6 +3,7 @@ import { LoginForm } from "../components/LoginForm";
 import { RegisterForm } from "../components/RegisterForm";
 import { GoogleLogin} from "../api/GoogleLogin"
 import { FortyTwoLogin } from "../api/42Login";
+import { GitLogin } from "../api/GitLogin";
 
 export function Login() {
   const [created, setCreated] = useState(false);
@@ -17,6 +18,7 @@ export function Login() {
         )}
 		<div> <GoogleLogin /> </div>
 		<div> <FortyTwoLogin /> </div>
+		<div> <GitLogin /> </div>
 		
       </div>
     </div>

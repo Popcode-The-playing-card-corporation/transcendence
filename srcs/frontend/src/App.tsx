@@ -14,6 +14,7 @@ import { TermsOfService } from "./pages/TermsOfService";
 import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./pages/GoogleCallback";
 import { FortyTwoCallback } from "./pages/42Callback";
+import { GitCallback } from "./pages/GitCallback";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/termsOfService" element={<TermsOfService />} />
 		  <Route path="/login/google/callback" element={<GoogleCallback />} />
 		  <Route path="/login/42/callback" element={<FortyTwoCallback />} />
+		  <Route path="/login/github/callback" element={<GitCallback />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
         <Footer />
