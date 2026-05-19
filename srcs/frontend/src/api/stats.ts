@@ -6,7 +6,7 @@ import type { statisticsT } from '../utils/statisticsType';
 export async function getStats(id:number) {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.get('http://' + host.host_ip + ':8000/user/' + id + '/stats/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.get(host.http + 'user/' + id + '/stats/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		const ret_val:statisticsT = res.data;
 		return ret_val;
 	} catch (err) {

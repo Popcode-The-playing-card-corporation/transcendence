@@ -11,10 +11,10 @@ export async function getLeaderboard() { //: Promise<friendT | errorT>
 	try {
 		let res;
 		if (await checkAuth()) { // Need to actualy check authentication rather than if access exists
-			res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', { 'headers': {'Authorization': AuthStr}, timeout: 2000});
+			res = await axios.get(host.http + 'leaderboard/', { 'headers': {'Authorization': AuthStr}, timeout: 2000});
 			return res;
 		}
-		res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/', {timeout: 2000});
+		res = await axios.get(host.http + 'leaderboard/', {timeout: 2000});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

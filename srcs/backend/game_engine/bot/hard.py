@@ -1,4 +1,4 @@
-from medium import takeFold
+from .medium import takeFold, convert, copy_fold
 from ..card import Card
 from ..player import Player
 
@@ -11,36 +11,37 @@ def countCard(card, data, fold):
 	cards.append(card)
 
 	for c in fold:
-		if (c["color"] == card["color"]):
-			cards.append()
+		if (c.colors == card.colors):
+			cards.append(c)
 
-	for p in data["players"]:
+	for p in data["players"].values():
 		for c in p["cards"]:
-			if (c["color"] == card["color"]):
-				cards.append(c)
+			if (c["color"] == card.colors):
+				cards.append(Card(c["value"], c["color"]))
 
 	cards = sorted(cards)
 	index = cards.index(card)
-	return abs(index - cardValue[card["value"]])
+	return abs(index - cardValue[card.values])
 
 def splithand(data, idPlayer, legal):
 	playable = []
 	tricks = data["tricks"]
-	fold = data["board"].copy()
-	asked = fold.pop("asked")
+	fold = copy_fold(data["board"])
+	asked = fold.pop(0)
 	playing = len(data["players"]) - len(fold)
 
 	i = 0
 	while (i < len(legal)):
 		if (legal[i]):
-			playable.append(data["players"][idPlayer]["cards"][i])
+			c = data["players"][idPlayer]["cards"][i]
+			playable.append(Card(c["value"], c["color"], c["id"]))
 		i += 1
 
 	take = []
 	dontTake = []
 	for c in playable:
 		if (takeFold(fold, asked, tricks, c)):
-			if (c["color"] == tricks):
+			if (c.colors == tricks):
 				take.append(c)
 			left = countCard(c, data, fold)
 			if (left < playing):
@@ -55,13 +56,13 @@ def splithand(data, idPlayer, legal):
 		else:
 			dontTake.append(c)
 
-	return take, dontTake
+	return take, dontTake, fold, asked
 
 def Tricks(data: dict, tricks: str):
 	played = []
 	playedTricks = 0
 
-	for p in data["players"]:
+	for p in data["players"].values():
 		for c in p["taken"]:
 			if (c["color"] == tricks):
 				playedTricks += 1
@@ -81,24 +82,22 @@ def Tricks(data: dict, tricks: str):
 def boardPoints(data: dict, board):
 	points = 0
 	for c in board:
-		if (c["color"] == data["tricks"]):
-			if (c["value"] == "J"):
+		if (c.colors == data["tricks"]):
+			if (c.values == "J"):
 				points += 20
 				continue
-			elif (c["value"] == "9"):
+			elif (c.values == "9"):
 				points += 14
 				continue
-		points += cardPoint[c["value"]]
+		points += cardPoint[c.values]
 
 	points += Player.countMelds(Player(), board, data["tricks"])
 	return points
 
 def hard(data: dict, idPlayer, legal):
-	take, dontTake = splithand(data, idPlayer, legal)
+	take, dontTake, board, asked = splithand(data, idPlayer, legal)
 
 	first, second = Tricks(data, data["tricks"])
-	board = data["board"].copy()
-	asked = board.pop("asked")
 	points = boardPoints(data, board)
 
 	for c in take:
@@ -106,10 +105,10 @@ def hard(data: dict, idPlayer, legal):
 			break 
 		if (c["color"] == data["tricks"]):
 			if (c["value"] == first and points <= 20 - (10 * len(data["players"]))):
-				return data["players"][idPlayer]["cards"].index(c)
+				return data["players"][idPlayer]["cards"].index(convert(c))
 
 			if (c["value"] == second and points <= 10- (5 * len(data["players"]))):
-				return data["players"][idPlayer]["cards"].index(c)
+				return data["players"][idPlayer]["cards"].index(convert(c))
 
 	if (len(dontTake) > 0):
 		maxPoint = 0
@@ -121,6 +120,7 @@ def hard(data: dict, idPlayer, legal):
 				card = c
 				maxPoint = newPoints
 
+		card = convert(card)
 		return data["players"][idPlayer]["cards"].index(card)
 
 	maxPoint = 0
@@ -132,4 +132,5 @@ def hard(data: dict, idPlayer, legal):
 			card = c
 			maxPoint = newPoints
 
+	card = convert(card)
 	return data["players"][idPlayer]["cards"].index(card)
