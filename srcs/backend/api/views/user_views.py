@@ -101,6 +101,11 @@ def login(request):
     username = request.data.get("username")
     password = request.data.get("password")
 
+    if password == "":
+        return Response(
+            {"error": "Password empty"},
+            status=401
+        )
     user = authenticate(username=username, password=password)
 
     if user is not None:
