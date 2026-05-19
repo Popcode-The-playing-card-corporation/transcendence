@@ -35,13 +35,16 @@ class AddBotView(APIView):
         if (room.host == request.user):
             last_bot = PlayerPresence.objects.filter(is_human=False, room=room).last()
 
-            if (not last_bot):
-                user = User.objects.get(username="BOT0")
+            if (last_bot == None):
+                user = User.objects.get(username= "BOT")
             else:
-                user = User.objects.get(id= int(last_bot.id))
+                user = User.objects.get(id= int(last_bot.player_id))
                 
                 result = user.username.removeprefix("BOT")
-                nbr = int(result) + 1
+                if (result == ""):
+                    nbr = 0
+                else:
+                    nbr = int(result) + 1
                 user = User.objects.get(username= f"BOT{nbr}")
 
             add_bot_to_room(user, code)

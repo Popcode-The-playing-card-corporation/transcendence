@@ -252,8 +252,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             position= game_state["playing"]
         )
         while (not p.is_human):
-            print(game_state)
-            position = str(game_state["playing"])
+            position = game_state["playing"]
             legal = game.handleAction("legal", game_state, idPlayer= position)
             card = bot(game_state, position, legal, p.difficulty)
             game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
@@ -699,7 +698,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             position= game_state["playing"]
         )
         while (not p.is_human):
-            print(game_state)
             position = str(game_state["playing"])
             legal = game.handleAction("legal", game_state, idPlayer= position)
             card = bot(game_state, position, legal, p.difficulty)
