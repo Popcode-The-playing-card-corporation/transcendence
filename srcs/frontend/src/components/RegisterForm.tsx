@@ -65,8 +65,6 @@ export function RegisterForm({
     if (validate_inputs(email, name, password, repassword)) {
       const result = await registerRequest(email, name, password, avatar);
       if (!('code' in result)) {
-        localStorage.setItem("access", result.access);
-        localStorage.setItem("refresh", result.refresh);
         setSuccess(true);
         return;
       }

@@ -4,7 +4,7 @@ import type { errorT } from "../utils/errorType";
 import { getHistory, historyArray } from "../api/history";
 import type { playerT } from "../utils/playerType";
 import { useNavigate } from "react-router-dom";
-import { refreshAuth } from "../api/checkAuth";
+import { checkAuth } from "../api/checkAuth";
 
 export function History() {
   const [isMore, setIsMore] = useState(false);
@@ -17,7 +17,7 @@ export function History() {
 			let res = await getHistory();
 			if ('code' in res) {
 				if (res.code === 401) {
-					if (!(await refreshAuth())) {
+					if (!(await checkAuth())) {
 						navigate('/login');
 					}
 					res = await getHistory();
@@ -106,7 +106,8 @@ export function History() {
         </tr>
       ))}
       <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
-        {isMore ? "Show less" : "Show more"}
+        {gameHistory.length ? (isMore ? "Show less" : "Show more") : ""}
+        
       </a>
     </table>
   );

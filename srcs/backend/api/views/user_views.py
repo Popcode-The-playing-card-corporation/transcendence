@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 from ..models import User
+from django.conf import settings
 from game.models import Stat
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -12,6 +14,7 @@ from django.utils import timezone
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from datetime import datetime
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -30,8 +33,24 @@ def user(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_data(request, user_id):
-    user = User.objects.get(id=user_id)
-    serializer = FriendProfileSerializer(user)
+
+    try:
+        user = User.objects.get(id=user_id)
+
+    except User.DoesNotExist:
+        return Response(
+            {
+                "code": "user_not_found",
+                "error": f"No user found with id {user_id}"
+            },
+            status=404
+        )
+
+    serializer = FriendProfileSerializer(
+        user,
+        context={"request": request}
+    )
+
     return Response(serializer.data)
     
 
@@ -50,6 +69,14 @@ def register(request):
             )
             
     serializer = UserSerializer(data=request.data)
+    if not serializer.is_valid():
+
+        errors = {}
+    
+        for field, messages in serializer.errors.items():
+            errors[field] = messages[0]
+    
+        return Response(errors, status=400)
     if serializer.is_valid():
         user = serializer.save()
         Stat.objects.create(user=user)
@@ -62,13 +89,46 @@ def register(request):
             user.save(update_fields=["last_login"])
     
             refresh = RefreshToken.for_user(user)
-    
-            return Response({
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
-            })
+        access_token = refresh.access_token
+        refresh_token = refresh
+        
+        res = Response()
+        res.data = {'success': True}
+        res.set_cookie(
+            key='access_token',
+            value=access_token,
+            httponly=True,  ## Prevents javascript from accessing cookie
+            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
+            path='/', ## Only sends to host that sent them and not any other host
+            max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
+	    )
+        
+        res.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,  ## Prevents javascript from accessing cookie
+            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
+            path='/', ## Only sends to host that sent them and not any other host
+            max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
+	    )
+        
+        return res
         
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def logout(request):
+	res = Response()
+	res.data = {'success': True}
+    
+	res.delete_cookie(key="access_token")
+	res.delete_cookie(key="refresh_token")
+    
+	return res
+    
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -83,11 +143,37 @@ def login(request):
         user.save(update_fields=["last_login"])
 
         refresh = RefreshToken.for_user(user)
+        access_token = refresh.access_token
+        refresh_token = refresh
+        
+        res = Response()
+        res.data = {'success': True}
+        res.set_cookie(
+            key='access_token',
+            value=access_token,
+            httponly=True,  ## Prevents javascript from accessing cookie
+            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
+            path='/', ## Only sends to host that sent them and not any other host
+            max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
+	    )
+        
+        res.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,  ## Prevents javascript from accessing cookie
+            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
+            path='/', ## Only sends to host that sent them and not any other host *** maybe should be changed to just refresh path but in production tbc ...
+            max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
+	    )
+        
+        return res
 
-        return Response({
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
-        })
+        # return Response({
+        #     "access": str(refresh.access_token),
+        #     "refresh": str(refresh),
+        # })
 
     return Response(
         {"error": "Invalid credentials"},

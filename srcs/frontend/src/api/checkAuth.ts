@@ -1,38 +1,40 @@
 import axios, { AxiosError } from 'axios'
 import host from '../api/host'
 import { type errorT, type backendErrorT, getError } from '../utils/errorType';
+import { logging_out, setLoggedIn } from './login_status';
 
 export async function refreshAuth() : Promise<boolean> {
-
+	if (logging_out)
+		return false;
 	try {
-		const res = await axios.post(host.http + 'api/token/refresh/', { 'refresh': localStorage.getItem('refresh'), timeout: 2000});
-		localStorage.setItem('access', res.data['access']);
+		await axios.post(host.http + 'api/token/refresh/', {}, {timeout: 2000, withCredentials: true });
 		return true;
 	} catch {
-		localStorage.removeItem('access');
-		localStorage.removeItem('refresh');
 		return false;
 	}
 }
 
 export async function checkAuth() : Promise<boolean> {
-
+	if (logging_out)
+		return false;
 	try {
-		await axios.post(host.http + 'api/token/verify/', { 'token': localStorage.getItem('access'), timeout: 2000});
+		await axios.get(host.http + 'api/token/verify/', {timeout: 2000, withCredentials: true });
+		setLoggedIn(true);
 		return true;
 	} catch {
 		const res = await refreshAuth();
 		if (!res) {
+			setLoggedIn(false);
 			return false;
 		}
+		setLoggedIn(true);
 		return true;
 	}
 }
 
 export async function checkPass(old_pass:string) : Promise<errorT> {
-	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.post(host.http + 'user/verify/',{ 'token': localStorage.getItem('access'), 'password':old_pass}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.post(host.http + 'user/verify/',{ 'password':old_pass}, { timeout: 2000, withCredentials: true});
 		if (res.data.valid === false) {
 			return {code:-1, response:"Wrong Password!"};
 		}
@@ -48,9 +50,8 @@ export async function checkPass(old_pass:string) : Promise<errorT> {
 }
 
 export async function check2Pass(pass1:string, pass2:string) : Promise<errorT> {
-	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.post(host.http + 'user/check/',{ 'token': localStorage.getItem('access'), 'password':pass1, 'password2':pass2}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.post(host.http + 'user/check/',{ 'password':pass1, 'password2':pass2}, { timeout: 2000, withCredentials: true});
 		if (res.data.valid === false) {
 			return {code:-1, response:"New passwords don't match!"};
 		}

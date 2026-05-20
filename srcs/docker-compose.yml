@@ -1,6 +1,7 @@
 services:
   mariadb:
     image: mariadb:11
+    profiles: [dev, prod]
     container_name: mariadb
     restart: unless-stopped
     
@@ -12,7 +13,7 @@ services:
       retries: 3
     
     environment:
-      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD} #should we replace these with docker secrets?
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -24,14 +25,34 @@ services:
     networks:
       - transcendence
  
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
+  nginx_dev:
+    build:
+      context: ./Docker/nginx/dev_nginx
+      dockerfile: Dockerfile
+    profiles: [dev]
+    container_name: nginx_dev
     ports:
       - "8000:80"
-    volumes:
-      - ./Docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - media_data:/app/media
+    depends_on:
+      - django
+    networks:
+      - transcendence
+
+  nginx_prod:
+    build:
+      context: .
+      dockerfile: Docker/nginx/prod_nginx/Dockerfile
+    profiles: [prod]
+    container_name: nginx_prod
+    environment:
+      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+      VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+      VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+      VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+    ports:
+      - "80:80"
     depends_on:
       - django
     networks:
@@ -41,6 +62,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    profiles: [dev, prod]
     container_name: django
     depends_on:
       mariadb:
@@ -60,18 +82,23 @@ services:
       - .env
     networks:
       - transcendence
-    volumes:
-      - media_data:/app/media
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    profiles: [dev]
     container_name: frontend
     ports:
       - "5173:5173"
     environment:
       NODE_ENV: development
+      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+      VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+      VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+      VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -80,22 +107,9 @@ services:
     networks:
       - transcendence
 
-  #frontend:
-  #  build:
-  #    context: ./frontend
-  #    dockerfile: Dockerfile
-  #  container_name: frontend
-  #  ports:
-  #    - "3000:80"
-  #  depends_on:
-  #    - django
-  #  networks:
-  #    - transcendence
-
 networks:
   transcendence:
     driver: bridge
 
 volumes:
   db_data:
-  media_data:

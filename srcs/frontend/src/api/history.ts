@@ -6,9 +6,8 @@ import type { historyApiT } from '../utils/historyApiType';
 import type { playerT } from '../utils/playerType';
 
 export async function getHistory() {
-	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.get(host.http + 'history/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.get(host.http + 'history/', { timeout: 2000, withCredentials: true});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -21,9 +20,8 @@ export async function getHistory() {
 }
 
 async function getPlayers(uuid:string) {
-	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.get(host.http + 'room/' + uuid + '/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.get(host.http + 'room/' + uuid + '/', { timeout: 2000, withCredentials: true});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

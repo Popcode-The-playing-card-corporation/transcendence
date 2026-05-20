@@ -17,7 +17,7 @@
 @layer base {
   body {
     background: var(--bg-color);
-    height: 100vh;
+    /* height: 100vh; */
     font-family: "JetBrains Mono";
   }
   .page-content {
@@ -102,3 +102,4 @@
 .th-stats {
   @apply w-50 h-8;
 }
+

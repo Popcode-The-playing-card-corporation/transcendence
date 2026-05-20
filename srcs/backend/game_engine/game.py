@@ -225,7 +225,6 @@ class GameEngine:
 		if (len(data["board"]) == 0):
 			data["board"]["asked"] = card
 		data["board"][idPlayer] = card
-		s = int(data["playing"])
 
 		if (len(data["board"]) - 1 == len(data["players"])):
 			asked = data["board"].pop("asked")
@@ -235,10 +234,8 @@ class GameEngine:
 				fold.append(c)
 	
 			strongest = self.strongestCard(asked, fold, data["tricks"])
-			index = 0
 			for i in data["board"].keys():
 				if (data["board"][i] == strongest):
-					index = i
 					break
 			
 			melds = Player.countMelds(Player(), fold, data["tricks"])
@@ -251,7 +248,6 @@ class GameEngine:
 		if (len(data["board"]) == 0):
 			data["board"]["asked"] = card
 		data["board"][idPlayer] = card
-		s = int(data["playing"])
 
 		if (len(data["board"]) - 1 == len(data["players"])):
 			asked = data["board"].pop("asked")
@@ -268,7 +264,6 @@ class GameEngine:
 			data["board"]["asked"] = asked
 			return index
 
-   
 	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1, meldIndex=[]):
 		if (action == "start"):
 			return self.startGame(data, nbPlayer)

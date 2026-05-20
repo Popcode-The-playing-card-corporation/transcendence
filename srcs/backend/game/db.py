@@ -35,7 +35,7 @@ def add_player_to_room(user, code):
             room=room
         ).aggregate(Max("position"))["position__max"]
         next_position = 0
-        if last_position != None:
+        if last_position is not None:
             next_position = (last_position or 0) + 1
         
         if room.status == "start":
@@ -74,6 +74,54 @@ def add_player_to_room(user, code):
     except Room.DoesNotExist:
         return False
 
+def add_bot_to_room(user, code):
+    try:
+        room = Room.objects.get(code=code)
+
+        last_position = PlayerPresence.objects.filter(
+            room=room
+        ).aggregate(Max("position"))["position__max"]
+        next_position = 0
+        if last_position is not None:
+            next_position = (last_position or 0) + 1
+        
+        if room.status == "start":
+            exists = PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).exists()
+
+            if not exists:
+                return False
+
+            PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).update(is_online=True)
+
+            return True
+
+        obj, created = PlayerPresence.objects.get_or_create(
+            player=user,
+            room=room,
+            defaults={
+                "position": next_position,
+                "is_online": False,
+                "is_human": False
+            }
+        )
+        room.nb_player = PlayerPresence.objects.filter(room=room).count()
+        room.save()
+
+        if not created:
+            obj.is_online = True
+            obj.save()
+
+        return True
+
+    except Room.DoesNotExist:
+        return False
+
 @sync_to_async
 def remove_player_from_room(user, code):
     try:
@@ -81,7 +129,8 @@ def remove_player_from_room(user, code):
 
         if room.host == user:
             next_player = PlayerPresence.objects.filter(
-                room=room
+                room=room,
+                is_human=True
             ).exclude(player=user).order_by("position").first()
 
             if next_player:

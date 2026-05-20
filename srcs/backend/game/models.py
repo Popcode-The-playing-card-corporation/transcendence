@@ -68,7 +68,7 @@ class PlayerPresence(models.Model):
 
     class Meta:
         unique_together = ['player', 'room']
-        
+
 class Stat(models.Model):
     TRICKS_CHOICES = [
         ("null", "Null"),
@@ -93,5 +93,3 @@ class Stat(models.Model):
     highest_hand_meld = models.IntegerField(default=0)
     highest_board_meld = models.IntegerField(default=0)
     nb_host = models.IntegerField(default=0)
-    
-    

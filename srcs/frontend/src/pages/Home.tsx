@@ -1,6 +1,6 @@
 export function Home() {
   return (
-    <div className="page-content mt-5">
+    <div className="page-content mt-17">
       <h1>Home</h1>
       <div>
         <p>

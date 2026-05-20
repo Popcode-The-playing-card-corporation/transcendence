@@ -1,5 +1,5 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import User, Friendship
+from .models import User
 from asgiref.sync import sync_to_async
 
 from django.contrib.auth import get_user_model
@@ -21,7 +21,6 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         )(is_online=True)
 
     async def disconnect(self, close_code):
-        from django.utils import timezone
 
         await sync_to_async(
             User.objects.filter(id=self.user.id).update
