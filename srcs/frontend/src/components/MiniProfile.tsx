@@ -41,11 +41,6 @@ export default function MiniProfile() {
           <th className="th-profile">Last login:</th>
           <td>{fakeAccount.is_online ? "now" : fakeAccount.last_login}</td>
         </tr>
-        <tr> {/* ?????? why? */}
-
-          <th className="th-profile">History :</th>
-          <td>{fakeAccount.is_online ? "now" : fakeAccount.last_login}</td>
-        </tr>
       </table>
       {/* {* if friend *} 
 				 need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}
