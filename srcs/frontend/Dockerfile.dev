@@ -1,7 +1,7 @@
 # =========================================
 # Stage: Development (Vite React.js App)
 # =========================================
-ARG NODE_VERSION=20-alpine
+ARG NODE_VERSION=22-bookworm-slim
  
 FROM node:${NODE_VERSION} AS dev
  

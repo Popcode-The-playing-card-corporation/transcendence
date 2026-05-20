@@ -4,7 +4,7 @@ import { loginRequest } from '../api/login'
 import { useLocation, useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
 import type { errorT } from "../utils/errorType";
-
+import { setLoggedIn } from "../api/login_status";
 
 export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<boolean>>}) {
 
@@ -27,9 +27,7 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		setName(name.trim());
 		if (password !== "" && name.trim().length !== 0) {
 			const result = await loginRequest(name, password);
-			if (!('code' in result)) {
-				localStorage.setItem('access', result.access);
-				localStorage.setItem('refresh', result.refresh);
+			if (result.code == 200) {
 				setFailure(false);
 				setSuccess(true);
 				return ;
@@ -58,6 +56,7 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		checkAccess();
 
 		if (success || access) {
+			setLoggedIn(true);
 			if (location.state) {
 				navigate(location.state);
 				return ;

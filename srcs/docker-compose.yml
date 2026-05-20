@@ -13,7 +13,7 @@ services:
       retries: 3
     
     environment:
-      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD} #should we replace these with docker secrets?
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -44,6 +44,13 @@ services:
       dockerfile: Docker/nginx/prod_nginx/Dockerfile
     profiles: [prod]
     container_name: nginx_prod
+    environment:
+      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+      VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+      VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+      VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
     ports:
       - "80:80"
     depends_on:
@@ -86,6 +93,12 @@ services:
       - "5173:5173"
     environment:
       NODE_ENV: development
+      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+      VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+      VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+      VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
     volumes:
       - ./frontend:/app
       - /app/node_modules
