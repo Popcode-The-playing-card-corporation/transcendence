@@ -56,7 +56,6 @@ def handle_db(new_email, API, id=0, new_username=""):
 	if (User.objects.filter(email=new_email).exists()):
 
 		user = User.objects.get(email=new_email)
-		user.
 		user.last_login = timezone.now()
 		user.has_password = False
 		if (API == "google"):
