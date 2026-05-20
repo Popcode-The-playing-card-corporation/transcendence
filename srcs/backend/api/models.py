@@ -10,6 +10,10 @@ class User(AbstractUser):
     is_online = models.BooleanField(default=False)
     is_bot = models.BooleanField(default=False)
     elo = models.IntegerField(default=0)
+    has_password = models.BooleanField(default=True)
+    google_id = models.IntegerField(default=0)
+    github_id = models.IntegerField(default=0)
+    fortytwo_id = models.IntegerField(default=0)
     
 class Friendship(models.Model):
     STATUS_CHOICES = [

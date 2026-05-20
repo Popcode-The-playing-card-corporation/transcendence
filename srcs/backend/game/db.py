@@ -124,6 +124,8 @@ def add_bot_to_room(user, code):
 
 @sync_to_async
 def remove_player_from_room(user, code):
+    if not user or not code:
+        return
     try:
         room = Room.objects.get(code=code)
 
@@ -151,12 +153,19 @@ def remove_player_from_room(user, code):
             player=user,
             room=room
         ).values_list("position", flat=True).first()
-
+        
+        if pos is None:
+            PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).delete()
+            return
+        
         players = PlayerPresence.objects.filter(
             room=room,
             position__gt=pos
         )
-
+        
         for p in players:
             p.position -= 1
             p.save()
