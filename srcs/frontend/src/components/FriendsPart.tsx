@@ -15,10 +15,10 @@ import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
-import MiniProfile from "./MiniProfile"
+import MiniProfile from "./MiniProfile";
+import { MdBlock } from "react-icons/md";
 
 export function Friends() {
-
   const [friends, setFriends] = useState<friendT[] | errorT>({
     code: 0,
     response: "",
@@ -28,21 +28,27 @@ export function Friends() {
   const [updatedFriends, setUpdate] = useState(false);
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
-  const [search, setSearch] = useState<string>("")
+  const confirmDelRef = useRef<HTMLDialogElement>(null);
+  const confirmBlocklRef = useRef<HTMLDialogElement>(null);
+  const [search, setSearch] = useState<string>("");
+  const [isMore, setIsMore] = useState(false);
+  const [nbSlice, setNbSlice] = useState(10);
 
-  function getRequests(friend_list:friendT[]) : {friends:friendT[], requests:requestT[]} {
-	const friends:friendT[] = [];
-	const requests:requestT[] = [];
-	for (const friend of friend_list) {
-		if (friend.can_accept) {
-			requests.push({id: friend.id, username: friend.user.username});
-		} else {
-			friends.push(friend);
-		}
-	}
-	return {friends: friends, requests: requests};
+  function getRequests(friend_list: friendT[]): {
+    friends: friendT[];
+    requests: requestT[];
+  } {
+    const friends: friendT[] = [];
+    const requests: requestT[] = [];
+    for (const friend of friend_list) {
+      if (friend.can_accept) {
+        requests.push({ id: friend.id, username: friend.user.username });
+      } else {
+        friends.push(friend);
+      }
+    }
+    return { friends: friends, requests: requests };
   }
-
 
   useEffect(() => {
     async function retrieveFriends() {
@@ -58,27 +64,39 @@ export function Friends() {
           setFriends(res);
         } else {
           const arr = friendArray(res);
-		  const filter = getRequests(arr);
-	      setRequests(filter.requests);
-		  setFriends(filter.friends);
+          const filter = getRequests(arr);
+          setRequests(filter.requests);
+          setFriends(filter.friends);
         }
       } else {
         const arr = friendArray(res);
-		const filter = getRequests(arr);
-		setRequests(filter.requests);
-		setFriends(filter.friends);
+        const filter = getRequests(arr);
+        setRequests(filter.requests);
+        setFriends(filter.friends);
       }
     }
     retrieveFriends();
   }, [navigate, updatedFriends]);
 
-
   if ("code" in friends) {
     return <p>Error: {String(friends.response)}</p>;
   }
 
+  function handleMoreLessBtn() {
+    //  if ('code' in sortedFriends) {
+    // return ;
+    //  }
+    if (isMore) {
+      setIsMore(false);
+      setNbSlice(10);
+    } else {
+      setIsMore(true);
+      setNbSlice(sortedFriends.length);
+    }
+  }
+
   if (requests === null) {
-	return <p>Error: I'm not sure how you got here...</p>;
+    return <p>Error: I'm not sure how you got here...</p>;
   }
 
   async function changeHandler(req_id: number, func: string) {
@@ -101,31 +119,49 @@ export function Friends() {
     setUpdate(!updatedFriends);
     return;
   }
-  
+
   const searchedFriends = friends.filter((friend) => {
-	  if (!search) return true;
-	  const lower = search.toLocaleLowerCase();
-	  return (friend.user.username.toLocaleLowerCase().includes(lower))
-  })
+    if (!search) return true;
+    const lower = search.toLocaleLowerCase();
+    return friend.user.username.toLocaleLowerCase().includes(lower);
+  });
+
+  const sortedFriends = [...searchedFriends].sort((a, b) =>
+    a.status.localeCompare(b.status),
+  );
 
   return (
     <div className="friend-part min-h-70">
       <div className="action-container flex justify-between">
         <label className="input my-5">
           <IoSearch className="text-2xl" />
-          <input type="search" required placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)}/>
+          <input
+            type="search"
+            required
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </label>
         <div className="btn-container my-5 flex justify-end gap-1">
-          <button className="btn" onClick={() => addFriendsRef.current?.showModal()}>
+          <button
+            className="btn"
+            onClick={() => addFriendsRef.current?.showModal()}
+          >
             {" "}
             <FaPlus />{" "}
           </button>
           <dialog id="add_new_friends" className="modal" ref={addFriendsRef}>
-		  <AddFriends />
+            <AddFriends />
           </dialog>
           <div className="dropdown dropdown-end">
             <div className="indicator">
-              <span className="indicator-item badge bg-(--nav-color)">
+              <span
+                className={
+                  "indicator-item badge bg-(--nav-color)" +
+                  (requests.length === 0 ? " hidden" : "")
+                }
+              >
                 {requests.length}
               </span>
               <div tabIndex={0} className="btn" role="button">
@@ -134,7 +170,10 @@ export function Friends() {
             </div>
             <ul
               tabIndex={-1}
-              className="dropdown-content bg-(--hover-color) rounded-box z-1 p-2 shadow-sm h-fit overflow-scroll"
+              className={
+                "dropdown-content bg-(--hover-color) rounded-box z-1 p-2 shadow-sm h-fit overflow-scroll" +
+                (requests.length === 0 ? " hidden" : "")
+              }
             >
               {requests.map((request: { id: number; username: string }) => {
                 return (
@@ -172,7 +211,7 @@ export function Friends() {
           <th className="w-30 text-left">Status</th>
           <th className="w-30 text-left">From</th>
         </tr>
-        {searchedFriends.map((friend: friendT) => (
+        {sortedFriends.slice(0, nbSlice).map((friend: friendT) => (
           <tr className="h-14">
             <td
               className={
@@ -183,11 +222,19 @@ export function Friends() {
               <TbPointFilled />
             </td>
             <td>
-            <button onClick={() => showMiniProfileRef.current?.showModal()}>{friend.user.username}</button>
-
-            <dialog id="showMiniProfile" className="modal" ref={showMiniProfileRef}>
-              <MiniProfile />
-            </dialog>
+              <button
+                className="link-hover"
+                onClick={() => showMiniProfileRef.current?.showModal()}
+              >
+                {friend.user.username}
+              </button>
+              <dialog
+                id="showMiniProfile"
+                className="modal"
+                ref={showMiniProfileRef}
+              >
+                <MiniProfile />
+              </dialog>
             </td>
             <td>{friend.status}</td>
 
@@ -196,15 +243,84 @@ export function Friends() {
                 ? friend.created_at
                 : friend.accepted_at}
             </td>
-            <td>
-              <button onClick={() => changeHandler(friend.id, "delete")} className="btn del ">
+            <td className="w-16">
+              <button
+                onClick={() => confirmDelRef.current?.showModal()}
+                className="btn del "
+              >
                 {" "}
                 <FaRegTrashAlt />{" "}
               </button>
+              <dialog
+                id="modal_confirm_del"
+                className="modal "
+                ref={confirmDelRef}
+              >
+                <div className="modal-box bg-(--bg-color)">
+                  <h3 className="font-bold text-lg">
+                    Are you sure to delete this user to your friends?
+                  </h3>
+                  <p className="py-4">
+                    Are you sure to delete your friend? You can always add him
+                    again
+                  </p>
+                  <div className="modal-action">
+                    <form method="dialog">
+                      <button
+                        className="btn mr-5 del"
+                        onClick={() => changeHandler(friend.id, "delete")}
+                      >
+                        Confirm
+                      </button>
+                      <button className="btn">Cancel</button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
+            </td>
+            <td>
+              <button
+                onClick={() => confirmBlocklRef.current?.showModal()}
+                className="btn del"
+              >
+                {" "}
+                <MdBlock />{" "}
+              </button>
+              <dialog
+                id="modal_confirm_block"
+                className="modal "
+                ref={confirmBlocklRef}
+              >
+                <div className="modal-box bg-(--bg-color)">
+                  <h3 className="font-bold text-lg">
+                    Are you sure to block this user?
+                  </h3>
+                  <p className="py-4">
+                    You won't be able to play with them and your profile will be
+                    hidden from them.
+                    <br />
+                    You can always unblock them in settings
+                  </p>
+                  <div className="modal-action">
+                    <form method="dialog">
+                      <button
+                        className="btn mr-5 del"
+                        onClick={() => changeHandler(friend.id, "block")}
+                      >
+                        Confirm
+                      </button>
+                      <button className="btn">Cancel</button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
             </td>
           </tr>
         ))}
       </table>
+      <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
+        {sortedFriends.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
+      </a>
     </div>
   );
 }

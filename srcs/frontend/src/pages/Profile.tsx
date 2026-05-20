@@ -1,9 +1,38 @@
+import { useLocation, useNavigate } from "react-router";
+import { checkAuth } from "../api/checkAuth";
 import { Friends } from "../components/FriendsPart";
 import { History } from "../components/HistoryPart";
 import { ProfilePart } from "../components/ProfilePart";
 import { StatisticsPart } from "../components/StatisticPart";
+import { useEffect, useState } from "react";
 
 export function Profile() {
+
+	const [valid, setValid] = useState<boolean | null>(null);
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	useEffect(() => {
+		async function verify() {
+			if (!(await checkAuth())) {
+				navigate('/login', {state: location.pathname});
+				setValid(false);
+				return ;
+			}
+			setValid(true);
+		}
+		verify();
+	}, [navigate, location])
+
+	if (valid === null) {
+		return <p>Loading...</p>;
+	}
+
+	if (!valid) {
+		return ;
+	}
+
+
   return (
     <div className=" page-content mt-17">
       <h1>Profile</h1>

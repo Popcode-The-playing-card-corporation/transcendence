@@ -51,6 +51,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
             ).exists
         )()
         
+        if room.nb_player == 7:
+            await self.accept()
+            await self.send(text_data=json.dumps({
+                "event": "game_event",
+                "message": "La partie est remplie"
+            }, ensure_ascii=False))
+            await self.close(code=4003)
+            return
+            
+        
         if room.status == "end":
             await self.accept()
             await self.send(text_data=json.dumps({
