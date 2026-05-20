@@ -6,12 +6,11 @@ from rest_framework.response import Response
 from game.models import Stat
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from ..models import User
 from django.conf import settings
 import requests
 
 def OAUTH_Success(user, message):
-
-	Stat.objects.create(user=user)
 	
 	refresh = RefreshToken.for_user(user)
 	access_token = refresh.access_token
@@ -54,14 +53,20 @@ def check_username(User, new_username, api):
 def handle_db(new_email, API, id=0, new_username=""):
 	if (API == 'google'):
 		new_username = new_email
-	User = get_user_model()
 	if (User.objects.filter(email=new_email).exists()):
 
 		user = User.objects.get(email=new_email)
 		user.last_login = timezone.now()
-		user.save(update_fields=["last_login"])
-		## set has_password to true
-		## set oauth id based on which API
+		user.has_password = False
+		if (API == "google"):
+			user.google_id = id
+			user.save(update_fields=["google_id", "last_login", "has_password"])
+		if (API == "github"):
+			user.github_id = id
+			user.save(update_fields=["github_id", "last_login", "has_password"])
+		if (API == "fortytwo"):
+			user.fortytwo_id = id
+			user.save(update_fields=["fortytwo_id", "last_login", "has_password"])
 		return (OAUTH_Success(user, "Merged accounts with email"))
 	
 	message = "Success"
@@ -70,11 +75,19 @@ def handle_db(new_email, API, id=0, new_username=""):
 	if (check_name != new_username):
 		message = "Username changed"
 	user = User.objects.create(email=new_email, username=new_username)
+	Stat.objects.create(user=user)
 	user.last_login = timezone.now()
 	user.date_joined = timezone.now()
-	## set has_password to false
-	## set oauth id based on which API
-	user.save(update_fields=["last_login", 'date_joined'])
+	user.has_password = False
+	if (API == "google"):
+		user.google_id = id
+		user.save(update_fields=["google_id", "last_login", "has_password", 'date_joined'])
+	if (API == "github"):
+		user.github_id = id
+		user.save(update_fields=["github_id", "last_login", "has_password", 'date_joined'])
+	if (API == "fortytwo"):
+		user.fortytwo_id = id
+		user.save(update_fields=["fortytwo_id", "last_login", "has_password", 'date_joined'])
 	return (OAUTH_Success(user, message))
 
 
@@ -103,7 +116,8 @@ def FortyTwoLogin(request):
 		return(Response({f"error":"error getting user data"}, status=400))
 	
 	data = user_data.json()
-	return (handle_db(data["email"], "42", new_username=data["login"]))
+
+	return (handle_db(data["email"], "fortytwo", id=data['id'], new_username=data["login"]))
 
 
 @api_view(["POST"])
@@ -132,7 +146,7 @@ def GitLogin(request):
 	user_data = requests.get("https://api.github.com/user", headers={"Authorization": f"Bearer {token}"})
 	if (user_data.status_code != 200):
 		return(Response({f"error":"error getting user data"}, status=400))
-	
+	print(user_data)
 	emails = emails.json()
 	real_email = None
 	for email in emails:
@@ -145,7 +159,7 @@ def GitLogin(request):
 
 	data = user_data.json()
 
-	return (handle_db(real_email, "git", new_username=data["login"]))
+	return (handle_db(real_email, "github", id=data['id'], new_username=data["login"]))
 
 
 @api_view(["POST"])
@@ -174,4 +188,4 @@ def GoogleLogin(request):
 
 	data = user_data.json()
 
-	return (handle_db(data['email'], "google"))
+	return (handle_db(data['email'], "google", id=data['sub']))

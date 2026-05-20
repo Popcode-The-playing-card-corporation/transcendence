@@ -37,7 +37,6 @@ def user_data(request, user_id):
 
     try:
         user = User.objects.get(id=user_id)
-
     except User.DoesNotExist:
         return Response(
             {
