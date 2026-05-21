@@ -40,7 +40,7 @@ def leaderboard(request):
         previous_elo = user["elo"]
 
     if request.user.is_authenticated:
-
+        
         user = request.user
 
         rank = (
