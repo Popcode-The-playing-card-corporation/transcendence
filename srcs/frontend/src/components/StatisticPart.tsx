@@ -3,7 +3,7 @@ import type { statisticsT } from "../utils/statisticsType";
 import type { errorT } from "../utils/errorType";
 import { getStats } from "../api/stats";
 import { useNavigate } from "react-router-dom";
-import { refreshAuth } from "../api/checkAuth";
+import { checkAuth } from "../api/checkAuth";
 import { profileRequest } from "../api/profile";
 
 
@@ -16,7 +16,7 @@ export function StatisticsPart() {
 			let user = await profileRequest();
 			if ('code' in user) {
 				if (user.code === 401) {
-					if (!(await refreshAuth())) {
+					if (!(await checkAuth())) {
 						navigate('/login');
 					}
 					user = await profileRequest();
@@ -36,7 +36,7 @@ export function StatisticsPart() {
 			let res = await getStats(id);
 			if ('code' in res) {
 				if (res.code === 401) {
-					if (!(await refreshAuth())) {
+					if (!(await checkAuth())) {
 						navigate('/login');
 					}
 					res = await getStats(id);

@@ -45,9 +45,14 @@ class Player:
 		hearts = []
 		bucket = {"club": clubs, "spade": spades, "diamond": diamonds, "heart": hearts}
 
+		ex = Card("-1", "none")
 		for c in fold:
-			cList = bucket[c["color"]]
-			cList.append(Card(c["value"], c["color"]))
+			if (type(ex) == type(c)):
+				cList = bucket[c.colors]
+				cList.append(Card(c.values, c.colors))
+			else:
+				cList = bucket[c["color"]]
+				cList.append(Card(c["value"], c["color"]))
 
 		ret = self.findSuit(bucket)
 		for c in clubs:

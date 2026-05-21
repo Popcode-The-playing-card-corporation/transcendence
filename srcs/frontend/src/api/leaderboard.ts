@@ -7,14 +7,13 @@ import { checkAuth } from './checkAuth';
 
 export async function getLeaderboard() { //: Promise<friendT | errorT>
 	
-	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
 		let res;
-		if (await checkAuth()) { // Need to actualy check authentication rather than if access exists
-			res = await axios.get(host.http + 'leaderboard/', { 'headers': {'Authorization': AuthStr}, timeout: 2000});
+		if (await checkAuth()) { 
+			res = await axios.get(host.http + 'leaderboard/', { timeout: 2000, withCredentials: true});
 			return res;
 		}
-		res = await axios.get(host.http + 'leaderboard/', {timeout: 2000});
+		res = await axios.get(host.http + 'leaderboard/', {timeout: 2000, withCredentials: true});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

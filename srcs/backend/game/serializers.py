@@ -10,7 +10,6 @@ class RoomSerializer(serializers.ModelSerializer):
         model = Room
         fields = ['id', 'code', 'host', 'created_at']
 
-
 class PlayerScoreSerializer(serializers.ModelSerializer):
     player = UserSerializer()
 

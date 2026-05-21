@@ -12,6 +12,9 @@ import { NotifPopUp } from "./components/NotifPopUp";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 import Error404 from "./pages/Error404";
+import { GoogleCallback } from "./OAuth/GoogleCallback";
+import { FortyTwoCallback } from "./OAuth/42Callback";
+import { GitCallback } from "./OAuth/GitCallback";
 
 function App() {
   return (
@@ -33,6 +36,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
           <Route path="/termsOfService" element={<TermsOfService />} />
+		  <Route path="/login/google/callback" element={<GoogleCallback />} />
+		  <Route path="/login/42/callback" element={<FortyTwoCallback />} />
+		  <Route path="/login/github/callback" element={<GitCallback />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
         <Footer />

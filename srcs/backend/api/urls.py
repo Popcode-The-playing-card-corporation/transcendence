@@ -1,8 +1,8 @@
 from django.urls import path
-from .views.user_views import register, login, user, user_data, verify_password, check_new_password
+from .views.user_views import register, login, logout, user, user_data, verify_password, check_new_password
 from .views.friend_view import get_friends, unblock_friend, list_user, list_propal, accept_friend_request, block_friend, list_blocked, delete_friend_request, send_friend_request
 from .views.stat_view import get_stat, room_data, game_history, leaderboard, game_history_friend
-
+from .views.OAuth_view import GoogleLogin, FortyTwoLogin, GitLogin
 
 urlpatterns = [
     #user part
@@ -12,6 +12,13 @@ urlpatterns = [
     path("user/<int:user_id>/", user_data),
     path("user/verify/", verify_password),
     path("user/check/", check_new_password),
+
+	path("logout/", logout),
+	# #OAuth part
+	path("login/google/", GoogleLogin.as_view(), name="google_login"),
+	path("login/42/", FortyTwoLogin, name="42_login"),
+	path("login/github/", GitLogin, name="GitHub_login"),
+	# path("logout/google/", GoogleLogout.as_view()),
     
     #friend part
     path("friends/", get_friends),

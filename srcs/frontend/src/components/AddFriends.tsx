@@ -3,28 +3,29 @@ import { FaPlus } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 
 export function AddFriends() {
-	const [search, setSearch] = useState("");
-	const result = [{
-		id:0,
-		username: "danouille",
-	},
-	{
-		id:2,
-		username: "dananas",
-	},
-	{
-		id:3,
-		username: "danube",
-	},
-	{
-		id:4,
-		username: "danazi",
-	},
-	{
-		id:5,
-		username: "danabelle",
-	}
-	]
+  const [search, setSearch] = useState("");
+  const result = [
+    {
+      id: 0,
+      username: "danouille",
+    },
+    {
+      id: 2,
+      username: "dananas",
+    },
+    {
+      id: 3,
+      username: "danube",
+    },
+    {
+      id: 4,
+      username: "danazi",
+    },
+    {
+      id: 5,
+      username: "danabelle",
+    },
+  ];
   return (
     <>
        <div className="modal-box bg-(--nav-color) w-fit">

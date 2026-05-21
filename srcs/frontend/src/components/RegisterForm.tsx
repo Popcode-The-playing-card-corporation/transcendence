@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
 import avatar from "../assets/avatars/avatar1.png";
 import type { errorT } from "../utils/errorType";
+import LoginWithService from "./LoginWithService";
 
 export function RegisterForm({
   setCreated,
@@ -65,8 +66,6 @@ export function RegisterForm({
     if (validate_inputs(email, name, password, repassword)) {
       const result = await registerRequest(email, name, password, avatar);
       if (!('code' in result)) {
-        localStorage.setItem("access", result.access);
-        localStorage.setItem("refresh", result.refresh);
         setSuccess(true);
         return;
       }
@@ -158,6 +157,7 @@ export function RegisterForm({
       >
         Register
       </button>
+      <LoginWithService />
     </fieldset>
   );
 }

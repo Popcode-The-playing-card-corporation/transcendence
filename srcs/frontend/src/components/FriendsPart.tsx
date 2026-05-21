@@ -10,7 +10,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
-import { refreshAuth } from "../api/checkAuth";
+import { checkAuth } from "../api/checkAuth";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
@@ -57,7 +57,7 @@ export function Friends() {
       let res = await getFriends();
       if ("code" in res) {
         if (res.code === 401) {
-          if (!(await refreshAuth())) {
+          if (!(await checkAuth())) {
             navigate("/login");
           }
           res = await getFriends();
