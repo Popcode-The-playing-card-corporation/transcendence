@@ -36,6 +36,7 @@ class Room(models.Model):
     started_at = models.DateTimeField(null=True)
     ended_at = models.DateTimeField(null=True)
     nb_player = models.IntegerField(default=0)
+    is_private = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.code}"

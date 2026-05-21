@@ -8,7 +8,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'code', 'host', 'created_at']
+        fields = ['id', 'code', 'host', 'created_at', 'is_private']
 
 class PlayerScoreSerializer(serializers.ModelSerializer):
     player = UserSerializer()

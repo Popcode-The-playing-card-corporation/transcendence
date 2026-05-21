@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from api.auth.authentication import OptionalJWTAuthentication
 from ..models import Room
 from ..models import PlayerPresence
 from api.models import User
@@ -9,17 +10,23 @@ from ..db import add_bot_to_room
 import uuid
 
 class CreateRoomView(APIView):
+    authentication_classes = [OptionalJWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        private = request.data.get("private")
+        if private == None:
+            private = 0
         room_code = str(uuid.uuid4())[:8]
         room = Room.objects.create(
             code=room_code,
-            host=request.user
+            host=request.user,
+            is_private=private,
         )
         return Response(RoomSerializer(room).data, status=201)
 
 class AddBotView(APIView):
+    authentication_classes = [OptionalJWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request, code):
