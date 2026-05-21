@@ -111,7 +111,7 @@ export function Profile() {
 			setValid(true);
 		}
 		verify();
-	}, [updatedProfile, navigate, location])
+	}, [updatedFriends, updatedProfile, navigate, location])
 
 	if (valid === null) {
 		return <p>Loading...</p>;
