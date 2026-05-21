@@ -42,7 +42,7 @@ def add_bot(request, code):
     if (room.host == request.user):
         last_bot = PlayerPresence.objects.filter(is_human=False, room=room).last()
         if (last_bot == None):
-            user = User.objects.get(username= "BOT")
+            user = User.objects.get(username= "BOT0")
         else:
             user = User.objects.get(id= int(last_bot.player_id))
             
@@ -71,10 +71,6 @@ def add_bot(request, code):
         {"error": "You are not the host. BAD"},
         status=401
     )
-
-#TODO list start room with player presence
-#TODO vote in game to ban a player
-#TODO host can kick player when room's status open
 
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -127,7 +123,6 @@ def list_friend_room(request):
             friends.add(f.from_user)
 
     rooms = Room.objects.filter(
-        is_private=0,
         status="open"
     )
 
@@ -158,6 +153,63 @@ def list_friend_room(request):
     for value in room_map.values():
 
         if not value["has_friend"]:
+            continue
+
+        room = value["room"]
+
+        list_player = [
+            {
+                "username": p.player.username
+            }
+            for p in value["players"]
+        ]
+
+        data.append({
+            "id": room.id,
+            "code": room.code,
+            "nb_player": room.nb_player,
+            "list_player": list_player,
+            "host": room.host.username if room.host else None,
+        })
+
+    return Response(data, status=200)
+
+@api_view(["GET"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def list_my_started_room(request):
+
+    rooms = Room.objects.filter(
+        status="start"
+    )
+
+    presences = PlayerPresence.objects.filter(
+        room__in=rooms,
+    ).select_related("player", "room")
+
+    room_map = {}
+
+    for p in presences:
+        print(p)
+        room_id = p.room.id
+
+        if room_id not in room_map:
+            room_map[room_id] = {
+                "room": p.room,
+                "players": [],
+                "present": False
+            }
+
+        room_map[room_id]["players"].append(p)
+
+        if request.user == p.player:
+            room_map[room_id]["present"] = True
+
+    data = []
+
+    for value in room_map.values():
+
+        if not value["present"]:
             continue
 
         room = value["room"]
