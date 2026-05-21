@@ -4,13 +4,8 @@ import {
   acceptRequest,
   deleteRequest,
   denyRequest,
-  friendArray,
-  getFriends,
 } from "../api/friend";
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import type { errorT } from "../utils/errorType";
-import { checkAuth } from "../api/checkAuth";
+import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
@@ -18,14 +13,7 @@ import { AddFriends } from "./AddFriends";
 import MiniProfile from "./MiniProfile";
 import { MdBlock } from "react-icons/md";
 
-export function Friends() {
-  const [friends, setFriends] = useState<friendT[] | errorT>({
-    code: 0,
-    response: "",
-  });
-  const navigate = useNavigate();
-  const [requests, setRequests] = useState<requestT[] | null>(null);
-  const [updatedFriends, setUpdate] = useState(false);
+export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:friendT[], requests:requestT[]; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>}) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
   const confirmDelRef = useRef<HTMLDialogElement>(null);
@@ -34,58 +22,7 @@ export function Friends() {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10);
 
-  function getRequests(friend_list: friendT[]): {
-    friends: friendT[];
-    requests: requestT[];
-  } {
-    const friends: friendT[] = [];
-    const requests: requestT[] = [];
-    for (const friend of friend_list) {
-      if (friend.can_accept) {
-        requests.push({ id: friend.id, username: friend.user.username });
-      } else {
-        friends.push(friend);
-      }
-    }
-    return { friends: friends, requests: requests };
-  }
-
-  useEffect(() => {
-    async function retrieveFriends() {
-      let res = await getFriends();
-      if ("code" in res) {
-        if (res.code === 401) {
-          if (!(await checkAuth())) {
-            navigate("/login");
-          }
-          res = await getFriends();
-        }
-        if ("code" in res) {
-          setFriends(res);
-        } else {
-          const arr = friendArray(res);
-          const filter = getRequests(arr);
-          setRequests(filter.requests);
-          setFriends(filter.friends);
-        }
-      } else {
-        const arr = friendArray(res);
-        const filter = getRequests(arr);
-        setRequests(filter.requests);
-        setFriends(filter.friends);
-      }
-    }
-    retrieveFriends();
-  }, [navigate, updatedFriends]);
-
-  if ("code" in friends) {
-    return <p>Error: {String(friends.response)}</p>;
-  }
-
   function handleMoreLessBtn() {
-    //  if ('code' in sortedFriends) {
-    // return ;
-    //  }
     if (isMore) {
       setIsMore(false);
       setNbSlice(10);
@@ -94,11 +31,6 @@ export function Friends() {
       setNbSlice(sortedFriends.length);
     }
   }
-
-  if (requests === null) {
-    return <p>Error: I'm not sure how you got here...</p>;
-  }
-
   async function changeHandler(req_id: number, func: string) {
     if (func === "accept") {
       const res = await acceptRequest(req_id);
