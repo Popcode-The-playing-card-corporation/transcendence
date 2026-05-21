@@ -7,7 +7,7 @@ type Props = {
 };
 
 export function NotifPopUp({ isEnabled, title, body }: Props) {
-  const [progress, setProgress] = useState(100);
+  const [progress, setProgress] = useState(200);
   // const [reference, setReference] = useState(0);
 
   useEffect(() => {

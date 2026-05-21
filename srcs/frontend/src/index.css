@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Cause:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Yarndings+12&display=swap');
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -11,10 +12,19 @@
   --accent-color: #e06b73;
   --red-color: #c40606;
   --green-color: #31dd7e;
-  --font: "JetBrains Mono";
 }
 
 @layer base {
+  .font-Cause {
+    font-family: "Cause";
+  }
+  .font-JetBrains {
+    font-family: "JetBrains Mono";
+  }
+
+.font-Yarndings {
+		font-family: "Yarndings 12"
+	}
   body {
     background: var(--bg-color);
     /* height: 100vh; */
@@ -47,7 +57,7 @@
 }
 
 .validate {
-	@apply bg-(--green-color)
+  @apply bg-(--green-color);
 }
 
 .avatar-hovered {
@@ -102,4 +112,3 @@
 .th-stats {
   @apply w-50 h-8;
 }
-
