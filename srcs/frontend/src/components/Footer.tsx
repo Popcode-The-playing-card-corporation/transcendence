@@ -17,7 +17,7 @@ export function Footer() {
           <a className="text-xl hover:scale-110" href="https://github.com/Cyraullie/transcendence" target="_blank">
             <FaGithub />
           </a>
-          <a  className="text-xl hover:scale-110" href="https://cornhub.website/" target="_blank">
+          <a   className="text-xl hover:scale-110" href="https://cornhub.website/" target="_blank">
             <SiOnlyfans />
           </a>
         </div>

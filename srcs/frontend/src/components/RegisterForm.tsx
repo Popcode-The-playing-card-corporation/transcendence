@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { checkAuth } from "../api/checkAuth";
 import avatar from "../assets/avatars/avatar1.png";
 import type { errorT } from "../utils/errorType";
+import LoginWithService from "./LoginWithService";
 
 export function RegisterForm({
   setCreated,
@@ -156,6 +157,7 @@ export function RegisterForm({
       >
         Register
       </button>
+      <LoginWithService />
     </fieldset>
   );
 }
