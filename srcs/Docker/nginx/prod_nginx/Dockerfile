@@ -29,12 +29,15 @@ RUN npm run build
 
 FROM nginx:stable-alpine
 
+ARG DOMAIN_NAME
+
 RUN mkdir -p /etc/nginx/ssl 
 
 COPY Docker/nginx/prod_nginx/ssl.cert /etc/nginx/ssl/ssl.cert 
 COPY Docker/nginx/prod_nginx/ssl.key /etc/nginx/ssl/ssl.key
 COPY Docker/nginx/prod_nginx/nginx.conf /etc/nginx/nginx.conf
 
+RUN sed -i "s/localhost/${DOMAIN_NAME} www.${DOMAIN_NAME}/g" /etc/nginx/nginx.conf
 
 COPY --from=build /app/dist /etc/nginx/dist
 

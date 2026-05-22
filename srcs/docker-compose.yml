@@ -51,6 +51,7 @@ services:
         VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
         VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
         VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+        DOMAIN_NAME: ${DOMAIN_NAME}
     profiles: [prod]
     container_name: nginx_prod
     ports:
