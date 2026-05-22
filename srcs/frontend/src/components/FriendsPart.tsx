@@ -12,6 +12,9 @@ import { FaPlus } from "react-icons/fa";
 
 export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:friendT[]; requests:requestT[]; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>}) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
+  const showMiniProfileRef = useRef<HTMLDialogElement[] | null>([]);
+  const confirmDelRef = useRef<HTMLDialogElement>(null);
+  const confirmBlocklRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10);
@@ -117,7 +120,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
           <th className="w-30 text-left">Status</th>
           <th className="w-30 text-left">From</th>
         </tr>
-        {sortedFriends.slice(0, nbSlice).map((friend: friendT) => (
+        {sortedFriends.slice(0, nbSlice).map((friend: friendT, index:number) => (
           <tr className="h-14">
             <td
               className={
@@ -128,7 +131,19 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
               <TbPointFilled />
             </td>
             <td>
+              <button
+                className="link-hover"
+                onClick={() => showMiniProfileRef.current![index].showModal()}
+              >
+                {friend.user.username}
+              </button>
+              <dialog
+                id="showMiniProfile"
+                className="modal"
+                ref={(elt) => {showMiniProfileRef.current![index] = elt!}}
+              >
                 <MiniProfile friend={friend}/>
+              </dialog>
             </td>
             <td>{friend.status}</td>
 
