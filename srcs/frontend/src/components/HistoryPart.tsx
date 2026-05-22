@@ -1,52 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { historyT } from "../utils/historyType";
-import type { errorT } from "../utils/errorType";
-import { getHistory, historyArray } from "../api/history";
 import type { playerT } from "../utils/playerType";
-import { useNavigate } from "react-router-dom";
-import { checkAuth } from "../api/checkAuth";
 
-export function History() {
+export function History({gameHistory}:{gameHistory:historyT[]}) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10)
-  const [gameHistory, setHistory] = useState< historyT[] | errorT>({code: 0, response: ''});
-  const navigate = useNavigate();
-
-  	useEffect(() => {
-		async function retrieveHistory() {
-			let res = await getHistory();
-			if ('code' in res) {
-				if (res.code === 401) {
-					if (!(await checkAuth())) {
-						navigate('/login');
-					}
-					res = await getHistory();
-				}
-				if ('code' in res) {
-					setHistory(res);
-				}
-				else {
-					const arr = await historyArray(res);
-					setHistory(arr);
-				}
-			} else {
-				const arr = await historyArray(res);
-				setHistory(arr);
-			}	
-		}
-
-		retrieveHistory();
-
-	}, [navigate])
-
-	if ('code' in gameHistory) {
-		return <p>Error: {String(gameHistory.response)}</p>;
-	} 
 
   function handleMoreLessBtn() {
-	  if ('code' in gameHistory) {
-		return ;
-	  }
 	  if (isMore) {
 		  setIsMore(false);
 		  setNbSlice(10);

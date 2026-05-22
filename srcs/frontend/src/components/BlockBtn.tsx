@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { MdBlock } from "react-icons/md";
 
-export default function BlockBtn({req_id, changeHandler}: {req_id: number, changeHandler:(req_id: number, func: string) => void}) {
+export default function BlockBtn({req_id, changeHandler, updatedFriends, setUpdate}: {req_id: number; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; changeHandler: (req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => void}) {
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
 
 	return (
@@ -34,7 +34,7 @@ export default function BlockBtn({req_id, changeHandler}: {req_id: number, chang
             <form method="dialog">
               <button
                 className="btn mr-5 del"
-                onClick={() => changeHandler(req_id, "block")}
+                onClick={() => changeHandler(req_id, "block", updatedFriends, setUpdate)}
               >
                 Confirm
               </button>

@@ -3,12 +3,10 @@ import { MiniHistory } from "./MiniHistory";
 import DeleteBtn from "./DeleteBtn";
 import AddFriendsBtn from "./AddFriendsBtn";
 import BlockBtn from "./BlockBtn";
-import { useRef } from "react";
 import type { friendT } from "../utils/friendType";
 
 export default function MiniProfile({friend}:{friend:friendT}) {
   const fakeAccount = generateFakeAccount();
-  const showMiniProfileRef = useRef<HTMLDialogElement>(null);
   async function changeHandler(req_id: number, func: string) {
     if (func === "accept") {
       console.log("it accepts");
@@ -22,17 +20,6 @@ export default function MiniProfile({friend}:{friend:friendT}) {
 
   return (
     <>
-    <button
-      className="link-hover"
-      onClick={() => showMiniProfileRef.current?.showModal()}
-    >
-      {friend.user.username}
-    </button>
-    <dialog
-      id="showMiniProfile"
-      className="modal"
-      ref={showMiniProfileRef}
-    >
     <div className="modal-box bg-(--nav-color)">
       <p className="text-center ">click ESC for close this window</p>
       <div className="flex">
@@ -41,7 +28,7 @@ export default function MiniProfile({friend}:{friend:friendT}) {
             <img src={fakeAccount.avatar}></img>
           </div>
           <p className="text-green-200 font-extrabold my-2 mx-auto">
-            {fakeAccount.is_online ? "Online" : ""}
+            {friend.user.is_online ? "Online" : ""}
           </p>
         </div>
         <div className="w-full flex justify-end">
@@ -78,7 +65,6 @@ export default function MiniProfile({friend}:{friend:friendT}) {
       <form method="dialog" className="modal-backdrop">
         <button ></button>
       </form>
-    </dialog>
     </>
   );
 }

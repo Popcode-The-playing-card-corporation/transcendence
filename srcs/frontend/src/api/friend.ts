@@ -42,6 +42,27 @@ export async function friendRequest(id:number) {
 	}
 }
 
+export async function changeHandler(req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>) {
+	if (func === "accept") {
+		const res = await acceptRequest(req_id);
+		if ("code" in res) {
+		console.error(res.response);
+		}
+	} else if (func === "deny") {
+		const res = await denyRequest(req_id);
+		if ("code" in res) {
+		console.error(res.response);
+		}
+	} else if (func === "delete") {
+		const res = await deleteRequest(req_id);
+		if ("code" in res) {
+		console.error(res.response);
+		}
+	}
+	setUpdate(!updatedFriends);
+	return;
+}
+
 export async function acceptRequest(req_id:number) {
 	try {
 		const res = await axios.post(host.http + 'friends/accept/' + req_id + '/',{}, { timeout: 2000, withCredentials: true });

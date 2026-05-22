@@ -1,7 +1,7 @@
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useRef } from "react";
 
-export default function DeleteBtn({req_id, changeHandler}: {req_id: number, changeHandler: (req_id: number, func: string) => void}) {
+export default function DeleteBtn({req_id, changeHandler, updatedFriends, setUpdate}: {req_id: number; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; changeHandler: (req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => void}) {
   const confirmDelRef = useRef<HTMLDialogElement>(null);
 
   return (
@@ -31,7 +31,7 @@ export default function DeleteBtn({req_id, changeHandler}: {req_id: number, chan
         <form method="dialog">
           <button
           className="btn mr-5 del"
-          onClick={() => changeHandler(req_id, "delete")}
+          onClick={() => changeHandler(req_id, "delete", updatedFriends, setUpdate)}
           >
           Confirm
           </button>

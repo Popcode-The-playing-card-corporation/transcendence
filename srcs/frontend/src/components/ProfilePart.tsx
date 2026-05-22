@@ -1,61 +1,14 @@
-import { profileRequest } from "../api/profile"; // changeEmail
 import type { accountT } from "../utils/accountType";
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import type { errorT } from "../utils/errorType";
+import { useRef } from "react";
 import { AvatarSelection } from "./AvatarSelection";
 import { PswdChange } from "./PswdChange";
 import { PseudoChange } from "./PseudoChange";
-import { checkAuth } from "../api/checkAuth";
-import avatar1 from "../assets/avatars/avatar1.png";
 
-export function ProfilePart() {
-  const [realAccount, setAccount] = useState<accountT | errorT>({
-    code: 0,
-    response: "",
-  });
-  const navigate = useNavigate();
-  const [updatedProfile, setUpdate] = useState(false);
+
+export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccount:accountT; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; updatedProfile:boolean}) {
+
   const dialogPswdRef = useRef<HTMLDialogElement>(null);
   const dialogPseudoRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    async function getProfile() {
-      let result = await profileRequest();
-
-	  if ("code" in result) {
-		if (result.code === 401) {
-			if (!(await checkAuth())) {
-				navigate('/login');
-			}
-			result = await profileRequest();
-		}
-      } else {
-		if (result.avatar === "") {
-			result.avatar = avatar1;
-		}
-	  }
-	  setAccount(result);
-      return;
-    }
-
-    getProfile();
-  }, [updatedProfile, navigate]);
-
-  if ("code" in realAccount) {
-    return <p>Error: {realAccount.response}</p>; // improve message
-  }
-
-
-//   async function updateEmail(in_email:string) {
-// 	const res = await changeEmail(in_email);
-// 	if (!res) {
-// 		console.error('email failure');
-// 		return ;
-// 	}
-// 	setUpdate(!updatedProfile);
-// 	return ;
-//   }
 
   return (
     <div>

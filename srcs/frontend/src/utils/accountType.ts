@@ -10,3 +10,15 @@
     elo: number,
     is_friend: boolean,
   };
+
+  export const defaultAccount:accountT  = {
+	id: 0,
+	username: "",
+	email:"",
+	avatar:"",
+	date_joined:"",
+	is_online:false,
+	last_login:"",
+	elo:0,
+	is_friend:false,
+  }
