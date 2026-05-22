@@ -10,14 +10,19 @@ import DeleteBtn from "./DeleteBtn";
 import BlockBtn from "./BlockBtn";
 import { FaPlus } from "react-icons/fa";
 
-export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:friendT[]; requests:requestT[]; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>}) {
+type Props = {
+  friends:friendT[];
+  requests:requestT[];
+  updatedFriends:boolean;
+  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const showMiniProfileRef = useRef<HTMLDialogElement[] | null>([]);
-  const confirmDelRef = useRef<HTMLDialogElement>(null);
-  const confirmBlocklRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
-  const [isMore, setIsMore] = useState(false);
-  const [nbSlice, setNbSlice] = useState(10);
+  const [isMore, setIsMore] = useState<boolean>(false);
+  const [nbSlice, setNbSlice] = useState<number>(10);
 
   function handleMoreLessBtn() {
     if (isMore) {
@@ -142,21 +147,20 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
                 className="modal"
                 ref={(elt) => {showMiniProfileRef.current![index] = elt!}}
               >
-                <MiniProfile friend={friend}/>
+                <MiniProfile id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
               </dialog>
             </td>
             <td>{friend.status}</td>
-
             <td>
               {friend.status === "pending"
                 ? friend.created_at
                 : friend.accepted_at}
             </td>
             <td className="w-16">
-              <DeleteBtn req_id={friend.id} changeHandler={changeHandler} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <DeleteBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
             <td>
-              <BlockBtn req_id={friend.id} changeHandler={changeHandler} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <BlockBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
           </tr>
         ))}

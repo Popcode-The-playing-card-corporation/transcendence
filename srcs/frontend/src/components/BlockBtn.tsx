@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { MdBlock } from "react-icons/md";
+import { changeHandler } from "../api/friend";
 
 type Props = {
   req_id: number;

@@ -1,7 +1,14 @@
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useRef } from "react";
+import { changeHandler } from "../api/friend";
 
-export default function DeleteBtn({req_id, changeHandler, updatedFriends, setUpdate}: {req_id: number; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; changeHandler: (req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => void}) {
+type Props = {
+  req_id: number;
+  updatedFriends: boolean;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function DeleteBtn({req_id, updatedFriends, setUpdate}: Props) {
   const confirmDelRef = useRef<HTMLDialogElement>(null);
 
   return (

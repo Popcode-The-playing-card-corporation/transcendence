@@ -3,20 +3,16 @@ import { MiniHistory } from "./MiniHistory";
 import DeleteBtn from "./DeleteBtn";
 import AddFriendsBtn from "./AddFriendsBtn";
 import BlockBtn from "./BlockBtn";
-import type { friendT } from "../utils/friendType";
+import type { profileT } from "../utils/profileType";
 
-export default function MiniProfile({friend}:{friend:friendT}) {
+type Props = {
+  id: number;
+  updatedFriends: boolean;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function MiniProfile({id, updatedFriends, setUpdate}: Props) {
   const fakeAccount = generateFakeAccount();
-  async function changeHandler(req_id: number, func: string) {
-    if (func === "accept") {
-      console.log("it accepts");
-    } else if (func === "block") {
-      console.log("it blocks");
-    } else if (func === "delete") {
-      console.log("it deletes");
-    }
-    return;
-  }
 
   return (
     <>
@@ -28,24 +24,20 @@ export default function MiniProfile({friend}:{friend:friendT}) {
             <img src={fakeAccount.avatar}></img>
           </div>
           <p className="text-green-200 font-extrabold my-2 mx-auto">
-            {friend.user.is_online ? "Online" : ""}
+            {fakeAccount.is_online ? "Online" : ""}
           </p>
         </div>
         <div className="w-full flex justify-end">
           <div >
-            {fakeAccount.is_friend ? <DeleteBtn req_id={fakeAccount.id} changeHandler={changeHandler}/> : <AddFriendsBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>}
+            {fakeAccount.is_friend ? <DeleteBtn req_id={fakeAccount.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/> : <AddFriendsBtn req_id={fakeAccount.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>}
           </div>
-            <BlockBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>
+            <BlockBtn req_id={fakeAccount.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
         </div>
       </div>
       <table className="mt-5">
         <tr>
           <th className="th-profile">Username:</th>
           <td>{fakeAccount.username}</td>
-        </tr>
-        <tr>
-          <th className="th-profile">Email:</th>
-          <td>{friend.user.username}</td>
         </tr>
         <tr>
           <th className="th-profile">Joined on:</th>
