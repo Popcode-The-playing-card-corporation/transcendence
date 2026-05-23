@@ -1,9 +1,11 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import generateFakeBlockList from "../../utils/test_funcs/generateFakeBlocklist";
+import { changeHandler } from "../../api/friend";
 
 export default function BlockList() {
   const blocklist = generateFakeBlockList();
   const confirmUnblockRef = useRef<HTMLDialogElement>(null);
+  const [updatedBlocked, setUpdatedBlocked] = useState(false);
 
   return (
     <div className="blocklist my-3 table mx-auto w-fit">
@@ -14,9 +16,6 @@ export default function BlockList() {
         </thead>
         <tbody>
           {blocklist.map((blocked) => {
-			const tst = useRef<HTMLDialogElement>(null);
-
-
             return (
               <tr>
                 <td>
@@ -33,7 +32,7 @@ export default function BlockList() {
                   <dialog
                     id="modal_confirm_unblock"
                     className="modal"
-                    ref={tst}
+                    ref={confirmUnblockRef}
                   >
                     <div className="modal-box bg-(--bg-color)">
                       <h3 className="font-bold text-lg">Are you sure?</h3>
@@ -46,7 +45,14 @@ export default function BlockList() {
                         <form method="dialog">
                           <button
                             className="btn mr-5 del"
-                            onClick={() => changeHandler(friend.id, "unblock")}
+                            onClick={() =>
+                              changeHandler(
+                                blocked.blocked_id,
+                                "unblocked",
+                                updatedBlocked,
+                                setUpdatedBlocked,
+                              )
+                            }
                           >
                             Confirm
                           </button>
@@ -59,7 +65,7 @@ export default function BlockList() {
               </tr>
             );
           })}
-        </HTMLDialogElement>
+        </tbody>
       </table>
     </div>
   );

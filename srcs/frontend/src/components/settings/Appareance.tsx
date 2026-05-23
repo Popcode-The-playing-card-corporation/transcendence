@@ -5,9 +5,7 @@ export default function Appareance({
 }: {
   setFontChoice: Dispatch<SetStateAction<string>>;
 }) {
-	const array[];
 
-	array
   return (
     <div>
       <div className="font-selection my-3 mx-auto mb-26">
