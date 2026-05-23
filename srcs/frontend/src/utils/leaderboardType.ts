@@ -14,3 +14,8 @@ export type leaderboardT = {
   leaderboard: userLB[];
   current: currentLB;
 };
+
+export const defaultLeaderboard:leaderboardT = {
+	leaderboard: [],
+	current: {username: "", score:0, rank: 0}
+}

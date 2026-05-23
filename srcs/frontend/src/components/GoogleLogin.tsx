@@ -1,3 +1,5 @@
+import { FaGoogle } from "react-icons/fa";
+
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID
 const GOOGLE_URL = "https://accounts.google.com/o/oauth2/v2/auth?";
 const CALLBACK = import.meta.env.VITE_GOOGLE_OAUTH_CALLBACK_URL; // should come from env
@@ -13,5 +15,5 @@ export function GoogleLogin() {
 
 		window.location.href = GOOGLE_URL + param.toString();
 	}
-	return ( <button onClick={handleGoogle}> Login with Google </button>);
+	return ( <button className="btn " onClick={handleGoogle}> <FaGoogle /> </button>);
 }

@@ -9,7 +9,6 @@ export function generateFakeAccount(): accountT {
     date_joined: "04-02-2042",
     is_online: true,
     last_login: "28-04-2025",
-	id: 67, // Tu m'as menti Dana! tu n'as pas respecte le type smh :(
-	elo: 69,
+    is_friend: true,
   };
 }

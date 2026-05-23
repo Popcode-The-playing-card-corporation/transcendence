@@ -1,56 +1,6 @@
-import { useState, useEffect } from "react";
 import type { statisticsT } from "../utils/statisticsType";
-import type { errorT } from "../utils/errorType";
-import { getStats } from "../api/stats";
-import { useNavigate } from "react-router-dom";
-import { checkAuth } from "../api/checkAuth";
-import { profileRequest } from "../api/profile";
 
-
-export function StatisticsPart() {
-    const [stats, setStats] = useState< statisticsT | errorT>({code: 0, response: ''});
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		async function getID() {
-			let user = await profileRequest();
-			if ('code' in user) {
-				if (user.code === 401) {
-					if (!(await checkAuth())) {
-						navigate('/login');
-					}
-					user = await profileRequest();
-				}
-			}
-			if ('code' in user) {
-				return -1;
-			}
-			return user.id;
-		}
-
-		async function retrieveStats() {
-			const id = await getID();
-			if (id === -1) {
-				return ;
-			}
-			let res = await getStats(id);
-			if ('code' in res) {
-				if (res.code === 401) {
-					if (!(await checkAuth())) {
-						navigate('/login');
-					}
-					res = await getStats(id);
-				}
-			}
-			setStats(res);
-		}
-		
-		retrieveStats();
-	}, [navigate])
-
-	if ('code' in stats) {
-		return <p>Error: {String(stats.response)}</p>;
-	} 
+export function StatisticsPart({stats}:{stats:statisticsT}) {
 
   return (
     <table className="text-left w-screen">

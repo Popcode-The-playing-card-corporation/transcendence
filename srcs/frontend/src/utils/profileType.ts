@@ -1,8 +1,7 @@
 
-  export type accountT = {
+  export type profileT = {
     id: number,
     username: string,
-    email: string,
     avatar: string,
     date_joined: string,
     is_online: boolean,
@@ -11,10 +10,9 @@
     is_friend: boolean,
   };
 
-  export const defaultAccount:accountT  = {
+  export const defaultAccount:profileT  = {
 	id: 0,
 	username: "",
-	email:"",
 	avatar:"",
 	date_joined:"",
 	is_online:false,
