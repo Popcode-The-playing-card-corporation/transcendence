@@ -177,7 +177,6 @@ def list_user(request, name):
 
     return Response(data)
 
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_propal(request):
@@ -216,10 +215,43 @@ def list_propal(request):
 
             if suggested_user.id not in my_friend_ids:
 
+                suggested_friendships = Friendship.objects.filter(
+                    Q(from_user=suggested_user) |
+                    Q(to_user=suggested_user),
+                    status="accepted"
+                )
+
+                suggested_friend_ids = set()
+
+                for sf in suggested_friendships:
+
+                    if sf.from_user == suggested_user:
+                        suggested_friend_ids.add(sf.to_user.id)
+                    else:
+                        suggested_friend_ids.add(sf.from_user.id)
+
+                mutual_ids = my_friend_ids.intersection(
+                    suggested_friend_ids
+                )
+
+                mutual_users = User.objects.filter(
+                    id__in=mutual_ids
+                )
+
                 suggestions.append({
                     "id": suggested_user.id,
                     "username": suggested_user.username,
                     "is_online": suggested_user.is_online,
+
+                    "mutual_friends": [
+                        {
+                            "id": user.id,
+                            "username": user.username,
+                        }
+                        for user in mutual_users
+                    ],
+
+                    "mutual_count": len(mutual_ids)
                 })
 
                 my_friend_ids.add(suggested_user.id)

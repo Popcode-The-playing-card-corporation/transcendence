@@ -1,10 +1,28 @@
 import { useRef } from "react";
 import { MdBlock } from "react-icons/md";
+import { changeHandler } from "../api/friend";
 
-export default function BlockBtn({req_id, changeHandler, updatedFriends, setUpdate}: {req_id: number; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; changeHandler: (req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => void}) {
+type Props = {
+  req_id: number;
+  updatedFriends: boolean;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  changeHandler: (
+    req_id: number,
+    func: string,
+    updatedFriends: boolean,
+    setUpdate: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => void;
+};
+
+export default function BlockBtn({
+  req_id,
+  changeHandler,
+  updatedFriends,
+  setUpdate,
+}: Props) {
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
 
-	return (
+  return (
     <div>
       <button
         onClick={() => confirmBlocklRef.current?.showModal()}
@@ -19,14 +37,12 @@ export default function BlockBtn({req_id, changeHandler, updatedFriends, setUpda
         ref={confirmBlocklRef}
       >
         <div className="modal-box bg-(--bg-color)">
-          <h3 className="font-bold text-lg">
-            Are you sure?
-          </h3>
+          <h3 className="font-bold text-lg">Are you sure?</h3>
           <p className="py-4">
             Are you sure you want to block this user ?
             <br />
-            You won't be able to play with them and your profile will be
-            hidden from them.
+            You won't be able to play with them and your profile will be hidden
+            from them.
             <br />
             You can always unblock them in settings.
           </p>
@@ -34,7 +50,9 @@ export default function BlockBtn({req_id, changeHandler, updatedFriends, setUpda
             <form method="dialog">
               <button
                 className="btn mr-5 del"
-                onClick={() => changeHandler(req_id, "block", updatedFriends, setUpdate)}
+                onClick={() =>
+                  changeHandler(req_id, "block", updatedFriends, setUpdate)
+                }
               >
                 Confirm
               </button>
@@ -46,3 +64,4 @@ export default function BlockBtn({req_id, changeHandler, updatedFriends, setUpda
     </div>
   );
 }
+

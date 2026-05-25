@@ -3,36 +3,19 @@ import { MiniHistory } from "./MiniHistory";
 import DeleteBtn from "./DeleteBtn";
 import AddFriendsBtn from "./AddFriendsBtn";
 import BlockBtn from "./BlockBtn";
-import { useRef } from "react";
-import type { friendT } from "../utils/friendType";
+import type { profileT } from "../utils/profileType";
 
-export default function MiniProfile({friend}:{friend:friendT}) {
+type Props = {
+  id: number;
+  updatedFriends: boolean;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function MiniProfile({id, updatedFriends, setUpdate}: Props) {
   const fakeAccount = generateFakeAccount();
-  const showMiniProfileRef = useRef<HTMLDialogElement>(null);
-  async function changeHandler(req_id: number, func: string) {
-    if (func === "accept") {
-      console.log("it accepts");
-    } else if (func === "block") {
-      console.log("it blocks");
-    } else if (func === "delete") {
-      console.log("it deletes");
-    }
-    return;
-  }
 
   return (
     <>
-    <button
-      className="link-hover"
-      onClick={() => showMiniProfileRef.current?.showModal()}
-    >
-      {friend.user.username}
-    </button>
-    <dialog
-      id="showMiniProfile"
-      className="modal"
-      ref={showMiniProfileRef}
-    >
     <div className="modal-box bg-(--nav-color)">
       <p className="text-center ">click ESC for close this window</p>
       <div className="flex">
@@ -46,19 +29,15 @@ export default function MiniProfile({friend}:{friend:friendT}) {
         </div>
         <div className="w-full flex justify-end">
           <div >
-            {fakeAccount.is_friend ? <DeleteBtn req_id={fakeAccount.id} changeHandler={changeHandler}/> : <AddFriendsBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>}
+            {fakeAccount.is_friend ? <DeleteBtn req_id={fakeAccount.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/> : <AddFriendsBtn req_id={fakeAccount.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>}
           </div>
-            <BlockBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>
+            <BlockBtn req_id={fakeAccount.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
         </div>
       </div>
       <table className="mt-5">
         <tr>
           <th className="th-profile">Username:</th>
           <td>{fakeAccount.username}</td>
-        </tr>
-        <tr>
-          <th className="th-profile">Email:</th>
-          <td>{friend.user.username}</td>
         </tr>
         <tr>
           <th className="th-profile">Joined on:</th>
@@ -78,7 +57,6 @@ export default function MiniProfile({friend}:{friend:friendT}) {
       <form method="dialog" className="modal-backdrop">
         <button ></button>
       </form>
-    </dialog>
     </>
   );
 }
