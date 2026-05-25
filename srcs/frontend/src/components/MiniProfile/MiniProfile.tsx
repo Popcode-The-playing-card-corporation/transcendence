@@ -1,9 +1,8 @@
-import { generateFakeAccount } from "../utils/test_funcs/generateTestAccount";
-import { MiniHistory } from "./MiniHistory";
-import DeleteBtn from "./DeleteBtn";
-import AddFriendsBtn from "./AddFriendsBtn";
-import BlockBtn from "./BlockBtn";
-import type { profileT } from "../utils/profileType";
+import { generateFakeAccount } from "../../utils/test_funcs/generateTestAccount";
+import { MiniHistory } from "../MiniHistory";
+import DeleteBtn from "../DeleteBtn";
+import AddFriendsBtn from "../AddFriendsBtn";
+import BlockBtn from "../BlockBtn";
 
 type Props = {
   id: number;

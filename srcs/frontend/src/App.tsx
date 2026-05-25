@@ -18,22 +18,21 @@ import { GitCallback } from "./OAuth/GitCallback";
 import { Presence } from "./websockets/presence";
 
 function App() {
+
+	callNotifPopUp("caca", "boudin");
   return (
     <main className="bg-(--bg-color) font-[Cause] text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh">
 	  <Presence />
       <BrowserRouter>
         <Navbar />
         <NotifPopUp
-          isEnabled={false}
-          title="Tu es seul"
-          body="Et tu dois l'accepter"
         />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/settings" element={<Settings setFontChoice={setFontChoice}/>} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/login" element={<Login />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
