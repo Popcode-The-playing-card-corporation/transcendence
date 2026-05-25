@@ -18,6 +18,7 @@ staticfiles/
 # Secrets
 .env
 *.env
+.env_prod
 
 # IDE
 .vscode/

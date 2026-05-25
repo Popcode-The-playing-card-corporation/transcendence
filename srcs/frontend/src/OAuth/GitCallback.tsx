@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import host from "../api/host";
 import { setLoggedIn } from "../api/login_status";
 
 export function GitCallback() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     async function GitLogin() {
@@ -24,7 +25,11 @@ export function GitCallback() {
           { withCredentials: true }
         );
 		setLoggedIn(true);
-        navigate("/profile");
+		if (location.state) {
+        	navigate(location.state, {state: location.pathname});
+		} else {
+			navigate("/");
+		}
       } catch (err) {
 		// improve with set state
         console.error("GitHub login failed:", err);
@@ -33,7 +38,11 @@ export function GitCallback() {
     }
 
     GitLogin();
-  }, [navigate]);
+  }, [navigate, location]);
 
-  return <p>Logging in...</p>;
+return (
+	<div className="page-content flex items-center justify-center min-h-screen">
+		<span className="loading loading-spinner loading-xl"></span>
+	</div>
+)
 }

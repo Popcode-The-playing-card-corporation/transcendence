@@ -21,7 +21,7 @@ export function MiniHistory() {
       if ("code" in res) {
         if (res.code === 401) {
           if (!(await refreshAuth())) {
-            navigate("/login");
+            navigate("/login", {state: location.pathname});
           }
           res = await getHistory();
         }
