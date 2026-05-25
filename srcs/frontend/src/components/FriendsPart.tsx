@@ -5,10 +5,11 @@ import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
-import MiniProfile from "./MiniProfile";
+import MiniProfile from "./MiniProfile/MiniProfile";
 import DeleteBtn from "./DeleteBtn";
 import BlockBtn from "./BlockBtn";
 import { FaPlus } from "react-icons/fa";
+import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
 
 type Props = {
   friends:friendT[];
@@ -19,7 +20,7 @@ type Props = {
 
 export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
-  const showMiniProfileRef = useRef<HTMLDialogElement[] | null>([]);
+  // const showMiniProfileRef = useRef<HTMLDialogElement[] | null>([]);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
   const [nbSlice, setNbSlice] = useState<number>(10);
@@ -136,19 +137,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
               <TbPointFilled />
             </td>
             <td>
-              <button
-                className="link-hover"
-                onClick={() => showMiniProfileRef.current![index].showModal()}
-              >
-                {friend.user.username}
-              </button>
-              <dialog
-                id="showMiniProfile"
-                className="modal"
-                ref={(elt) => {showMiniProfileRef.current![index] = elt!}}
-              >
-                <MiniProfile id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
-              </dialog>
+              <UsernameMiniProfileBtn id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
             <td>{friend.status}</td>
             <td>

@@ -6,17 +6,10 @@ type Props = {
   req_id: number;
   updatedFriends: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
-  changeHandler: (
-    req_id: number,
-    func: string,
-    updatedFriends: boolean,
-    setUpdate: React.Dispatch<React.SetStateAction<boolean>>,
-  ) => void;
 };
 
 export default function BlockBtn({
   req_id,
-  changeHandler,
   updatedFriends,
   setUpdate,
 }: Props) {

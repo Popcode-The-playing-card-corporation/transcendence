@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
+import { isEnabled, titleNotif, bodyNotif, setIsEnabled } from "../utils/notifPopUpVariables";
 
-type Props = {
-  isEnabled: boolean;
-  title: string;
-  body: string;
-};
+// type Props = {
+//   isEnabled: boolean;
+//   title: string;
+//   body: string;
+// };
 
-export function NotifPopUp({ isEnabled, title, body }: Props) {
+export function NotifPopUp() {
   const [progress, setProgress] = useState(100);
-  // const [reference, setReference] = useState(0);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (progress > 0) setProgress(progress - 1);
-      else setProgress(0);
+      else {
+        setProgress(0);
+		setIsEnabled(false)
+      }
     }, 100);
 
     return () => {
@@ -37,8 +40,8 @@ export function NotifPopUp({ isEnabled, title, body }: Props) {
             style={{ width: `${progress}%` }}
           ></div>
         </div>
-        <h3>{title}</h3>
-        <p>{body}</p>
+        <h3>{titleNotif}</h3>
+        <p>{bodyNotif}</p>
       </div>
     </div>
   );
