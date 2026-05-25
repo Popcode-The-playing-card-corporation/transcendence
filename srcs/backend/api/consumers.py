@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import User
+import json
 from asgiref.sync import sync_to_async
 
 from django.contrib.auth import get_user_model
@@ -27,3 +28,11 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         )(
             is_online=False,
         )
+        
+    async def receive(self, data):
+        data = json.loads(data)
+        
+        if data.get("type") == "heartbeat":
+             await self.send(data=json.dumps({
+                  "type": "acknowledge"
+			 }))

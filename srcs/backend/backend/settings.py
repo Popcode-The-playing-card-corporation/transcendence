@@ -17,9 +17,6 @@ from datetime import timedelta
 
 load_dotenv()
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = "/app/media"
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +36,8 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","127.0.0.1").split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","localhost").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_TRUSTED_ORIGINS", "http://localhost:5173").split(",")
 
 
 # Application definition
@@ -65,6 +63,8 @@ INSTALLED_APPS = [
 	"game",
 ]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 #Following guide for google login, need to doublecheck ..
 # how it would impact us if we want to have email verification later
 ACCOUNT_LOGIN_METHODS = {'email'}
@@ -84,6 +84,7 @@ GIT_OAUTH_CLIENT_SECRET=os.getenv("GIT_OAUTH_CLIENT_SECRET")
 FORTYTWO_OAUTH_CALLBACK_URL=os.getenv("FORTYTWO_OAUTH_CALLBACK_URL")
 FORTYTWO_OAUTH_CLIENT_ID=os.getenv("FORTYTWO_OAUTH_CLIENT_ID")
 FORTYTWO_OAUTH_CLIENT_SECRET=os.getenv("FORTYTWO_OAUTH_CLIENT_SECRET") ## Needs to be in env
+
 
 
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
@@ -134,11 +135,9 @@ MIDDLEWARE = [
 	'allauth.account.middleware.AccountMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+CORS_ALLOWED_ORIGINS =os.environ.get("CORS_ALLOWED_ORIGINS","").split(",")  ### This should only be applicable in dev mode: tbc if we need to remove in prod to be safe
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = os.getenv("CORS_ALLOW_CREDENTIALS") == "True"
 
 ROOT_URLCONF = 'backend.urls'
 
