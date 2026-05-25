@@ -15,10 +15,13 @@ import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./OAuth/GoogleCallback";
 import { FortyTwoCallback } from "./OAuth/42Callback";
 import { GitCallback } from "./OAuth/GitCallback";
+import { useState } from "react";
 
 function App() {
+const [fontChoice, setFontChoice] = useState("font-Cause")
+
   return (
-    <main className="bg-(--bg-color) font-[Cause] text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh">
+    <main className={"bg-(--bg-color) text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh " + fontChoice}>
       <BrowserRouter>
         <Navbar />
         <NotifPopUp
@@ -31,7 +34,7 @@ function App() {
           <Route path="/game" element={<Game />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/settings" element={<Settings setFontChoice={setFontChoice}/>} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/login" element={<Login />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
