@@ -36,7 +36,7 @@ export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccoun
           <th className="th-profile">Email:</th>
           <td>{realAccount.email}</td>
         </tr>
-        <tr>
+        { realAccount.has_pass ? <tr> 
           <th className="th-profile">Password:</th>
           <td>
             *******
@@ -55,7 +55,7 @@ export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccoun
               <PswdChange dialogRef={dialogPswdRef} />
             </dialog>
           </td>
-        </tr>
+        </tr> : null }
         <tr>
           <th className="th-profile">Joined on:</th>
           <td>{realAccount.date_joined}</td>
