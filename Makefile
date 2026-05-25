@@ -40,13 +40,15 @@ header:
 
 prod-up:
 	@$(COMPOSE) --profile "*" down
-	@if [ -f ./srcs/.env ]; then \
+	@if [ -f ./srcs/.env ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.crt ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.key ]; then \
 		sed -i 's/DEBUG=True/DEBUG=False/g' ./srcs/.env; \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(PROD_COMPOSE) up -d; \
 		echo "$(CYAN)Launching completed!$(RESET)"; \
-	else \
+	elif [ -f ./srcs/Docker/nginx/prod_nginx/ssl.crt ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.key ]; then \
 		echo "❌ Missing ./srcs/.env file"; \
+	else  \
+		echo "❌ Missing ssl.crt and/or ssl.key in prod_nginx directory"; \
 	fi
 
 dev-up:

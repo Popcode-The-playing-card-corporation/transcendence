@@ -187,6 +187,7 @@ class FriendSerializer(serializers.ModelSerializer):
         return {
             "id": friend.id,
             "username": friend.username,
+            "avatar": friend.avatar,
             "is_online": friend.is_online
         }
 

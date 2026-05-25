@@ -47,7 +47,7 @@ export function Profile() {
 	useEffect(() => {
 
 		function login_error(message:string) {
-			navigate('/login', {state: location.pathname});
+			navigate('/login', {state: "/profile"});
 			// notif bar
 			console.debug(message);
 			setValid(false);
@@ -55,7 +55,7 @@ export function Profile() {
 		}
 
 		function other_error(message:string) {
-			navigate('/home', {state: location.pathname});
+			navigate('/', {state: "/profile"});
 			// notif bar
 			console.debug(message);
 			setValid(false);
@@ -114,14 +114,15 @@ export function Profile() {
 	}, [updatedFriends, updatedProfile, navigate, location])
 
 	if (valid === null) {
-		return <p>Loading...</p>;
+		return (
+			<div className="page-content flex items-center justify-center min-h-screen">
+				<span className="loading loading-spinner loading-xl"></span>
+			</div>
+		)
 	}
 
+
 	if (!valid) {
-		navigate('/home', {state: location.pathname});
-		// notif bar
-		console.debug("");
-		setValid(false);
 		return ;
 	}
 

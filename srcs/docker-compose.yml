@@ -44,17 +44,18 @@ services:
     build:
       context: .
       dockerfile: Docker/nginx/prod_nginx/Dockerfile
+      args:
+        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+        VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+        VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+        VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+        VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+        VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+        DOMAIN_NAME: ${DOMAIN_NAME}
     profiles: [prod]
     container_name: nginx_prod
-    environment:
-      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
-      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
-      VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
-      VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
-      VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
-      VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
     ports:
-      - "80:80"
+      - "443:443"
     depends_on:
       - django
     networks:

@@ -15,15 +15,14 @@ import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./OAuth/GoogleCallback";
 import { FortyTwoCallback } from "./OAuth/42Callback";
 import { GitCallback } from "./OAuth/GitCallback";
-import { callNotifPopUp } from "./utils/callNotifPopUp";
-
-
+import { Presence } from "./websockets/presence";
 
 function App() {
 
 	callNotifPopUp("caca", "boudin");
   return (
-    <main className={"bg-(--bg-color) text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh " + fontChoice}>
+    <main className="bg-(--bg-color) font-[Cause] text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh">
+	  <Presence />
       <BrowserRouter>
         <Navbar />
         <NotifPopUp
