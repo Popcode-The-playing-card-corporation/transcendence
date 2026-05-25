@@ -47,6 +47,7 @@ export default function Appareance({
       </div>
 	  <div className="skin-selection">
 	  <h3>Skin selection</h3>
+	  <p>Not implementeed, fuck you</p>
 	  </div>
     </div>
   );
