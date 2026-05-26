@@ -39,6 +39,11 @@ def user(request):
                         {"error": "Invalid account type"},
                         status=400
 				    )
+            else:
+                return Response(
+                    {"error": "Missing information"},
+                    status=400
+				)
                 
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
