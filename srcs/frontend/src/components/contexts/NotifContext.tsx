@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { notifContext } from "./CreateNotifContext";
 import type { notifT } from "../../utils/notifType";
 
@@ -20,37 +20,64 @@ export default function NotifProvider({
   const [body, setBody] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
   const [duration, setDuration] = useState(10000);
-  const [queue, setQueue] = useState<notifT[]>([])
+  const [queue, setQueue] = useState<notifT[]>([]);
 
-  function showNotif(title: string, body: string, duration?: number) {
+  const currentNotifRef = useRef<notifT | null>(null);
 
-	const new_notif = {title:title, message:body, duration:duration};
-	setQueue(queue => [...queue, new_notif])
-    // setIsEnabled(true);
-    // setTitle(title);
-    // setBody(body);
-    // if (duration) setDuration(duration);
+  function showNotif(
+    newtitle: string,
+    newbody: string,
+    newduration = 10000
+  ) {
+    const newNotif = {
+      title: newtitle,
+      message: newbody,
+      duration: newduration,
+    };
+
+    setQueue(queue => {
+      const alreadyQueued = queue.some(
+        notif =>
+          notif.title === newNotif.title &&
+          notif.message === newNotif.message
+      );
+
+      const checkCurr =
+        currentNotifRef.current &&
+        currentNotifRef.current.title === newNotif.title &&
+        currentNotifRef.current.message === newNotif.message;
+
+      if (alreadyQueued || checkCurr) {
+        return queue;
+      }
+
+      return [...queue, newNotif];
+    });
   }
 
   useEffect(() => {
-	function handle_queue() {
-		if (isEnabled || queue.length === 0) {
-			return ;
-		}
-		setTitle(queue[0].title);
-		setBody(queue[0].message);
-		if (queue[0].duration) setDuration(queue[0].duration);
-		setIsEnabled(true);
+    function handle_queue() {
+      if (isEnabled || queue.length === 0) {
+        return;
+      }
 
-		setQueue(prev => prev.slice(1));
-	}
-	handle_queue();
-  }, [queue, isEnabled])
+      currentNotifRef.current = queue[0];
+
+      setTitle(queue[0].title);
+      setBody(queue[0].message);
+      setDuration(queue[0].duration ?? 10000);
+      setIsEnabled(true);
+
+      setQueue(queue => queue.slice(1));
+    }
+
+    handle_queue();
+  }, [queue, isEnabled]);
 
   function resetNotif() {
+    currentNotifRef.current = null;
     setIsEnabled(false);
   }
-
   return (
     <notifContext.Provider
       value={{ title, body, isEnabled, duration, showNotif, resetNotif }}
