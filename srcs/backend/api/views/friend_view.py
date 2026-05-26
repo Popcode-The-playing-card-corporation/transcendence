@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from django.db.models import Q
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -52,6 +53,23 @@ def send_friend_request(request, user_id):
             status="pending"
         )
 
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            f"user_{target.id}",
+            {
+                "type": "notify",
+        
+                "event": "friend_request",
+        
+                "payload": {
+                    "from_user": request.user.username,
+                    "from_user_id": request.user.id,
+                    "message": f"{request.user.username} sent you a friend request"
+                }
+            }
+        )
+        
         return Response({"message": "Friend request sent"})
 
     except User.DoesNotExist:
@@ -70,6 +88,21 @@ def accept_friend_request(request, request_id):
         friendship.accepted_at = timezone.now()
         friendship.save()
 
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            f"user_{friendship.from_user.id}",
+            {
+                "type": "notify",
+        
+                "event": "friend_accepted",
+        
+                "payload": {
+                    "message": f"{request.user.username} accept your friend request"
+                }
+            }
+        )
+        
         return Response({"message": "Friend request accepted"})
 
     except Friendship.DoesNotExist:

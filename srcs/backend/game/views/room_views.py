@@ -75,6 +75,18 @@ def add_bot(request, code):
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
+def is_presence(request):
+    presence = PlayerPresence.objects.filter(
+		room__status="open",
+        player=request.user
+	).exists()
+    return Response({
+        "presence": presence
+    }, status=200)
+
+@api_view(["GET"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
 def list_public_room(request):
     rooms = Room.objects.filter(
         is_private=0,

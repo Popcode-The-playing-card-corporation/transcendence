@@ -1,5 +1,5 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import User
+from ..models import User
 import json
 from asgiref.sync import sync_to_async
 
