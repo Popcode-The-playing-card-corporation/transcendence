@@ -30,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             "date_joined",
             "is_online",
             "last_login",
+            "has_password",
             "elo",
         ]
 
