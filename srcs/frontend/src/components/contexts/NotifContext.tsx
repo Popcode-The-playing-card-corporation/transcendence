@@ -36,13 +36,12 @@ export default function NotifProvider({
     };
 
     setQueue(queue => {
-      const alreadyQueued = queue.some(
-        notif =>
-          notif.title === newNotif.title &&
-          notif.message === newNotif.message
-      );
 
-      const checkCurr =
+	  let alreadyQueued = null;
+	  if (queue[0])	{
+      	alreadyQueued = queue.toReversed()[0].title === newNotif.title && queue.toReversed()[0].message === newNotif.message;
+	  }
+	  const checkCurr =
         currentNotifRef.current &&
         currentNotifRef.current.title === newNotif.title &&
         currentNotifRef.current.message === newNotif.message;
