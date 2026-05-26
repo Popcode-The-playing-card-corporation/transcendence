@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .consumers import PresenceConsumer
+from .consumers.presence_consumers import PresenceConsumer
 
 
 websocket_urlpatterns = [
