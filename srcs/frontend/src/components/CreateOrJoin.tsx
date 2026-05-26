@@ -24,6 +24,7 @@ export default function CreateOrJoin() {
             <thead>
               <tr>
                 <th>Room</th>
+                <th>Type</th> {/* Public or friend's game */}
                 <th>nb of player/max player</th>
                 <th>pending</th>
               </tr>
