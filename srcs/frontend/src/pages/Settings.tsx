@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import BlockList from "../components/settings/BlockList";
 import Appareance from "../components/settings/Appareance";
 import Account from "../components/settings/Account";
+import { TestNotifPopUp } from "../components/TestNotifPopUp";
 
 export function Settings({
   setFontChoice,
@@ -39,6 +40,7 @@ export function Settings({
 		<BlockList />
         </div>
       </div>
+	  <TestNotifPopUp />
     </div>
   );
 }
