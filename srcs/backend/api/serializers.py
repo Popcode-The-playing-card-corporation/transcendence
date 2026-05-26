@@ -34,7 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
-            "password": {"write_only": True}
+            "password": {"write_only": True},
+            "id": {"read_only": True},
         }
 
     def create(self, validated_data):
@@ -66,8 +67,9 @@ class FriendProfileSerializer(serializers.ModelSerializer):
         allow_null=True
     )
     
-    is_friend = serializers.SerializerMethodField()
-    is_blocked = serializers.SerializerMethodField()
+    is_online = serializers.SerializerMethodField()
+    last_login = serializers.SerializerMethodField()
+    friend = serializers.SerializerMethodField()
     blocked_by_me = serializers.SerializerMethodField()
 
     class Meta:
@@ -80,42 +82,76 @@ class FriendProfileSerializer(serializers.ModelSerializer):
             "is_online",
             "last_login",
             "elo",
-            "is_friend",
-            "is_blocked",
+            "friend",
             "blocked_by_me",
         ]
     
-    def get_is_friend(self, obj):
+    def _get_friendship(self, obj, status=None):
 
         request = self.context.get("request")
-
-        if not request or not request.user.is_authenticated:
-            return False
-
-        user = request.user
-
-        return Friendship.objects.filter(
-            status="accepted"
-        ).filter(
-            Q(from_user=user, to_user=obj) |
-            Q(from_user=obj, to_user=user)
-        ).exists()
     
-    def get_is_blocked(self, obj):
+        if not request or not request.user.is_authenticated:
+            return None
+    
+        user = request.user
+    
+        query = Friendship.objects.filter(
+            Q(from_user=user, to_user=obj) |
+            Q(from_user=obj, to_user=user)
+        )
+    
+        if status:
+            query = query.filter(status=status)
+    
+        return query.first()
+    
+    def get_is_online(self, obj):
+        request = self.context.get("request")
+    
+        if not request or not request.user.is_authenticated:
+            return None
+    
+        is_friend = self._get_friendship(obj, "accepted")
+        
+        if not is_friend:
+            return None
+        
+        return obj.is_online
+    
+    def get_last_login(self, obj):
+
+        request = self.context.get("request")
+    
+        if not request or not request.user.is_authenticated:
+            return None
+    
+        is_friend = self._get_friendship(obj, "accepted")
+    
+        if not is_friend:
+            return None
+    
+        if not obj.last_login:
+            return None
+    
+        return obj.last_login.strftime("%d/%m/%Y %H:%M")
+    
+    def get_friend(self, obj):
 
         request = self.context.get("request")
 
         if not request or not request.user.is_authenticated:
             return False
 
-        user = request.user
-
-        return Friendship.objects.filter(
-            status="blocked"
-        ).filter(
-            Q(from_user=user, to_user=obj) |
-            Q(from_user=obj, to_user=user)
-        ).exists()
+        friend = self._get_friendship(obj, "accepted")
+        
+        if not friend:
+            return None
+    
+        return {
+            "id": friend.id,
+            "status": friend.status,
+            "created_at": friend.created_at,
+        }
         
     def get_blocked_by_me(self, obj):
     
@@ -126,12 +162,7 @@ class FriendProfileSerializer(serializers.ModelSerializer):
     
         user = request.user
     
-        friendship = Friendship.objects.filter(
-            status="blocked"
-        ).filter(
-            Q(from_user=user, to_user=obj) |
-            Q(from_user=obj, to_user=user)
-        ).first()
+        friendship = self._get_friendship(obj, "blocked")
     
         if not friendship:
             return None
