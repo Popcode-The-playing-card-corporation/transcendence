@@ -14,7 +14,9 @@ export function NotifPopUp() {
 
   useEffect(() => {
     if (!context || !context.isEnabled) return;
+
     const intervalId = setInterval(() => {
+	  setProgress(100);
       if (progress > 0) setProgress(progress - 1);
       else {
         setProgress(100);

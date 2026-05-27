@@ -1,8 +1,15 @@
 import { useState } from "react";
 import type { historyT } from "../utils/historyType";
 import type { playerT } from "../utils/playerType";
+import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
 
-export function History({gameHistory}:{gameHistory:historyT[]}) {
+type Props = {
+  gameHistory:historyT[];
+  updatedProfile:boolean;
+  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function History({gameHistory, updatedProfile, setUpdate}: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10)
 
@@ -57,7 +64,7 @@ export function History({gameHistory}:{gameHistory:historyT[]}) {
               >
                 {game.players.map((player: playerT) => (
                   <li>
-                    <a className="text-(--font-color)">{player.username}</a>
+			  			<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate}/>
                   </li>
                 ))}
               </ul>

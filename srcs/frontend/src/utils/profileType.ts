@@ -1,4 +1,10 @@
 
+  type friendSimple = {
+	id: number,
+	status: string,
+	created_at: string,
+  }
+
   export type profileT = {
     id: number,
     username: string,
@@ -7,7 +13,8 @@
     is_online: boolean,
     last_login: string,
     elo: number,
-    is_friend: boolean,
+    friend: friendSimple,
+	blocked_by_me: boolean,
   };
 
   export const defaultAccount:profileT  = {
@@ -18,5 +25,6 @@
 	is_online:false,
 	last_login:"",
 	elo:0,
-	is_friend:false,
+	friend: {id: 0, status: "nope", created_at: "nope nope"},
+	blocked_by_me: false,
   }

@@ -27,6 +27,7 @@ import avatar24 from "../assets/avatars/avatar24.webp";
 import avatar25 from "../assets/avatars/avatar25.webp";
 import { changeAvatar } from "../api/profile";
 import type { errorT } from "../utils/errorType";
+import { useNotif } from "./hooks/useNotif";
 
 export function AvatarSelection({
   currentAvatar,
@@ -35,8 +36,9 @@ export function AvatarSelection({
 }) {
   const [hovered, setHovered] = useState(false);
   const [tempAvatar, setTempAvatar] = useState(currentAvatar);
-  const [isError, setError] = useState<{code: number} | errorT>({code:200});
+  const [isError, setError] = useState<errorT>({code:200, response: ""});
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const notif = useNotif();
 
   async function handleAvatarChange(newPath: string, e: React.MouseEvent) {
     e.stopPropagation();
@@ -48,7 +50,8 @@ export function AvatarSelection({
 	}
 	else {
 		setError(res);
-		// console.debug(isError.code);
+		notif?.showNotif("Avatar change error:", res.response, 5000);
+		dialogRef.current?.close();
 	}
   }
 

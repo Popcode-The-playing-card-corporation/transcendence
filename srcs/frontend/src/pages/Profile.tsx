@@ -14,13 +14,16 @@ import { profileRequest } from "../api/profile";
 import avatar1 from "../assets/avatars/avatar1.png";
 import { type historyT } from "../utils/historyType";
 import { getHistory, historyArray } from "../api/history";
+import { useNotif } from "../components/hooks/useNotif";
 
 function getRequests(friend_list: friendT[]): {
     friends: friendT[];
     requests: requestT[];
   } {
+
     const friends: friendT[] = [];
     const requests: requestT[] = [];
+
     for (const friend of friend_list) {
       if (friend.can_accept) {
         requests.push({ id: friend.id, username: friend.user.username });
@@ -43,35 +46,34 @@ export function Profile() {
   	const [updatedFriends, setFriendUpdate] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
+	const notif = useNotif();
 
 	useEffect(() => {
 
-		function login_error(message:string) {
+		function login_error(title:string, message:string) {
 			navigate('/login', {state: "/profile"});
-			// notif bar
-			console.debug(message);
+			notif?.showNotif(title, message, 5000);
 			setValid(false);
 			return ;
 		}
 
-		function other_error(message:string) {
+		function other_error(title:string, message:string) {
 			navigate('/', {state: "/profile"});
-			// notif bar
-			console.debug(message);
+			notif?.showNotif(title, message, 5000);
 			setValid(false);
 			return ;
 		}
 
 		async function verify() {
 			if (!(await checkAuth())) {
-				return login_error("Authentication error");
+				return login_error("Authentication error:", "Please log in again.");
 			}
 			const account = await profileRequest();
 			if ("code" in account) {
 				if (account.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(account.response);
+					return other_error("Error " + account.code + ":", account.response);
 				}
 			}
 			if (account.avatar === "") {
@@ -81,9 +83,9 @@ export function Profile() {
 			const friendlist = await getFriends();
 			if ("code" in friendlist) {
 				if (friendlist.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(friendlist.response);
+					return other_error("Error " + friendlist.code + ":", friendlist.response);
 				}
 			}
 			const arr = friendArray(friendlist);
@@ -93,25 +95,25 @@ export function Profile() {
 			const gameHistory = await getHistory();
 			if ("code" in gameHistory) {
 				if (gameHistory.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(gameHistory.response);
+					return other_error("Error " + gameHistory.code + ":", gameHistory.response);
 				}
 			}
 			setHistory(await historyArray(gameHistory));
 			const stat_vals = await getStats(account.id);
 			if ("code" in stat_vals) {
 				if (stat_vals.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(stat_vals.response);
+					return other_error("Error " + stat_vals.code + ":", stat_vals.response);
 				}
 			}
 			setStats(stat_vals);
 			setValid(true);
 		}
 		verify();
-	}, [updatedFriends, updatedProfile, navigate, location])
+	}, [updatedFriends, updatedProfile, navigate, location, notif])
 
 	if (valid === null) {
 		return (
@@ -154,7 +156,7 @@ export function Profile() {
           <h2 className="text-center">History</h2>
         </div>
         <div className="collapse-content">
-          <History gameHistory={gameHistory}/>
+          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

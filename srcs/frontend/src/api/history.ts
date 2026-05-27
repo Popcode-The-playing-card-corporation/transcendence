@@ -19,9 +19,23 @@ export async function getHistory() {
 	}
 }
 
+export async function getPlayerHistory(id:number) {
+	try {
+		const res = await axios.get(host.http + 'user/' + id + '/history/', { timeout: 2000, withCredentials: true});
+		return res;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
 async function getPlayers(uuid:string) {
 	try {
-		const res = await axios.get(host.http + 'room/' + uuid + '/', { timeout: 2000, withCredentials: true});
+		const res = await axios.get(host.http + 'room/' + 'data/' + uuid + '/', { timeout: 2000, withCredentials: true});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

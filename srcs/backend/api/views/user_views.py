@@ -25,6 +25,21 @@ def user(request):
         return Response(serializer.data)
     
     if request.method == "PUT" or request.method == "PATCH":
+        if "username" in request.data:
+            if request.user.has_password == True: ## I moved around the conditions to allow OAuth to change username for now
+                if "password" in request.data:
+                    user = authenticate(username=request.user.username, password=request.data["password"])
+                    if user is None:
+                        return Response(
+							{"error": "Invalid credentials"},
+							status=400
+						)
+                else:
+                     return Response(
+						{"error": "Missing information"},
+						status=400
+					)
+
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -186,65 +201,66 @@ def login(request):
         {"error": "Invalid credentials"},
         status=401
     )
-    
-@api_view(["POST"])
+
+@api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
-def verify_password(request):
-    password = request.data.get("password")
+def change_password(request):
+    old_password = request.data.get("old_password")
+    new_password = request.data.get("new_password")
+    new_password2 = request.data.get("new_password2")
     
-    if not password:
-        return Response(
-            {"error": "Password required"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    if check_password(password, request.user.password):
-        return Response({
-            "valid": True
-        })
-    else:
-        return Response({
-            "valid": False
-        })
-        
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def check_new_password(request):
-    password = request.data.get("password")
-    password2 = request.data.get("password2")
     
-    if not password:
+    if request.user.has_password != True:
         return Response(
-            {"error": "Password required"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    
-    if not password2:
-        return Response(
-            {"error": "Password2 required"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-
-    if password == password2:
-        try:
-            validate_password(password, user)
-            return Response(
-                {"valid": True},
-                status=200
-            )
-            
-        except ValidationError as e:
-            for error in e.messages:
-                return Response(
-                    {"error": (f"Password validation error: {error}")},
-                    status=400
-                )
-
-    else:
-        return Response(
-            {"error": "Not the same password"},
+            {"error": "Invalid account type"},
             status=400
+		)
+    
+    if not old_password:
+        return Response(
+            {"error": "Old password required"},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
+    if check_password(old_password, request.user.password):
+        if not new_password:
+            return Response(
+                {"error": "Password required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
+        if not new_password2:
+            return Response(
+                {"error": "Password2 required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    
+        if new_password == new_password2:
+            try:
+                user = User.objects.get(id=request.user.id)
+                validate_password(new_password, user)
+                user.set_password(new_password)
+                user.save()
+                return Response(
+                    {"valid": True},
+                    status=200
+                )
+                
+            except ValidationError as e:
+                for error in e.messages:
+                    return Response(
+                        {"error": (f"Password validation error: {error}")},
+                        status=400
+                    )
+    
+        else:
+            return Response(
+                {"error": "Not the same password"},
+                status=400
+            )
+    else:
+        return Response(
+            {"error": "Old password incorrect"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
