@@ -3,6 +3,7 @@ import BlockList from "../components/settings/BlockList";
 import Appareance from "../components/settings/Appareance";
 import Account from "../components/settings/Account";
 import { TestNotifPopUp } from "../components/TestNotifPopUp";
+import { logged_in } from "../api/login_status";
 
 export function Settings({
   setFontChoice,
@@ -36,9 +37,9 @@ export function Settings({
         <div className="collapse-title">
           <h2 className="text-center">BlockList</h2>
         </div>
-        <div className="collapse-content">
+        {logged_in ? <div className="collapse-content">
 		<BlockList />
-        </div>
+        </div> : null}
       </div>
 	  <TestNotifPopUp />
     </div>
