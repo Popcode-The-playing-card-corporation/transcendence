@@ -9,6 +9,7 @@
     last_login: string,
     elo: number,
     is_friend: boolean,
+	has_password:boolean,
   };
 
   export const defaultAccount:accountT  = {
@@ -21,4 +22,5 @@
 	last_login:"",
 	elo:0,
 	is_friend:false,
+	has_password:true,
   }

@@ -6,12 +6,14 @@ type Props = {
   req_id: number;
   updatedFriends: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  profileRef: React.RefObject<HTMLDialogElement | null> | null;
 };
 
 export default function BlockBtn({
   req_id,
   updatedFriends,
   setUpdate,
+  profileRef,
 }: Props) {
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
 
@@ -44,7 +46,7 @@ export default function BlockBtn({
               <button
                 className="btn mr-5 del"
                 onClick={() =>
-                  changeHandler(req_id, "block", updatedFriends, setUpdate)
+                  changeHandler(req_id, "block", updatedFriends, setUpdate, profileRef)
                 }
               >
                 Confirm

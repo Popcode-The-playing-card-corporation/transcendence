@@ -5,7 +5,6 @@ import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
-import MiniProfile from "./MiniProfile/MiniProfile";
 import DeleteBtn from "./DeleteBtn";
 import BlockBtn from "./BlockBtn";
 import { FaPlus } from "react-icons/fa";
@@ -20,7 +19,6 @@ type Props = {
 
 export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
-  // const showMiniProfileRef = useRef<HTMLDialogElement[] | null>([]);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
   const [nbSlice, setNbSlice] = useState<number>(10);
@@ -100,13 +98,13 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
                       <div className="btn-accept-or-reject flex gap-3">
                         <button
                           className="btn btn-circle validate"
-                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate)}
+                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate, null)}
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate)}
+                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate, null)}
                         >
                           <RxCross2 />
                         </button>
@@ -126,7 +124,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
           <th className="w-30 text-left">Status</th>
           <th className="w-30 text-left">From</th>
         </tr>
-        {sortedFriends.slice(0, nbSlice).map((friend: friendT, index:number) => (
+        {sortedFriends.slice(0, nbSlice).map((friend: friendT) => (
           <tr className="h-14">
             <td
               className={
@@ -137,7 +135,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
               <TbPointFilled />
             </td>
             <td>
-              <UsernameMiniProfileBtn id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <UsernameMiniProfileBtn id={friend.user.id} name={friend.user.username} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
             <td>{friend.status}</td>
             <td>
@@ -146,10 +144,10 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
                 : friend.accepted_at}
             </td>
             <td className="w-16">
-              <DeleteBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <DeleteBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={null}/>
             </td>
             <td>
-              <BlockBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <BlockBtn req_id={friend.user.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={null}/>
             </td>
           </tr>
         ))}

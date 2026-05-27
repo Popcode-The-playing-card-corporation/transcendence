@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { changeUsername } from "../api/profile";
-import type { errorT } from "../utils/errorType";
+import { type errorT } from "../utils/errorType";
+import { useNotif } from "./hooks/useNotif";
 
-export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user}:{dialogRef: React.RefObject<HTMLDialogElement| null>; updatedProfile:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; old_user:string}) {
+export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, has_pass}:{dialogRef: React.RefObject<HTMLDialogElement| null>; updatedProfile:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; old_user:string, has_pass:boolean}) {
 
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
 	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
 	const passChange = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword(e.target.value);};
 	const [reason, setReason] = useState<errorT>({code:200,response:""});
+	const notif = useNotif();
 
   function validate_inputs (in_name:string, old_pass:string, old_user:string) {
-	if (in_name.trim().length === 0 && old_pass.length === 0) {
+	if (in_name.trim().length === 0 && (old_pass.length === 0 && has_pass)) {
 		return {code:-1, response:"Current password and new username are required fields!"};
 	} else if (in_name.trim().length === 0) {
 		return {code: -1, response:"New username is a required field!"};
-	} else if (old_pass.length === 0) {
+	} else if (old_pass.length === 0 && has_pass) {
 		return {code: -1, response:"Current password is a required field!"};
  	} else if (old_user === in_name) {
 		return {code: -1, response:"New username cannot be the same as the old username!"};
@@ -36,9 +38,11 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user}:{d
 		setReason(check);
 		return ;
 	}
-	const res = await changeUsername(in_name, old_pass);
+	const res = await changeUsername(in_name, old_pass, has_pass);
 	if (res.code !== 200) {
 		setReason(res);
+		notif?.showNotif("Username change error:", res.response, 5000);
+		clean_close();
 		return ;
 	}
 	setUpdate(!updatedProfile);
@@ -59,9 +63,9 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user}:{d
         <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border-1 p-4 mx-auto">
           <legend className="fieldset-legend">Change username</legend>
 
-          <label className="label">Password</label>
-          <input type="password" value={password} onChange={passChange} className="input" placeholder="Your password"/>
-
+          {has_pass ? <label className="label">Password</label> : null}
+          {has_pass ? <input type="password" value={password} onChange={passChange} className="input" placeholder="Your password"/>
+		  : null }
           <label className="label">New username</label>
           <input
             type="text"

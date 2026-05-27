@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
+            "password",
             "avatar",
             "date_joined",
             "is_online",
@@ -35,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
+            "password" : {"write_only": True},
             "id": {"read_only": True},
             "elo": {"read_only": True},
             "date_joined": {"read_only": True},
@@ -146,7 +148,9 @@ class FriendProfileSerializer(serializers.ModelSerializer):
         friend = self._get_friendship(obj, "accepted")
         
         if not friend:
-            return None
+            friend = self._get_friendship(obj, "pending") ### I'm not sure if this is used elsewhere than in user_data, but hopefully nothing is broken
+            if not friend:
+                return None
     
         return {
             "id": friend.id,

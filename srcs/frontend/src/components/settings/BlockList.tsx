@@ -1,11 +1,28 @@
-import { useRef, useState } from "react";
-import generateFakeBlockList from "../../utils/test_funcs/generateFakeBlocklist";
-import { changeHandler } from "../../api/friend";
+import { useEffect, useRef, useState } from "react";
+// import generateFakeBlockList from "../../utils/test_funcs/generateFakeBlocklist";
+import { changeHandler, getBlocked } from "../../api/friend";
+import { useNotif } from "../hooks/useNotif";
+import type { friendT } from "../../utils/friendType";
+import type { errorT } from "../../utils/errorType";
 
 export default function BlockList() {
-  const blocklist = generateFakeBlockList();
+  const [blocklist, setBlocked] = useState<friendT[] | errorT>([]);
   const confirmUnblockRef = useRef<HTMLDialogElement>(null);
   const [updatedBlocked, setUpdatedBlocked] = useState(false);
+  const notif = useNotif();
+  
+  useEffect(() => {
+	async function retrieveBlocked() {
+		const tmpBlocked = await getBlocked();
+		setBlocked(tmpBlocked);
+	}
+	retrieveBlocked();
+  }, []);
+
+  if ('code' in blocklist) {
+	notif?.showNotif("Unexpected error:", "Error displaying blocked list.", 5000);
+	return ;
+  }
 
   return (
     <div className="blocklist my-3 table mx-auto w-fit">
@@ -19,9 +36,9 @@ export default function BlockList() {
             return (
               <tr>
                 <td>
-                  <a className="link-hover">{blocked.username}</a>
+                  <a className="link-hover">{blocked.user.username}</a>
                 </td>
-                <td>{blocked.blocket_at.getFullYear()}</td>
+                <td>{blocked.blocked_at}</td>
                 <td>
                   <button
                     className="btn"
@@ -47,10 +64,11 @@ export default function BlockList() {
                             className="btn mr-5 del"
                             onClick={() =>
                               changeHandler(
-                                blocked.blocked_id,
+                                blocked.id,
                                 "unblocked",
                                 updatedBlocked,
                                 setUpdatedBlocked,
+								null
                               )
                             }
                           >
