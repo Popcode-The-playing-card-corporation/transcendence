@@ -25,9 +25,9 @@ def user(request):
         return Response(serializer.data)
     
     if request.method == "PUT" or request.method == "PATCH":
-        if "username" in request.data:
-            if "password" in request.data:
-                if request.user.has_password == True:
+        if request.user.has_password == True:
+            if "username" in request.data:
+                if "password" in request.data:
                     user = authenticate(username=request.user.username, password=request.data["password"])
                     if user is None:
                         return Response(
@@ -38,12 +38,12 @@ def user(request):
                     return Response(
                         {"error": "Invalid account type"},
                         status=400
-				    )
-            else:
-                return Response(
-                    {"error": "Missing information"},
-                    status=400
-				)
+			    	)
+        else:
+            return Response(
+                {"error": "Invalid account type"},
+                status=400
+		    )
                 
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():

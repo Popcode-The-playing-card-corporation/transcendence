@@ -18,8 +18,6 @@ def tricks_state():
         "diamond": 0
     }
 
-# Create your models here.
-
 class Room(models.Model):
     STATUS_CHOICES = [
         ("created", "Created"),
@@ -43,7 +41,6 @@ class Room(models.Model):
     def __str__(self):
         return f"{self.code}"
 
-#TODO log point in game
 
 class PlayerScore(models.Model):
     player = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -98,3 +95,12 @@ class Stat(models.Model):
     highest_hand_meld = models.IntegerField(default=0)
     highest_board_meld = models.IntegerField(default=0)
     nb_host = models.IntegerField(default=0)
+
+class GameLog(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='game')
+    player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player')
+    round = models.IntegerField(default=0)
+    meld = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ['player', 'room']

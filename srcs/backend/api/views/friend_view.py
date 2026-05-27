@@ -149,7 +149,6 @@ def block_friend(request, user_id):
         Q(from_user=user, to_user=request.user)
     ).first()
 
-    # Relation existe déjà
     if friendship:
         if friendship.status == "blocked":
             return Response(
@@ -161,7 +160,6 @@ def block_friend(request, user_id):
         friendship.blocked_at = timezone.now()
         friendship.save()
 
-    # Aucune relation -> on crée
     else:
         friendship = Friendship.objects.create(
             from_user=request.user,
