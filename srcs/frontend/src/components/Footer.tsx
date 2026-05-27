@@ -3,7 +3,7 @@ import { SiOnlyfans } from "react-icons/si";
 
 export function Footer() {
   return (
-    <footer className="footer sm:footer-horizontal bg-(--nav-color) p-8 mt-6 relative bottom-0">
+    <footer className="footer sm:footer-horizontal bg-(--nav-color) p-5 mt-6 relative bottom-0">
       <aside>
         <p>
           PopCode industries
@@ -24,10 +24,8 @@ export function Footer() {
       </nav>
       <nav>
         <h6 className="footer-title">Legal</h6>
-        <div>
+        <div className="grid grid-flow-col gap-4">
           <a href="/PrivacyPolicy" >Privacy Policy</a>
-        </div>
-        <div>
           <a href="/TermsOfService" >Terms of service</a>
         </div>
       </nav>
