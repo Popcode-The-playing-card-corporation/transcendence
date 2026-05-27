@@ -6,7 +6,7 @@ import  axios, { AxiosError } from 'axios';
 export async function loginRequest(in_name:string, in_pass:string): Promise<accessT | errorT> {
 
 	try {
-		const res = await axios.post('http://' + host.host_ip + ':8000/login/', { 'username': in_name, 'password': in_pass, timeout: 2000});
+		const res = await axios.post(host.http + 'login/', { 'username': in_name, 'password': in_pass, timeout: 2000});
 		const response : accessT = {
 			access: res.data.access,
 			refresh: res.data.refresh,

@@ -6,7 +6,7 @@ import type { friendT } from '../utils/friendType';
 export async function getFriends() { 
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.get('http://' + host.host_ip + ':8000/friends/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.get(host.http + 'friends/', { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -32,7 +32,7 @@ export function friendArray(friends:AxiosResponse<friendT[]>) {
 export async function friendRequest(id:number) {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.post('http://' + host.host_ip + ':8000/friends/add/' + id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.post(host.http + 'friends/add/' + id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -47,7 +47,7 @@ export async function friendRequest(id:number) {
 export async function acceptRequest(req_id:number) {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.post('http://' + host.host_ip + ':8000/friends/accept/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.post(host.http + 'friends/accept/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -62,7 +62,7 @@ export async function acceptRequest(req_id:number) {
 export async function denyRequest(req_id:number) {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.post('http://' + host.host_ip + ':8000/friends/deny/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.post(host.http + 'friends/deny/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -77,7 +77,7 @@ export async function denyRequest(req_id:number) {
 export async function deleteRequest(req_id:number) {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
-		const res = await axios.post('http://' + host.host_ip + ':8000/friends/delete/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		const res = await axios.post(host.http + 'friends/delete/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
