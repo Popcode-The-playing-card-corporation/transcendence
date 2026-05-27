@@ -127,23 +127,51 @@ def delete_friend_request(request, request_id):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def block_friend(request, request_id):
-    try:
-        friendship = Friendship.objects.get(
-            Q(from_user=request.user) | Q(to_user=request.user),
-            Q(status="accepted") | Q(status="pending"),
-            id=request_id,
+def block_friend(request, user_id):
+
+    if request.user.id == user_id:
+        return Response(
+            {"error": "You cannot block yourself"},
+            status=400
         )
 
+    try:
+        user = User.objects.get(id=user_id)
+
+    except User.DoesNotExist:
+        return Response(
+            {"error": "User not found"},
+            status=404
+        )
+
+    friendship = Friendship.objects.filter(
+        Q(from_user=request.user, to_user=user) |
+        Q(from_user=user, to_user=request.user)
+    ).first()
+
+    if friendship:
+        if friendship.status == "blocked":
+            return Response(
+                {"error": "User already blocked"},
+                status=400
+            )
         friendship.status = "blocked"
         friendship.blocked_by = request.user
         friendship.blocked_at = timezone.now()
         friendship.save()
 
-        return Response({"message": "Friend blocked"})
+    else:
+        friendship = Friendship.objects.create(
+            from_user=request.user,
+            to_user=user,
+            status="blocked",
+            blocked_by=request.user,
+            blocked_at=timezone.now(),
+        )
 
-    except Friendship.DoesNotExist:
-        return Response({"error": "Request not found"}, status=404)
+    return Response({
+        "message": "User blocked"
+    })
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
