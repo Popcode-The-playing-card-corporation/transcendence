@@ -3,7 +3,7 @@ import { getError, type backendErrorT, type errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { friendT } from '../utils/friendType';
 import type { profileT } from '../utils/profileType';
-import { useNotif } from '../components/hooks/useNotif';
+import type { NotifContextType } from '../components/contexts/NotifContext';
 
 export async function getFriends() { 
 	try {
@@ -74,46 +74,40 @@ export async function friendRequest(id:number) {
 	}
 }
 
-function Sendnotif(title:string, message:string) {
-	const notif = useNotif();
-	notif?.showNotif(title, message, 5000);
-}
-
-export async function changeHandler(req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>,   profileRef: React.RefObject<HTMLDialogElement | null> | null) {
-	
+export async function changeHandler(req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>,   profileRef: React.RefObject<HTMLDialogElement | null> | null, notif: NotifContextType | undefined) {
 
 	if (func === "accept") {
 		const res = await acceptRequest(req_id);
 		if ("code" in res) {
-			Sendnotif("Accept Error:", "There was an unexpected error accepting the friend request.")
+			notif?.showNotif("Accept Error:", "There was an unexpected error accepting the friend request.", 5000)
 		} else {
 			profileRef?.current?.close();
 		}
 	} else if (func === "deny") {
 		const res = await denyRequest(req_id);
 		if ("code" in res) {
-			Sendnotif("Deny Error:", "There was an unexpected error denying the friend request.")
+			notif?.showNotif("Deny Error:", "There was an unexpected error denying the friend request.",5000)
 		} else {
 			profileRef?.current?.close();
 		}
 	} else if (func === "delete") {
 		const res = await deleteRequest(req_id);
 		if ("code" in res) {
-			Sendnotif("Delete Error:", "There was an unexpected error deleting the friend.")
+			notif?.showNotif("Delete Error:", "There was an unexpected error deleting the friend.", 5000)
 		} else {
 			profileRef?.current?.close();
 		}
 	} else if (func === "block") {
 		const res = await blockRequest(req_id);
 		if ("code" in res) {
-			Sendnotif("Block Error:", "There was an unexpected error blocking this individual.")
+			notif?.showNotif("Block Error:", "There was an unexpected error blocking this individual.", 5000)
 		} else {
 			profileRef?.current?.close();
 		}	
 	} else if (func === "unblock") {
 		const res = await unblockRequest(req_id);
 		if ("code" in res) {
-			Sendnotif("Unblock Error:", "There was an unexpected error unblocking this person.")
+			notif?.showNotif("Unblock Error:", "There was an unexpected error unblocking this person.", 5000)
 		} else {
 			profileRef?.current?.close();
 		}

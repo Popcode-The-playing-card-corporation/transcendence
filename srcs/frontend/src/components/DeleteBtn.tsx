@@ -1,6 +1,7 @@
 import { FaRegTrashAlt } from "react-icons/fa";
 import React, { useRef } from "react";
 import { changeHandler } from "../api/friend";
+import { useNotif } from "./hooks/useNotif";
 
 type Props = {
   req_id: number;
@@ -11,6 +12,7 @@ type Props = {
 
 export default function DeleteBtn({req_id, updatedFriends, setUpdate, profileRef}: Props) {
   const confirmDelRef = useRef<HTMLDialogElement>(null);
+  const notif = useNotif();
 
   return (
     <div>
@@ -39,7 +41,7 @@ export default function DeleteBtn({req_id, updatedFriends, setUpdate, profileRef
         <form method="dialog">
           <button
           className="btn mr-5 del"
-          onClick={() => changeHandler(req_id, "delete", updatedFriends, setUpdate, profileRef)}
+          onClick={() => changeHandler(req_id, "delete", updatedFriends, setUpdate, profileRef, notif)}
           >
           Confirm
           </button>
