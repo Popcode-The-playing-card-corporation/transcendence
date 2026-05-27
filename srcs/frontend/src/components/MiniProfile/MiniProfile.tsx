@@ -2,32 +2,18 @@ import { MiniHistory } from "../MiniHistory";
 import DeleteBtn from "../DeleteBtn";
 import AddFriendsBtn from "../AddFriendsBtn";
 import BlockBtn from "../BlockBtn";
-import { getProfile } from "../../api/friend";
-import { useEffect, useState } from "react";
 import type { profileT } from "../../utils/profileType";
-import type { errorT } from "../../utils/errorType";
+import type { historyT } from "../../utils/historyType";
 
 type Props = {
-  id: number;
+  account: profileT;
   updatedFriends: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  history: historyT[] | null;
 };
 
-export default function MiniProfile({id, updatedFriends, setUpdate}: Props) {
+export default function MiniProfile({account, updatedFriends, setUpdate, history}: Props) {
 
-	const [account, setAccount] = useState<profileT | errorT>({code:200, response:""})
-	useEffect(() => {
-		async function retrieveProfile(id:number) {
-			const tmp_account = await getProfile(id);
-			setAccount(tmp_account);
-			return ;
-		}
-		retrieveProfile(id);
-	}, [id])
-  
-  
-  if ('code' in account)
-	return ;
   return (
     <>
     <div className="modal-box bg-(--nav-color)">
@@ -65,7 +51,7 @@ export default function MiniProfile({id, updatedFriends, setUpdate}: Props) {
       {/* {* if friend *} 
 				 need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}
       <div className="mt-10">
-		<MiniHistory />
+		<MiniHistory history={history} updatedProfile={updatedFriends} setUpdate={setUpdate}/>
       </div>
     </div>
       <form method="dialog" className="modal-backdrop">

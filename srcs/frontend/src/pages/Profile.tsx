@@ -156,7 +156,7 @@ export function Profile() {
           <h2 className="text-center">History</h2>
         </div>
         <div className="collapse-content">
-          <History gameHistory={gameHistory}/>
+          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

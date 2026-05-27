@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
+            "password",
             "avatar",
             "date_joined",
             "is_online",
@@ -35,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
+            "password" : {"write_only": True},
             "id": {"read_only": True},
             "elo": {"read_only": True},
             "date_joined": {"read_only": True},
