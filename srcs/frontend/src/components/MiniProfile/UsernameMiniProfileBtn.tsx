@@ -6,6 +6,8 @@ import type { errorT } from "../../utils/errorType";
 import { getProfile } from "../../api/friend";
 import { type historyT } from "../../utils/historyType";
 import { getPlayerHistory, historyArray } from "../../api/history";
+import { useNotif } from "../hooks/useNotif";
+import { logged_in } from "../../api/login_status";
 
 type Props = {
   id: number;
@@ -14,15 +16,27 @@ type Props = {
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+
 export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpdate}: Props) {
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
   	
   const [account, setAccount] = useState<profileT | errorT>({code:200, response:""})
   const [history, setHistory] = useState<historyT[] | errorT>({code:200, response:""});
+  const notif = useNotif();
+
+	async function Sendnotif(title:string, message:string) {
+		console.debug("in func")
+		notif?.showNotif(title, message, 5000);
+	}
 
 	async function load_mini() {
+		if (!logged_in) {
+			return ;
+		}
 		const tmp_account = await getProfile(id);
 		if ('code' in tmp_account) {
+			console.debug("here");
+			Sendnotif("Profile Display Error:", "There was an error display " + name + "'s account!");
 			return ;
 		}
 		setAccount(tmp_account);
