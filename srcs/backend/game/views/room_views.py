@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from api.auth.authentication import OptionalJWTAuthentication
-from ..models import Room, PlayerPresence
+from ..models import Room, PlayerPresence, GameLog
 from api.models import User, Friendship
 from ..serializers import RoomSerializer
 from django.db.models import Q
@@ -84,6 +84,50 @@ def is_presence(request):
         "presence": presence
     }, status=200)
 
+@api_view(["GET"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_game_scorelog(request, code):
+    if not Room.objects.filter(
+		code=code
+	).exists():
+        return Response(
+            {"message": "No room with this code"},
+            status= 401
+        )
+    room = Room.objects.get(code=code)
+        
+    players = PlayerPresence.objects.filter(
+        room=room
+    )
+    
+    data = []
+    
+    for player in players:
+        scores = GameLog.objects.filter(
+	    	room=room,
+            player=player.player,
+	    )
+
+        list_score = [
+            {
+                "game": score.game,
+                "round": score.round,
+                "meld": score.meld,
+            }
+            for score in scores
+        ]
+        data.append(
+            {
+                "id": room.id,
+                "username": player.player.username,
+                "list_score": list_score,
+            }
+	    )
+
+    return Response({
+        "scores": data
+    }, status=200)
 
 
 def list_public_room(request, data):
@@ -185,7 +229,6 @@ def list_friend_room(request, data):
 
     return data
 
-#TODO add type
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])

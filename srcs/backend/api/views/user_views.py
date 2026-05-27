@@ -36,7 +36,7 @@ def user(request):
                         )
                 else:
                     return Response(
-                        {"error": "Invalid account type"},
+                        {"error": "Missing information"},
                         status=400
 			    	)
         else:
