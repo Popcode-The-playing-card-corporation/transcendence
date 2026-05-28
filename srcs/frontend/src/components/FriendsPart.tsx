@@ -1,6 +1,6 @@
 import { TbPointFilled } from "react-icons/tb";
 import type { friendT, requestT } from "../utils/friendType";
-import { changeHandler, getRecs } from "../api/friend";
+import { changeHandler } from "../api/friend";
 import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { RxCheck, RxCross2 } from "react-icons/rx";
