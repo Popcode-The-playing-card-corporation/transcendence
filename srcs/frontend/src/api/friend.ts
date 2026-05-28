@@ -114,7 +114,7 @@ export async function changeHandler(req_id: number, func: string, updatedFriends
 	} else if (func === "request") {
 		const res = await friendRequest(req_id);
 		if ("code" in res) {
-			Sendnotif("Request Error:", "There was an unexpected error sending a friend request to this person.")
+			notif?.showNotif("Request Error:", "There was an unexpected error sending a friend request to this person.")
 		} else {
 			profileRef?.current?.close();
 		}

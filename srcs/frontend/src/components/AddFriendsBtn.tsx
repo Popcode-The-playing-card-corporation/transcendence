@@ -15,7 +15,7 @@ export default function AddFriendsBtn({req_id, updatedFriends, setUpdate, profil
     <div>
       <button
         className="btn"
-        onClick={() => changeHandler(req_id, "accept", updatedFriends, setUpdate, profileRef, notif)}
+        onClick={() => changeHandler(req_id, "request", updatedFriends, setUpdate, profileRef, notif)}
       >
         {" "}
         <FaPlus />{" "}

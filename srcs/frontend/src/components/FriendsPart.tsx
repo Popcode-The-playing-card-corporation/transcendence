@@ -106,7 +106,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate, null, notif)}
+                          onClick={() => changeHandler(request.id, "delete", updatedFriends, setUpdate, null, notif)}
                         >
                           <RxCross2 />
                         </button>

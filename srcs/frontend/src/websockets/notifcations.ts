@@ -30,18 +30,25 @@ export function Notifications() {
 		},
 
 		onMessage: (event) => {
-			if (event.data.event === "notifcation") {
-				if (event.data.payload.type === "friend_request") {
-					notif?.showNotif("New Friend Request", event.data.payload.from_user + " has sent you a friend request!", 5000);
+			const data = JSON.parse(event.data);
+			const payload = data.payload;
+			if (data.event === "notification") {
+				if (data.type === "friend_request") {
+					notif?.showNotif("New Friend Request", payload.from_user + " has sent you a friend request!", 5000);
+				} else if (data.type === "friend_accepted") {
+					notif?.showNotif("Friend Request Accepted", payload.from_user + " has accepted your friend request!", 5000);
+				} else {
+					console.debug("type not implemented. Format: ", data)
 				}
-			} else if (event.data.event === "update") {
+			} else if (data.event === "update") {
 				console.debug("Refresh target");
 			} else {
-				console.debug("event not implemented. Format: ", event.data)
-			}
-			notif?.showNotif("Server Notification", event.data, 5000);
-	
+				console.debug("event not implemented. Format: ", data)
+			}	
 		},
 	});
 	return null;
 }
+
+//event not implemented. Format:  {"type": "friend_accepted", "event": "notification", "payload": {"message": "anouar accept your friend request"}}
+//event not implemented. Format:  {"type": "friend_request", "event": "notification", "payload": {"from_user": "test", "from_user_id": 9, "message": "test sent you a friend request"}}
