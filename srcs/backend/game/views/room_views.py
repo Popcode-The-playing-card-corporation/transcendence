@@ -25,6 +25,14 @@ def create_room(request):
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def add_bot(request, code, nb_bot):
+    difficulty = "medium"
+    if "difficulty" in request.data:
+        if request.data["difficulty"] != "easy" and request.data["difficulty"] != "medium" and request.data["difficulty"] != "hard":
+            return Response(
+                {"message": "Invalid difficulty of bot"},
+                status= 401
+            )
+        difficulty = request.data["difficulty"]
     room = Room.objects.get(
         code=code
     )
@@ -55,7 +63,7 @@ def add_bot(request, code, nb_bot):
                 else:
                     nbr = int(result) + 1
                 user = User.objects.get(username= f"BOT{nbr}")
-            add_bot_to_room(user, code)
+            add_bot_to_room(user, code, difficulty)
             room = Room.objects.get(
                 code=code
             )
