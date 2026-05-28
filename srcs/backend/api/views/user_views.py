@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
-from ..models import User
+from ..models import User, Friendship
 from django.conf import settings
 from game.models import Stat
 from rest_framework import status
@@ -16,6 +16,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from datetime import datetime
+from django.db.models import Q
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -51,7 +52,16 @@ def user(request):
 def user_data(request, user_id):
 
     try:
+        
         user = User.objects.get(id=user_id)
+        if Friendship.objects.filter(
+            Q(from_user=request.user, to_user=user) |
+            Q(from_user=user, to_user=request.user),
+            status="blocked"
+		).exists():
+            return Response({
+                "error": "Display not possible"
+			}, status=403)
     except User.DoesNotExist:
         return Response(
             {

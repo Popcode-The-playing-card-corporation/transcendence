@@ -55,7 +55,7 @@ services:
     profiles: [prod]
     container_name: nginx_prod
     ports:
-      - "4242:443" ## env
+      - "443:443" # may need to change for eval so maybe best to put in env
     depends_on:
       - django
     networks:

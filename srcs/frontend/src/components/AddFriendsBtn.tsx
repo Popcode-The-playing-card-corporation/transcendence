@@ -1,5 +1,6 @@
 import { FaPlus } from "react-icons/fa";
 import { changeHandler } from "../api/friend";
+import { useNotif } from "./hooks/useNotif";
 
 type Props = {
   req_id: number;
@@ -9,11 +10,12 @@ type Props = {
 };
 
 export default function AddFriendsBtn({req_id, updatedFriends, setUpdate, profileRef}: Props) {
+	const notif = useNotif();
 	return (
     <div>
       <button
         className="btn"
-        onClick={() => changeHandler(req_id, "request", updatedFriends, setUpdate, profileRef)}
+        onClick={() => changeHandler(req_id, "accept", updatedFriends, setUpdate, profileRef, notif)}
       >
         {" "}
         <FaPlus />{" "}

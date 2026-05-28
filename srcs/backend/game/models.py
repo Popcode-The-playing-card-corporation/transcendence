@@ -26,6 +26,12 @@ class Room(models.Model):
         ("end", "End"),
     ]
     
+    TYPE_CHOICES = [
+        ("public", "Public"),
+        ("friends_only", "Friends_only"),
+        ("private", "Private"),
+    ]
+    
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     code = models.CharField(max_length=8, unique=True)
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosted_rooms')
@@ -35,12 +41,11 @@ class Room(models.Model):
     started_at = models.DateTimeField(null=True)
     ended_at = models.DateTimeField(null=True)
     nb_player = models.IntegerField(default=0)
-    is_private = models.BooleanField(default=False)
+    type = models.CharField(max_length=12, choices=TYPE_CHOICES, default="private")
     max_player = models.IntegerField(default=7)
     
     def __str__(self):
         return f"{self.code}"
-
 
 class PlayerScore(models.Model):
     player = models.ForeignKey(User, on_delete=models.CASCADE)

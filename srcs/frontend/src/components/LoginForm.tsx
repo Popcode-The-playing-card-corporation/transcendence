@@ -50,6 +50,7 @@ export function LoginForm({
   }
 
   useEffect(() => {
+
     async function checkAccess() {
       const authed = await checkAuth();
       if (authed) {

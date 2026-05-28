@@ -9,6 +9,7 @@ import DeleteBtn from "./DeleteBtn";
 import BlockBtn from "./BlockBtn";
 import { FaPlus } from "react-icons/fa";
 import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
+import { useNotif } from "./hooks/useNotif";
 
 type Props = {
   friends:friendT[];
@@ -22,6 +23,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
   const [nbSlice, setNbSlice] = useState<number>(10);
+  const notif = useNotif();
 
   function handleMoreLessBtn() {
     if (isMore) {
@@ -98,13 +100,13 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
                       <div className="btn-accept-or-reject flex gap-3">
                         <button
                           className="btn btn-circle validate"
-                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate, null)}
+                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate, null, notif)}
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate, null)}
+                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate, null, notif)}
                         >
                           <RxCross2 />
                         </button>

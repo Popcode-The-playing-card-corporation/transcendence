@@ -20,7 +20,6 @@ function getRequests(friend_list: friendT[]): {
     friends: friendT[];
     requests: requestT[];
   } {
-
     const friends: friendT[] = [];
     const requests: requestT[] = [];
 
