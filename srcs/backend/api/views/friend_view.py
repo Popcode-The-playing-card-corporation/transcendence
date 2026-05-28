@@ -59,8 +59,8 @@ def send_friend_request(request, user_id):
             f"user_{target.id}",
             {
                 "type": "notify",
-        
-                "event": "friend_request",
+                "type_notify": "friend_request",
+                "event": "notification",
         
                 "payload": {
                     "from_user": request.user.username,
@@ -94,8 +94,8 @@ def accept_friend_request(request, request_id):
             f"user_{friendship.from_user.id}",
             {
                 "type": "notify",
-        
-                "event": "friend_accepted",
+                "event": "notification",
+                "type_notify": "friend_accepted",
         
                 "payload": {
                     "message": f"{request.user.username} accept your friend request"
