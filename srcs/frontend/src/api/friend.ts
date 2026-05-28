@@ -4,6 +4,7 @@ import host from '../api/host'
 import type { friendT } from '../utils/friendType';
 import type { profileT } from '../utils/profileType';
 import type { NotifContextType } from '../components/contexts/NotifContext';
+import type { recommendationT } from '../utils/recommendationType';
 
 export async function getFriends() { 
 	try {
@@ -19,6 +20,25 @@ export async function getFriends() {
 	}
 }
 
+export async function getRecs() { 
+	try {
+		const res = await axios.get(host.http + 'propal/', { timeout: 2000, withCredentials: true});
+		const result = recArray(res);
+		return result;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
+function recArray(recs:AxiosResponse<recommendationT[]>) {
+	return recs;
+}
+ 
 export async function getBlocked() { 
 	try {
 		const res = await axios.get(host.http + 'friends/block/', { timeout: 2000, withCredentials: true});
