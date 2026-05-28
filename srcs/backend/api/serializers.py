@@ -40,7 +40,6 @@ class UserSerializer(serializers.ModelSerializer):
             "elo": {"read_only": True},
             "date_joined": {"read_only": True},
             "last_login": {"read_only": True},
-            "email": {"read_only": True},
             "has_password": {"read_only": True},
             "is_online": {"read_only": True},
         }
@@ -55,6 +54,7 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         
         validated_data.pop("password", None)
+        validated_data.pop("email", None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
     
