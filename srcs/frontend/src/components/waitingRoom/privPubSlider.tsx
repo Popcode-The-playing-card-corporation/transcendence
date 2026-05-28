@@ -1,9 +1,19 @@
-export default function PrivatePublicToggle()
+import { useEffect } from "react";
+
+export default function PrivatePublicSlider()
 {
+  useEffect(() => {
+
+  },[])
   return (
-    <> 
      <div className="w-full max-w-xs">
-      <input type="range" min="0" max="100" value="50" className="range bg-(--bg-color)" step="50" />
+      <input
+        type="range"
+        min="0"
+        max="100"
+        defaultValue="0"
+        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+        step="50" />
       <div className="flex justify-between px-2.5 mt-2 text-xs">
         <span>|</span>
         <span>|</span>
@@ -15,6 +25,5 @@ export default function PrivatePublicToggle()
         <span>Public</span>
       </div>
     </div>
-    </>
   );
 }
