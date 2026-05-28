@@ -302,7 +302,6 @@ def list_propal(request):
                 suggestions.append({
                     "id": suggested_user.id,
                     "username": suggested_user.username,
-                    "is_online": suggested_user.is_online,
 
                     "mutual_friends": [
                         {
