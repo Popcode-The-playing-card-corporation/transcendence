@@ -98,6 +98,8 @@ def accept_friend_request(request, request_id):
                 "type_notify": "friend_accepted",
         
                 "payload": {
+                    "from_user": request.user.username,
+                    "from_user_id": request.user.id,
                     "message": f"{request.user.username} accept your friend request"
                 }
             }
@@ -117,8 +119,22 @@ def delete_friend_request(request, request_id):
             Q(status="accepted") | Q(status="pending") | Q(status="blocked"),
             id=request_id,
         )
+        target = (
+            friendship.to_user
+            if friendship.from_user == request.user
+            else friendship.from_user
+        )
+        channel_layer = get_channel_layer()
 
-        friendship.delete()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{target.id}",
+            {
+                "type": "notify",
+                "type_notify": "friend_delete",
+                "event": "update"
+            }
+        )
+        #friendship.delete()
 
         return Response({"message": "Friend request delete"})
 
