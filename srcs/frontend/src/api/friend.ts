@@ -36,7 +36,13 @@ export async function getRecs() {
 }
 
 function recArray(recs:AxiosResponse<recommendationT[]>) {
-	return recs;
+	const data = recs.data;
+	const rec_array: recommendationT[] = [];
+	for (const res_data of data) {
+		const rec:recommendationT = res_data;
+		rec_array.push(rec);
+	}
+	return rec_array;
 }
  
 export async function getBlocked() { 
