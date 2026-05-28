@@ -1,6 +1,6 @@
 import { TbPointFilled } from "react-icons/tb";
 import type { friendT, requestT } from "../utils/friendType";
-import { changeHandler } from "../api/friend";
+import { changeHandler, getRecs } from "../api/friend";
 import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { RxCheck, RxCross2 } from "react-icons/rx";
@@ -10,15 +10,17 @@ import BlockBtn from "./BlockBtn";
 import { FaPlus } from "react-icons/fa";
 import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
 import { useNotif } from "./hooks/useNotif";
+import type { recommendationT } from "../utils/recommendationType";
 
 type Props = {
   friends:friendT[];
   requests:requestT[];
+  recs:recommendationT[];
   updatedFriends:boolean;
   setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
+export function Friends({friends, requests, recs, updatedFriends, setUpdate}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
@@ -67,7 +69,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
             <FaPlus />{" "}
           </button>
           <dialog id="add_new_friends" className="modal" ref={addFriendsRef}>
-            <AddFriends />
+            <AddFriends recs={recs}/>
           </dialog>
           <div className="dropdown dropdown-end">
             <div className="indicator">
