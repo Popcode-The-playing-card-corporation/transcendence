@@ -3,17 +3,19 @@ import { createFakeGame } from "../../utils/test_funcs/createFakeGameAvailable";
 import UsernameMiniProfileBtn from "../MiniProfile/UsernameMiniProfileBtn";
 import { useState } from "react";
 import FilterGame from "./FilterGames";
+import type { availableGameT } from "../../utils/availableGameType";
 
 export default function CreateOrJoin() {
   const availableGames = createFakeGame();
   const [fakeBool, setFakeBool] = useState<boolean>(false);
+  const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
 
   return (
     <div className=" mt-17 h-screen mr-15">
       <h1 className="">Create or join a game!</h1>
       <div className="w-full flex h-screen">
-        <div className="createOrJoinBtn-container w-1/3 flex flex-col justify-center items-center max-h-8/12 ">
-          <button className="btn m-3 btn-primary">Create</button>
+        <div className="createOrJoinBtn-container w-1/3 flex flex-col justify-center items-center h-8/12">
+          <button className="btn m-3 ">Create</button>
           <p>or</p>
           <div className="joinCode-container m-3">
             <input
@@ -26,8 +28,8 @@ export default function CreateOrJoin() {
         </div>
         <div className="listAvailableGame w-2/3 flex justify-center bordered overflow-scroll max-h-8/12">
 		<div className="w-full">
-		<FilterGame />
-          <table className="table ml-10">
+		<FilterGame rawList={availableGames} setFilteredGames={setFilteredGames}/>
+          <table className="table ml-10 ">
             <thead>
               <tr>
                 <th>Room</th>
@@ -36,7 +38,7 @@ export default function CreateOrJoin() {
               </tr>
             </thead>
             <tbody>
-              {availableGames.map((game) => {
+              {filteredGames.map((game) => {
                 return (
                   <tr>
                     <td>{game.host}'s room</td>
