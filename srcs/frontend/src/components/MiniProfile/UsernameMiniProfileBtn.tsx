@@ -11,9 +11,9 @@ import { useNotif } from "../hooks/useNotif";
 type Props = {
   id: number;
   name: string;
-  updatedFriends: boolean;
+  updatedFriends?: boolean;
   logged_in: boolean;
-  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  setUpdate?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 
