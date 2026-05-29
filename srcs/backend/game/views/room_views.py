@@ -360,7 +360,7 @@ def update_params(request, code):
             status= 401
         )
     if "max_player" in request.data:
-        if request.data["max_player"] > 7 or request.data["max_player"] < 2:
+        if request.data["max_player"] > 7 or request.data["max_player"] < 1:
             return Response(
                 {"message": "Invalid number of player max"},
                 status= 401
