@@ -14,6 +14,9 @@ export default function FilterGame({
   const [search, setSearch] = useState<string>("");
   const [dispFilter, setDispFilter] = useState<boolean>(false);
   const [maxPlayers, setMaxPlayers] = useState<number>(0);
+  const [friendsFilter, setFriendsFilter] = useState<boolean>(false);
+  const [publicFilter, setPublicFilter] = useState<boolean>(false);
+  const [typeFilter, setTypeFilter] = useState<string>("");
 
   useEffect(() => {
     const searchedGames = rawList.filter((game: availableGameT) => {
@@ -22,12 +25,20 @@ export default function FilterGame({
       return game.host.toLocaleLowerCase().includes(lower);
     });
 
-    const filteredGames = searchedGames.filter((game: availableGameT) => {
-      return game.max_player >= maxPlayers + 2;
-    });
+    const filteredMaxPlayerGames = searchedGames.filter(
+      (game: availableGameT) => {
+        return game.max_player >= maxPlayers + 2;
+      },
+    );
 
-    setFilteredGames(filteredGames);
-  }, [maxPlayers, search]);
+
+	const finalFilteredGames = filteredMaxPlayerGames.filter((game: availableGameT) => {
+		if (typeFilter === "All") return true;
+		return game.type === typeFilter;
+	} )
+
+    setFilteredGames(finalFilteredGames);
+  }, [maxPlayers, search, typeFilter]);
 
   return (
     <div className="filterGame flex justify-between my-2 items-center sticky -top-10 bg-(--bg-color) z-10 p-3 rounded-4xl shadow-2xl -mt-12">
@@ -42,7 +53,7 @@ export default function FilterGame({
           }}
         />
       </label>
-      <form className="flex gap-3 justify-end items-center">
+      <div className="flex gap-3 justify-end items-center">
         <div
           className={
             "w-50 max-w-xs transition-all duration-500 text-center" +
@@ -66,15 +77,6 @@ export default function FilterGame({
               step="10"
             />
           </label>
-          {/* <div className="flex justify-between px-2.5 mt-2 text-xs"> */}
-          {/*   <span>|</span> */}
-          {/*   <span>|</span> */}
-          {/*   <span>|</span> */}
-          {/*   <span>|</span> */}
-          {/*   <span>|</span> */}
-          {/*   <span>|</span> */}
-          {/*   <span>|</span> */}
-          {/* </div> */}
           <div className="flex justify-between px-2.5 mt-2 text-xs">
             <span>2</span>
             <span>3</span>
@@ -85,26 +87,47 @@ export default function FilterGame({
           </div>
         </div>
 
-        <input
-          className={
-            dispFilter
-              ? "btn checked:bg-(--nav-color) opacity-100 transition-all duration-500"
-              : "btn opacity-0" + " transition-all duration-500 translate-x-9"
-          }
-          type="checkbox"
-          name="filter"
-          aria-label="friends"
-        />
-        <input
-          className={
-            dispFilter
-              ? "btn checked:bg-(--nav-color) transition-all duration-500"
-              : " btn opacity-0" + " transition-all duration-500 translate-x-5"
-          }
-          type="checkbox"
-          name="filter"
-          aria-label="public"
-        />
+        <form
+          className="filter"
+        >
+          <input
+            className={
+              dispFilter
+                ? "btn checked:bg-(--nav-color) opacity-100 transition-all duration-500"
+                : "btn opacity-0" + " transition-all duration-500 translate-x-9"
+            }
+            type="radio"
+            name="filter"
+            aria-label="friends"
+            value="friend"
+			onClick={() => setTypeFilter("friend")}
+          />
+          <input
+            className={
+              dispFilter
+                ? "btn checked:bg-(--nav-color) transition-all duration-500"
+                : " btn opacity-0" +
+                  " transition-all duration-500 translate-x-5"
+            }
+            type="radio"
+            name="filter"
+            aria-label="public"
+            value="public"
+			onClick={() => setTypeFilter("public")}
+          />
+          <input
+            name="filter"
+            type="reset"
+            value="All"
+			onClick={() => setTypeFilter("All")}
+            className={
+              dispFilter
+                ? "btn checked:bg-(--nav-color) transition-all duration-500"
+                : " btn opacity-0" +
+                  " transition-all duration-500 translate-x-5"
+            }
+          />
+        </form>
         <label className="btn btn-circle swap swap-rotate glass">
           {/* this hidden checkbox controls the state */}
           <input type="checkbox" onClick={() => setDispFilter(!dispFilter)} />
@@ -112,7 +135,7 @@ export default function FilterGame({
           <FaFilter className="swap-off fill-current mx-auto" />
           <MdClose className="swap-on fill-current text-xl" />
         </label>
-      </form>
+      </div>
     </div>
   );
 }
