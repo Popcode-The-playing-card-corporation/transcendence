@@ -8,12 +8,14 @@ import { StatisticsPart } from "../components/StatisticPart";
 import { defaultStat, type statisticsT } from "../utils/statisticsType";
 import { getStats } from "../api/stats";
 import { type friendT, type requestT } from "../utils/friendType";
-import { friendArray, getFriends } from "../api/friend"
+import { friendArray, getFriends, getRecs } from "../api/friend"
 import { defaultAccount, type accountT } from "../utils/accountType";
 import { profileRequest } from "../api/profile";
 import avatar1 from "../assets/avatars/avatar1.png";
 import { type historyT } from "../utils/historyType";
 import { getHistory, historyArray } from "../api/history";
+import { useNotif } from "../components/hooks/useNotif";
+import type { recommendationT } from "../utils/recommendationType";
 
 function getRequests(friend_list: friendT[]): {
     friends: friendT[];
@@ -21,6 +23,7 @@ function getRequests(friend_list: friendT[]): {
   } {
     const friends: friendT[] = [];
     const requests: requestT[] = [];
+
     for (const friend of friend_list) {
       if (friend.can_accept) {
         requests.push({ id: friend.id, username: friend.user.username });
@@ -36,6 +39,7 @@ export function Profile() {
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [stats, setStats] = useState<statisticsT>(defaultStat);
 	const [friends, setFriends] = useState<friendT[]>([]);
+	const [recs, setRecs] = useState<recommendationT[]>([]);
 	const [requests, setRequests] = useState<requestT[]>([]);
 	const [gameHistory, setHistory] = useState<historyT[]>([])
 	const [profile, setProfile] = useState<accountT>(defaultAccount);
@@ -43,35 +47,34 @@ export function Profile() {
   	const [updatedFriends, setFriendUpdate] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
+	const notif = useNotif();
 
 	useEffect(() => {
 
-		function login_error(message:string) {
-			navigate('/login', {state: location.pathname});
-			// notif bar
-			console.debug(message);
+		function login_error(title:string, message:string) {
+			navigate('/login', {state: "/profile"});
+			notif?.showNotif(title, message, 5000);
 			setValid(false);
 			return ;
 		}
 
-		function other_error(message:string) {
-			navigate('/home', {state: location.pathname});
-			// notif bar
-			console.debug(message);
+		function other_error(title:string, message:string) {
+			navigate('/', {state: "/profile"});
+			notif?.showNotif(title, message, 5000);
 			setValid(false);
 			return ;
 		}
 
 		async function verify() {
 			if (!(await checkAuth())) {
-				return login_error("Authentication error");
+				return login_error("Authentication error:", "Please log in again.");
 			}
 			const account = await profileRequest();
 			if ("code" in account) {
 				if (account.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(account.response);
+					return other_error("Error " + account.code + ":", account.response);
 				}
 			}
 			if (account.avatar === "") {
@@ -81,47 +84,57 @@ export function Profile() {
 			const friendlist = await getFriends();
 			if ("code" in friendlist) {
 				if (friendlist.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(friendlist.response);
+					return other_error("Error " + friendlist.code + ":", friendlist.response);
 				}
 			}
 			const arr = friendArray(friendlist);
 			const filter = getRequests(arr);
 			setFriends(filter.friends);
 			setRequests(filter.requests);
-			const gameHistory = await getHistory();
+			const recommendations = await getRecs();
+			if ("code" in recommendations) {
+				if (recommendations.code === 401) {
+					return login_error("Authentication error:", "Please log in again.");
+				} else {
+					return other_error("Error " + recommendations.code + ":", recommendations.response);
+				}
+			}
+			setRecs(recommendations);
+ 			const gameHistory = await getHistory();
 			if ("code" in gameHistory) {
 				if (gameHistory.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(gameHistory.response);
+					return other_error("Error " + gameHistory.code + ":", gameHistory.response);
 				}
 			}
 			setHistory(await historyArray(gameHistory));
 			const stat_vals = await getStats(account.id);
 			if ("code" in stat_vals) {
 				if (stat_vals.code === 401) {
-					return login_error("Authentication error, please log in.");
+					return login_error("Authentication error:", "Please log in again.");
 				} else {
-					return other_error(stat_vals.response);
+					return other_error("Error " + stat_vals.code + ":", stat_vals.response);
 				}
 			}
 			setStats(stat_vals);
 			setValid(true);
 		}
 		verify();
-	}, [updatedFriends, updatedProfile, navigate, location])
+	}, [updatedFriends, updatedProfile, navigate, location, notif])
 
 	if (valid === null) {
-		return <p>Loading...</p>;
+		return (
+			<div className="page-content flex items-center justify-center min-h-screen">
+				<span className="loading loading-spinner loading-xl"></span>
+			</div>
+		)
 	}
 
+
 	if (!valid) {
-		navigate('/home', {state: location.pathname});
-		// notif bar
-		console.debug("");
-		setValid(false);
 		return ;
 	}
 
@@ -144,7 +157,7 @@ export function Profile() {
           <h2 className="text-center">Friends</h2>
         </div>
         <div className="collapse-content overflow-auto">
-          <Friends friends={friends} requests={requests} updatedFriends={updatedFriends} setUpdate={setFriendUpdate} />
+          <Friends friends={friends} requests={requests} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">
@@ -153,7 +166,7 @@ export function Profile() {
           <h2 className="text-center">History</h2>
         </div>
         <div className="collapse-content">
-          <History gameHistory={gameHistory}/>
+          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

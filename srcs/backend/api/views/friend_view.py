@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from django.db.models import Q
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -52,6 +53,23 @@ def send_friend_request(request, user_id):
             status="pending"
         )
 
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            f"user_{target.id}",
+            {
+                "type": "notify",
+                "type_notify": "friend_request",
+                "event": "notification",
+        
+                "payload": {
+                    "from_user": request.user.username,
+                    "from_user_id": request.user.id,
+                    "message": f"{request.user.username} sent you a friend request"
+                }
+            }
+        )
+        
         return Response({"message": "Friend request sent"})
 
     except User.DoesNotExist:
@@ -70,6 +88,23 @@ def accept_friend_request(request, request_id):
         friendship.accepted_at = timezone.now()
         friendship.save()
 
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            f"user_{friendship.from_user.id}",
+            {
+                "type": "notify",
+                "event": "notification",
+                "type_notify": "friend_accepted",
+        
+                "payload": {
+                    "from_user": request.user.username,
+                    "from_user_id": request.user.id,
+                    "message": f"{request.user.username} accept your friend request"
+                }
+            }
+        )
+        
         return Response({"message": "Friend request accepted"})
 
     except Friendship.DoesNotExist:
@@ -84,7 +119,21 @@ def delete_friend_request(request, request_id):
             Q(status="accepted") | Q(status="pending") | Q(status="blocked"),
             id=request_id,
         )
+        target = (
+            friendship.to_user
+            if friendship.from_user == request.user
+            else friendship.from_user
+        )
+        channel_layer = get_channel_layer()
 
+        async_to_sync(channel_layer.group_send)(
+            f"user_{target.id}",
+            {
+                "type": "notify",
+                "type_notify": "friend_delete",
+                "event": "update"
+            }
+        )
         friendship.delete()
 
         return Response({"message": "Friend request delete"})
@@ -94,23 +143,64 @@ def delete_friend_request(request, request_id):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def block_friend(request, request_id):
-    try:
-        friendship = Friendship.objects.get(
-            Q(from_user=request.user) | Q(to_user=request.user),
-            Q(status="accepted") | Q(status="pending"),
-            id=request_id,
+def block_friend(request, user_id):
+
+    if request.user.id == user_id:
+        return Response(
+            {"error": "You cannot block yourself"},
+            status=400
         )
 
+    try:
+        user = User.objects.get(id=user_id)
+
+    except User.DoesNotExist:
+        return Response(
+            {"error": "User not found"},
+            status=404
+        )
+
+    friendship = Friendship.objects.filter(
+        Q(from_user=request.user, to_user=user) |
+        Q(from_user=user, to_user=request.user)
+    ).first()
+
+    if friendship:
+        if friendship.status == "blocked":
+            return Response(
+                {"error": "User already blocked"},
+                status=400
+            )
         friendship.status = "blocked"
         friendship.blocked_by = request.user
         friendship.blocked_at = timezone.now()
         friendship.save()
 
-        return Response({"message": "Friend blocked"})
-
-    except Friendship.DoesNotExist:
-        return Response({"error": "Request not found"}, status=404)
+    else:
+        friendship = Friendship.objects.create(
+            from_user=request.user,
+            to_user=user,
+            status="blocked",
+            blocked_by=request.user,
+            blocked_at=timezone.now(),
+        )
+    target = (
+        friendship.to_user
+        if friendship.from_user == request.user
+        else friendship.from_user
+    )
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"user_{target.id}",
+        {
+            "type": "notify",
+            "type_notify": "friend_blocked",
+            "event": "update"
+        }
+    )
+    return Response({
+        "message": "User blocked"
+    })
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -241,7 +331,6 @@ def list_propal(request):
                 suggestions.append({
                     "id": suggested_user.id,
                     "username": suggested_user.username,
-                    "is_online": suggested_user.is_online,
 
                     "mutual_friends": [
                         {

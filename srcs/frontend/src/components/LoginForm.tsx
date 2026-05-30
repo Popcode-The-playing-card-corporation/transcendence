@@ -50,6 +50,7 @@ export function LoginForm({
   }
 
   useEffect(() => {
+
     async function checkAccess() {
       const authed = await checkAuth();
       if (authed) {
@@ -65,10 +66,10 @@ export function LoginForm({
     if (success || access) {
       setLoggedIn(true);
       if (location.state) {
-        navigate(location.state);
+        navigate(location.state, {state: location.pathname});
         return;
       }
-      navigate("/");
+      navigate("/", {state: location.pathname});
       return;
     }
   }, [access, navigate, success, location]);

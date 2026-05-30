@@ -1,26 +1,23 @@
 import { useRef } from "react";
 import { MdBlock } from "react-icons/md";
 import { changeHandler } from "../api/friend";
+import { useNotif } from "./hooks/useNotif";
 
 type Props = {
   req_id: number;
   updatedFriends: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
-  changeHandler: (
-    req_id: number,
-    func: string,
-    updatedFriends: boolean,
-    setUpdate: React.Dispatch<React.SetStateAction<boolean>>,
-  ) => void;
+  profileRef: React.RefObject<HTMLDialogElement | null> | null;
 };
 
 export default function BlockBtn({
   req_id,
-  changeHandler,
   updatedFriends,
   setUpdate,
+  profileRef,
 }: Props) {
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
+  const notif = useNotif();
 
   return (
     <div>
@@ -51,7 +48,7 @@ export default function BlockBtn({
               <button
                 className="btn mr-5 del"
                 onClick={() =>
-                  changeHandler(req_id, "block", updatedFriends, setUpdate)
+                  changeHandler(req_id, "block", updatedFriends, setUpdate, profileRef, notif)
                 }
               >
                 Confirm

@@ -3,31 +3,37 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 from asgiref.sync import sync_to_async
+from http.cookies import SimpleCookie
 
 User = get_user_model()
 
 class JwtAuthMiddleware:
-    def __init__(self, app):
-        self.app = app
+	def __init__(self, app):
+		self.app = app
 
-    async def __call__(self, scope, receive, send):
-        query_string = scope.get("query_string", b"").decode()
-        params = parse_qs(query_string)
+	async def __call__(self, scope, receive, send):
 
-        token = params.get("token", [None])[0]
+		headers = dict(scope["headers"])
 
-        scope["user"] = AnonymousUser()
+		token = None
+		if b"cookie" in headers:
+			cookies = SimpleCookie(headers[b"cookie"].decode())
 
-        if token:
-            try:
-                access_token = AccessToken(token)
-                user_id = access_token["user_id"]
+			if "access_token" in cookies:
+				token = cookies["access_token"].value
 
-                user = await sync_to_async(User.objects.get)(id=user_id)
+		scope["user"] = AnonymousUser()
 
-                scope["user"] = user
+		if token:
+			try:
+				access_token = AccessToken(token)
+				user_id = access_token["user_id"]
 
-            except Exception as e:
-                print("AUTH ERROR:", e)
+				user = await sync_to_async(User.objects.get)(id=user_id)
 
-        return await self.app(scope, receive, send)
+				scope["user"] = user
+
+			except Exception as e:
+				print("AUTH ERROR:", e)
+
+		return await self.app(scope, receive, send)

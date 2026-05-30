@@ -94,10 +94,10 @@ export function RegisterForm({
 
 	if (success || access) {
 		if (location.state) {
-			navigate(location.state);
+			navigate(location.state, {state: location.pathname});
 			return ;
 		}
-		navigate('/');
+		navigate('/', {state: location.pathname});
 		return ;
 	}
   }, [navigate, success, access, location]);

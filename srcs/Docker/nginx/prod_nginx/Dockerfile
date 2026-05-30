@@ -2,6 +2,20 @@ FROM node:22-bookworm-slim AS build
 
 WORKDIR /app
 
+ARG VITE_GOOGLE_OAUTH_CALLBACK_URL
+ARG VITE_GOOGLE_OAUTH_CLIENT_ID
+ARG VITE_42_OAUTH_CALLBACK_URL
+ARG VITE_42_OAUTH_CLIENT_ID
+ARG VITE_GIT_OAUTH_CALLBACK_URL
+ARG VITE_GIT_OAUTH_CLIENT_ID
+
+ENV VITE_GOOGLE_OAUTH_CALLBACK_URL=$VITE_GOOGLE_OAUTH_CALLBACK_URL
+ENV VITE_GOOGLE_OAUTH_CLIENT_ID=$VITE_GOOGLE_OAUTH_CLIENT_ID
+ENV VITE_42_OAUTH_CALLBACK_URL=$VITE_42_OAUTH_CALLBACK_URL
+ENV VITE_42_OAUTH_CLIENT_ID=$VITE_42_OAUTH_CLIENT_ID
+ENV VITE_GIT_OAUTH_CALLBACK_URL=$VITE_GIT_OAUTH_CALLBACK_URL
+ENV VITE_GIT_OAUTH_CLIENT_ID=$VITE_GIT_OAUTH_CLIENT_ID
+
 COPY frontend/package*.json ./
 
 RUN npm ci
@@ -13,9 +27,18 @@ RUN npm run build
 
 
 
-
 FROM nginx:stable-alpine
 
+ARG DOMAIN_NAME
+
+RUN mkdir -p /etc/nginx/ssl 
+
+COPY Docker/nginx/prod_nginx/ssl.crt /etc/nginx/ssl/ssl.crt 
+COPY Docker/nginx/prod_nginx/ssl.key /etc/nginx/ssl/ssl.key
 COPY Docker/nginx/prod_nginx/nginx.conf /etc/nginx/nginx.conf
 
+RUN sed -i "s/localhost/${DOMAIN_NAME} www.${DOMAIN_NAME}/g" /etc/nginx/nginx.conf
+
 COPY --from=build /app/dist /etc/nginx/dist
+
+

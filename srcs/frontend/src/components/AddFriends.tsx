@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
+import type { recommendationT } from "../utils/recommendationType";
 
-export function AddFriends() {
+export function AddFriends({recs}:{recs:recommendationT[]}) {
+  console.log(recs); // just here as a placeholder until recommendations are implemented
+
   const [search, setSearch] = useState("");
   const result = [
     {

@@ -7,6 +7,7 @@ venv/
 .env/
 .venv/
 
+
 # Django
 *.log
 db.sqlite3
@@ -17,6 +18,9 @@ staticfiles/
 
 # Secrets
 .env
+.env_ip_test
+.env_prod
+.env_ip_test
 *.env
 .env_prod
 
@@ -34,3 +38,4 @@ srcs/docker-compose.override.yml
 # env files which do not contain secrets
 !./srcs/frontend/.env.dev
 !./srcs/frontend/.env.prod
+srcs/.env_prod

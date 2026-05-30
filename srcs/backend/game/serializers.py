@@ -8,7 +8,21 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'code', 'host', 'created_at', 'is_private']
+        fields = ['id', 'code', 'host', 'created_at', 'status', 'max_player', 'type']
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "code": {"read_only": True},
+            "host": {"read_only": True},
+            "created_at": {"read_only": True},
+        }
+
+    def update(self, instance, validated_data):
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+    
+        instance.save()
+        return instance
 
 class PlayerScoreSerializer(serializers.ModelSerializer):
     player = UserSerializer()

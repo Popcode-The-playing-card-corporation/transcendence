@@ -1,51 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { historyT } from "../utils/historyType";
-import type { errorT } from "../utils/errorType";
-import { getHistory, historyArray } from "../api/history";
 import type { playerT } from "../utils/playerType";
-import { useNavigate } from "react-router-dom";
-import { refreshAuth } from "../api/checkAuth";
+import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
+import type { errorT } from "../utils/errorType";
 
-export function MiniHistory() {
+
+type Props = {
+  history:historyT[] | errorT;
+  updatedProfile:boolean;
+  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function MiniHistory({history, updatedProfile, setUpdate}:Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10);
-  const [gameHistory, setHistory] = useState<historyT[] | errorT>({
-    code: 0,
-    response: "",
-  });
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    async function retrieveHistory() {
-      let res = await getHistory();
-      if ("code" in res) {
-        if (res.code === 401) {
-          if (!(await refreshAuth())) {
-            navigate("/login");
-          }
-          res = await getHistory();
-        }
-        if ("code" in res) {
-          setHistory(res);
-        } else {
-          const arr = await historyArray(res);
-          setHistory(arr);
-        }
-      } else {
-        const arr = await historyArray(res);
-        setHistory(arr);
-      }
-    }
 
-    retrieveHistory();
-  }, [navigate]);
-
-  if ("code" in gameHistory) {
-    return <p>Error: {String(gameHistory.response)}</p>;
+  if ('code' in history) {
+	if (history.response === "Forbidden: not friends")
+		return <p>Send a friend request to see this person's history!</p>;
+    return <p>Error displaying history</p>;
   }
 
   function handleMoreLessBtn() {
-    if ("code" in gameHistory) {
+    if ('code' in history) {
       return;
     }
     if (isMore) {
@@ -53,7 +31,7 @@ export function MiniHistory() {
       setNbSlice(10);
     } else {
       setIsMore(true);
-      setNbSlice(gameHistory.length);
+      setNbSlice(history.length);
     }
   }
   return (
@@ -78,7 +56,7 @@ export function MiniHistory() {
             <th className="th-history">Nb players</th>
             <th className=" w-100 text-left overflow-hidden">Opponents</th>
           </tr>
-          {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+          {history.slice(0, nbSlice).map((game: historyT) => (
             <tr
               className={
                 (game.won ? "bg-(--green-color)" : "bg-(--accent-color)") +
@@ -104,9 +82,9 @@ export function MiniHistory() {
                     className="dropdown-content menu bg-(--hover-color) rounded-box z-1 w-52 p-2 shadow-sm"
                   >
                     {game.players.map((player: playerT) => (
-                      <li>
-                        <a className="text-(--font-color)">{player.username}</a>
-                      </li>
+					<li>
+							<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate}/>
+					</li>
                     ))}
                   </ul>
                 </div>
@@ -114,7 +92,7 @@ export function MiniHistory() {
             </tr>
           ))}
           <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
-            {gameHistory.length > 10? (isMore ? "Show less" : "Show more") : ""}
+            {history.length > 10? (isMore ? "Show less" : "Show more") : ""}
           </a>
         </table>
       </div>

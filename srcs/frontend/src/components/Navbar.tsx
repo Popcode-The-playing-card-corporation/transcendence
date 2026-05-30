@@ -28,19 +28,27 @@ export function Navbar() {
 	if (logged_in) {
 		setLogging(true);
 		const res = await logout();
-		if (res.code !== 200) {
+		if (res.code !== 200 && res.code !== 401) {
 			//error popup
 			setLogging(false);
 			return ;
 		}
-		navigate("/login");
+		if (location.pathname === "/login") {
+			navigate("/login")
+		} else {
+			navigate("/login", {state: location.pathname});
+		}
 		setTimeout(() => {
 			setLogging(false);
 		}, (1000));
 		setLoggedIn(false);
 		return ;
 	}
-	navigate("/login");
+	if (location.pathname === "/login") {
+		navigate("/login")
+	} else {
+		navigate("/login", {state: location.pathname});
+	}
   }
 
   return (
