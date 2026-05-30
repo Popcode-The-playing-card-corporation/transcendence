@@ -14,8 +14,6 @@ export default function FilterGame({
   const [search, setSearch] = useState<string>("");
   const [dispFilter, setDispFilter] = useState<boolean>(false);
   const [maxPlayers, setMaxPlayers] = useState<number>(0);
-  const [friendsFilter, setFriendsFilter] = useState<boolean>(false);
-  const [publicFilter, setPublicFilter] = useState<boolean>(false);
   const [typeFilter, setTypeFilter] = useState<string>("");
 
   useEffect(() => {
@@ -31,11 +29,12 @@ export default function FilterGame({
       },
     );
 
-
-	const finalFilteredGames = filteredMaxPlayerGames.filter((game: availableGameT) => {
-		if (typeFilter === "All") return true;
-		return game.type === typeFilter;
-	} )
+    const finalFilteredGames = filteredMaxPlayerGames.filter(
+      (game: availableGameT) => {
+        if (typeFilter === "All" || !typeFilter) return true;
+        return game.type === typeFilter;
+      },
+    );
 
     setFilteredGames(finalFilteredGames);
   }, [maxPlayers, search, typeFilter]);
@@ -87,9 +86,7 @@ export default function FilterGame({
           </div>
         </div>
 
-        <form
-          className="filter"
-        >
+        <form className="filter">
           <input
             className={
               dispFilter
@@ -100,7 +97,7 @@ export default function FilterGame({
             name="filter"
             aria-label="friends"
             value="friend"
-			onClick={() => setTypeFilter("friend")}
+            onClick={() => setTypeFilter("friend")}
           />
           <input
             className={
@@ -113,13 +110,13 @@ export default function FilterGame({
             name="filter"
             aria-label="public"
             value="public"
-			onClick={() => setTypeFilter("public")}
+            onClick={() => setTypeFilter("public")}
           />
           <input
             name="filter"
             type="reset"
             value="All"
-			onClick={() => setTypeFilter("All")}
+            onClick={() => setTypeFilter("All")}
             className={
               dispFilter
                 ? "btn checked:bg-(--nav-color) transition-all duration-500"
