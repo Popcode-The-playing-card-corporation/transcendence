@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState, type SetStateAction } from "react";
-import generateFakePlayerList from "../../utils/test_funcs/generateFakePlayerList";
+import { useEffect, useRef, useState} from "react";
 import { friendArray, getFriends } from "../../api/friend";
 import { useNavigate } from "react-router";
 import { useNotif } from "../hooks/useNotif";
