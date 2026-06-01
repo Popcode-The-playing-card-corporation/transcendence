@@ -6,7 +6,7 @@ export default function PrivatePublicSlider()
 
   },[])
   return (
-     <div className="w-full max-w-xs">
+     <div className="w-full max-w-xs px-2">
       <input
         type="range"
         min="0"

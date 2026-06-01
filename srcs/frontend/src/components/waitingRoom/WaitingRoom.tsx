@@ -6,7 +6,7 @@ import PlayerList from "./playerList";
 export default function WaitingRoom({logged_in} : {logged_in : boolean}) {
 
     return (
-      <>  
+      <div className="mt-17 page-content">  
         <h1>Waiting Room</h1>
         <div className="grid grid-cols-4 gap-6">
           <div className=" space-y-6 mt-10">
@@ -27,6 +27,6 @@ export default function WaitingRoom({logged_in} : {logged_in : boolean}) {
             <ParameterRoom />
           </div>
         </div>
-      </>
+      </div>
     );
 }
