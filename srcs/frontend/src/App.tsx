@@ -66,7 +66,7 @@ function App() {
           <NotifPopUp />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/game" element={<Game logged_in={logged_in}/>} />
+            <Route path="/game" element={<Game logged_in={logged_in} logging={logging}/>} />
             <Route path="/leaderboard" element={<Leaderboard logged_in={logged_in}  updateLeaderboard={updateLeaderboard} />} />
             <Route path="/profile" element={<Profile logged_in={logged_in} logging={logging} setUpdate={setProfile} updatedProfile={updatedProfile} />} />
             <Route
