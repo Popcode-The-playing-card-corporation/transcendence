@@ -5,7 +5,7 @@ import RoomSize from "./RoomSize";
 export default function ParameterRoom() {
   return (
     <div className="bordered grid grid-cols-3 gap-4">
-      <div className="col-span-3 grid grid-cols-3 border-t border-(--hover-color) pt-6">
+      <div className="col-span-3 grid grid-cols-3 pt-6">
         <div className="text-lg">
           <p>State of the room : </p>
         </div>
