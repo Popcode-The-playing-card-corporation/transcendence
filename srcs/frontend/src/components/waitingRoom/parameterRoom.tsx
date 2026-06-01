@@ -25,8 +25,11 @@ export default function ParameterRoom() {
         <div className="">
           <p>Choose the level and the number of bots you want : </p>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 mb-6">
           <AddingBot />
+        </div>
+        <div className="flex items-center justify-center col-span-3 border-t border-(--hover-color) pt-6">
+          <button className="btn">Confirm</button>
         </div>
       </div>
     </div>
