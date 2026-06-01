@@ -27,6 +27,9 @@ def strongestCard(asked, fold, tricks):
 	return strongest
 
 def takeFold(fold, asked, tricks, card):
+	if (not asked):
+		return True
+
 	fold_copy = fold.copy()
 	fold_copy.append(card)
 	strongest = strongestCard(asked, fold_copy, tricks)
@@ -58,7 +61,10 @@ def medium(data: dict, idPlayer, legal):
 	playable = []
 	tricks = data["tricks"]
 	fold = copy_fold(data["board"])
-	asked = fold.pop(0)
+	asked = None
+
+	if (len(fold) != 0):
+		asked = fold.pop(0)
 
 	i = 0
 	while (i < len(legal)):

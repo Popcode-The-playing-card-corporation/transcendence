@@ -20,11 +20,11 @@ class GameEngine:
 
 		i = 0
 		while (i < nbrPlayer):
-			data["players"][i] = {}
-			data["players"][i]["cards"] = []
-			data["players"][i]["taken"] = []
-			if ("puntos" not in data["players"][i].keys()):
-				data["players"][i]["puntos"] = 0
+			data["players"][str(i)] = {}
+			data["players"][str(i)]["cards"] = []
+			data["players"][str(i)]["taken"] = []
+			if ("puntos" not in data["players"][str(i)].keys()):
+				data["players"][str(i)]["puntos"] = 0
 			i += 1
 
 		return data
@@ -84,7 +84,6 @@ class GameEngine:
 		i = 0
 		for p in data["players"].values():
 			p["cards"] = self.order(p["cards"])
-			print(p["cards"])
 
 		for p in data["players"].values():
 			p["shtokr"] = self.shtokr(p["cards"])
@@ -167,7 +166,7 @@ class GameEngine:
 		return data
 
 	def legal(self, data: dict,  idPlayer: int):
-		hand = data["players"][idPlayer]["cards"]
+		hand = data["players"][str(idPlayer)]["cards"]
 		fold = []
 		cardBoard = data["board"].copy()
 		asked = {"color": "none", "value": "-1", "id": -1}
