@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction } from "react";
-import BlockList from "../components/settings/BlockList";
-import Appareance from "../components/settings/Appareance";
-import Account from "../components/settings/Account";
+import BlockList from "../components/Settings/BlockList";
+import Appareance from "../components/Settings/Appareance";
+import Account from "../components/Settings/Account";
 
 
 export function Settings({

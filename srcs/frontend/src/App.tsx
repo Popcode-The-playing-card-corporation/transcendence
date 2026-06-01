@@ -3,12 +3,12 @@ import { Home } from "./pages/Home";
 import { Game } from "./pages/Game";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Profile } from "./pages/Profile";
-import { Navbar } from "./components/Navbar";
+import { Navbar } from "./components/utils/Navbar";
 import { Settings } from "./pages/Settings";
 import { Rules } from "./pages/Rules";
 import { Login } from "./pages/Login";
-import { Footer } from "./components/Footer";
-import { NotifPopUp } from "./components/NotifPopUp";
+import { Footer } from "./components/utils/Footer";
+import { NotifPopUp } from "./components/utils/NotifPopUp";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 import Error404 from "./pages/Error404";
@@ -17,9 +17,9 @@ import { FortyTwoCallback } from "./OAuth/42Callback";
 import { GitCallback } from "./OAuth/GitCallback";
 import { useEffect, useState } from "react";
 import NotifProvider from "./components/contexts/NotifContext";
-import { Presence } from "./websockets/presence";
-import { Notifications } from "./websockets/notifcations";
-import { checkAuth } from "./api/checkAuth";
+import { Presence } from "./api/websockets/presence";
+import { Notifications } from "./api/websockets/notifcations";
+import { checkAuth } from "./api/http/checkAuth";
 
 function App() {
   const [fontChoice, setFontChoice] = useState("font-Cause");
