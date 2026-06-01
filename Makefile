@@ -1,8 +1,26 @@
-COMPOSE = docker compose -f ./srcs/docker-compose.yml
+COMPOSE = docker compose -f ./srcs/docker-compose.yml --env-file "./srcs/secrets/.env"
 DEV_COMPOSE = $(COMPOSE) --profile dev
 PROD_COMPOSE = $(COMPOSE) --profile prod
 
-RM = rm -rf
+REQUIRED_FILES_PROD := \
+	./srcs/secrets/.env \
+	./srcs/secrets/google_secret.txt \
+	./srcs/secrets/git_secret.txt \
+	./srcs/secrets/42_secret.txt \
+	./srcs/secrets/django_secret.txt \
+	./srcs/Docker/nginx/prod_nginx/ssl.crt \
+	./srcs/Docker/nginx/prod_nginx/ssl.key
+
+REQUIRED_FILES_DEV := \
+	./srcs/secrets/.env \
+	./srcs/secrets/google_secret.txt \
+	./srcs/secrets/git_secret.txt \
+	./srcs/secrets/42_secret.txt \
+	./srcs/secrets/django_secret.txt
+
+MISSING_FILES_PROD := $(strip $(foreach f,$(REQUIRED_FILES_PROD),$(if $(wildcard $(f)),,$(f))))
+
+MISSING_FILES_DEV := $(strip $(foreach f,$(REQUIRED_FILES_DEV),$(if $(wildcard $(f)),,$(f))))
 
 RESET := $(shell printf "\033[0m")
 WHITE    := $(shell printf "\033[1;37m")
@@ -39,29 +57,30 @@ header:
 	@echo "$(RESET)"
 
 prod-up:
-	@$(COMPOSE) --profile "*" down
-	@if [ -f ./srcs/.env ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.crt ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.key ]; then \
-		sed -i 's/DEBUG=True/DEBUG=False/g' ./srcs/.env; \
+	@if [ -n "$(MISSING_FILES_PROD)" ]; then \
+		echo "❌ Missing files:"; \
+		printf '%s\n' $(MISSING_FILES_PROD); \
+		exit 1; \
+	else \
+		$(COMPOSE) --profile "*" down; \
+		sed -i 's/DEBUG=True/DEBUG=False/g' ./srcs/secrets/.env; \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(PROD_COMPOSE) up -d; \
 		echo "$(CYAN)Launching completed!$(RESET)"; \
-	elif [ -f ./srcs/Docker/nginx/prod_nginx/ssl.crt ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.key ]; then \
-		echo "❌ Missing ./srcs/.env file"; \
-	else  \
-		echo "❌ Missing ssl.crt and/or ssl.key in prod_nginx directory"; \
 	fi
 
 dev-up:
-	@$(COMPOSE) --profile "*" down
-	@if [ -f ./srcs/.env ]; then \
-		sed -i 's/DEBUG=False/DEBUG=True/g' ./srcs/.env; \
+	@if [ -n "$(MISSING_FILES_DEV)" ]; then \
+		echo "❌ Missing files:"; \
+		printf '%s\n' $(MISSING_FILES_DEV); \
+		exit 1; \
+	else \
+		$(COMPOSE) --profile "*" down; \
+		sed -i 's/DEBUG=True/DEBUG=False/g' ./srcs/secrets/.env; \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(DEV_COMPOSE) up -d; \
 		echo "$(CYAN)Launching completed!$(RESET)"; \
-	else \
-		echo "❌ Missing ./srcs/.env file"; \
 	fi
-	
 
 down:
 	@echo "$(YELLOW)Stopping docker container...$(RESET)"
