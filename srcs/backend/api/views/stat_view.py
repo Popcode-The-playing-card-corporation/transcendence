@@ -17,6 +17,7 @@ def leaderboard(request):
     top_users = (
         User.objects
         .order_by("-elo")
+        .filter(is_bot=False)
         .values("id", "username", "elo")[:15]
     )
 
