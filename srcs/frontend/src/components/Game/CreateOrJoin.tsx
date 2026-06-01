@@ -5,9 +5,8 @@ import { useState } from "react";
 import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../utils/availableGameType";
 
-export default function CreateOrJoin() {
+export default function CreateOrJoin({logged_in}: {logged_in: boolean}) {
   const availableGames = createFakeGame();
-  const [fakeBool, setFakeBool] = useState<boolean>(false);
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
 
   return (
@@ -62,8 +61,7 @@ export default function CreateOrJoin() {
                                 <UsernameMiniProfileBtn
                                   id={player.id}
                                   name={player.username}
-                                  updatedFriends={fakeBool}
-                                  setUpdate={setFakeBool}
+								  logged_in={logged_in}
                                 />
                               </a>
                             </li>

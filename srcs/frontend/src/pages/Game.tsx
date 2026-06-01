@@ -16,7 +16,7 @@ export function Game({ logged_in, logging }: { logged_in: boolean, logging: bool
       />
 	  </label>
       {!isInWaitingRoom ? (
-        <CreateOrJoin />
+        <CreateOrJoin  logged_in={logged_in}/>
       ) : (
         <WaitingRoom logged_in={logged_in} logging={logging}/>
       )}
