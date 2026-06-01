@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { historyT } from "../utils/historyType";
-import type { playerT } from "../utils/playerType";
-import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
-import type { errorT } from "../utils/errorType";
+import type { historyT } from "../../utils/type/historyType";
+import type { playerT } from "../../utils/type/playerType";
+import UsernameMiniProfileBtn from "./UsernameMiniProfileBtn";
+import type { errorT } from "../../utils/type/errorType";
 
 
 type Props = {

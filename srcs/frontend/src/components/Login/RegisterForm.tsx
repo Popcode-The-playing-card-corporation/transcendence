@@ -1,9 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
-import { registerRequest } from "../api/register";
+import { registerRequest } from "../../api/http/register";
 import { useLocation, useNavigate } from "react-router-dom";
-import avatar from "../assets/avatars/avatar1.png";
-import type { errorT } from "../utils/errorType";
+import avatar from "../../assets/avatars/avatar1.png";
+import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 
 export function RegisterForm({

@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
-import { loginRequest } from "../api/login";
+import { loginRequest } from "../../api/http/login";
 import { useLocation, useNavigate } from "react-router-dom";
-import type { errorT } from "../utils/errorType";
+import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 
 export function LoginForm({
