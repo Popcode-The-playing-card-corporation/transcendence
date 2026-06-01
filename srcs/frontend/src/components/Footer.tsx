@@ -25,8 +25,8 @@ export function Footer() {
       <nav>
         <h6 className="footer-title">Legal</h6>
         <div className="grid grid-flow-col gap-4">
-          <a href="/PrivacyPolicy" >Privacy Policy</a>
-          <a href="/TermsOfService" >Terms of service</a>
+          <a href="/PrivacyPolicy" className="link-hover">Privacy Policy</a>
+          <a href="/TermsOfService" className="link-hover" >Terms of service</a>
         </div>
       </nav>
       </footer>

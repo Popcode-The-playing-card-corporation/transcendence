@@ -2,7 +2,7 @@ import { useState } from "react";
 import CreateOrJoin from "../components/Game/CreateOrJoin";
 import WaitingRoom from "../components/waitingRoom/WaitingRoom";
 
-export function Game({ logged_in }: { logged_in: boolean }) {
+export function Game({ logged_in, logging }: { logged_in: boolean, logging: boolean }) {
   const [isInWaitingRoom, setIsInWaitingRoom] = useState<boolean>(false);
   return (
     <>
@@ -18,7 +18,7 @@ export function Game({ logged_in }: { logged_in: boolean }) {
       {!isInWaitingRoom ? (
         <CreateOrJoin />
       ) : (
-        <WaitingRoom logged_in={logged_in} />
+        <WaitingRoom logged_in={logged_in} logging={logging}/>
       )}
     </>
   );

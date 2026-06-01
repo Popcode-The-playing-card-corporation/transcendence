@@ -3,7 +3,7 @@ import InviteYourFriends from "./InviteYourFriends";
 import ParameterRoom from "./parameterRoom";
 import PlayerList from "./playerList";
 
-export default function WaitingRoom({logged_in} : {logged_in : boolean}) {
+export default function WaitingRoom({logged_in, logging} : {logged_in : boolean, logging: boolean}) {
 
     return (
       <div className="mt-17 page-content">  
@@ -21,7 +21,7 @@ export default function WaitingRoom({logged_in} : {logged_in : boolean}) {
           </div>
           <div className=" space-y-6">
             <PlayerList logged_in={logged_in}/>
-            <InviteYourFriends />
+            <InviteYourFriends logging={logging}/>
           </div>
           <div className="col-span-2">
             <ParameterRoom />
