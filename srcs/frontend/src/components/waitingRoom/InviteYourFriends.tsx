@@ -96,7 +96,7 @@ export default function InviteYourFriends({logging}:{logging:boolean}) {
                     {friend.user.username}
                   </td>
                   <td>
-                    <label className="swap btn">
+                    <label className="swap btn" onClick={() => sendInvite()}>
                       <input type="checkbox" />
                       <button className="swap-off">
                         Invite
