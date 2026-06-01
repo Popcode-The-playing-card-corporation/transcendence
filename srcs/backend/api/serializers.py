@@ -18,7 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         allow_null=True,
         read_only=True
     )
-    password = None
 
     class Meta:
         model = User
@@ -41,7 +40,6 @@ class UserSerializer(serializers.ModelSerializer):
             "elo": {"read_only": True},
             "date_joined": {"read_only": True},
             "last_login": {"read_only": True},
-            "email": {"read_only": True},
             "has_password": {"read_only": True},
             "is_online": {"read_only": True},
         }
@@ -54,6 +52,9 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+        
+        validated_data.pop("password", None)
+        validated_data.pop("email", None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
     
@@ -224,7 +225,7 @@ class FriendSerializer(serializers.ModelSerializer):
             "id": friend.id,
             "username": friend.username,
             "avatar": friend.avatar,
-            "is_online": friend.is_online
+            "is_online": friend.is_online if obj.status == "accepted" else False
         }
 
     def get_can_accept(self, obj):

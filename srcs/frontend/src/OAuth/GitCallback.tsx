@@ -1,15 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useRef, type SetStateAction } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import host from "../api/host";
-import { setLoggedIn } from "../api/login_status";
+import { useNotif } from "../components/hooks/useNotif";
 
-export function GitCallback() {
+export function GitCallback({setLoggedIn}:{setLoggedIn:React.Dispatch<SetStateAction<boolean>>}) {
   const navigate = useNavigate();
   const location = useLocation();
+  const notif = useNotif();
+  const hasRun = useRef(false);
 
   useEffect(() => {
-    async function GitLogin() {
+	if (hasRun.current) return; // I think it's just a dev problem, but to be safe
+    	hasRun.current = true;
+
+    async function gitLogin() {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
 
@@ -21,24 +26,21 @@ export function GitCallback() {
       try {
         await axios.post(
           host.http + 'login/github/',
-          { code },
+          { code:code },
           { withCredentials: true }
         );
 		setLoggedIn(true);
-		if (location.state) {
-        	navigate(location.state, {state: location.pathname});
-		} else {
-			navigate("/");
-		}
-      } catch (err) {
-		// improve with set state
-        console.error("GitHub login failed:", err);
+		const redirect = sessionStorage.getItem("login_redirect") || "/";
+		sessionStorage.removeItem("login_redirect");
+		navigate(redirect);
+      } catch {
+		notif?.showNotif("Login Error", "OAuth Login failed please try again.", 5000)
         navigate("/login");
       }
     }
 
-    GitLogin();
-  }, [navigate, location]);
+    gitLogin();
+  }, [navigate, location, setLoggedIn, notif]);
 
 return (
 	<div className="page-content flex items-center justify-center min-h-screen">

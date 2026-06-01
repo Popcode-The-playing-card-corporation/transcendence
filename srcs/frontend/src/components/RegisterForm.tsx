@@ -1,27 +1,28 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { registerRequest } from "../api/register";
 import { useLocation, useNavigate } from "react-router-dom";
-import { checkAuth } from "../api/checkAuth";
 import avatar from "../assets/avatars/avatar1.png";
 import type { errorT } from "../utils/errorType";
 import LoginWithService from "./LoginWithService";
 
 export function RegisterForm({
   setCreated,
+  setLoggedIn,
 }: {
   setCreated: Dispatch<SetStateAction<boolean>>;
+  setLoggedIn: Dispatch<SetStateAction<boolean>>;
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repassword, setrePassword] = useState("");
-  const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
-  const [access, setAccess] = useState(false);
   const [reason, setReason] = useState<errorT>({code:200, response:""});
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const emailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
@@ -57,51 +58,35 @@ export function RegisterForm({
 	return true;
   }
 
-  async function registerClick() {
-    setSuccess(false);
-    setFailure(false);
-	setReason({code:200, response:""});
-	setName(name.trim());
-	setEmail(email.trim());
-    if (validate_inputs(email, name, password, repassword)) {
-      const result = await registerRequest(email, name, password, avatar);
-      if (!('code' in result)) {
-        setSuccess(true);
-        return;
-      }
-	  setReason(result);
-      setSuccess(false);
-      setFailure(true);
+  function registerSuccess() {
+    if (location.state) {
+      navigate(location.state, { state: location.pathname });
       return;
     }
+
+    navigate("/", { state: location.pathname });
+  }
+
+  async function registerClick() {
+    setFailure(false);
+	setReason({code:200, response:""});
+	const trimmedName = name.trim();
+	const trimmedEmail = email.trim();
+    if (!validate_inputs(trimmedEmail, trimmedName, password, repassword)) {
+		setFailure(true);
+   		return;
+	}
+
+    const result = await registerRequest(trimmedEmail, trimmedName, password, avatar);
+    if (!('code' in result)) {
+        setLoggedIn(true);
+		registerSuccess();
+        return;
+    }
+	setReason(result);
     setFailure(true);
     return;
   }
-
-
-  useEffect(() => {
-	async function checkAccess() {
-		const authed = await checkAuth();
-		if (authed) {
-		setAccess(true);
-		return;
-		}
-		setAccess(false);
-		return;
-  	}
-
-    checkAccess();
-
-	if (success || access) {
-		if (location.state) {
-			navigate(location.state, {state: location.pathname});
-			return ;
-		}
-		navigate('/', {state: location.pathname});
-		return ;
-	}
-  }, [navigate, success, access, location]);
-
 
   return (
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">

@@ -9,19 +9,24 @@ import DeleteBtn from "./DeleteBtn";
 import BlockBtn from "./BlockBtn";
 import { FaPlus } from "react-icons/fa";
 import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
+import { useNotif } from "./hooks/useNotif";
+import type { recommendationT } from "../utils/recommendationType";
 
 type Props = {
   friends:friendT[];
   requests:requestT[];
+  recs:recommendationT[];
+  logged_in:boolean;
   updatedFriends:boolean;
   setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
+export function Friends({friends, requests, recs, updatedFriends, logged_in, setUpdate}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
   const [nbSlice, setNbSlice] = useState<number>(10);
+  const notif = useNotif();
 
   function handleMoreLessBtn() {
     if (isMore) {
@@ -65,7 +70,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
             <FaPlus />{" "}
           </button>
           <dialog id="add_new_friends" className="modal" ref={addFriendsRef}>
-            <AddFriends />
+            <AddFriends recs={recs}/>
           </dialog>
           <div className="dropdown dropdown-end">
             <div className="indicator">
@@ -98,13 +103,13 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
                       <div className="btn-accept-or-reject flex gap-3">
                         <button
                           className="btn btn-circle validate"
-                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate, null)}
+                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate, null, notif)}
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate, null)}
+                          onClick={() => changeHandler(request.id, "delete", updatedFriends, setUpdate, null, notif)}
                         >
                           <RxCross2 />
                         </button>
@@ -135,7 +140,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
               <TbPointFilled />
             </td>
             <td>
-              <UsernameMiniProfileBtn id={friend.user.id} name={friend.user.username} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <UsernameMiniProfileBtn id={friend.user.id} name={friend.user.username} updatedFriends={updatedFriends} setUpdate={setUpdate} logged_in={logged_in}/>
             </td>
             <td>{friend.status}</td>
             <td>

@@ -926,6 +926,30 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         await end_room(room.uuid, room.game_state)
         
+        users = await sync_to_async(list)(
+            User.objects.filter(is_online=True)
+        )
+        
+        players = await sync_to_async(list)(
+            PlayerPresence.objects.filter(room=room).select_related("player")
+        )
+        
+        player_ids = {p.player_id for p in players}
+        
+        for user in users:
+        
+            if user.id not in player_ids:
+        
+                await self.channel_layer.group_send(
+                    f"user_{user.id}",
+                    {
+                        "type": "notify",
+                        "type_notify": "game_finished",
+                        "event": "update",
+                    }
+                )
+                
+                
         await self.channel_layer.group_send(
             self.group_name,
             {

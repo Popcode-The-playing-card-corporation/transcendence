@@ -1,7 +1,13 @@
+
+
 export function PrivacyPolicy() {
 	return (
-		<div>
-			I don't know and I don't wanna know
+		<div className="page-content mt-17 w-full min-h-screen">
+			<iframe
+				src="/privacypolicy.html"
+				title="Privacy Policy"
+				className="w-full min-h-screen border-0"
+			/>
 		</div>
 	);
 }

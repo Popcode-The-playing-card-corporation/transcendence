@@ -18,25 +18,31 @@ def tricks_state():
         "diamond": 0
     }
 
-# Create your models here.
-
 class Room(models.Model):
     STATUS_CHOICES = [
+        ("created", "Created"),
         ("open", "Open"),
         ("start", "Start"),
         ("end", "End"),
     ]
     
+    TYPE_CHOICES = [
+        ("public", "Public"),
+        ("friends_only", "Friends_only"),
+        ("private", "Private"),
+    ]
+    
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     code = models.CharField(max_length=8, unique=True)
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosted_rooms')
-    status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
+    status = models.CharField(max_length=7, choices=STATUS_CHOICES, default="created")
     game_state = models.JSONField(default=default_state)
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True)
     ended_at = models.DateTimeField(null=True)
     nb_player = models.IntegerField(default=0)
-    is_private = models.BooleanField(default=False)
+    type = models.CharField(max_length=12, choices=TYPE_CHOICES, default="private")
+    max_player = models.IntegerField(default=7)
     
     def __str__(self):
         return f"{self.code}"
@@ -94,3 +100,11 @@ class Stat(models.Model):
     highest_hand_meld = models.IntegerField(default=0)
     highest_board_meld = models.IntegerField(default=0)
     nb_host = models.IntegerField(default=0)
+
+class GameLog(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='game')
+    player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player')
+    game = models.IntegerField(default=0)
+    round = models.IntegerField(default=0)
+    meld = models.IntegerField(default=0)
+

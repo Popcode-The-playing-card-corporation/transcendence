@@ -1,6 +1,5 @@
-import { useLocation, useNavigate } from "react-router";
-import { useState, useEffect } from "react";
-import { checkAuth } from "../api/checkAuth";
+import { useNavigate } from "react-router";
+import React, { useState, useEffect, type SetStateAction } from "react";
 import { Friends } from "../components/FriendsPart";
 import { History } from "../components/HistoryPart";
 import { ProfilePart } from "../components/ProfilePart";
@@ -8,19 +7,19 @@ import { StatisticsPart } from "../components/StatisticPart";
 import { defaultStat, type statisticsT } from "../utils/statisticsType";
 import { getStats } from "../api/stats";
 import { type friendT, type requestT } from "../utils/friendType";
-import { friendArray, getFriends } from "../api/friend"
+import { friendArray, getFriends, getRecs } from "../api/friend"
 import { defaultAccount, type accountT } from "../utils/accountType";
 import { profileRequest } from "../api/profile";
 import avatar1 from "../assets/avatars/avatar1.png";
 import { type historyT } from "../utils/historyType";
 import { getHistory, historyArray } from "../api/history";
 import { useNotif } from "../components/hooks/useNotif";
+import type { recommendationT } from "../utils/recommendationType";
 
 function getRequests(friend_list: friendT[]): {
     friends: friendT[];
     requests: requestT[];
   } {
-
     const friends: friendT[] = [];
     const requests: requestT[] = [];
 
@@ -34,25 +33,30 @@ function getRequests(friend_list: friendT[]): {
     return { friends: friends, requests: requests };
   }
 
-export function Profile() {
+export function Profile({logged_in, logging, updatedProfile, setUpdate}:{logged_in:boolean, logging:boolean, updatedProfile:boolean, setUpdate:React.Dispatch<SetStateAction<boolean>>}) {
 
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [stats, setStats] = useState<statisticsT>(defaultStat);
 	const [friends, setFriends] = useState<friendT[]>([]);
+	const [recs, setRecs] = useState<recommendationT[]>([]);
 	const [requests, setRequests] = useState<requestT[]>([]);
 	const [gameHistory, setHistory] = useState<historyT[]>([])
 	const [profile, setProfile] = useState<accountT>(defaultAccount);
-	const [updatedProfile, setUpdate] = useState(false);
   	const [updatedFriends, setFriendUpdate] = useState(false);
 	const navigate = useNavigate();
-	const location = useLocation();
 	const notif = useNotif();
 
 	useEffect(() => {
 
+		if (!logged_in) {
+			return login_error("Authentication error:", "Please log in again.");
+		}
+
 		function login_error(title:string, message:string) {
-			navigate('/login', {state: "/profile"});
-			notif?.showNotif(title, message, 5000);
+			if (!logging) {
+				navigate('/login', {state: "/profile"});
+				notif?.showNotif(title, message, 5000);
+			}
 			setValid(false);
 			return ;
 		}
@@ -65,9 +69,6 @@ export function Profile() {
 		}
 
 		async function verify() {
-			if (!(await checkAuth())) {
-				return login_error("Authentication error:", "Please log in again.");
-			}
 			const account = await profileRequest();
 			if ("code" in account) {
 				if (account.code === 401) {
@@ -92,7 +93,16 @@ export function Profile() {
 			const filter = getRequests(arr);
 			setFriends(filter.friends);
 			setRequests(filter.requests);
-			const gameHistory = await getHistory();
+			const recommendations = await getRecs();
+			if ("code" in recommendations) {
+				if (recommendations.code === 401) {
+					return login_error("Authentication error:", "Please log in again.");
+				} else {
+					return other_error("Error " + recommendations.code + ":", recommendations.response);
+				}
+			}
+			setRecs(recommendations);
+ 			const gameHistory = await getHistory();
 			if ("code" in gameHistory) {
 				if (gameHistory.code === 401) {
 					return login_error("Authentication error:", "Please log in again.");
@@ -113,7 +123,7 @@ export function Profile() {
 			setValid(true);
 		}
 		verify();
-	}, [updatedFriends, updatedProfile, navigate, location, notif])
+	}, [updatedFriends, updatedProfile, navigate, notif, logged_in, logging])
 
 	if (valid === null) {
 		return (
@@ -147,7 +157,7 @@ export function Profile() {
           <h2 className="text-center">Friends</h2>
         </div>
         <div className="collapse-content overflow-auto">
-          <Friends friends={friends} requests={requests} updatedFriends={updatedFriends} setUpdate={setFriendUpdate} />
+          <Friends logged_in={logged_in} friends={friends} requests={requests} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">
@@ -156,7 +166,7 @@ export function Profile() {
           <h2 className="text-center">History</h2>
         </div>
         <div className="collapse-content">
-          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
+          <History logged_in={logged_in} gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

@@ -7,17 +7,17 @@ import { getProfile } from "../../api/friend";
 import { type historyT } from "../../utils/historyType";
 import { getPlayerHistory, historyArray } from "../../api/history";
 import { useNotif } from "../hooks/useNotif";
-import { logged_in } from "../../api/login_status";
 
 type Props = {
   id: number;
   name: string;
-  updatedFriends: boolean;
-  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  updatedFriends?: boolean;
+  logged_in: boolean;
+  setUpdate?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 
-export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpdate}: Props) {
+export default function UsernameMiniProfileBtn({id, name, updatedFriends, logged_in, setUpdate}: Props) {
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
   	
   const [account, setAccount] = useState<profileT | errorT>({code:200, response:""})
@@ -25,7 +25,6 @@ export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpd
   const notif = useNotif();
 
 	async function Sendnotif(title:string, message:string) {
-		console.debug("in func")
 		notif?.showNotif(title, message, 5000);
 	}
 
@@ -35,7 +34,6 @@ export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpd
 		}
 		const tmp_account = await getProfile(id);
 		if ('code' in tmp_account) {
-			console.debug("here");
 			Sendnotif("Profile Display Error:", "There was an error display " + name + "'s account!");
 			return ;
 		}
@@ -64,7 +62,7 @@ export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpd
       className="modal"
       ref={showMiniProfileRef}
     >
-      <MiniProfile account={account} updatedFriends={updatedFriends} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef}/>
+      <MiniProfile account={account} updatedFriends={updatedFriends} logged_in={logged_in} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef}/>
     </dialog>
       </>
 	);

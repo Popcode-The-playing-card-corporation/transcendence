@@ -1,25 +1,24 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { loginRequest } from "../api/login";
 import { useLocation, useNavigate } from "react-router-dom";
-import { checkAuth } from "../api/checkAuth";
 import type { errorT } from "../utils/errorType";
-import { setLoggedIn } from "../api/login_status";
 import LoginWithService from "./LoginWithService";
 
 export function LoginForm({
   setCreated,
+  setLoggedIn,
 }: {
   setCreated: Dispatch<SetStateAction<boolean>>;
+  setLoggedIn: React.Dispatch<SetStateAction<boolean>>;
 }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
-  const [access, setAccess] = useState(false);
   const [reason, setReason] = useState<errorT>({ code: 200, response: "" });
   const location = useLocation();
   const navigate = useNavigate();
+
   const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
@@ -27,51 +26,38 @@ export function LoginForm({
     setPassword(e.target.value);
   };
 
-  async function loginClick() {
-    setSuccess(false);
-    setFailure(false);
-    setReason({ code: 200, response: "" });
-    setName(name.trim());
-    if (password !== "" && name.trim().length !== 0) {
-      const result = await loginRequest(name, password);
-      if (result.code == 200) {
-        setFailure(false);
-        setSuccess(true);
-        return;
-      }
-      setReason(result);
-      setSuccess(false);
-      setFailure(true);
-      return;
-    }
-    setReason({ code: -1, response: "Username and Password cannot be empty!" });
-    setFailure(true);
-    return;
+  function loginSuccess() {
+	if (location.state) {
+		navigate(location.state, { state: location.pathname});
+		return ;
+	}
+	navigate("/", {state: location.pathname})
   }
 
-  useEffect(() => {
-    async function checkAccess() {
-      const authed = await checkAuth();
-      if (authed) {
-        setAccess(true);
+  async function loginClick() {
+    setFailure(false);
+    setReason({ code: 200, response: "" });
+
+    const trimmedName = name.trim();
+
+    if (password === "" && trimmedName.length === 0) {
+		setReason({ code: -1, response: "Username and Password cannot be empty!" });
+    	setFailure(true);
+		return ;
+	}
+
+    const result = await loginRequest(name, password);
+    if (result.code == 200) {
+		setLoggedIn(true);
+		loginSuccess();
         return;
-      }
-      setAccess(false);
-      return;
+    }
+    setReason(result);
+    setFailure(true);
+    return;
     }
 
-    checkAccess();
 
-    if (success || access) {
-      setLoggedIn(true);
-      if (location.state) {
-        navigate(location.state, {state: location.pathname});
-        return;
-      }
-      navigate("/", {state: location.pathname});
-      return;
-    }
-  }, [access, navigate, success, location]);
 
   return (
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">

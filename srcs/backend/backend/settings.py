@@ -20,12 +20,16 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+def read_secret(name):
+	secret_path = Path(f'/run/secrets/{name}')
+	if secret_path.exists():
+		return secret_path.read_text().strip()
+	return ""
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = read_secret("django_secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
@@ -75,35 +79,16 @@ ACCOUNT_EMAIL_VERIFCATION = "none"
 # BASE_API_URI=os.getenv("BASE_API_URI")
 GOOGLE_OAUTH_CALLBACK_URL=os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
 GOOGLE_OAUTH_CLIENT_ID=os.getenv("GOOGLE_OAUTH_CLIENT_ID") 
-GOOGLE_OAUTH_CLIENT_SECRET=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET") 
+GOOGLE_OAUTH_CLIENT_SECRET=read_secret("google_secret")
 
 GIT_OAUTH_CALLBACK_URL=os.getenv("GIT_OAUTH_CALLBACK_URL")
 GIT_OAUTH_CLIENT_ID=os.getenv("GIT_OAUTH_CLIENT_ID") 
-GIT_OAUTH_CLIENT_SECRET=os.getenv("GIT_OAUTH_CLIENT_SECRET") 
+GIT_OAUTH_CLIENT_SECRET=read_secret("git_secret")
 
 FORTYTWO_OAUTH_CALLBACK_URL=os.getenv("FORTYTWO_OAUTH_CALLBACK_URL")
 FORTYTWO_OAUTH_CLIENT_ID=os.getenv("FORTYTWO_OAUTH_CLIENT_ID")
-FORTYTWO_OAUTH_CLIENT_SECRET=os.getenv("FORTYTWO_OAUTH_CLIENT_SECRET") ## Needs to be in env
+FORTYTWO_OAUTH_CLIENT_SECRET=read_secret("42_secret") ## Needs to be in env
 
-
-
-SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
-SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
-SOCIALACCOUNT_PROVIDERS = {
-	"google": {
-		"APPS": [
-			{
-				"client_id": GOOGLE_OAUTH_CLIENT_ID,
-				"secret": GOOGLE_OAUTH_CLIENT_SECRET,
-				"key": "",
-			},
-		],
-		"SCOPE": ["profile", "email"],
-		"AUTH_PARAMS": {
-			"access_type": "online",
-		},
-	}
-}
 
 # django.contrib.sites
 SITE_ID = 1

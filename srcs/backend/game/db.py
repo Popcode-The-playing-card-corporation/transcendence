@@ -74,7 +74,7 @@ def add_player_to_room(user, code):
     except Room.DoesNotExist:
         return False
 
-def add_bot_to_room(user, code):
+def add_bot_to_room(user, code, difficulty):
     try:
         room = Room.objects.get(code=code)
 
@@ -104,6 +104,7 @@ def add_bot_to_room(user, code):
         obj, created = PlayerPresence.objects.get_or_create(
             player=user,
             room=room,
+            difficulty=difficulty,
             defaults={
                 "position": next_position,
                 "is_online": False,

@@ -24,7 +24,7 @@ urlpatterns = [
     path("friends/add/<int:user_id>/", send_friend_request),
     path("friends/accept/<int:request_id>/", accept_friend_request),
     path("friends/delete/<int:request_id>/", delete_friend_request),
-    path("friends/block/<int:request_id>/", block_friend),
+    path("friends/block/<int:user_id>/", block_friend),
     path("friends/block/", list_blocked),
     path("friends/unblock/<int:request_id>/", unblock_friend),
     path("search/<str:name>/", list_user),

@@ -3,26 +3,31 @@ import { LeaderboardPart } from "../components/LeaderboardPart";
 import { defaultLeaderboard, type leaderboardT } from "../utils/leaderboardType";
 import { useEffect, useState } from "react";
 import { getLeaderboard, leaderboardArray } from "../api/leaderboard";
+import { useNotif } from "../components/hooks/useNotif";
 
-export function Leaderboard() {
+type Props = {
+	logged_in: boolean;
+	updateLeaderboard: boolean;
+}
+export function Leaderboard({logged_in, updateLeaderboard}:Props) {
 
 	const navigate = useNavigate();
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [leaderboard, setLeaderboard] = useState<leaderboardT>(defaultLeaderboard)
+	const notif = useNotif();
 
 	useEffect(() => {
 
 		function other_error(message:string) {
 			navigate('/', {state: location.pathname});
-			// notif bar
-			console.debug(message);
+			notif?.showNotif("Unknown Error", message, 5000);
 			setValid(false);
 			return ;
 		}
 
 		async function load_leaderboard() {
 			
-			const tmp_leaderboard = await getLeaderboard();
+			const tmp_leaderboard = await getLeaderboard(logged_in);
 			if ("code" in tmp_leaderboard) {
 				return other_error(tmp_leaderboard.response);
 			}
@@ -30,7 +35,7 @@ export function Leaderboard() {
 			setValid(true);
 		}
 		load_leaderboard();
-	}, [navigate])
+	}, [navigate, logged_in, notif, updateLeaderboard])
 
 	if (valid === null) {
 	  return (
@@ -51,7 +56,7 @@ export function Leaderboard() {
   return (
     <div className="page-content my-17">
       <h1>Leaderboard</h1>
-      <LeaderboardPart tmp_leaderboard={leaderboard} />
+      <LeaderboardPart tmp_leaderboard={leaderboard} logged_in={logged_in} />
     </div>
   );
 }

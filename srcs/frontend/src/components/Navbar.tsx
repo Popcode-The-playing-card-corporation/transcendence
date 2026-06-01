@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { MdLogout, MdLogin, MdOutlineLeaderboard } from "react-icons/md";
 import { TbCards } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
@@ -6,50 +6,38 @@ import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../api/login";
-import { logged_in, setLoggedIn } from "../api/login_status";
-import { useEffect, useState } from "react";
-import { setLogging } from "../api/login_status";
 
-export function Navbar() {
+type Props = {
+  logged_in: boolean;
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  setLogging: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function Navbar({logged_in, setLoggedIn, setLogging}:Props) {
   const navigate = useNavigate();
   const current_location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(logged_in);
   const isActive = (path: string) => path === current_location.pathname;
   
-  	useEffect(() => {
-		async function update_logo() {
-			setIsLoggedIn(logged_in);
-		}
-		update_logo();
-	}, [current_location.pathname])
-
-
   async function handleLogout() {
-	if (logged_in) {
+		if (!logged_in) {
+			navigate("/login", {state: current_location.pathname})
+			return ;
+		}
+		
 		setLogging(true);
 		const res = await logout();
+
 		if (res.code !== 200 && res.code !== 401) {
-			//error popup
 			setLogging(false);
 			return ;
 		}
-		if (location.pathname === "/login") {
-			navigate("/login")
-		} else {
-			navigate("/login", {state: location.pathname});
-		}
+		setLoggedIn(false);
+		navigate("/login", {state: current_location.pathname});
 		setTimeout(() => {
 			setLogging(false);
-		}, (1000));
-		setLoggedIn(false);
-		return ;
+		}, 500);
 	}
-	if (location.pathname === "/login") {
-		navigate("/login")
-	} else {
-		navigate("/login", {state: location.pathname});
-	}
-  }
+  
 
   return (
     <div className="navbar bg-(--nav-color) fixed top-0 z-100 ">
@@ -61,53 +49,61 @@ export function Navbar() {
       <div className="flex-none">
         <ul className="menu menu-horizontal">
           <li>
-            <a
-              className={(isActive("/game") ? "active " : "") + "item-menu"}
-              href="/game"
-            >
-              <TbCards /> Game
-            </a>
+			<NavLink
+				to="/game"
+				className={({ isActive }) =>
+				(isActive ? "active " : "") + "item-menu"
+				}
+			>
+				<TbCards /> Game
+			</NavLink>
           </li>
           <li>
-            <a
-              className={
-                (isActive("/leaderboard") ? "active " : "") + "item-menu"
-              }
-              href="/leaderboard"
-            >
-              <MdOutlineLeaderboard /> Leaderboard
-            </a>
+			<NavLink
+				to="/leaderboard"
+				className={({ isActive }) =>
+				(isActive ? "active " : "") + "item-menu"
+				}
+			>
+				<MdOutlineLeaderboard /> Leaderboard
+			</NavLink>
           </li>
           <li>
-            <a
-              className={(isActive("/profile") ? "active " : "") + "item-menu"}
-              href="/profile"
-            >
-              <CgProfile /> Profile
-            </a>
+			<NavLink
+				to="/profile"
+				className={({ isActive }) =>
+				(isActive ? "active " : "") + "item-menu"
+				}
+			>
+				<CgProfile /> Profile
+			</NavLink>
           </li>
           <li>
-            <a
-              className={(isActive("/settings") ? "active " : "") + "item-menu"}
-              href="/settings"
-            >
-              <CiSettings /> Settings
-            </a>
+			<NavLink
+				to="/settings"
+				className={({ isActive }) =>
+				(isActive ? "active " : "") + "item-menu"
+				}
+			>
+				<CiSettings /> Settings
+			</NavLink>
           </li>
           <li>
-            <a
-              className={(isActive("/rules") ? "active " : "") + "item-menu"}
-              href="/rules"
-            >
-              <GoLaw /> Rules
-            </a>
+			<NavLink
+				to="/rules"
+				className={({ isActive }) =>
+				(isActive ? "active " : "") + "item-menu"
+				}
+			>
+				<GoLaw /> Rules
+			</NavLink>
           </li>
           <li>
             <button
               onClick={handleLogout}
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
-              {isLoggedIn ? (
+              {logged_in ? (
                 <MdLogout fontSize={20} />
               ) : (
                 <MdLogin fontSize={20} />

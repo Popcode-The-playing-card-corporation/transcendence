@@ -1,15 +1,17 @@
-import type { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import BlockList from "../components/settings/BlockList";
 import Appareance from "../components/settings/Appareance";
 import Account from "../components/settings/Account";
-import { TestNotifPopUp } from "../components/TestNotifPopUp";
-import { logged_in } from "../api/login_status";
+
 
 export function Settings({
   setFontChoice,
+  islogged,
 }: {
   setFontChoice: Dispatch<SetStateAction<string>>;
+  islogged:boolean;
 }) {
+
   return (
     <div className="page-content mt-17">
       <h1 className="text-4xl text-center">Settings</h1>
@@ -37,11 +39,10 @@ export function Settings({
         <div className="collapse-title">
           <h2 className="text-center">BlockList</h2>
         </div>
-        {logged_in ? <div className="collapse-content">
+        {islogged ? <div className="collapse-content">
 		<BlockList />
         </div> : null}
       </div>
-	  <TestNotifPopUp />
     </div>
   );
 }

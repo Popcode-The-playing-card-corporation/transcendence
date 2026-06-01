@@ -2,15 +2,18 @@ import useWebSocketModule from "react-use-websocket";
 
 import host from '../api/host';
 
-export function Presence() {
+export function Presence({loggedIn}:{loggedIn: boolean}) {
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 		default: typeof useWebSocketModule;
 	};
 	
-	useWebSocket(host.ws + "presence/", {
-		shouldReconnect: () => true,
-		
+
+	useWebSocket(loggedIn ? (host.ws + "presence/") : null, {
+		shouldReconnect: () => loggedIn,
+		reconnectAttempts: 30,
+		reconnectInterval: 1000,
+
 		heartbeat: {
 			message: JSON.stringify({ type: "heartbeat" }),
 			returnMessage: JSON.stringify({ type: "acknowledge" }),
@@ -19,11 +22,11 @@ export function Presence() {
 		},
 
 		onOpen: () => {
-			console.log("Presence websocket connected");
+		
 		},
 
 		onClose: () => {
-			console.log("Presence websocket disconnected");
+
 		},
 
 		onMessage: (event) => {

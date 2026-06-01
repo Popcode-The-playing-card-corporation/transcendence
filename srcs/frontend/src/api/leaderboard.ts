@@ -3,13 +3,12 @@ import { getError, type backendErrorT, type errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { leaderboardRetT } from '../utils/leaderboardApiType';
 import type { userLB, leaderboardT, currentLB } from '../utils/leaderboardType';
-import { checkAuth } from './checkAuth';
 
-export async function getLeaderboard() { //: Promise<friendT | errorT>
+export async function getLeaderboard(logged_in:boolean) { //: Promise<friendT | errorT>
 	
 	try {
 		let res;
-		if (await checkAuth()) { 
+		if (logged_in) { 
 			res = await axios.get(host.http + 'leaderboard/', { timeout: 2000, withCredentials: true});
 			return res;
 		}

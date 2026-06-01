@@ -5,7 +5,7 @@ services:
     container_name: mariadb
     restart: unless-stopped
     ports:
-      - "3306:3306" # TODO: Remove before the end
+      - "${MARIADB_PORT}:3306" # TODO: Remove before the end
 
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
@@ -20,7 +20,7 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     env_file:
-      - .env
+      - secrets/.env
     volumes:
       - db_data:/var/lib/mysql
       - ./Docker/mariadb/tools/init.sh:/docker-entrypoint-initdb.d/init.sh
@@ -55,7 +55,7 @@ services:
     profiles: [prod]
     container_name: nginx_prod
     ports:
-      - "443:443"
+      - "${NGINX_PORT}:443" # may need to change for eval so maybe best to put in env
     depends_on:
       - django
     networks:
@@ -82,7 +82,12 @@ services:
       DATABASE_HOST: ${DB_HOST}
       DATABASE_PORT: ${DB_PORT}
     env_file:
-      - .env
+      - secrets/.env
+    secrets:
+      - django_secret
+      - google_secret
+      - git_secret
+      - 42_secret
     networks:
       - transcendence
 
@@ -116,3 +121,13 @@ networks:
 
 volumes:
   db_data:
+
+secrets:
+  google_secret:
+    file: ./secrets/google_secret.txt
+  git_secret:
+    file: ./secrets/git_secret.txt
+  42_secret:
+    file: ./secrets/42_secret.txt
+  django_secret:
+    file: ./secrets/django_secret.txt

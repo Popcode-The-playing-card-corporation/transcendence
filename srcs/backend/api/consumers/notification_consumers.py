@@ -35,6 +35,19 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def notify(self, event):
 
         await self.send(text_data=json.dumps({
+            "type": event["type_notify"],
             "event": event["event"],
-            "payload": event["payload"]
+            "payload": event.get("payload")
         }))
+        
+    async def receive(self, text_data):
+        
+        try:
+            data = json.loads(text_data)
+			
+            if data.get("type") == "heartbeat":
+                await self.send(text_data=json.dumps({
+					"type": "acknowledge"
+				}))
+        finally:
+            return

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { MdBlock } from "react-icons/md";
 import { changeHandler } from "../api/friend";
+import { useNotif } from "./hooks/useNotif";
 
 type Props = {
   req_id: number;
@@ -16,6 +17,7 @@ export default function BlockBtn({
   profileRef,
 }: Props) {
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
+  const notif = useNotif();
 
   return (
     <div>
@@ -46,7 +48,7 @@ export default function BlockBtn({
               <button
                 className="btn mr-5 del"
                 onClick={() =>
-                  changeHandler(req_id, "block", updatedFriends, setUpdate, profileRef)
+                  changeHandler(req_id, "block", updatedFriends, setUpdate, profileRef, notif)
                 }
               >
                 Confirm
