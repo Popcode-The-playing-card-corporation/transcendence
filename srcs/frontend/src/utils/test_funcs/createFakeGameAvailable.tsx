@@ -1,0 +1,250 @@
+import type { availableGameT } from "../availableGameType";
+
+export function createFakeGame(): availableGameT[] {
+  return [
+    {
+      id: 0,
+      code: "phil123",
+      type: "friend",
+      nb_player: 6,
+      max_player: 7,
+      list_player: [
+        {
+          username: "philou",
+		  id: 0,
+          rank: 666,
+          score: 123,
+        },
+        {
+          username: "phistule",
+		  id: 1,
+          rank: 626,
+          score: 113,
+        },
+        {
+          username: "philipe",
+		  id: 3,
+          rank: 123,
+          score: 666,
+        },
+        {
+          username: "phibonacci",
+		  id: 2,
+          rank: 166,
+          score: 23,
+        },
+        {
+          username: "phiphi",
+		  id: 4,
+          rank: 146,
+          score: 24,
+        },
+        {
+          username: "phuck",
+		  id: 5,
+          rank: 16,
+          score: 623,
+        },
+      ],
+      host: "philipe",
+    },
+    {
+      id: 1,
+      code: "fred123",
+      type: "friend",
+      max_player: 4,
+      nb_player: 4,
+      list_player: [
+        {
+          username: "fredo",
+		  id: 6,
+          rank: 56,
+          score: 323,
+        },
+        {
+          username: "frederic",
+		  id: 7,
+          rank: 57,
+          score: 33,
+        },
+        {
+          username: "fredouane",
+		  id: 8,
+          rank: 17,
+          score: 13,
+        },
+        {
+          username: "fredpayment",
+		  id: 9,
+          rank: 87,
+          score: 17,
+        },
+      ],
+      host: "frederic",
+    },
+    {
+      id: 2,
+      code: "anne123",
+      type: "public",
+      max_player: 5,
+      nb_player: 3,
+      list_player: [
+        {
+          username: "anna",
+		  id: 10,
+          rank: 878,
+          score: 178,
+        },
+        {
+          username: "annesthesie",
+		  id: 11,
+          rank: 98,
+          score: 99,
+        },
+        {
+          username: "annick",
+		  id: 12,
+          rank: 8999,
+          score: 19,
+        },
+      ],
+      host: "anna",
+    },
+    {
+      id: 3,
+      code: "clem123",
+      type: "friend",
+      max_player: 6,
+      nb_player: 4,
+      list_player: [
+        {
+          username: "clemence",
+		  id: 13,
+          rank: 67,
+          score: 69,
+        },
+        {
+          username: "clementine",
+		  id: 14,
+          rank: 90,
+          score: 97,
+        },
+        {
+          username: "clement",
+		  id: 15,
+          rank: 69,
+          score: 67,
+        },
+        {
+          username: "clemercestcquiyadplubo",
+		  id: 16,
+          rank: 431,
+          score: 786,
+        },
+      ],
+      host: "clementine",
+    },
+    {
+      id: 4,
+      code: "al123",
+      nb_player: 3,
+      max_player: 3,
+      type: "public",
+      list_player: [
+        {
+          username: "alain",
+		  id: 17,
+          rank: 47,
+          score: 47,
+        },
+        {
+          username: "alapecheaumoulemoulemoulejenveuxplusyallermaman",
+		  id: 18,
+          rank: 19,
+          score: 20,
+        },
+        {
+          username: "alana",
+		  id: 19,
+          rank: 142,
+          score: 421,
+        },
+      ],
+      host: "alana",
+    },
+    {
+      id: 5,
+      code: "six123",
+      type: "public",
+      nb_player: 5,
+      max_player: 6,
+      list_player: [
+        {
+          username: "sixtine",
+		  id: 20,
+          rank: 821,
+          score: 123,
+        },
+        {
+          username: "sixto",
+		  id: 21,
+          rank: 214,
+          score: 213,
+        },
+        {
+          username: "sixta",
+		  id: 22,
+          rank: 42,
+          score: 24,
+        },
+        {
+          username: "sixte",
+		  id: 23,
+          rank: 342532,
+          score: 342523,
+        },
+        {
+          username: "sixseveeeeeeeeen",
+		  id: 24,
+          rank: 523,
+          score: 1,
+        },
+      ],
+      host: "sixte",
+    },
+    {
+      id: 6,
+      code: "ki123",
+      type: "public",
+      nb_player: 4,
+      max_player: 4,
+      list_player: [
+        {
+          username: "kirikou",
+		  id: 25,
+          rank: 57,
+          score: 13,
+        },
+        {
+          username: "kilian",
+		  id: 26,
+          rank: 9,
+          score: 7,
+        },
+        {
+          username: "kishta",
+		  id: 26,
+          rank: 76,
+          score: 17,
+        },
+        {
+          username: "kicestquiecritcesprenomdemerde",
+		  id: 27,
+          rank: 4,
+          score: 2,
+        },
+      ],
+      host: "kirikou",
+    },
+  ];
+}

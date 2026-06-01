@@ -1,8 +1,8 @@
+import CreateOrJoin from "../components/Game/CreateOrJoin";
+
 export function Game() {
+	const isInWaitingRoom = false;
   return (
-    <div className="page-content mt-17">
-      <h1 className="">Game</h1>
-      <img className="m-auto" src="./src/assets/game-icon.png" />
-    </div>
+	  !isInWaitingRoom ? <CreateOrJoin /> : <></>
   );
 }
