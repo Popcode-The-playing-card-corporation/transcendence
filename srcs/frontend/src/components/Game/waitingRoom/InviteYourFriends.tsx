@@ -96,14 +96,14 @@ export default function InviteYourFriends({logging}:{logging:boolean}) {
                     {friend.user.username}
                   </td>
                   <td>
-                    <label className="swap btn" onClick={() => sendInvite()}>
+                    <label className="swap btn">
                       <input type="checkbox" />
-                      <button className="swap-off">
+                      <div className="swap-off fill-current">
                         Invite
-                      </button>
-                      <button className="swap-on">
-                        Done
-                      </button>
+                      </div>
+                      <div className="swap-on fill-current" onClick={() => notif?.showNotif("Invitation", friend.user.username)}>
+                        Sent
+                      </div>
                     </label>
                   </td>
                 </tr>

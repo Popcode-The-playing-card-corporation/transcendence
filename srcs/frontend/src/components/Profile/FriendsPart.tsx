@@ -96,7 +96,7 @@ export function Friends({friends, requests, recs, updatedFriends, logged_in, set
               {requests.map((request: { id: number; username: string }) => {
                 return (
                   <li className="flex w-full my-3" key={request.id}>
-                    <div className="flex gap-6 w-full">
+                    <div className="flex gap-6 w-full">	
                       <div className="username-request flex items-center w-2/3">
                         <p>{request.username}</p>
                       </div>
