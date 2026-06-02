@@ -1,5 +1,5 @@
-import AddingBot from "./addingBot";
-import PrivatePublicSlider from "./privPubSlider";
+import AddingBot from "./AddingBot";
+import PrivatePublicSlider from "./PrivateFriendPublicSlider";
 import RoomSize from "./RoomSize";
 
 export default function ParameterRoom() {

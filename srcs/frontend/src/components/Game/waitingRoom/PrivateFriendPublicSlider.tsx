@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export default function PrivatePublicSlider()
+export default function PrivateFriendPublicSlider()
 {
   useEffect(() => {
 
