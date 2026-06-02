@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router";
-import { LeaderboardPart } from "../components/LeaderboardPart";
-import { defaultLeaderboard, type leaderboardT } from "../utils/leaderboardType";
+import { LeaderboardPart } from "../components/Leaderboard/LeaderboardPart";
+import { defaultLeaderboard, type leaderboardT } from "../utils/type/leaderboardType";
 import { useEffect, useState } from "react";
-import { getLeaderboard, leaderboardArray } from "../api/leaderboard";
+import { getLeaderboard, leaderboardArray } from "../api/http/leaderboard";
 import { useNotif } from "../components/hooks/useNotif";
 
 type Props = {

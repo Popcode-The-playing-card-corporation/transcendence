@@ -1,20 +1,20 @@
 import { useNavigate } from "react-router";
 import React, { useState, useEffect, type SetStateAction } from "react";
-import { Friends } from "../components/FriendsPart";
-import { History } from "../components/HistoryPart";
-import { ProfilePart } from "../components/ProfilePart";
-import { StatisticsPart } from "../components/StatisticPart";
-import { defaultStat, type statisticsT } from "../utils/statisticsType";
-import { getStats } from "../api/stats";
-import { type friendT, type requestT } from "../utils/friendType";
-import { friendArray, getFriends, getRecs } from "../api/friend"
-import { defaultAccount, type accountT } from "../utils/accountType";
-import { profileRequest } from "../api/profile";
+import { Friends } from "../components/Profile/FriendsPart";
+import { History } from "../components/Profile/HistoryPart";
+import { ProfilePart } from "../components/Profile/ProfilePart";
+import { StatisticsPart } from "../components/Profile/StatisticPart";
+import { defaultStat, type statisticsT } from "../utils/type/statisticsType";
+import { getStats } from "../api/http/stats";
+import { type friendT, type requestT } from "../utils/type/friendType";
+import { friendArray, getFriends, getRecs } from "../api/http/friend"
+import { defaultAccount, type accountT } from "../utils/type/accountType";
+import { profileRequest } from "../api/http/profile";
 import avatar1 from "../assets/avatars/avatar1.png";
-import { type historyT } from "../utils/historyType";
-import { getHistory, historyArray } from "../api/history";
+import { type historyT } from "../utils/type/historyType";
+import { getHistory, historyArray } from "../api/http/history";
 import { useNotif } from "../components/hooks/useNotif";
-import type { recommendationT } from "../utils/recommendationType";
+import type { recommendationT } from "../utils/type/recommendationType";
 
 function getRequests(friend_list: friendT[]): {
     friends: friendT[];

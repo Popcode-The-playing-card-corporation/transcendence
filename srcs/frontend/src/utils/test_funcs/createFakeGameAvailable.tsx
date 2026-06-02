@@ -1,4 +1,4 @@
-import type { availableGameT } from "../availableGameType";
+import type { availableGameT } from "../type/availableGameType";
 
 export function createFakeGame(): availableGameT[] {
   return [

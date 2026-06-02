@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { notifContext } from "./CreateNotifContext";
-import type { notifT } from "../../utils/notifType";
+import type { notifT } from "../../utils/type/notifType";
 
 export interface NotifContextType {
   title: string;

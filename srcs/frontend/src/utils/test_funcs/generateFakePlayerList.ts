@@ -1,4 +1,4 @@
-import type { playerT } from "../playerType";
+import type { playerT } from "../type/playerType";
 
 export default function generateFakePlayerList() : playerT[] {
   return [
