@@ -1,7 +1,7 @@
 import { useEffect, useRef, type SetStateAction } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import host from "../api/host";
+import host from "../api/http/host";
 import { useNotif } from "../components/hooks/useNotif";
 
 export function FortyTwoCallback({setLoggedIn}:{setLoggedIn:React.Dispatch<SetStateAction<boolean>>}) {

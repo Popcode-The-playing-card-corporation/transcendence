@@ -1,6 +1,6 @@
 import { useEffect, useState, type SetStateAction } from "react";
-import { LoginForm } from "../components/LoginForm";
-import { RegisterForm } from "../components/RegisterForm";
+import { LoginForm } from "../components/Login/LoginForm";
+import { RegisterForm } from "../components/Login/RegisterForm";
 import { useNavigate } from "react-router";
 
 export function Login({loggedIn, setLoggedIn}:{loggedIn:boolean, setLoggedIn:React.Dispatch<SetStateAction<boolean>>}) {
