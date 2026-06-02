@@ -1,4 +1,4 @@
-import type { statisticsT } from "../utils/statisticsType";
+import type { statisticsT } from "../../utils/type/statisticsType";
 
 export function StatisticsPart({stats}:{stats:statisticsT}) {
 

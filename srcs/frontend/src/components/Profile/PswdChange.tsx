@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { changePassword } from "../api/profile";
-import type { errorT } from "../utils/errorType";
-import { useNotif } from "./hooks/useNotif";
+import { changePassword } from "../../api/http/profile";
+import type { errorT } from "../../utils/type/errorType";
+import { useNotif } from "../hooks/useNotif";
 
 
 export function PswdChange({dialogRef}:{dialogRef:React.RefObject<HTMLDialogElement| null>}) {
