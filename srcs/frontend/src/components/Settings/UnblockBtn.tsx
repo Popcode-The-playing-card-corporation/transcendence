@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { MdBlock } from "react-icons/md";
-import { changeHandler } from "../api/friend";
-import { useNotif } from "./hooks/useNotif";
+import { changeHandler } from "../../api/http/friend";
+import { useNotif } from "../hooks/useNotif";
 
 type Props = {
   req_id: number;

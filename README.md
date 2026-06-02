@@ -168,6 +168,7 @@ Visual representation or description of the database structure.
 | Blocked Users Management | | Cyril, Alex, Anouar |
 | Leaderboard, Statistics & Game History | | Everyone |
 | Realtime Updates & Notifications | | Cyril, Alex, Anouar |
+| Handmade custom cards | | Dana |
 | Custom Game Engine | | Kilian |
 | AI Opponents | | Kilian |
 | Customizable Matches | | Kilian |
