@@ -12,7 +12,7 @@ export default function WaitingRoom({logged_in, logging} : {logged_in : boolean,
           <InfoAndActionPart />
           <div className=" space-y-6">
             <PlayerList logged_in={logged_in}/>
-            <InviteYourFriends logging={logging}/>
+			<InviteYourFriends logging={logging}/>
           </div>
           <div className="col-span-2">
             <ParameterRoom />

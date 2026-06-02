@@ -14,7 +14,7 @@ export default function PlayerList({logged_in} : {logged_in : boolean}) {
   }
 
   return (
-    <div className="bordered">
+    <div className="bordered h-">
       <table className="table">
         <thead className="text-xl w-full">
           <th></th>
