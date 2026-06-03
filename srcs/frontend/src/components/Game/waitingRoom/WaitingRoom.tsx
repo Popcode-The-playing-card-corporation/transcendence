@@ -1,10 +1,12 @@
+import type { SetStateAction } from "react";
 import InfoAndActionPart from "./InfoAndActionPart";
 import InviteYourFriends from "./InviteYourFriends";
 import ParameterRoom from "./ParameterRoom";
 import PlayerList from "./PlayerList";
 
-export default function WaitingRoom({logged_in, logging} : {logged_in : boolean, logging: boolean}) {
+export default function WaitingRoom({logged_in, logging, setIsInGame} : {logged_in : boolean, logging: boolean, setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
 
+	setIsInGame(false)
     return (
       <div className="mt-17 page-content">  
         <h1>Waiting Room</h1>

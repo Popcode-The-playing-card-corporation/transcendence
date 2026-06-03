@@ -28,6 +28,7 @@ function App() {
   const [authChecked, setChecked] = useState(false);
   const [updatedProfile, setProfile] = useState(false);
   const [updateLeaderboard, setLeaderboard] = useState(false);
+  const [isGamePage, setIsGamePage] = useState<boolean>(false)
 
   useEffect(() => {
 	if (logging) {
@@ -61,12 +62,12 @@ function App() {
       >
         <BrowserRouter>
 		  <Presence loggedIn={logged_in} />
-		  <Notifications loggedIn={logged_in} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
-          <Navbar logged_in={logged_in} setLoggedIn={setLogged} setLogging={setLogging}/>
+		  {!isGamePage ? <Notifications loggedIn={logged_in} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/> : <></>}
+		  {!isGamePage ? <Navbar logged_in={logged_in} setLoggedIn={setLogged} setLogging={setLogging}/> : <></>}
           <NotifPopUp />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/game" element={<Game logged_in={logged_in} logging={logging}/>} />
+            <Route path="/game" element={<Game logged_in={logged_in} logging={logging} setIsGamePage={setIsGamePage} />} />
             <Route path="/leaderboard" element={<Leaderboard logged_in={logged_in}  updateLeaderboard={updateLeaderboard} />} />
             <Route path="/profile" element={<Profile logged_in={logged_in} logging={logging} setUpdate={setProfile} updatedProfile={updatedProfile} />} />
             <Route
@@ -82,7 +83,7 @@ function App() {
             <Route path="/login/github/callback" element={<GitCallback setLoggedIn={setLogged}/>} />
             <Route path="*" element={<Error404 />} />
           </Routes>
-          <Footer />
+		  { !isGamePage ? <Footer /> : <></>}
         </BrowserRouter>
       </main>
     </NotifProvider>

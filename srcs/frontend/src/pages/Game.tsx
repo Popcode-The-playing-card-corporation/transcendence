@@ -1,9 +1,11 @@
-import { useState } from "react";
-import CreateOrJoin from "../components/Game/createOrJoin/CreateOrJoin";
+import { useState, type SetStateAction } from "react";
+// import CreateOrJoin from "../components/Game/createOrJoin/CreateOrJoin";
 import WaitingRoom from "../components/Game/waitingRoom/WaitingRoom";
+import GameMain from "../components/Game/Game/GameMain";
 
-export function Game({ logged_in, logging }: { logged_in: boolean, logging: boolean }) {
+export function Game({ logged_in, logging , setIsGamePage}: { logged_in: boolean, logging: boolean, setIsGamePage: React.Dispatch<SetStateAction<boolean>>}) {
   const [isInWaitingRoom, setIsInWaitingRoom] = useState<boolean>(false);
+
   return (
     <>
 	<label className="mt-20 -mb-17 text-center ">
@@ -16,9 +18,9 @@ export function Game({ logged_in, logging }: { logged_in: boolean, logging: bool
       />
 	  </label>
       {!isInWaitingRoom ? (
-        <CreateOrJoin  logged_in={logged_in}/>
+        <GameMain setIsGamePage={setIsGamePage}/>
       ) : (
-        <WaitingRoom logged_in={logged_in} logging={logging}/>
+        <WaitingRoom logged_in={logged_in} logging={logging} setIsInGame={setIsGamePage}/>
       )}
     </>
   );
