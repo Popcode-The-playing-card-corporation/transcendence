@@ -581,7 +581,21 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #
         #await self.send_data()
 
-    async def handle_melds(self, payload: dict):
+    async def handle_melds(self, payload):
+        room = await get_room_with_host(self.code)
+    
+        result = await MeldService.play_meld(
+            room=room,
+            user=self.user,
+            cards=payload["cards"]
+        )
+    
+        if result.get("error"):
+            return await self.error(result["error"])
+    
+        await self.send_data()
+
+    async def handle_melds_old(self, payload: dict):
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
 
@@ -699,7 +713,18 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "message": "Toutes les cartes doivent appartenir à des suites valides"
             }))
 
-    async def handle_verify_melds(self, payload: dict):
+    async def handle_verify_melds(self, payload):
+        room = await get_room_with_host(self.code)
+    
+        result = await MeldService.verify_melds(
+            room=room,
+            user=self.user,
+            cards=payload["cards"]
+        )
+    
+        await self.send(json.dumps(result))
+
+    async def handle_verify_melds_old(self, payload: dict):
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
 
