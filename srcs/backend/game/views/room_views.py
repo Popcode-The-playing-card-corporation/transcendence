@@ -345,7 +345,6 @@ def list_my_started_room(request):
     room_map = {}
 
     for p in presences:
-        print(p)
         room_id = p.room.id
 
         if room_id not in room_map:

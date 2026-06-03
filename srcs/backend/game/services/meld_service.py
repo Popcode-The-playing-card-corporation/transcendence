@@ -107,7 +107,6 @@ class MeldService:
         selected_idx = []
     
         for card in cards:
-            print(room.code)
             idx = await GameService.get_card_index(
                 user,
                 room,
