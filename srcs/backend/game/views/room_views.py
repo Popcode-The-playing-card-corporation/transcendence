@@ -273,8 +273,9 @@ def list_friend_room(request, data):
             "type": "friends_only",
             "is_friend": True,
             "nb_player": room.nb_player,
+            "max_player": room.max_player,
             "list_player": list_player,
-            "host": room.host.username if room.host else None,
+            "host": { "username":room.host.username, "id":room.host.id } if room.host else None,
         })
 
     return data

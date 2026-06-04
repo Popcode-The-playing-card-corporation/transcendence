@@ -1,21 +1,19 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from api.auth.authentication import OptionalJWTAuthentication
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework.decorators import authentication_classes
 from django.conf import settings
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 @authentication_classes([OptionalJWTAuthentication])
 def VerifyCookie(request):
 	if request.user.is_authenticated:
 		return Response({"status":"success"})
-	else:
-		return Response({"status":"failed"})
+	return RefreshCookie(request)
 
-@api_view(["POST"])
 @permission_classes([AllowAny])
 @authentication_classes([OptionalJWTAuthentication])
 def RefreshCookie(request):
