@@ -7,6 +7,7 @@ import type {
   detailedGameT,
   detailedRoundT,
 } from "../../../utils/type/detailedGame";
+import Time from "./Time";
 
 export default function LeadderboardInGame() {
   const listPlayer = generateFakeUsersInGame();
@@ -23,6 +24,7 @@ export default function LeadderboardInGame() {
 
   return (
     <div className="h-1/2 p-2 flex flex-col items-center">
+	<Time />
       <table className="w-full mt-2">
         <thead className="w-full">
           <th>Position</th>
