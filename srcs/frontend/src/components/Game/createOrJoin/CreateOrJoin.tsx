@@ -1,13 +1,15 @@
 import { FaPlay } from "react-icons/fa";
 import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable";
 import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
-import { useState } from "react";
+import React, { useState, type SetStateAction } from "react";
 import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
 
-export default function CreateOrJoin({logged_in}: {logged_in: boolean}) {
+export default function CreateOrJoin({logged_in, setIsInGame}: {logged_in: boolean, setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
   const availableGames = createFakeGame();
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
+
+  setIsInGame(false)
 
   return (
     <div className=" mt-17 h-screen mr-15">
