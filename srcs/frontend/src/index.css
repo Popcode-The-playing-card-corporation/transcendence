@@ -107,6 +107,10 @@
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
 }
 
+.bordered-wmp {
+  @apply border-2 border-(--accent-color) rounded-xl p-5 pr-7 pl-7;
+}
+
 .table tr {
   @apply p-1;
 }
