@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 // import generateFakeBlockList from "../../utils/test_funcs/generateFakeBlocklist";
-import { changeHandler, getBlocked } from "../../api/http/friend";
+import { getBlocked } from "../../api/http/friend";
 import { useNotif } from "../hooks/useNotif";
 import type { friendT } from "../../utils/type/friendType";
 import type { errorT } from "../../utils/type/errorType";
+import UnblockBtn from "./UnblockBtn";
 
 export default function BlockList() {
   const [blocklist, setBlocked] = useState<friendT[] | errorT>([]);
-  const confirmUnblockRef = useRef<HTMLDialogElement>(null);
   const [updatedBlocked, setUpdatedBlocked] = useState(false);
   const notif = useNotif();
   useEffect(() => {
@@ -39,48 +39,9 @@ export default function BlockList() {
                   <a className="link-hover">{blocked.user.username}</a>
                 </td>
                 <td>{blocked.blocked_at}</td>
-                <td>
-                  <button
-                    className="btn"
-                    onClick={() => confirmUnblockRef.current?.showModal()}
-                  >
-                    Unblock
-                  </button>
-                  <dialog
-                    id="modal_confirm_unblock"
-                    className="modal"
-                    ref={confirmUnblockRef}
-                  >
-                    <div className="modal-box bg-(--bg-color)">
-                      <h3 className="font-bold text-lg">Are you sure?</h3>
-                      <p className="py-4">
-                        This user will be able to send you a friend request and
-                        play with you in a game
-                      </p>
-
-                      <div className="modal-action">
-                        <form method="dialog">
-                          <button
-                            className="btn mr-5 del"
-                            onClick={() =>
-                              changeHandler(
-                                blocked.id,
-                                "unblock",
-                                updatedBlocked,
-                                setUpdatedBlocked,
-								null,
-								notif,
-                              )
-                            }
-                          >
-                            Confirm
-                          </button>
-                          <button className="btn">Cancel</button>
-                        </form>
-                      </div>
-                    </div>
-                  </dialog>
-                </td>
+					<td>
+						<UnblockBtn req_id={blocked.id} updatedBlocked={updatedBlocked} setUpdate={setUpdatedBlocked} profileRef={null}/>
+					</td>
               </tr>
             );
           })}

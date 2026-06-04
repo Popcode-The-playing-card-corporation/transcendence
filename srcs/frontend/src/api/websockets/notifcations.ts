@@ -52,7 +52,7 @@ export function Notifications({loggedIn, setProfile, updatedProfile, updateLeade
 					notif?.showNotif("Friend Request Accepted", payload.from_user + " has accepted your friend request!", 5000);
 					setProfile(!updatedProfile);
 				} else {
-					console.debug("type not implemented. Format: ", data)
+					console.debug("Notification: type not implemented. Format: ", data)
 				}
 			} else if (data.event === "update") {
 				if (data.type === "friend_delete") {
@@ -63,6 +63,8 @@ export function Notifications({loggedIn, setProfile, updatedProfile, updateLeade
 					setProfile(!updatedProfile);
 				} else if (data.type === "game_finished") {
 					setLeaderboard(!updateLeaderboard);
+				} else {
+					console.debug("Update: type not implemented. Format: ", data)
 				}
 			} else {
 				console.debug("event not implemented. Format: ", data)
