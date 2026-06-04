@@ -25,7 +25,13 @@ export default function GameButtons() {
   }
 
   return (
-    <div className="h-1/2 ">
+    <div className="h-1/2 flex flex-col justify-end">
+	{isChatOpen ? (
+		<Chat/>
+	) : ""}
+	{isInfoOpen ? (
+		<FunctionnementInfos />
+	) : ""}
       <div className="flex gap-2 m-2 items-center justify-between">
         <AnnouncementBtn />
         <div className="flex gap-2 m-2">
@@ -33,12 +39,6 @@ export default function GameButtons() {
           <InfoBtn changeState={changeState} />
         </div>
       </div>
-      {isChatOpen ? (
-        <Chat/>
-      ) : ""}
-      {isInfoOpen ? (
-        <FunctionnementInfos />
-      ) : ""}
     </div>
   );
 }
