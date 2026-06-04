@@ -4,7 +4,6 @@ from ..db import add_player_to_room, remove_player_from_room, end_room, save_roo
 
 from ..models import PlayerPresence
 
-
 class RoomService:
 
     @staticmethod
@@ -40,4 +39,37 @@ class RoomService:
                 "username": kicked_user.username,
                 "message": f"{kicked_user.username} has been kicked"
             }
+        }
+    
+    @staticmethod
+    async def handle_player_disconnect(user, code):
+        room = await get_room_with_host(code)
+
+        participants = await sync_to_async(list)(
+            PlayerPresence.objects.filter(room=room)
+            .select_related("player")
+        )
+
+        participant_users = [p.player for p in participants]
+
+        old_host = room.host
+
+        await remove_player_from_room(user, code)
+
+        await sync_to_async(
+            PlayerPresence.objects.filter(
+                player=user,
+                room__code=code
+            ).update
+        )(
+            channel_name=None
+        )
+
+        room = await get_room_with_host(code)
+
+        return {
+            "room": room,
+            "participant_users": participant_users,
+            "host_changed": room and old_host != room.host,
+            "old_host": old_host,
         }
