@@ -57,7 +57,8 @@ services:
     ports:
       - "${NGINX_PORT}:443" # may need to change for eval so maybe best to put in env
     depends_on:
-      - django
+      django:
+        condition: service_healthy
     networks:
       - transcendence
 
@@ -81,6 +82,14 @@ services:
       DATABASE_PASSWORD: ${DB_PASSWORD}
       DATABASE_HOST: ${DB_HOST}
       DATABASE_PORT: ${DB_PORT}
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://django:8000/leaderboard/"]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
     env_file:
       - secrets/.env
     secrets:
