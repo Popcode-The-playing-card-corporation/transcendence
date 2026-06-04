@@ -9,7 +9,7 @@ from django.db.models import Q
 import copy
 from .board_service import BoardService
 from .stats_service import StatsService
-#from .bot_service import BotService
+from .bot_service import BotService
 from channels.layers import get_channel_layer
 
 
@@ -17,7 +17,7 @@ from channels.layers import get_channel_layer
 class GameService:
 
     @staticmethod
-    async def start_game(room):
+    async def start_game(room, send_data_callback=None, send_init_callback=None):
         game = GameEngine(room.uuid)
 
         game_state = game.handleAction(
@@ -29,11 +29,13 @@ class GameService:
         await start_room(room.uuid, game_state)
 
         await GameService.create_scores(room, game_state)
-
-        await GameService.notify_bots(room, game_state)
+        
+        if send_init_callback:
+                await send_init_callback()
+                
+        game_state = await BotService.play_until_human(room, game_state, game, send_data_callback=send_data_callback, check_end=GameService.check_game_end)
 
         return game_state
-    
     
     @staticmethod
     async def create_scores(room, game_state):
@@ -48,20 +50,7 @@ class GameService:
             await sync_to_async(PlayerScore.objects.get_or_create)(
                 player=user,
                 room=room
-            )
-        
-        
-    @staticmethod
-    async def notify_bots(room, game_state):
-        for player_id, data in game_state["players"].items():
-            presence = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(player_id)
-            )
-    
-            #if not presence.is_human:
-            #    await BotService.play_if_needed(room, game_state, presence)
-            
+            )           
 
     @staticmethod
     async def play_card(room, user, position, card_id):
@@ -117,10 +106,7 @@ class GameService:
     
     @staticmethod
     async def ask_host_continue(room, game_state):
-    
-        room.status = "waiting_host"
-        await sync_to_async(room.save)()
-    
+        
         await save_room_state(room.uuid, game_state)
     
         host_presence = await sync_to_async(PlayerPresence.objects.get)(
@@ -140,7 +126,7 @@ class GameService:
             }
         )
     
-    
+    @staticmethod
     async def check_game_end(room, game):
         game_state = room.game_state
     
@@ -156,3 +142,35 @@ class GameService:
         await save_room_state(room.uuid, game_state)
     
         return True, game_state
+
+    @staticmethod
+    async def continue_game(
+        room,
+        send_data_callback=None,
+        send_init_callback=None
+    ):
+        game = GameEngine(room.uuid)
+
+        game_state = game.handleAction(
+            "start",
+            room.game_state,
+            await count_player(room.code)
+        )
+
+        await start_room(
+            room.uuid,
+            game_state
+        )
+        
+        if send_init_callback:
+                await send_init_callback()
+                
+        game_state = await BotService.play_until_human(
+            room,
+            game_state,
+            game,
+            send_data_callback,
+            check_end=GameService.check_game_end
+        )
+
+        return game_state

@@ -1,6 +1,5 @@
 from asgiref.sync import sync_to_async
 from ..models import PlayerPresence
-from .game_service import GameService
 from .room_service import RoomService
 from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
 from game_engine.game import GameEngine
@@ -9,9 +8,9 @@ from game_engine.bot.bot import bot
 class BotService:
 
     @staticmethod
-    async def play_until_human(room, game_state, game, send_data_callback=None):
+    async def play_until_human(room, game_state, game, send_data_callback=None, check_end=None):
 
-        is_end, gs = await GameService.check_game_end(room, game)
+        is_end, gs = await check_end(room, game)
         if is_end:
             return game_state
         
@@ -35,7 +34,7 @@ class BotService:
             if send_data_callback:
                 await send_data_callback()
             
-            is_end, gs = await GameService.check_game_end(room, game)
+            is_end, gs = await check_end(room, game)
             if is_end:
                 return
             p = await sync_to_async(PlayerPresence.objects.get)(
