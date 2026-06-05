@@ -20,7 +20,7 @@ export async function listRooms() {
 
 export async function getJoinedRoom() {
 	try {
-		const res = await axios.get(host.http + 'rooms/my/', {timeout: 2000, withCredentials:true});
+		const res = await axios.get(host.http + 'room/my/', {timeout: 2000, withCredentials:true});
 		if ("code" in res.data) {
 			return {room: res.data.code};
 		}

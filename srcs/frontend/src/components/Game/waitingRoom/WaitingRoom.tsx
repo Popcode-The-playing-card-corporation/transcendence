@@ -5,7 +5,12 @@ import ParameterRoom from "./ParameterRoom";
 import PlayerList from "./PlayerList";
 import type React from "react";
 
-export default function WaitingRoom({setIsInGame, setInGame} : { setIsInGame: React.Dispatch<SetStateAction<boolean>>, setInGame: React.Dispatch<SetStateAction<boolean>>}) {
+type Props = {
+	kickPlayer: (playerId: number) => void;
+	startGame: () => void;
+}
+
+export default function WaitingRoom({kickPlayer, startGame} : Props) {
 
 	setIsInGame(false)
     return (

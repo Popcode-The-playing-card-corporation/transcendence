@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type SetStateAction } from "react";
+import { useEffect, useRef, useState } from "react";
 import CreateOrJoin from "../components/Game/createOrJoin/CreateOrJoin";
 import GameWebSocket from "../components/Game/GameWebSocket";
 import { useAuth } from "../components/hooks/useAuth";
@@ -7,11 +7,8 @@ import { useNotif } from "../components/hooks/useNotif";
 import { type availableGameT } from "../utils/type/availableGameType";
 import { getJoinedRoom, listRooms } from "../api/http/game";
 
-export function Game({
-  setIsGamePage,
-}: {
-  setIsGamePage: React.Dispatch<SetStateAction<boolean>>;
-}) {
+export function Game() {
+
 	const [isInWaitingRoom, setIsInWaitingRoom] = useState<boolean>(false);
 	const auth = useAuth();
 	const navigate = useNavigate();
@@ -89,7 +86,7 @@ export function Game({
 
 	if (joined !== "") {
 		return (
-			<GameWebSocket code={joined} setIsInGame={setIsGamePage}/>
+			<GameWebSocket code={joined}/>
 		)
 	}
 
@@ -104,7 +101,7 @@ export function Game({
           onChange={() => setIsInWaitingRoom(!isInWaitingRoom)}
         />
       </label>
-        <CreateOrJoin availableGames={rooms} setIsInGame={setIsGamePage} setJoined={setJoined}/>
+        <CreateOrJoin availableGames={rooms} setJoined={setJoined}/>
     </>
   );
 }

@@ -10,11 +10,10 @@ import { useNotif } from "../../hooks/useNotif";
 
 type Props = {
 	availableGames:availableGameT[],
-	setIsInGame:React.Dispatch<SetStateAction<boolean>>,
 	setJoined:React.Dispatch<SetStateAction<string>>,
 }
 
-export default function CreateOrJoin({availableGames, setIsInGame, setJoined}: Props) {
+export default function CreateOrJoin({availableGames, setJoined}: Props) {
 //   const availableGames = createFakeGame();
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
   const notif = useNotif();
@@ -26,7 +25,6 @@ export default function CreateOrJoin({availableGames, setIsInGame, setJoined}: P
 		return ;
 	}
 	setJoined(room.room);
-	setIsInGame(true);
 	notif?.showNotif("Room Created:", room.room, 5000)
 	return ;
   }

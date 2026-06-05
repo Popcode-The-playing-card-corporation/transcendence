@@ -1,12 +1,14 @@
-import { useState, type SetStateAction } from "react"
+import { useState } from "react"
 import WaitingRoom from "./waitingRoom/WaitingRoom";
 import GameMain from "./Game/GameMain";
 import useWebSocketModule from "react-use-websocket";
 import host from "../../api/http/host";
 import { useAuth } from "../hooks/useAuth";
+import { useNotif } from "../hooks/useNotif";
 
-export default function GameWebSocket({code, setIsInGame} : {code:string; setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
+export default function GameWebSocket({code} : {code:string}) {
 
+	const notif = useNotif();
 	const [inGame, setInGame] = useState(false);
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
@@ -27,11 +29,28 @@ export default function GameWebSocket({code, setIsInGame} : {code:string; setIsI
 			},
 	
 			onOpen: () => {
-				console.debug("Game websocket open");
 			},
 	
 			onClose: () => {
-				console.debug("Game websocket closed");
+			},
+
+			onMessage: (event) => {
+				const data = JSON.parse(event.data);
+				if (data.type == "acknowledge") {
+					return
+				}
+				const payload = data.payload;
+
+				if (data.event === "private") {
+					console.debug("Private event: ", payload);
+				}
+				else if (data.event === "event") {
+					console.debug("Room event: ", payload);
+				} else if (data.event === "error") {
+					notif?.showNotif("Game Error", data.message);
+				} else {
+					console.debug("Unknown event: ", data)
+				}
 			},
 	
 		});
@@ -44,8 +63,8 @@ export default function GameWebSocket({code, setIsInGame} : {code:string; setIsI
 			sendJson("start_game");
 		}
 
-		function playCard(cardID:number) {
-			sendJson("play_card", String(cardID));
+		function playCard(cardId:number) {
+			sendJson("play_card", JSON.stringify({cardId: cardId}));
 		}
 
 		function continueGame() {
@@ -56,13 +75,21 @@ export default function GameWebSocket({code, setIsInGame} : {code:string; setIsI
 			sendJson("end_game");
 		}
 
-		function endGame() {
-			sendJson("end_game");
+		function annonces(cards: number[]) {
+			const parsed_cards:{cardId:number}[] = [];
+			cards.forEach((card) => {
+				parsed_cards.push({cardId: card})
+			})
+			sendJson("melds", JSON.stringify(parsed_cards));
+		}
+		
+		function kickPlayer(playerId:number) { //RoomId of player/ position
+			sendJson("kick", JSON.stringify({playerId : playerId}));
 		}
 	
 	return (
 		<>
-		{inGame ? <GameMain setIsGamePage={setIsInGame} playCard={playCard}/> : <WaitingRoom setIsInGame={setIsInGame} setInGame={setInGame}/>}
+		{inGame ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> : <WaitingRoom  kickPlayer={kickPlayer} startGame={startGame}/>}
 		</>
 	);
 }
