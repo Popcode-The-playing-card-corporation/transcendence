@@ -129,52 +129,53 @@ def remove_player_from_room(user, code):
         return
     try:
         room = Room.objects.get(code=code)
-
-        if room.host == user:
-            next_player = PlayerPresence.objects.filter(
-                room=room,
-                is_human=True
-            ).exclude(player=user).order_by("position").first()
-
-            if next_player:
-                room.host = next_player.player
+        if room.status not in ["start", "end"]:
+            if room.host == user:
+                next_player = PlayerPresence.objects.filter(
+                    room=room,
+                    is_human=True
+                ).exclude(player=user).order_by("position").first()
+    
+                if next_player:
+                    room.host = next_player.player
+                    room.save()
+                else:
+                    room.delete()
+                    return
+    
+                PlayerPresence.objects.filter(
+                    player=user,
+                    room=room
+                ).update(is_online=False)
+                
+                pos = PlayerPresence.objects.filter(
+                    player=user,
+                    room=room
+                ).values_list("position", flat=True).first()
+                
+                if pos is None:
+                    PlayerPresence.objects.filter(
+                        player=user,
+                        room=room
+                    ).delete()
+                    return
+                
+                players = PlayerPresence.objects.filter(
+                    room=room,
+                    position__gt=pos
+                )
+                
+                for p in players:
+                    p.position -= 1
+                    p.save()
+        
+                room.nb_player -= 1
                 room.save()
-            else:
-                room.delete()
-                return
-
-        if room.status in ["start", "end"]:
-            PlayerPresence.objects.filter(
-                player=user,
-                room=room
-            ).update(is_online=False)
-            return
-
-        pos = PlayerPresence.objects.filter(
-            player=user,
-            room=room
-        ).values_list("position", flat=True).first()
-        
-        if pos is None:
-            PlayerPresence.objects.filter(
-                player=user,
-                room=room
-            ).delete()
-            return
-        
-        players = PlayerPresence.objects.filter(
-            room=room,
-            position__gt=pos
-        )
-        
-        for p in players:
-            p.position -= 1
-            p.save()
-
-        PlayerPresence.objects.filter(
-            player=user,
-            room=room
-        ).delete()
+                
+                PlayerPresence.objects.filter(
+                    player=user,
+                    room=room
+                ).delete()
 
     except Room.DoesNotExist:
         pass
@@ -182,6 +183,10 @@ def remove_player_from_room(user, code):
 
 @sync_to_async
 def get_room_with_host(code):
+    if not sync_to_async(
+        Room.objects.filter(code=code).exists
+    )():
+        return None
     return Room.objects.select_related("host").get(code=code)
 
 @sync_to_async

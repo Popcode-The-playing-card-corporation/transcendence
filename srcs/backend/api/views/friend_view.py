@@ -152,7 +152,7 @@ def block_friend(request, user_id):
         )
 
     try:
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(id=user_id, is_bot=False)
 
     except User.DoesNotExist:
         return Response(
@@ -331,6 +331,7 @@ def list_propal(request):
                 suggestions.append({
                     "id": suggested_user.id,
                     "username": suggested_user.username,
+                    "is_online": suggested_user.is_online,
 
                     "mutual_friends": [
                         {

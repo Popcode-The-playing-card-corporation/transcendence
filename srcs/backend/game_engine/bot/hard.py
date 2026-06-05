@@ -27,8 +27,11 @@ def splithand(data, idPlayer, legal):
 	playable = []
 	tricks = data["tricks"]
 	fold = copy_fold(data["board"])
-	asked = fold.pop(0)
+	asked = None
 	playing = len(data["players"]) - len(fold)
+
+	if (len(fold) != 0):
+		asked = fold.pop(0)
 
 	i = 0
 	while (i < len(legal)):
@@ -100,16 +103,18 @@ def hard(data: dict, idPlayer, legal):
 	first, second = Tricks(data, data["tricks"])
 	points = boardPoints(data, board)
 
-	for c in take:
-		if (asked["color"] == data["tricks"]):
-			break 
-		if (c["color"] == data["tricks"]):
-			if (c["value"] == first and points <= 20 - (10 * len(data["players"]))):
-				return data["players"][idPlayer]["cards"].index(convert(c))
+	if (len(board) != 0):
+		for c in take:
+			if (asked.colors == data["tricks"]):
+				break 
+			if (c.colors == data["tricks"]):
+				if (c.values == first and points <= 20 - (10 * len(data["players"]))):
+					return data["players"][idPlayer]["cards"].index(convert(c))
 
-			if (c["value"] == second and points <= 10- (5 * len(data["players"]))):
-				return data["players"][idPlayer]["cards"].index(convert(c))
+				if (c.values == second and points <= 10- (5 * len(data["players"]))):
+					return data["players"][idPlayer]["cards"].index(convert(c))
 
+	card = None
 	if (len(dontTake) > 0):
 		maxPoint = 0
 		for c in dontTake:
@@ -131,6 +136,9 @@ def hard(data: dict, idPlayer, legal):
 		if (newPoints < maxPoint):
 			card = c
 			maxPoint = newPoints
+
+	if (card == None):
+		card = take[0]
 
 	card = convert(card)
 	return data["players"][idPlayer]["cards"].index(card)

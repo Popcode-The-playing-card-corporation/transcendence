@@ -1,0 +1,170 @@
+from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
+from ..models import PlayerPresence, Room, PlayerScore, Stat
+from api.models import Friendship, User
+from asgiref.sync import sync_to_async
+from game_engine.game import GameEngine
+from game_engine.bot.bot import bot
+from django.db.models import Q
+import copy
+from .board_service import BoardService
+from .stats_service import StatsService
+#from .bot_service import BotService
+from channels.layers import get_channel_layer
+
+
+
+
+
+
+class RoomConnectionService:
+
+    @staticmethod
+    async def handle_connect(user, code, channel_name):
+
+        room = await sync_to_async(Room.objects.filter(code=code).first)()
+
+        if not room:
+            return {"close": True, "code": 4001}
+
+        if not user or not user.is_authenticated:
+            return {"close": True, "code": 4001}
+
+        is_member = await sync_to_async(
+            PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).exists
+        )()
+
+        if room.status == "start" and is_member:
+            return {"close": False}
+        # ROOM FULL
+        if room.nb_player == room.max_player:
+            return {
+                "close": True,
+                "code": 4003,
+                "message": {"event": "game_event", "message": "room full"}
+            }
+
+        # GAME ENDED
+        if room.status == "end":
+            return {
+                "close": True,
+                "code": 4003,
+                "message": {"event": "game_ended", "message": "ended"}
+            }
+
+        # STARTED BUT NOT MEMBER
+        if room.status == "start" and not is_member:
+            return {
+                "close": True,
+                "code": 4003,
+                "message": {"event": "game_started", "message": "already started"}
+            }
+
+        # BLOCKING LOGIC
+        return await RoomConnectionService.check_blocking(user, room)
+
+
+    @staticmethod
+    async def check_blocking(user, room):
+
+        participant_users = await sync_to_async(list)(
+            PlayerPresence.objects.filter(room=room).values_list("player", flat=True)
+        )
+
+        blocking = await sync_to_async(
+            Friendship.objects.filter(
+                Q(from_user=user) | Q(to_user=user),
+                status="blocked",
+                blocked_by__in=participant_users,
+            ).first
+        )()
+
+        if blocking:
+            return {
+                "close": True,
+                "code": 4008
+            }
+
+        blocked = await RoomConnectionService.check_blocked_by_user(
+            user,
+            room,
+            participant_users
+        )
+
+        if blocked:
+            return {
+                "close": True,
+                "code": 4008,
+                "message": {
+                    "event": "blocked_users_present",
+                    "message": "You cannot join this room",
+                }
+            }
+
+        return {"close": False}
+
+    @staticmethod
+    async def check_blocked_by_user(user, room, participant_users):
+    
+        blocked_friendships = await sync_to_async(list)(
+            Friendship.objects.filter(
+                Q(from_user__in=participant_users) |
+                Q(to_user__in=participant_users),
+                status="blocked",
+                blocked_by=user,
+            ).select_related("from_user", "to_user")
+        )
+    
+        if not blocked_friendships:
+            return False
+    
+        blocked_users = []
+    
+        for f in blocked_friendships:
+    
+            blocked_user = (
+                f.to_user
+                if f.from_user == user
+                else f.from_user
+            )
+    
+            is_present = await sync_to_async(
+                PlayerPresence.objects.filter(
+                    player=blocked_user,
+                    room=room
+                ).exists
+            )()
+    
+            if is_present:
+                blocked_users.append(blocked_user.username)
+    
+        if not blocked_users:
+            return False
+    
+        return {
+            "close": True,
+            "code": 4008,
+            "message": {
+                "event": "blocked_users_present",
+                "payload": {
+                    "blocked_users": blocked_users,
+                    "by": user.username
+                }
+            }
+        }
+
+    @staticmethod
+    async def finalize_join(user, code, channel_name):
+
+        room = await sync_to_async(Room.objects.get)(code=code)
+
+        await add_player_to_room(user, code)
+
+        await sync_to_async(
+            PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).update
+        )(channel_name=channel_name)

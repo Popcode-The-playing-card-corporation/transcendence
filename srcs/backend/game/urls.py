@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.room_views import create_room, update_params, get_game_scorelog, list_room, add_bot, list_my_started_room, is_presence
+from .views.room_views import create_room, update_params, invite_friend, get_game_scorelog, list_room, add_bot, list_my_started_room, is_presence
 
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('room/presence/', is_presence), ### Let's figure out what this is XD
     path('room/<str:code>/score/', get_game_scorelog),
     path('room/params/<str:code>/', update_params),
+    path('room/<int:friend_id>/invite', invite_friend),
 ]

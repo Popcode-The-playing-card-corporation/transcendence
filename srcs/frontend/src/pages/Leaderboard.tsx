@@ -40,8 +40,8 @@ export function Leaderboard({updateLeaderboard}:Props) {
 
 	if (valid === null) {
 	  return (
-		<div className="page-content mt-17">
-			<span className="loading loading-spinner text-secondary"></span>
+		<div className="page-content flex items-center justify-center min-h-screen">
+			<span className="loading loading-spinner loading-xl"></span>
 		</div>
 	);
 	}
@@ -57,7 +57,7 @@ export function Leaderboard({updateLeaderboard}:Props) {
   return (
     <div className="page-content my-17">
       <h1>Leaderboard</h1>
-      <LeaderboardPart tmp_leaderboard={leaderboard} logged_in={auth.logged_in} />
+      <LeaderboardPart tmp_leaderboard={leaderboard}/>
     </div>
   );
 }

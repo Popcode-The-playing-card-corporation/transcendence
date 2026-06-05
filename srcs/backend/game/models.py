@@ -42,7 +42,7 @@ class Room(models.Model):
     ended_at = models.DateTimeField(null=True)
     nb_player = models.IntegerField(default=0)
     type = models.CharField(max_length=12, choices=TYPE_CHOICES, default="private")
-    max_player = models.IntegerField(default=7)
+    max_player = models.IntegerField(default=1)
     
     def __str__(self):
         return f"{self.code}"
