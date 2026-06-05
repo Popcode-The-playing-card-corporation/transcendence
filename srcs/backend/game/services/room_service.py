@@ -1,4 +1,3 @@
-#TODO kick here
 from asgiref.sync import sync_to_async
 from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
 

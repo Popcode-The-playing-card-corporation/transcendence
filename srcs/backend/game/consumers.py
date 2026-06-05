@@ -456,7 +456,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.send_board(game_state, room)
 
 #TODO send all melds possible
-#TODO add id player on board data
     async def send_data(self):
         room = await get_room_with_host(self.code)
         game_state = room.game_state

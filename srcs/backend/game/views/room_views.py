@@ -327,7 +327,6 @@ def list_room(request):
     return Response(data, status=200)
     
 
-#TODO only one game start at the time in the db by user
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
