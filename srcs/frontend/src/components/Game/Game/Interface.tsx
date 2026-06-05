@@ -1,5 +1,5 @@
 import LeaderboardInGame from "./LeaderboardInGame";
-import GameButtons from "./GameButtons";
+import GameButtons from "./GameInterface/GameButtons";
 
 export default function Interface() {
 	return (

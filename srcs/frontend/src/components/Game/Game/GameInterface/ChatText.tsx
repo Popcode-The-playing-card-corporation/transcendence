@@ -1,4 +1,4 @@
-import type { chatT } from "../../../utils/type/chatT";
+import type { chatT } from "../../../../utils/type/chatT";
 
 export default function ChatText({info}: {info: chatT}) {
   const isOtherPlayers = true;

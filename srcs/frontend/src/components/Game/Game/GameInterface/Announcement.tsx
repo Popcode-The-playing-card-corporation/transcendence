@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import generateFakeAnnonce from "../../../utils/test_funcs/generateFakeAnnonce";
+import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 
 export default function Announcement() {
   const isFirstFold = true;
