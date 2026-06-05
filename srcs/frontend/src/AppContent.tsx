@@ -19,6 +19,7 @@ import { useState } from "react";
 import { Presence } from "./api/websockets/presence";
 import { Notifications } from "./api/websockets/notifcations";
 import { useAuth } from "./components/hooks/useAuth";
+import PrivateRoute from "./utils/routing/PrivateRoutes";
 
 function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetStateAction<string>>}) {
   const [updatedProfile, setProfile] = useState(false);
@@ -41,11 +42,11 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
 		  {!isGamePage ? <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/> : <></>}
 		  {!isGamePage ? <Navbar /> : <></>}
           <NotifPopUp />
-          <Routes>
+          <Routes>	
+			<Route path="/game" element={<PrivateRoute> <Game setIsGamePage={setIsGamePage} /> </PrivateRoute>} />
+			<Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
             <Route path="/" element={<Home />} />
-            <Route path="/game" element={<Game setIsGamePage={setIsGamePage} />} />
             <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
-            <Route path="/profile" element={<Profile setUpdate={setProfile} updatedProfile={updatedProfile} />} />
             <Route
               path="/settings"
               element={<Settings setFontChoice={setFontChoice} />}

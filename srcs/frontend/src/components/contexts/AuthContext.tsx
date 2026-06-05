@@ -13,7 +13,7 @@ export interface AuthContextType {
 export default function AuthProvider ({children}:{children:React.ReactNode}) {
 
 	const [logged_in, setLoggedIn] = useState<boolean>(false);
-	const [logging, setLogging] = useState(false);
+	const [logging, setLogging] = useState(true);
 	const [checking, setChecking] = useState(true);
 
 
@@ -21,6 +21,7 @@ export default function AuthProvider ({children}:{children:React.ReactNode}) {
 		async function getAuth() {
 			setLoggedIn(await checkAuth());
 			setChecking(false);
+			setLogging(false);
 		}
 		getAuth();
 	}, [])

@@ -21,7 +21,10 @@ export async function listRooms() {
 export async function getJoinedRoom() {
 	try {
 		const res = await axios.get(host.http + 'rooms/my/', {timeout: 2000, withCredentials:true});
-		return res;
+		if ("code" in res.data) {
+			return {room: res.data.code};
+		}
+		return {room:""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
@@ -35,7 +38,10 @@ export async function getJoinedRoom() {
 export async function createRoom() {
 	try {
 		const res = await axios.post(host.http + 'room/', {}, {timeout: 2000, withCredentials:true});
-		return res;
+		if ("code" in res.data) {
+			return {room: res.data.code};
+		}
+		return {room:""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {

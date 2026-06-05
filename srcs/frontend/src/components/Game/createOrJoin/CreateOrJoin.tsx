@@ -4,20 +4,39 @@ import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
 import React, { useState, type SetStateAction } from "react";
 import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
-import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable.tsx";
+import { createRoom } from "../../../api/http/game";
+import { useNotif } from "../../hooks/useNotif";
+// import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable.tsx";
 
-export default function CreateOrJoin({setIsInGame}: {setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
-  const availableGames = createFakeGame();
+type Props = {
+	availableGames:availableGameT[],
+	setIsInGame:React.Dispatch<SetStateAction<boolean>>,
+	setJoined:React.Dispatch<SetStateAction<string>>,
+}
+
+export default function CreateOrJoin({availableGames, setIsInGame, setJoined}: Props) {
+//   const availableGames = createFakeGame();
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
+  const notif = useNotif();
 
-  setIsInGame(false)
+  async function createGame() {
+	const room = await createRoom();
+	if ("code" in room) {
+		notif?.showNotif("Game Creation Error", "There was an error creating the lobby. Please try again or refresh.", 5000);
+		return ;
+	}
+	setJoined(room.room);
+	setIsInGame(true);
+	notif?.showNotif("Room Created:", room.room, 5000)
+	return ;
+  }
 
   return (
     <div className=" mt-17 h-screen mr-15">
       <h1 className="">Create or join a game!</h1>
       <div className="w-full flex h-screen">
         <div className="createOrJoinBtn-container w-1/3 flex flex-col justify-center items-center h-8/12">
-          <button className="btn m-3 ">Create</button>
+          <button className="btn m-3 " onClick={createGame}>Create</button>
           <p>or</p>
           <div className="joinCode-container m-3">
             <input
