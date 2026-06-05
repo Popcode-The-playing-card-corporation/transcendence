@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import { generateFakeUsersInGame } from "../../../utils/test_funcs/generateFakeUsersInGame";
-import type { userInGameT } from "../../../utils/type/userInGameType";
-import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
-import { generateFakeDetailedGame } from "../../../utils/test_funcs/generateFakeDetailedGame";
+import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
+import type { userInGameT } from "../../../../utils/type/userInGameType";
+import UsernameMiniProfileBtn from "../../../miniProfile/UsernameMiniProfileBtn";
+import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
 import type {
   detailedGameT,
   detailedRoundT,

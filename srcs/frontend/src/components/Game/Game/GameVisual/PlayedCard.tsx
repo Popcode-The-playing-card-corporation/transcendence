@@ -1,3 +1,9 @@
 export default function PlayedCard() {
-  return <mesh></mesh>;
+  const texture = use
+  return (
+  <mesh>
+    <boxGeometry />
+    <mehs
+  </mesh>
+  );
 }

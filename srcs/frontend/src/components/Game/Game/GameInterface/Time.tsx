@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Chrono from "./GameInterface/Chrono";
+import Chrono from "./Chrono";
 
 export default function Time() {
 	const [timeLeft, setTimeLeft] = useState<number>(15) // new to calculate with backend
