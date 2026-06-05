@@ -1,9 +1,24 @@
+import { useRef } from "react";
 import generateFakeAnnonce from "../../../utils/test_funcs/generateFakeAnnonce";
 
-export default function AnnouncementModal() {
+export default function Announcement() {
+  const isFirstFold = true;
+  const showAnnonceRef = useRef<HTMLDialogElement>(null);
   const annonces = generateFakeAnnonce();
+
   return (
     <>
+      <button
+        className={"btn " + (isFirstFold ? "" : "btn-disabled")}
+        onClick={() => showAnnonceRef.current?.showModal()}
+        >
+        Annonces
+      </button>
+      <dialog
+        id="showAnnonce"
+        className="modal"
+        ref={showAnnonceRef}
+      >
       <div className="modal-box bg-(--nav-color)">
         <table className="table">
           <thead>
@@ -29,6 +44,7 @@ export default function AnnouncementModal() {
       <form method="dialog" className="modal-backdrop">
         <button ></button>
       </form>
+      </dialog>
     </>
   );
 }

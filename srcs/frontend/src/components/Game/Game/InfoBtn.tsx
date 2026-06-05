@@ -4,7 +4,7 @@ export default function InfoBtn({changeState}: {changeState: (whichButton: strin
   return (
     <>
       <button
-        className="btn btn-lg btn-circle btn-primary "
+        className="btn btn-lg btn-circle "
         onClick={() => changeState("info")}
       >
         <IoMdInformationCircleOutline />

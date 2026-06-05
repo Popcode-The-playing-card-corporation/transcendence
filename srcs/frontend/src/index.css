@@ -107,8 +107,8 @@
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
 }
 
-.bordered-wmp {
-  @apply border-2 border-(--accent-color) rounded-xl p-5 pr-7 pl-7;
+.dropdown-scroll{
+  @apply bg-(--nav-color) rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-(--accent-color);
 }
 
 .table tr {
