@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNotif } from "../hooks/useNotif";
+import { useAuth } from "../hooks/useAuth";
 
 // type Props = {
 //   isEnabled: boolean;
@@ -11,9 +12,11 @@ import { useNotif } from "../hooks/useNotif";
 export function NotifPopUp() {
   const [progress, setProgress] = useState(100);
   const context = useNotif();
+  const auth = useAuth();
+
 
   useEffect(() => {
-    if (!context || !context.isEnabled) return;
+    if (!context || !context.isEnabled ) return;
 
     const intervalId = setInterval(() => {
 	  setProgress(100);
@@ -29,6 +32,10 @@ export function NotifPopUp() {
     };
   }, [progress, context, context?.isEnabled]); // Maybe remove context
 
+  if (auth.in_game) {
+	return ;
+  }
+  
   if (!context || !context.isEnabled) return;
   else
     return (

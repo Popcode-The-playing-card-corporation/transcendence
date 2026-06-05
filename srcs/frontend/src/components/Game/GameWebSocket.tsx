@@ -1,4 +1,3 @@
-import { useState } from "react"
 import WaitingRoom from "./waitingRoom/WaitingRoom";
 import GameMain from "./Game/GameMain";
 import useWebSocketModule from "react-use-websocket";
@@ -9,7 +8,6 @@ import { useNotif } from "../hooks/useNotif";
 export default function GameWebSocket({code} : {code:string}) {
 
 	const notif = useNotif();
-	const [inGame, setInGame] = useState(false);
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 			default: typeof useWebSocketModule;
@@ -89,7 +87,7 @@ export default function GameWebSocket({code} : {code:string}) {
 	
 	return (
 		<>
-		{inGame ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> : <WaitingRoom  kickPlayer={kickPlayer} startGame={startGame}/>}
+		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> : <WaitingRoom  kickPlayer={kickPlayer} startGame={startGame}/>}
 		</>
 	);
 }
