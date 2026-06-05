@@ -242,7 +242,7 @@ def list_public_room(request, data):
             "is_friend": value["has_friend"],
             "nb_player": room.nb_player,
             "list_player": list_player,
-            "host": room.host.username if room.host else None,
+            "host": { "username":room.host.username, "id":room.host.id },
         })
     
     return data
@@ -313,7 +313,7 @@ def list_friend_room(request, data):
             "nb_player": room.nb_player,
             "max_player": room.max_player,
             "list_player": list_player,
-            "host": { "username":room.host.username, "id":room.host.id } if room.host else None,
+            "host": { "username":room.host.username, "id":room.host.id },
         })
 
     return data
