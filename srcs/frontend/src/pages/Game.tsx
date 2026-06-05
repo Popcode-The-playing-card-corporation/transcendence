@@ -42,10 +42,12 @@ export function Game() {
 
 		async function get_info() {
 
-			const tmp_joined = await getJoinedRoom();
+			let tmp_joined = await getJoinedRoom();
 			if ("code" in tmp_joined) {
 				if (tmp_joined.code === 401) {
 					return login_error("Authentication error:", "Please log in again.");
+				} else if (tmp_joined.code === 404) {
+					tmp_joined = {room: ""};
 				} else {
 					return other_error("Error " + tmp_joined.code + ":", tmp_joined.response);
 				}
