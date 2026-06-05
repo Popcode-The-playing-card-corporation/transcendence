@@ -4,6 +4,8 @@ import useWebSocketModule from "react-use-websocket";
 import host from "../../api/http/host";
 import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
+import { useState } from "react";
+import { playerT } from "../../utils/type/playerType";
 
 export default function GameWebSocket({code} : {code:string}) {
 
@@ -13,6 +15,10 @@ export default function GameWebSocket({code} : {code:string}) {
 			default: typeof useWebSocketModule;
 		};
 		const auth = useAuth();
+		const private_room = 0; const public_room = 1; const friend_room = 2;
+		const [mode, setMode] = useState(private_room);
+		const [maxSize, setSize] = useState(2);
+		const [listPlayer, setPlayers] = useState<playerT[]>([]);
 		
 		const { sendJsonMessage } = useWebSocket(auth.logged_in ? (host.ws + "room/" + code + '/') : null, {
 			shouldReconnect: () => auth.logged_in ? true : false,
@@ -84,11 +90,12 @@ export default function GameWebSocket({code} : {code:string}) {
 		function kickPlayer(playerId:number) { //RoomId of player/ position
 			sendJson("kick", JSON.stringify({playerId : playerId}));
 		}
+
 	
 	return (
 		<>
 		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
-		: <WaitingRoom roomCode={""} kickPlayer={kickPlayer} startGame={startGame} listPlayer={[]}/>}
+		: <WaitingRoom roomCode={""} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
 		</>
 	);
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { type SetStateAction } from "react";
 import InfoAndActionPart from "./InfoAndActionPart";
 import InviteYourFriends from "./InviteYourFriends";
 import ParameterRoom from "./ParameterRoom";
@@ -12,15 +12,15 @@ type Props = {
 	startGame: () => void;
 	listPlayer: playerT[]
 	roomCode: string;
+	mode: number;
+	maxSize: number;
+	setMode: React.Dispatch<SetStateAction<number>>;
+	setSize: React.Dispatch<SetStateAction<number>>;
 }
 
-export default function WaitingRoom({kickPlayer, startGame, roomCode, listPlayer} : Props) {
+export default function WaitingRoom({kickPlayer, startGame, roomCode, listPlayer, mode, maxSize, setMode, setSize} : Props) {
 	
 	const private_room = 0; const public_room = 1;
-	
-	const [mode, setMode] = useState(private_room);
-	const [maxSize, setSize] = useState(2);
-
 	const notif = useNotif();
 
 	async function updateSettings() {
