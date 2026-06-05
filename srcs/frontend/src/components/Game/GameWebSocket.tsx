@@ -87,7 +87,8 @@ export default function GameWebSocket({code} : {code:string}) {
 	
 	return (
 		<>
-		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> : <WaitingRoom  kickPlayer={kickPlayer} startGame={startGame}/>}
+		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
+		: <WaitingRoom roomCode={""} kickPlayer={kickPlayer} startGame={startGame} listPlayer={[]}/>}
 		</>
 	);
 }

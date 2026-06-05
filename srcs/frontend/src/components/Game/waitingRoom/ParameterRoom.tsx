@@ -2,7 +2,16 @@ import AddingBot from "./AddingBot";
 import PrivatePublicSlider from "./PrivateFriendPublicSlider";
 import RoomSize from "./RoomSize";
 
-export default function ParameterRoom() {
+type Props = {
+	roomCode: string;
+	mode: number;
+	maxSize: number;
+	setMode: React.Dispatch<React.SetStateAction<number>>;
+	setSize: React.Dispatch<React.SetStateAction<number>>;
+	updateSettings: () => void;
+}
+
+export default function ParameterRoom({roomCode, mode, maxSize, setMode, setSize, updateSettings}  : Props) {
   return (
     <div className="bordered grid grid-cols-3 gap-4">
       <div className="col-span-3 grid grid-cols-3 pt-6">
@@ -10,7 +19,7 @@ export default function ParameterRoom() {
           <p>State of the room : </p>
         </div>
         <div className="col-span-2 ">
-          <PrivatePublicSlider />
+          <PrivatePublicSlider mode={mode} setMode={setMode}/>
         </div>
       </div>
       <div className="col-span-3 grid grid-cols-3 border-t border-(--hover-color) pt-6">
@@ -18,7 +27,7 @@ export default function ParameterRoom() {
           <p>Maximum number of players : </p>
         </div>
         <div className="col-span-2">
-          <RoomSize />
+          <RoomSize maxSize={maxSize} setSize={setSize}/>
         </div>
       </div>
       <div className="col-span-3 grid grid-cols-3 border-t border-(--hover-color) pt-6">
@@ -26,10 +35,10 @@ export default function ParameterRoom() {
           <p>Choose the level and the number of bots you want : </p>
         </div>
         <div className="col-span-2 mb-6">
-          <AddingBot />
+          <AddingBot roomCode={roomCode}/>
         </div>
         <div className="flex items-center justify-center col-span-3 border-t border-(--hover-color) pt-6">
-          <button className="btn">Confirm</button>
+          <button className="btn" onClick={updateSettings}>Confirm</button>
         </div>
       </div>
     </div>

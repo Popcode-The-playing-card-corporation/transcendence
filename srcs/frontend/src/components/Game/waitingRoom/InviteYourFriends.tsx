@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { useNotif } from "../../hooks/useNotif";
 import type { friendT, requestT } from "../../../utils/type/friendType";
 import { useAuth } from "../../hooks/useAuth";
+import { inviteFriend } from "../../../api/http/game";
 
 function getRequests(friend_list: friendT[]): {
     friends: friendT[];
@@ -22,7 +23,7 @@ function getRequests(friend_list: friendT[]): {
     return { friends: friends, requests: requests };
   }
 
-export default function InviteYourFriends() {
+export default function InviteYourFriends({roomCode}:{roomCode:string}) {
   const showFriendsList = useRef<HTMLDialogElement>(null);
 	const [friends, setFriends] = useState<friendT[]>([]);
 	const [valid, setValid] = useState<boolean | null>(null);
@@ -77,6 +78,13 @@ export default function InviteYourFriends() {
 		return ;
 	}
 
+	async function sendInvite(friendID:number) {
+		const res = await inviteFriend(roomCode, friendID);
+		if ("code" in res) {
+			notif?.showNotif("Invite Error", res.response, 5000);
+		}
+	}
+
   return (
     <div className="flex justify-center">
       <button
@@ -100,7 +108,7 @@ export default function InviteYourFriends() {
                   <td>
                     <label className="swap btn">
                       <input type="checkbox" />
-                      <div className="swap-off fill-current">
+                      <div className="swap-off fill-current" onClick={() => sendInvite(friend.user.id)}>
                         Invite
                       </div>
                       <div className="swap-on fill-current" onClick={() => notif?.showNotif("Invitation", friend.user.username)}>

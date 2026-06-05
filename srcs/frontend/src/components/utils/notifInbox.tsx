@@ -18,13 +18,13 @@ export function Notif_Inbox() {
 		<div className="indicator">
 		<span
 			className={
-			"indicator-item badge bg-(--nav-color)" +
+			"indicator-item badge bg-(--nav-color) " +
 			(notif?.inbox.length === 0 ? " hidden" : "")
 			}
 		>
 			{notif?.inbox.length}
 		</span>
-		<div tabIndex={0} className="btn" role="button">
+		<div tabIndex={0} className="btn btn-sm" role="button">
 			<IoNotificationsOutline />
 		</div>
 		</div>

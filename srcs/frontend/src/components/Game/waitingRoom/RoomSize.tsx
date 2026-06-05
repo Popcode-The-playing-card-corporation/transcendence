@@ -1,13 +1,22 @@
-export default function RoomSize() {
+import type { SetStateAction } from "react";
+
+type Props = {
+	maxSize: number;
+	setSize: React.Dispatch<SetStateAction<number>>
+}
+
+export default function RoomSize({maxSize, setSize}: Props) {
+
   return (
     <div className="w-full max-w-xs">
       <input
         type="range"
-        min="0"
-        max="96"
-        defaultValue="0"
+        min="2"
+        max="7"
+        value={maxSize}
         className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
-        step="16" />
+        step="1"
+		onChange={(e) => setSize(Number(e.target.value))} />
       <div className="flex justify-between px-2.5 mt-2 text-xs">
         <span>|</span>
         <span>|</span>
