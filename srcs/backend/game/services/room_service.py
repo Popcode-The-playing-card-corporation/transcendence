@@ -1,4 +1,3 @@
-#TODO kick here
 from asgiref.sync import sync_to_async
 from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
 
@@ -53,7 +52,7 @@ class RoomService:
         participant_users = [p.player for p in participants]
 
         old_host = room.host
-
+        
         await remove_player_from_room(user, code)
 
         await sync_to_async(
@@ -67,9 +66,45 @@ class RoomService:
 
         room = await get_room_with_host(code)
 
+        participants = await sync_to_async(list)(
+            PlayerPresence.objects.filter(room=room)
+            .select_related("player")
+        )
+
+        participant_users = [p.player for p in participants]
         return {
             "room": room,
             "participant_users": participant_users,
             "host_changed": room and old_host != room.host,
             "old_host": old_host,
         }
+
+
+    @staticmethod
+    async def get_players(room):
+        if room == None:
+            return {"error": "No room send"}
+
+        presences = await sync_to_async(list)(
+            PlayerPresence.objects.select_related("player").filter(
+                room=room
+            )
+        )
+        
+        players = []
+        
+        for p in presences:
+            players.append({
+				"id": p.player.id,
+                "username": p.player.username,
+                "is_host": p.player == room.host,
+                "position": p.position
+			})
+
+
+        return players
+
+
+
+
+

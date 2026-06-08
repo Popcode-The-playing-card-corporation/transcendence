@@ -91,6 +91,7 @@ class GameEngine:
 
 		data["lastCard"] = {"value": last.values, "color": last.colors, "id": last.id}
 		data["tricks"] = "none"
+		data["round"] = 0
 
 		if ("start" in data.keys()):
 			data["start"] = int(data["start"]) + 1
@@ -126,6 +127,36 @@ class GameEngine:
 				continue
 		return strongest
 
+	def take_fold(self, data: dict):
+		asked = data["board"].pop("asked")
+		fold = []
+		for c in data["board"].values():
+			fold.append(c)
+
+		strongest = self.strongestCard(asked, fold, data["tricks"])
+		index = 0
+		for i in data["board"].keys():
+			if (data["board"][i] == strongest):
+				index = i
+				break
+		
+		melds = Player.countMelds(Player(), fold, data["tricks"])
+		data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
+
+		last_fold = []
+		for c in data["board"].values():
+			data["players"][index]["taken"].append(c)
+			last_fold.append(c)
+
+
+		data["board"].clear()
+		s = int(index)
+
+		data["playing"] = s
+		data["last_fold"] = last_fold
+		data["round"] = data["round"] + 1
+		return data
+
 	def play(self, data: dict, idPlayer: int , idCard: int):
 		card = data["players"][idPlayer]["cards"][idCard].copy()
 		del data["players"][idPlayer]["cards"][idCard]
@@ -137,31 +168,9 @@ class GameEngine:
 		if (card["color"] != data["board"]["asked"]["color"] and data["tricks"] == "none"):
 			data["tricks"] = card["color"]
 
-		if (len(data["board"]) - 1 == len(data["players"])):
-			asked = data["board"].pop("asked")
-			fold = []
-			for c in data["board"].values():
-				fold.append(c)
-	
-			strongest = self.strongestCard(asked, fold, data["tricks"])
-			index = 0
-			for i in data["board"].keys():
-				if (data["board"][i] == strongest):
-					index = i
-					break
-			
-			melds = Player.countMelds(Player(), fold, data["tricks"])
-			data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
-
-			for c in data["board"].values():
-				data["players"][index]["taken"].append(c)
-
-			data["board"].clear()
-			s = int(index)
-		else:
-			s += 1
-			if (s == len(data["players"])):
-				s = 0
+		s += 1
+		if (s == len(data["players"])):
+			s = 0
 
 		data["playing"] = s
 		return data
@@ -273,6 +282,9 @@ class GameEngine:
 		if (action == "play"):
 			return self.play(data, idPlayer, idCard)
 		
+		if (action == "take_fold"):
+			return self.take_fold(data)
+
 		if (action == "legal"):
 			return self.legal(data, idPlayer)
 		

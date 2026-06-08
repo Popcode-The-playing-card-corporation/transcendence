@@ -27,7 +27,7 @@ CARD_VALUES = {
     "K": 13,
     "A": 14
 }
-
+#TODO bug on open room to reconnect if server down
 ACTION_HANDLERS = {
     "start_game": "handle_start_game",
     "play_card": "handle_play_card",
@@ -45,7 +45,21 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
     async def private_event(self, event):
         await self.send(text_data=json.dumps({
-            "type": "private",
+            "type": "list_player",
+            "event": event["event"],
+            "payload": event["payload"]
+        }))
+
+    async def list_player_event(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "list_player",
+            "event": event["event"],
+            "payload": event["payload"]
+        }))
+    
+    async def params_event(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "params",
             "event": event["event"],
             "payload": event["payload"]
         }))
@@ -94,7 +108,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
             code=self.code,
             channel_name=self.channel_name
         )
-    
+        room = await get_room_with_host(self.code)
+        await RoomConnectionService.broadcast_player_list(
+            room,
+            self.channel_layer
+        )
+        
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -103,7 +122,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "payload": {"user": self.get_username()},
             }
         )
-    
+        
         room = await sync_to_async(Room.objects.get)(code=self.code)
     
         if room.status == "start":
@@ -126,6 +145,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
     
         room = result["room"]
+    
+        await RoomConnectionService.broadcast_player_list(
+            room,
+            self.channel_layer
+        )
     
         if self.group_name:
     
@@ -249,9 +273,18 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         room = await get_room_with_host(self.code)
         game_state = room.game_state
+
+        take_fold, game_state = await GameService.check_take_fold(game_state, room)
+        if (take_fold):
+            await self.send_data()
+
         game = GameEngine(room.uuid)
-        game_state = await BotService.play_until_human(room, game_state, game, send_data_callback=self.send_data, check_end=GameService.check_game_end)
-        
+        game_state = await BotService.play_until_human(room, game_state, game, 
+                                                       send_data_callback=self.send_data, 
+                                                       check_end=GameService.check_game_end, 
+                                                       check_take_fold_callback=GameService.check_take_fold
+                                                       )
+
         is_end, gs = await GameService.check_game_end(room, game)
         
         if (is_end):
@@ -413,9 +446,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "event": "init_cards",
                             "payload": {
                                 "hand": player_data["cards"],
-                                "board": game_state["board"],
-                                "taken": player_data["taken"],
-                                "puntos": player_data["puntos"],
                                 "legal": legal,
                                 
                             }
@@ -444,15 +474,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "event": "init_cards",
                             "payload": {
                                 "hand": player_data["cards"],
-                                "board": game_state["board"],
-                                "taken": player_data["taken"],
-                                "puntos": player_data["puntos"],
                             }
                         }
                     )
+        await self.send_board(game_state, room)
 
 #TODO send all melds possible
-#TODO add id player on board data
     async def send_data(self):
         room = await get_room_with_host(self.code)
         game_state = room.game_state
@@ -477,9 +504,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "event": "init_cards",
                             "payload": {
                                 "hand": player_data["cards"],
-                                "board": game_state["board"],
-                                "taken": player_data["taken"],
-                                "puntos": player_data["puntos"],
                                 "legal": legal,
                             }
                         }
@@ -498,23 +522,47 @@ class RoomConsumer(AsyncWebsocketConsumer):
                         }
                     )
             
-            player_puntos = {}
-            for player_id, player_data in game_state["players"].items():
-                player_puntos[player_id] = player_data["puntos"]
+            await self.send_board(game_state, room)
             
-            await self.channel_layer.group_send(
-                self.group_name,
-                {
-                    "type": "room_event",
-                    "event": "board_data",
-                    "payload": {
-                        "board": game_state["board"],
-                        "puntos": player_puntos
-                    }
-                }
-            )
         except ChannelFull:
             print("Channel is full. Dropping message.")
+    
+     
+    async def send_board(self, game_state, room):
+        player_puntos = {}
+        player_list = {}
+        for player_id, player_data in game_state["players"].items():
+            
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+				room_id=room.id,
+                position=int(player_id)
+			)
+            
+            player_puntos[str(player_id)] = player_data["puntos"]
+            player_list[str(player_id)] = {
+                "hand": len(player_data["cards"]),
+                "user": {"id": p.player.id, "username": p.player.username, "avatar": p.player.avatar}
+            }
+        
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "board_data",
+                "payload": {
+                    "board": game_state["board"],
+                    "puntos": player_puntos,
+                    "playing": game_state["playing"],
+                    "player_list": player_list,
+                    "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
+                    "round_time": game_state["round_time"],
+                    "round": game_state["round"],
+                    "last_fold": game_state.get("last_fold")
+                }
+            }
+        )
+    
+    
     
     def get_username(self):
         user = self.scope.get("user")

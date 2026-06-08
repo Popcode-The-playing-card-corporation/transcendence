@@ -4,8 +4,8 @@ from .views.room_views import create_room, update_params, invite_friend, get_gam
 
 urlpatterns = [
     path('rooms/list/', list_room),
-    path('rooms/my/', list_my_started_room),
     
+    path('room/my/', list_my_started_room),
     path('room/', create_room, name='create-room'),
     path('room/<str:code>/add_bot/<int:nb_bot>/', add_bot, name='add-bot'),
     path('room/presence/', is_presence), ### Let's figure out what this is XD
