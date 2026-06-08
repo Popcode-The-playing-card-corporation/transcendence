@@ -77,4 +77,5 @@ export function loadTexture(name: string) {
     ["back", Back],
   ]);
   if (textures.get(name)) return textures.get(name);
+  else return textures.get("back");
 }

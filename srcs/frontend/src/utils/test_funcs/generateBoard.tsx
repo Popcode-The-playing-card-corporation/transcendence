@@ -2,31 +2,38 @@ export default function generateFakeBoard() {
   return[
     {
       id: 0,
-      card: "Aspade"
+	  value: "A",
+	  color: "spade",
     },
     {
       id: 1,
-      card: "6heart"
+	  value: "6",
+	  color: "heart"
     },
     {
       id: 2,
-      card: "8diamond"
+	  value: "8",
+	  color: "diamond"
     },
     {
       id: 3,
-      card: "Jheart"
+	  value: "J",
+	  color: "heart",
     },
     {
       id: 4,
-      card: "Qspade"
+	  value: "Q",
+	  color: "spade",
     },
     {
       id: 5,
-      card: "8club"
+	  value: "8",
+	  color: "spade",
     },
     {
       id: 6,
-      card: "9club"
+	  value: "9",
+	  color: "club",
     }
   ];
 }
