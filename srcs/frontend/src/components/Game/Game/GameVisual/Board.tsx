@@ -11,7 +11,7 @@ export default function Board() {
       <meshStandardMaterial color={"#7d02b4"}/>
       {cards.map((card) => {
         return (
-          <PlayedCard card={card.card} id={(card.id - idPlayer) % 4} total={cards.length}/>
+          <PlayedCard card={card.value + card.color} id={(card.id - idPlayer) % 4} total={cards.length}/>
       );})}
     </mesh>
   );
