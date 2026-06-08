@@ -23,6 +23,10 @@ export default function generateFakeBoard() {
     {
       id: 5,
       card: "8club"
+    },
+    {
+      id: 6,
+      card: "9club"
     }
   ];
 }

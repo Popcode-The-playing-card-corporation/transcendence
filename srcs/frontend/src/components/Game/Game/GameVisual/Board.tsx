@@ -1,10 +1,9 @@
 import generateFakeBoard from "../../../../utils/test_funcs/generateBoard";
-import type { boardT } from "../../../../utils/type/boardType";
 import PlayedCard from "./PlayedCard";
 
 export default function Board() {
   const cards = generateFakeBoard();
-  const idPlayer = 2;
+  const idPlayer = 3;
 
   return (
     <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, 0]}>
