@@ -24,7 +24,7 @@ export default function PlayedCard({card, id, total} : {card:string, id: number,
       position={[Math.sin(angle) * distance, -Math.cos(angle) * distance, 0]}
       material={materials}
     >
-      <boxGeometry args={[1, 1.4, 0.1]}/>
+      <boxGeometry args={[1, 1.4, 0.03]}/>
     </mesh>
   </>
   );
