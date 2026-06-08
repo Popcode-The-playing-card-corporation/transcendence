@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import Hand from "./GameVisual/Hand";
 import Board from "./GameVisual/Board";
