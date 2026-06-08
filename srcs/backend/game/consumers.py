@@ -52,7 +52,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     async def list_player_event(self, event):
         await self.send(text_data=json.dumps({
-            "type": "private",
+            "type": "list_player",
             "event": event["event"],
             "payload": event["payload"]
         }))
