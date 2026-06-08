@@ -52,7 +52,7 @@ export function Notifications({ setProfile, updatedProfile, updateLeaderboard, s
 					notif?.showNotif("Friend Request Accepted", payload.from_user + " has accepted your friend request!", 5000);
 					setProfile(!updatedProfile); 
 				} else if (data.type === "friend_invite") {
-					notif?.showNotif("Game Invite", payload.from_user + " has invite you to a game: " + payload.code, 10000);
+					notif?.showNotif("Game Invite", payload.from_user + " has invited you to a game: " + payload.code, 10000);
 					setProfile(!updatedProfile);
 				} else {
 					console.debug("Notification: type not implemented. Format: ", data)
