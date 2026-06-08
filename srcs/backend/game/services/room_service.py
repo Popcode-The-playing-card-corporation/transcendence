@@ -1,9 +1,12 @@
 from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host
 
-from ..models import PlayerPresence
+from ..models import PlayerPresence, Room
 from api.models import User
 from django.db.models import F
+
+from ..room_tasks import ROOM_DELETE_TASKS
+import asyncio
 
 class RoomService:
 
@@ -49,7 +52,7 @@ class RoomService:
         
         await sync_to_async(
             User.objects.filter(id=user.id).update
-		)(presence=F("presence_game") - 1)
+		)(presence_game=F("presence_game") - 1)
         
         if (old_presence == 1): 
             room = await get_room_with_host(code)
@@ -65,6 +68,11 @@ class RoomService:
             
             await remove_player_from_room(user, code)
     
+            room = await get_room_with_host(code)
+            
+            if room.status == "open" and room.nb_player == 0:
+                asyncio.create_task(RoomService.schedule_room_delete(room.id))
+            
             await sync_to_async(
                 PlayerPresence.objects.filter(
                     player=user,
@@ -124,5 +132,31 @@ class RoomService:
             "type": room.type
         }
 
+    @staticmethod
+    async def delete_room_later(room_id, delay=30):
+        await asyncio.sleep(delay)
+        
+        try:
+            room = await sync_to_async(Room.objects.get)(id=room_id)
+    
+            if room.status == "open":
+                await sync_to_async(room.delete)()
+    
+        except Room.DoesNotExist:
+            pass
 
 
+
+    @staticmethod
+    async def schedule_room_delete(room_id, delay=15):
+        task = asyncio.create_task(RoomService.delete_room_later(room_id, delay))
+        ROOM_DELETE_TASKS[room_id] = task
+        
+        
+    @staticmethod
+    def cancel_room_delete(room_id):
+        task = ROOM_DELETE_TASKS.get(room_id)
+    
+        if task:
+            task.cancel()
+            del ROOM_DELETE_TASKS[room_id]

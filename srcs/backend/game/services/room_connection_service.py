@@ -19,7 +19,7 @@ class RoomConnectionService:
         
         await sync_to_async(
             User.objects.filter(id=user.id).update
-		)(presence_game=F("presence_game") + 1)        
+		)(presence_game=F("presence_game") + 1)
             
         room = await sync_to_async(Room.objects.filter(code=code).first)()
 
@@ -28,6 +28,8 @@ class RoomConnectionService:
 
         if not user or not user.is_authenticated:
             return {"close": True, "code": 4001}
+
+        RoomService.cancel_room_delete(room.id)
 
         is_member = await sync_to_async(
             PlayerPresence.objects.filter(
@@ -173,6 +175,9 @@ class RoomConnectionService:
 
         room = await sync_to_async(Room.objects.get)(code=code)
 
+        if room:
+            RoomService.cancel_room_delete(room.id)
+            
         await add_player_to_room(user, code)
 
         await sync_to_async(
