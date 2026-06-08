@@ -3,6 +3,7 @@ from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
+import asyncio
 
 @sync_to_async
 def count_player(code):
@@ -31,12 +32,14 @@ def add_player_to_room(user, code):
     try:
         room = Room.objects.get(code=code)
 
-        last_position = PlayerPresence.objects.filter(
-            room=room
-        ).aggregate(Max("position"))["position__max"]
         next_position = 0
-        if last_position is not None:
-            next_position = (last_position or 0) + 1
+        
+        if room.nb_player != 0:
+            last_position = PlayerPresence.objects.filter(
+                room=room
+            ).aggregate(Max("position"))["position__max"]
+            if last_position is not None:
+                next_position = (last_position or 0) + 1
         
         if room.status == "start":
             exists = PlayerPresence.objects.filter(
@@ -62,9 +65,14 @@ def add_player_to_room(user, code):
                 "is_online": True
             }
         )
+        
+        if room.nb_player == 0:
+            room.host = user
+            room.save()
+        
         room.nb_player = PlayerPresence.objects.filter(room=room).count()
         room.save()
-
+    
         if not created:
             obj.is_online = True
             obj.save()
@@ -124,11 +132,11 @@ def add_bot_to_room(user, code, difficulty):
         return False
 
 @sync_to_async
-def remove_player_from_room(user, code):
+def remove_player_from_room(user, code, room_delete=None):
     if not user or not code:
         return
     try:
-        room = Room.objects.get(code=code)
+        room = Room.objects.select_related("host").get(code=code)
         if room.status == "start":
             PlayerPresence.objects.filter(
                 player=user,
@@ -141,12 +149,18 @@ def remove_player_from_room(user, code):
                     room=room,
                     is_human=True
                 ).exclude(player=user).order_by("position").first()
-    
+
                 if next_player:
                     room.host = next_player.player
                     room.save()
                 else:
-                    room.delete()
+                    room.nb_player -= 1
+                    room.save()
+                    
+                    PlayerPresence.objects.filter(
+                        player=user,
+                        room=room
+                    ).delete()
                     return
     
             pos = PlayerPresence.objects.filter(

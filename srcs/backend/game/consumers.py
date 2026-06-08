@@ -96,6 +96,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         if result.get("close"):
             await self.accept()
+            if result["code"] == 42:
+                await self.send_json({"message": "you have already a game websocket open"})
+                await self.close(code=4003)
+                return
+                
             await self.send_json(result.get("message", {}))
             await self.close(code=result["code"])
             return
@@ -114,6 +119,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
             self.channel_layer
         )
         
+        await RoomConnectionService.broadcast_room_params(
+            room,
+            self.channel_layer
+        )
+        
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -124,7 +134,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
         
         room = await sync_to_async(Room.objects.get)(code=self.code)
-    
+        
         if room.status == "start":
             await self.send_data()
     

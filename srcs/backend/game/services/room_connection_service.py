@@ -1,27 +1,26 @@
-from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from ..models import PlayerPresence, Room, PlayerScore, Stat
+from ..db import add_player_to_room
+from ..models import PlayerPresence, Room
 from api.models import Friendship, User
 from asgiref.sync import sync_to_async
-from game_engine.game import GameEngine
-from game_engine.bot.bot import bot
-from django.db.models import Q
-import copy
-from .board_service import BoardService
-from .stats_service import StatsService
+from django.db.models import Q, F
+
 from .room_service import RoomService
-#from .bot_service import BotService
-from channels.layers import get_channel_layer
-
-
-
-
-
 
 class RoomConnectionService:
 
     @staticmethod
     async def handle_connect(user, code, channel_name):
 
+        old_presence = await sync_to_async(
+            lambda: User.objects.get(id=user.id).presence_game)()
+        
+        if (old_presence != 0):
+            return {"close": True, "code": 42}
+        
+        await sync_to_async(
+            User.objects.filter(id=user.id).update
+		)(presence_game=F("presence_game") + 1)
+            
         room = await sync_to_async(Room.objects.filter(code=code).first)()
 
         if not room:
@@ -29,6 +28,8 @@ class RoomConnectionService:
 
         if not user or not user.is_authenticated:
             return {"close": True, "code": 4001}
+
+        RoomService.cancel_room_delete(room.id)
 
         is_member = await sync_to_async(
             PlayerPresence.objects.filter(
@@ -174,6 +175,9 @@ class RoomConnectionService:
 
         room = await sync_to_async(Room.objects.get)(code=code)
 
+        if room:
+            RoomService.cancel_room_delete(room.id)
+            
         await add_player_to_room(user, code)
 
         await sync_to_async(
@@ -197,7 +201,19 @@ class RoomConnectionService:
                 }
             }
         )
+    
+    @staticmethod
+    async def broadcast_room_params(room, channel_layer):
+        snapshot = await RoomService.get_room_snapshot(room)
         
+        await channel_layer.group_send(
+            f"room_{room.code}",
+            {
+                "type": "params_event",
+                "event": "update",
+                "payload": snapshot
+            }
+        )
         
         
         
