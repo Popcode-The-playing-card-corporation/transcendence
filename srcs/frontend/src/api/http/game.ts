@@ -80,7 +80,7 @@ export async function updateParams(code:string, params) {
 	}
 }
 
-export async function inviteFriend(code:string, id:number) {
+export async function inviteFriend(id:number) {
 	try {
 		await axios.post(host.http + 'room/' + id + '/invite/', {}, {timeout: 2000, withCredentials:true});
 		return {success: true};

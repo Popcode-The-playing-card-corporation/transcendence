@@ -240,6 +240,7 @@ def list_public_room(request, data):
             "type": "public",
             "is_friend": value["has_friend"],
             "nb_player": room.nb_player,
+            "max_player": room.max_player,
             "list_player": list_player,
             "host": { "username":room.host.username, "id":room.host.id },
         })

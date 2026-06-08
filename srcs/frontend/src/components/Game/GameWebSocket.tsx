@@ -4,12 +4,21 @@ import useWebSocketModule from "react-use-websocket";
 import host from "../../api/http/host";
 import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
-import { useState } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import { type playerT } from "../../utils/type/playerType";
 
-export default function GameWebSocket({code} : {code:string}) {
-
+export default function GameWebSocket({code, setCode} : {code:string; setCode:React.Dispatch<SetStateAction<string>>}) {
+	
 	const notif = useNotif();
+
+	useEffect(() => {
+		localStorage.setItem("code", code);
+	}, [code]);
+
+	function leaveRoom() {
+		localStorage.removeItem("code");
+		setCode("");
+	}
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 			default: typeof useWebSocketModule;
@@ -32,9 +41,11 @@ export default function GameWebSocket({code} : {code:string}) {
 			},
 	
 			onOpen: () => {
+				
 			},
 	
 			onClose: () => {
+				setCode("");
 			},
 
 			onMessage: (event) => {
@@ -95,7 +106,7 @@ export default function GameWebSocket({code} : {code:string}) {
 	return (
 		<>
 		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
-		: <WaitingRoom roomCode={code} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
+		: <WaitingRoom leaveRoom={leaveRoom} roomCode={code} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
 		</>
 	);
 }

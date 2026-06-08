@@ -52,6 +52,9 @@ export function Game() {
 					return other_error("Error " + tmp_joined.code + ":", tmp_joined.response);
 				}
 			}
+			if (localStorage.getItem("code")) {
+				tmp_joined.room = localStorage.getItem("code")
+			}
 			setJoined(tmp_joined.room);
 			if (tmp_joined.room !== "")
 			{
@@ -88,7 +91,7 @@ export function Game() {
 
 	if (joined !== "") {
 		return (
-			<GameWebSocket code={joined}/>
+			<GameWebSocket code={joined} setCode={setJoined}/>
 		)
 	}
 

@@ -17,6 +17,11 @@ export default function CreateOrJoin({availableGames, setJoined}: Props) {
 //   const availableGames = createFakeGame();
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
   const notif = useNotif();
+  const [code, setCode] = useState("");
+
+const codeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCode(e.target.value);
+  };
 
   async function createGame() {
 	const room = await createRoom();
@@ -27,6 +32,10 @@ export default function CreateOrJoin({availableGames, setJoined}: Props) {
 	setJoined(room.room);
 	notif?.showNotif("Room Created:", room.room, 5000)
 	return ;
+  }
+
+  function joinRoom(code: string) {
+	setJoined(code);
   }
 
   return (
@@ -41,8 +50,10 @@ export default function CreateOrJoin({availableGames, setJoined}: Props) {
               className="input w-2/3 m-3"
               type="text"
               placeholder="enter game code here"
+			  value={code}
+              onChange={codeChange}
             />
-            <button className="btn">Join</button>
+            <button className="btn" onClick={() => joinRoom(code)}>Join</button>
           </div>
         </div>
         <div className="listAvailableGame w-2/3 flex justify-center bordered overflow-scroll max-h-8/12">
@@ -89,7 +100,7 @@ export default function CreateOrJoin({availableGames, setJoined}: Props) {
                       </div>
                     </td>
                     <td>
-                      <button className="btn">
+                      <button className="btn" onClick={() => joinRoom(game.code)}>
                         <FaPlay />{" "}
                       </button>
                     </td>

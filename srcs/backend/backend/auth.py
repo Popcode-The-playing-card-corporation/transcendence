@@ -10,8 +10,7 @@ from django.conf import settings
 @permission_classes([AllowAny])
 @authentication_classes([OptionalJWTAuthentication])
 def VerifyCookie(request):
-	if (not request):
-		return Response({"status":"failed"})
+
 	if request.user.is_authenticated:
 		return Response({"status":"success"})
 	return RefreshCookie(request)
@@ -19,14 +18,17 @@ def VerifyCookie(request):
 @permission_classes([AllowAny])
 @authentication_classes([OptionalJWTAuthentication])
 def RefreshCookie(request):
+
+
 	refresh = request.COOKIES.get("refresh_token")
 
 	if refresh is None:
 		return Response({"status":"failed"})
 	
 	serializer = TokenRefreshSerializer(data={"refresh": refresh})
-	serializer.is_valid(raise_exception=True)
-	if not serializer.is_valid():
+	try: 
+		serializer.is_valid(raise_exception=True)
+	except Exception:
 		return Response({"status": "failed"})
 	access = serializer.validated_data['access']
 

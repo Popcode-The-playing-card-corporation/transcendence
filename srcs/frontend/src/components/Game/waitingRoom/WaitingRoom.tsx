@@ -8,6 +8,7 @@ import { useNotif } from "../../hooks/useNotif";
 import type { playerT } from "../../../utils/type/playerType";
 
 type Props = {
+	leaveRoom: () => void;
 	kickPlayer: (playerId: number) => void;
 	startGame: () => void;
 	listPlayer: playerT[]
@@ -29,7 +30,10 @@ export default function WaitingRoom({kickPlayer, startGame, roomCode, listPlayer
 		const res = await updateParams(roomCode, {type:roomMode, max_player:maxSize})
 		if ("code" in res) {
 			notif?.showNotif("Settings Error", res.response, 5000);
+		} else {
+			notif?.showNotif("Success!", "Game settings succesfully changed!", 5000);
 		}
+		
 	}
 
     return (

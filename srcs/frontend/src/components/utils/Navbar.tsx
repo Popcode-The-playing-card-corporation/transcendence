@@ -29,6 +29,7 @@ export function Navbar() {
 			return ;
 		}
 		auth.setLoggedIn(false);
+		localStorage.removeItem("code");
 		navigate("/login", {state: current_location.pathname});
 		setTimeout(() => {
 			auth.setLogging(false);
