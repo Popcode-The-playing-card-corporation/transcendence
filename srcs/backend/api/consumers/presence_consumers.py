@@ -1,9 +1,8 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.db.models import F
 from ..models import User, Friendship
 import json
 from asgiref.sync import sync_to_async
-from django.db.models import Q
+from django.db.models import Q, F
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -71,7 +70,7 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         
         await sync_to_async(
             User.objects.filter(id=self.user.id).update
-		)(presence=F("presence") - 1)
+		)(presence_game=F("presence") - 1)
 
         if (old_presence <= 1):  
             await sync_to_async(

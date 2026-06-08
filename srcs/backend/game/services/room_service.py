@@ -1,7 +1,9 @@
 from asgiref.sync import sync_to_async
-from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
+from ..db import  remove_player_from_room, get_room_with_host
 
 from ..models import PlayerPresence
+from api.models import User
+from django.db.models import F
 
 class RoomService:
 
@@ -42,42 +44,50 @@ class RoomService:
     
     @staticmethod
     async def handle_player_disconnect(user, code):
-        room = await get_room_with_host(code)
-
-        participants = await sync_to_async(list)(
-            PlayerPresence.objects.filter(room=room)
-            .select_related("player")
-        )
-
-        participant_users = [p.player for p in participants]
-
-        old_host = room.host
+        old_presence = await sync_to_async(
+            lambda: User.objects.get(id=user.id).presence_game)()
         
-        await remove_player_from_room(user, code)
-
         await sync_to_async(
-            PlayerPresence.objects.filter(
-                player=user,
-                room__code=code
-            ).update
-        )(
-            channel_name=None
-        )
-
-        room = await get_room_with_host(code)
-
-        participants = await sync_to_async(list)(
-            PlayerPresence.objects.filter(room=room)
-            .select_related("player")
-        )
-
-        participant_users = [p.player for p in participants]
-        return {
-            "room": room,
-            "participant_users": participant_users,
-            "host_changed": room and old_host != room.host,
-            "old_host": old_host,
-        }
+            User.objects.filter(id=user.id).update
+		)(presence=F("presence_game") - 1)
+        
+        if (old_presence == 1): 
+            room = await get_room_with_host(code)
+    
+            participants = await sync_to_async(list)(
+                PlayerPresence.objects.filter(room=room)
+                .select_related("player")
+            )
+    
+            participant_users = [p.player for p in participants]
+    
+            old_host = room.host
+            
+            await remove_player_from_room(user, code)
+    
+            await sync_to_async(
+                PlayerPresence.objects.filter(
+                    player=user,
+                    room__code=code
+                ).update
+            )(
+                channel_name=None
+            )
+    
+            room = await get_room_with_host(code)
+    
+            participants = await sync_to_async(list)(
+                PlayerPresence.objects.filter(room=room)
+                .select_related("player")
+            )
+    
+            participant_users = [p.player for p in participants]
+            return {
+                "room": room,
+                "participant_users": participant_users,
+                "host_changed": room and old_host != room.host,
+                "old_host": old_host,
+            }
 
 
     @staticmethod

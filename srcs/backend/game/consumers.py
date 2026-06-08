@@ -96,6 +96,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         if result.get("close"):
             await self.accept()
+            if result["code"] == 42:
+                await self.send_json({"message": "you have already a game websocket open"})
+                await self.close(code=4003)
+                return
+                
             await self.send_json(result.get("message", {}))
             await self.close(code=result["code"])
             return
