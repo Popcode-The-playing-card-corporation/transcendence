@@ -11,6 +11,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from ..db import add_bot_to_room
 import uuid
+from datetime import timedelta
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -102,11 +103,33 @@ def add_bot(request, code, nb_bot):
             add_bot_to_room(valid_bots[0], code, difficulty)
             valid_bots.remove(valid_bots[0])
             nb_bot -= 1
-        ret = {}
-        room = Room.objects.get(
-			code=code
-		)
-
+        
+        presences = (list)(
+            PlayerPresence.objects.select_related("player").filter(
+                room=room
+            )
+        )
+        
+        players = []
+        
+        for p in presences:
+            players.append({
+				"id": p.player.id,
+                "username": p.player.username,
+                "is_host": p.player == room.host,
+                "position": p.position
+			})
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"room_{room.code}",
+            {
+                "type": "list_player_event",
+                "event": "update",
+                "payload": {
+                    "players": players
+                }
+            }
+        )
         return Response(status=200)
     
     return Response(
@@ -418,7 +441,8 @@ def update_params(request, code):
                     "code": room.code,
                     "status": room.status,
                     "max_player": room.max_player,
-                    "type": room.type
+                    "type": room.type,
+                    "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
 				}
             }
         )

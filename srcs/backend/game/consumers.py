@@ -154,9 +154,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             self.code
         )
         
-        if not result:
+        if result == None:
             return
-    
         room = result["room"]
     
         await RoomConnectionService.broadcast_player_list(
@@ -201,13 +200,18 @@ class RoomConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-        
+            if data.get("type") == "heartbeat":
+                await self.send(text_data=json.dumps({
+					"type": "acknowledge"
+				}))
+                return
+                
             if data.get("type") != "action":
                 return await self.error("Unknown message type")
         
             action = data.get("action")
             payload = data.get("payload", {})
-        
+            
             handler_name = ACTION_HANDLERS.get(action)
         
             if not handler_name:
@@ -349,6 +353,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
     
+        room = await get_room_with_host(self.code)
+        await RoomConnectionService.broadcast_player_list(room, self.channel_layer)
+        
         if result["kicked_channel"]:
             await self.channel_layer.send(
                 result["kicked_channel"],

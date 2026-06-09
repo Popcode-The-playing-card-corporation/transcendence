@@ -14,13 +14,13 @@ class RoomConnectionService:
         old_presence = await sync_to_async(
             lambda: User.objects.get(id=user.id).presence_game)()
         
-        if (old_presence != 0):
-            return {"close": True, "code": 42}
-        
         await sync_to_async(
             User.objects.filter(id=user.id).update
 		)(presence_game=F("presence_game") + 1)
-            
+        
+        if (old_presence != 0):
+            return {"close": True, "code": 42}
+ 
         room = await sync_to_async(Room.objects.filter(code=code).first)()
 
         if not room:
