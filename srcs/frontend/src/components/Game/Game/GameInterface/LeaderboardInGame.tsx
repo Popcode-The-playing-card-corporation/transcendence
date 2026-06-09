@@ -1,14 +1,15 @@
 import { useRef } from "react";
-import { generateFakeUsersInGame } from "../../../utils/test_funcs/generateFakeUsersInGame";
-import type { userInGameT } from "../../../utils/type/userInGameType";
-import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
-import { generateFakeDetailedGame } from "../../../utils/test_funcs/generateFakeDetailedGame";
+import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
+import type { userInGameT } from "../../../../utils/type/userInGameType";
+import UsernameMiniProfileBtn from "../../../miniProfile/UsernameMiniProfileBtn";
+import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
 import type {
   detailedGameT,
   detailedRoundT,
-} from "../../../utils/type/detailedGame";
+} from "../../../../utils/type/detailedGame";
+import Time from "./Time";
 
-export default function LeadderboardInGame() {
+export default function LeaderboardInGame() {
   const listPlayer = generateFakeUsersInGame();
   const detailedGame = generateFakeDetailedGame();
   const current = { id: 4, username: "alexouille", score: 69 };
@@ -23,6 +24,7 @@ export default function LeadderboardInGame() {
 
   return (
     <div className="h-1/2 p-2 flex flex-col items-center">
+	<Time />
       <table className="w-full mt-2">
         <thead className="w-full">
           <th>Position</th>
