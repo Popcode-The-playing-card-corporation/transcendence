@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import Hand from "./GameVisual/Hand";
 import Board from "./GameVisual/Board";
+import { OrbitControls } from '@react-three/drei'
 
 export default function GameVisual() {
   return (
@@ -8,6 +9,9 @@ export default function GameVisual() {
       <ambientLight />
       <Board />
       <Hand />
+      <OrbitControls />
+      <axesHelper />
+
     </Canvas>
   );
 }
