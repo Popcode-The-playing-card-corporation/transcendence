@@ -51,10 +51,7 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 				setConnected(true);
 			},
 	
-			onClose: (event) => {
-				console.log("WebSocket closed");
-				console.log("code:", event.code);
-				console.log("reason:", event.reason);
+			onClose: () => {
 			},
 
 			onMessage: (event) => {
@@ -72,6 +69,10 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 					setSize(payload.max_player);
 					const type = payload.type;
 					setMode(type === "private" ? 0 : type === "public" ? 2 : 1);
+				} else if (data.type === "event") {
+					if (data.event === "kicked") {
+						leaveRoom();
+					}
 				} else if (data.event === "error") {
 					notif?.showNotif("Game Error", data.message);
 				} else {

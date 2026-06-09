@@ -25,10 +25,11 @@ export default function AuthProvider ({children}:{children:React.ReactNode}) {
 
 	useEffect(() => {
 		async function getAuth() {
-			const auth = await checkAuth()
+			const auth = await checkAuth(setUserID)
 			setLoggedIn(auth);
 			setChecking(false);
 			setLogging(false);
+
 
 		}
 		getAuth();

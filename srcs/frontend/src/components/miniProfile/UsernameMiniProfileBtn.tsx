@@ -30,9 +30,8 @@ export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpd
 	}
 
 	async function load_mini() {
-		console.debug("Stored id: ", auth.userID)
-		console.debug("Actual id: ", id)
-		if (!auth.logged_in || auth.userID === id) {
+
+		if (!auth.logged_in || auth.userID === id || (id >= 1 && id <= 6)) {
 			return ;
 		}
 		const tmp_account = await getProfile(id);
