@@ -1,6 +1,7 @@
 import { MdClose } from "react-icons/md";
 import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
 import { type playerT } from "../../../utils/type/playerType";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
 	kickPlayer:(playerId:number) => void;
@@ -9,6 +10,13 @@ type Props = {
 }
 
 export default function PlayerList({kickPlayer, listPlayer}:Props) {
+
+	const auth = useAuth();
+	const host_user = listPlayer.filter(user => user.is_host)[0]
+	let id = 0;
+	if (host_user) {
+		id = host_user.id;
+	}
 
   return (
     <div className="bordered h-">
@@ -28,10 +36,10 @@ export default function PlayerList({kickPlayer, listPlayer}:Props) {
                   <UsernameMiniProfileBtn id={player.id} name={player.username}/>
                 </td>
                 <td>
-                  {!player.is_host ? (
+                  {!player.is_host ? ( id === auth.userID ? 
                   <button className="btn"onClick={() => kickPlayer(player.position)}>
                     <MdClose />
-                  </button>)
+                  </button> : null)
                   : (<p className="text-(--hover-color)">Host</p>)
                   }
                 </td>
