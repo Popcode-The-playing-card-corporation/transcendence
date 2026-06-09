@@ -198,13 +198,18 @@ class RoomConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-        
+            if data.get("type") == "heartbeat":
+                await self.send(text_data=json.dumps({
+					"type": "acknowledge"
+				}))
+                return
+                
             if data.get("type") != "action":
                 return await self.error("Unknown message type")
         
             action = data.get("action")
             payload = data.get("payload", {})
-        
+            
             handler_name = ACTION_HANDLERS.get(action)
         
             if not handler_name:
