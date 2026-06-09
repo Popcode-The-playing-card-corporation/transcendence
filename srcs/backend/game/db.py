@@ -132,10 +132,11 @@ def add_bot_to_room(user, code, difficulty):
         return False
 
 @sync_to_async
-def remove_player_from_room(user, code, room_delete=None):
+def remove_player_from_room(user, code):
     if not user or not code:
         return
     try:
+        should_change_host = False
         room = Room.objects.select_related("host").get(code=code)
         if room.status == "start":
             PlayerPresence.objects.filter(
@@ -155,8 +156,13 @@ def remove_player_from_room(user, code, room_delete=None):
                 ).exclude(player=user).order_by("position").first()
 
                 if next_player:
-                    room.host = next_player.player
-                    room.save()
+                    bots = PlayerPresence.objects.filter(
+                        room=room,
+                        is_human=False
+                    ).count()
+                    
+                    if room.status == "open" and room.nb_player - bots > 0:
+                        should_change_host = True
                 else:
                     room.nb_player -= 1
                     room.save()
@@ -190,7 +196,11 @@ def remove_player_from_room(user, code, room_delete=None):
                 player=user,
                 room=room
             ).delete()
-
+        return {
+            "should_change_host": should_change_host,
+            "room_id": room.id,
+            "user": user
+        }
     except Room.DoesNotExist:
         pass
 

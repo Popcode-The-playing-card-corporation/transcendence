@@ -153,7 +153,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             self.user,
             self.code
         )
-    
+        
+        if result == None:
+            return
         room = result["room"]
     
         await RoomConnectionService.broadcast_player_list(
