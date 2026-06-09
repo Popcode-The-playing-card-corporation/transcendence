@@ -1,5 +1,6 @@
 from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host
+from datetime import timedelta
 
 from ..models import PlayerPresence, Room
 from api.models import User
@@ -135,7 +136,8 @@ class RoomService:
             "code": room.code,
             "status": room.status,
             "max_player": room.max_player,
-            "type": room.type
+            "type": room.type,
+            "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
         }
 
     @staticmethod

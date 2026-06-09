@@ -11,6 +11,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from ..db import add_bot_to_room
 import uuid
+from datetime import timedelta
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -417,7 +418,8 @@ def update_params(request, code):
                     "code": room.code,
                     "status": room.status,
                     "max_player": room.max_player,
-                    "type": room.type
+                    "type": room.type,
+                    "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
 				}
             }
         )
