@@ -107,16 +107,34 @@ def add_bot(request, code, nb_bot):
             )
             
             nb_bot -= 1
-        ret = {}
         
-        for i in range(room.nb_player):
-            p =  PlayerPresence.objects.get(
-                room=room,
-                position= i
+        presences = (list)(
+            PlayerPresence.objects.select_related("player").filter(
+                room=room
             )
-            user = User.objects.get(id=p.player_id)
-            ret[str(i)] = user.username
-        return Response(ret, status=201)
+        )
+        
+        players = []
+        
+        for p in presences:
+            players.append({
+				"id": p.player.id,
+                "username": p.player.username,
+                "is_host": p.player == room.host,
+                "position": p.position
+			})
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"room_{room.code}",
+            {
+                "type": "list_player_event",
+                "event": "update",
+                "payload": {
+                    "players": players
+                }
+            }
+        )
+        return Response(status=200)
     
     return Response(
         {"error": "You are not the host. BAD"},
