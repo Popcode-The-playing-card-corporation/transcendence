@@ -218,11 +218,7 @@ def remove_player_from_room(user, code):
 
 @sync_to_async
 def get_room_with_host(code):
-    if not sync_to_async(
-        Room.objects.filter(code=code).exists
-    )():
-        return None
-    return Room.objects.select_related("host").get(code=code)
+    return Room.objects.select_related("host").filter(code=code).first()
 
 @sync_to_async
 def start_room(uuid, data):

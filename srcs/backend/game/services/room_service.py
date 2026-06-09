@@ -59,7 +59,8 @@ class RoomService:
         
         if (old_presence == 1): 
             room = await get_room_with_host(code)
-    
+            if not room:
+                return
             participants = await sync_to_async(list)(
                 PlayerPresence.objects.filter(room=room)
                 .select_related("player")

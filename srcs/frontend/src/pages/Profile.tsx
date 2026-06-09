@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import React, { useState, useEffect, type SetStateAction } from "react";
 import { Friends } from "../components/Profile/FriendsPart";
 import { History } from "../components/Profile/HistoryPart";
@@ -45,14 +45,11 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
 	const [profile, setProfile] = useState<accountT>(defaultAccount);
   	const [updatedFriends, setFriendUpdate] = useState(false);
 	const navigate = useNavigate();
+	const location = useLocation();
 	const notif = useNotif();
 	const auth = useAuth();
 
 	useEffect(() => {
-
-		if (!auth.logged_in) {
-			return login_error("Authentication error:", "Please log in again.");
-		}
 
 		function login_error(title:string, message:string) {
 			if (!auth.logging) {
@@ -64,7 +61,11 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
 		}
 
 		function other_error(title:string, message:string) {
-			navigate('/', {state: "/profile"});
+			if (location.state) {
+				navigate(location.state, {state: "/profile"});
+			} else {
+				navigate('/', {state: "/profile"})
+			}
 			notif?.showNotif(title, message, 5000);
 			setValid(false);
 			return ;

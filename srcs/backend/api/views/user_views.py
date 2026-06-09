@@ -119,7 +119,7 @@ def register(request):
         refresh_token = refresh
         
         res = Response()
-        res.data = {'success': True}
+        res.data = {'success': True,  "id":request.user.id}
         res.set_cookie(
             key='access_token',
             value=access_token,
@@ -179,7 +179,7 @@ def login(request):
         refresh_token = refresh
         
         res = Response()
-        res.data = {'success': True}
+        res.data = {'success': True, "id":request.user.id}
         res.set_cookie(
             key='access_token',
             value=access_token,
