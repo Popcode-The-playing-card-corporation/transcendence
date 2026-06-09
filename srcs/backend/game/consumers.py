@@ -346,6 +346,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
     
+        room = await get_room_with_host(self.code)
+        await RoomConnectionService.broadcast_player_list(room, self.channel_layer)
+        
         if result["kicked_channel"]:
             await self.channel_layer.send(
                 result["kicked_channel"],
