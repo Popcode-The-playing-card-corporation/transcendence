@@ -10,26 +10,30 @@ from django.conf import settings
 @permission_classes([AllowAny])
 @authentication_classes([OptionalJWTAuthentication])
 def VerifyCookie(request):
+
 	if request.user.is_authenticated:
-		return Response({"status":"success"})
+		return Response({"status":"success", "id":request.user.id})
 	return RefreshCookie(request)
 
 @permission_classes([AllowAny])
 @authentication_classes([OptionalJWTAuthentication])
 def RefreshCookie(request):
+
+
 	refresh = request.COOKIES.get("refresh_token")
 
 	if refresh is None:
 		return Response({"status":"failed"})
 	
 	serializer = TokenRefreshSerializer(data={"refresh": refresh})
-	serializer.is_valid(raise_exception=True)
-	if not serializer.is_valid():
+	try: 
+		serializer.is_valid(raise_exception=True)
+	except Exception:
 		return Response({"status": "failed"})
 	access = serializer.validated_data['access']
 
 	res = Response()
-	res.data = {'status': "success"}
+	res.data = {'status': "success",  "id":request.user.id}
 	res.set_cookie(
 		key='access_token',
 		value=access,

@@ -77,8 +77,8 @@ export function RegisterForm({
    		return;
 	}
 
-    const result = await registerRequest(trimmedEmail, trimmedName, password, avatar);
-    if (!('code' in result)) {
+    const result = await registerRequest(trimmedEmail, trimmedName, password, avatar, auth.setUserID);
+    if (result.code !== 200) {
         (auth.setLoggedIn(true));
 		registerSuccess();
         return;

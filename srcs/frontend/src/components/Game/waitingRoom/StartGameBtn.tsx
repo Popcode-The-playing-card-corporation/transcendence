@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export default function StartGameBtn() {
+export default function StartGameBtn({startGame}:{startGame:() => void}) {
  const confirmStartRef = useRef<HTMLDialogElement>(null);
 
   return (
@@ -22,7 +22,7 @@ export default function StartGameBtn() {
           </p>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn mr-5">Yes I'm ready to have fun!</button>
+              <button className="btn mr-5" onClick={startGame}>Yes I'm ready to have fun!</button>
               <button className="btn">No, I'm a coward</button>
             </form>
           </div>

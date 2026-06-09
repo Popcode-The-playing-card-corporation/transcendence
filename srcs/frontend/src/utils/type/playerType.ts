@@ -1,6 +1,6 @@
 export type playerT = {
 	id: number;
 	username: string;
-	score: number;
-	rank: number;
+	is_host: boolean;
+	position: number;
 }

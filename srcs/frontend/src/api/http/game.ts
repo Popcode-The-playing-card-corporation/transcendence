@@ -20,8 +20,25 @@ export async function listRooms() {
 
 export async function getJoinedRoom() {
 	try {
-		const res = await axios.get(host.http + 'rooms/my/', {timeout: 2000, withCredentials:true});
-		return res;
+		const res = await axios.get(host.http + 'room/my/', {timeout: 2000, withCredentials:true});
+		if ("code" in res.data) {
+			return {room: res.data.code};
+		}
+		return {room:""};
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
+export async function validateRoom(code:string) {
+	try {
+		await axios.get(host.http + 'room/validate/' + code + '/', {timeout: 2000, withCredentials:true});
+		return {code:200, response:""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
@@ -35,7 +52,10 @@ export async function getJoinedRoom() {
 export async function createRoom() {
 	try {
 		const res = await axios.post(host.http + 'room/', {}, {timeout: 2000, withCredentials:true});
-		return res;
+		if ("code" in res.data) {
+			return {room: res.data.code};
+		}
+		return {room:""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
@@ -46,10 +66,10 @@ export async function createRoom() {
 	}
 }
 
-export async function addBot(code:number, n_bot:number, dif:string) {
+export async function addBot(code:string, n_bot:number, dif:string) {
 	try {
-		const res = await axios.post(host.http + 'room/' + code + '/' + 'add_bot/' + n_bot + '/', {'difficulty':dif}, {timeout: 2000, withCredentials:true});
-		return res;
+		await axios.post(host.http + 'room/' + code + '/' + 'add_bot/' + n_bot + '/', {'difficulty':dif}, {timeout: 2000, withCredentials:true});
+		return {success: true};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
@@ -60,11 +80,24 @@ export async function addBot(code:number, n_bot:number, dif:string) {
 	}
 }
 
-export async function updateParams(code:number, params:string) {
+export async function updateParams(code:string, params:object) {
 	try {
-		const res = await axios.post(host.http + 'room/params/' + code + '/', params, {timeout: 2000, withCredentials:true});
-		// add params to body
-		return res;
+		await axios.patch(host.http + 'room/params/' + code + '/', params, {timeout: 2000, withCredentials:true});
+		return {success: true};
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
+export async function inviteFriend(id:number) {
+	try {
+		await axios.post(host.http + 'room/' + id + '/invite/', {}, {timeout: 2000, withCredentials:true});
+		return {success: true};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {

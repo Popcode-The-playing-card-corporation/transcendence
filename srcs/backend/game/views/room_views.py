@@ -66,7 +66,7 @@ def add_bot(request, code, nb_bot):
     if "difficulty" in request.data:
         if request.data["difficulty"] != "easy" and request.data["difficulty"] != "medium" and request.data["difficulty"] != "hard":
             return Response(
-                {"message": "Invalid difficulty of bot"},
+                {"error": "Invalid difficulty of bot"},
                 status= 401
             )
         difficulty = request.data["difficulty"]
@@ -76,47 +76,38 @@ def add_bot(request, code, nb_bot):
 
     if (room.nb_player + nb_bot) > room.max_player:
         return Response(
-            {"message": "too many player in that room"},
+            {"error": "too many player in that room"},
             status= 401
         )
 
     if (room.nb_player == 7):
         return Response(
-            {"message": "too many player in that room"},
+            {"error": "too many players in that room"},
             status= 401
         )
         
     if (room.host == request.user):
-
+        bots = list(User.objects.filter(is_bot=True))
+        bots_room = list((PlayerPresence.objects.filter(is_human=False, room=room)).select_related("player"))
+        valid_bots = []
+        remove_bots = []
+        for bot in bots:
+            for bot_room in bots_room:
+                if bot.id == bot_room.player_id:
+                    remove_bots.append(bot)
+        for bot in bots:
+            if (bot not in remove_bots):
+                valid_bots.append(bot)
         while nb_bot > 0:
-            last_bot = PlayerPresence.objects.filter(is_human=False, room=room).last()
-            if (last_bot == None):
-                user = User.objects.get(username= "BOT0")
-            else:
-                user = User.objects.get(id= int(last_bot.player_id))
-                
-                result = user.username.removeprefix("BOT")
-                if (result == ""):
-                    nbr = 0
-                else:
-                    nbr = int(result) + 1
-                user = User.objects.get(username= f"BOT{nbr}")
-            add_bot_to_room(user, code, difficulty)
-            room = Room.objects.get(
-                code=code
-            )
-            
+            add_bot_to_room(valid_bots[0], code, difficulty)
+            valid_bots.remove(valid_bots[0])
             nb_bot -= 1
         ret = {}
-        
-        for i in range(room.nb_player):
-            p =  PlayerPresence.objects.get(
-                room=room,
-                position= i
-            )
-            user = User.objects.get(id=p.player_id)
-            ret[str(i)] = user.username
-        return Response(ret, status=201)
+        room = Room.objects.get(
+			code=code
+		)
+
+        return Response(status=200)
     
     return Response(
         {"error": "You are not the host. BAD"},
@@ -338,11 +329,39 @@ def list_my_started_room(request):
         room__status="start"
     ).first()
 
+    if (not presence) :
+        return Response({"message": "failed", "code": ""}, status=200)
     data ={
+        "message": "success",
         "code": presence.room.code,
     }
 
     return Response(data, status=200)
+
+@api_view(["GET"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def validate_room(request, code):
+    room = Room.objects.filter(
+        code=code,
+        status="open"
+    ).first()
+
+    if not room:
+        return Response({
+            "valid": False,
+            "error": "Room no longer joinable",
+        }, status=404)
+    
+    if room.max_player == room.nb_player:
+        return Response({
+            "valid": False,
+            "error": "Room is full",
+        }, status=401)
+
+    return Response({
+        "valid": True,
+    }, status=200)
 
 @api_view(["PATCH"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -432,7 +451,7 @@ def invite_friend(request, friend_id):
     p = PlayerPresence.objects.filter(
 		player=request.user,
         room__status="open"
-	).select_related("player", "room").first()
+	).select_related("player", "room").last()
     
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -446,7 +465,7 @@ def invite_friend(request, friend_id):
                 "code": p.room.code,
                 "from_user": request.user.username,
                 "from_user_id": request.user.id,
-                "message": f"{request.user.username} invite you"
+                "message": f"{request.user.username} invited you"
             }
         }
     )

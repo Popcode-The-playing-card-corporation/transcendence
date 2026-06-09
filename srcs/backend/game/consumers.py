@@ -153,6 +153,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             self.user,
             self.code
         )
+        
+        if not result:
+            return
     
         room = result["room"]
     
