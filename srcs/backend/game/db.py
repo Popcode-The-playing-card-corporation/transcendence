@@ -6,6 +6,7 @@ from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
+import asyncio
 
 @sync_to_async
 def count_player(code):
@@ -34,12 +35,14 @@ def add_player_to_room(user, code):
     try:
         room = Room.objects.get(code=code)
 
-        last_position = PlayerPresence.objects.filter(
-            room=room
-        ).aggregate(Max("position"))["position__max"]
         next_position = 0
-        if last_position is not None:
-            next_position = (last_position or 0) + 1
+        
+        if room.nb_player != 0:
+            last_position = PlayerPresence.objects.filter(
+                room=room
+            ).aggregate(Max("position"))["position__max"]
+            if last_position is not None:
+                next_position = (last_position or 0) + 1
         
         if room.status == "start":
             exists = PlayerPresence.objects.filter(
@@ -65,9 +68,14 @@ def add_player_to_room(user, code):
                 "is_online": True
             }
         )
+        
+        if room.nb_player == 0:
+            room.host = user
+            room.save()
+        
         room.nb_player = PlayerPresence.objects.filter(room=room).count()
         room.save()
-
+    
         if not created:
             obj.is_online = True
             obj.save()
@@ -135,61 +143,65 @@ def getFile(code):
 		return file
 
 @sync_to_async
-def remove_player_from_room(user, code):
+def remove_player_from_room(user, code, room_delete=None):
     if not user or not code:
         return
     try:
-        room = Room.objects.get(code=code)
+        room = Room.objects.select_related("host").get(code=code)
+        if room.status == "start":
+            PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).update(is_online=False)
+             
         if room.status not in ["start", "end"]:
             if room.host == user:
                 next_player = PlayerPresence.objects.filter(
                     room=room,
                     is_human=True
                 ).exclude(player=user).order_by("position").first()
-    
+
                 if next_player:
                     room.host = next_player.player
                     room.save()
                 else:
-                    room.delete()
-                    file = getFile(code)
-                    if (file.exists()):
-                        os.remove(file)
-                    return
-    
-                PlayerPresence.objects.filter(
-                    player=user,
-                    room=room
-                ).update(is_online=False)
-                
-                pos = PlayerPresence.objects.filter(
-                    player=user,
-                    room=room
-                ).values_list("position", flat=True).first()
-                
-                if pos is None:
+                    room.nb_player -= 1
+                    room.save()
+                    
                     PlayerPresence.objects.filter(
                         player=user,
                         room=room
                     ).delete()
                     return
-                
-                players = PlayerPresence.objects.filter(
-                    room=room,
-                    position__gt=pos
-                )
-                
-                for p in players:
-                    p.position -= 1
-                    p.save()
-        
-                room.nb_player -= 1
-                room.save()
-                
+    
+            pos = PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).values_list("position", flat=True).first()
+            
+            if pos is None:
                 PlayerPresence.objects.filter(
                     player=user,
                     room=room
                 ).delete()
+                return
+            
+            players = PlayerPresence.objects.filter(
+                room=room,
+                position__gt=pos
+            )
+            
+            for p in players:
+                p.position -= 1
+                p.save()
+    
+            room.nb_player -= 1
+            room.save()
+            
+            PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).delete()
 
     except Room.DoesNotExist:
         pass

@@ -1,7 +1,13 @@
+import { Canvas } from "@react-three/fiber";
+import Hand from "./GameVisual/Hand";
+import Board from "./GameVisual/Board";
 
 export default function GameVisual() {
-	return (
-		<div className="w-3/4 h-full bg-red-900">
-		</div>
-	)
+  return (
+    <Canvas className="bg-(--green-color) w-3/4">
+      <ambientLight />
+      <Board />
+      <Hand />
+    </Canvas>
+  );
 }

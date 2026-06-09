@@ -20,7 +20,6 @@ def tricks_state():
 
 class Room(models.Model):
     STATUS_CHOICES = [
-        ("created", "Created"),
         ("open", "Open"),
         ("start", "Start"),
         ("end", "End"),
@@ -35,14 +34,14 @@ class Room(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     code = models.CharField(max_length=8, unique=True)
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosted_rooms')
-    status = models.CharField(max_length=7, choices=STATUS_CHOICES, default="created")
+    status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
     game_state = models.JSONField(default=default_state)
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True)
     ended_at = models.DateTimeField(null=True)
     nb_player = models.IntegerField(default=0)
     type = models.CharField(max_length=12, choices=TYPE_CHOICES, default="private")
-    max_player = models.IntegerField(default=1)
+    max_player = models.IntegerField(default=2)
     
     def __str__(self):
         return f"{self.code}"

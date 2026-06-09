@@ -1,9 +1,11 @@
-import LeadderboardInGame from "./LeaderboardInGame";
+import LeaderboardInGame from "./GameInterface/LeaderboardInGame";
+import GameButtons from "./GameInterface/GameButtons";
 
 export default function Interface() {
 	return (
-		<div className="w-1/4 h-full bg-green-900">
-		<LeadderboardInGame />
+		<div className="w-1/4 h-full ">
+      <LeaderboardInGame />
+      <GameButtons />
 		</div>
 	)
 }
