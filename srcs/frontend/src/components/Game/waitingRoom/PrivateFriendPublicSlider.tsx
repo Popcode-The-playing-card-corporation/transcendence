@@ -1,11 +1,8 @@
-import { type SetStateAction } from "react";
+import { useGame } from "../context/GameContext";
 
-type Props = {
-	mode: number;
-	setMode: React.Dispatch<SetStateAction<number>>
-}
-export default function PrivateFriendPublicSlider({mode, setMode}: Props)
+export default function PrivateFriendPublicSlider()
 {
+	const { state, setMode } = useGame(); 
 
   return (
      <div className="w-full max-w-xs px-2">
@@ -13,7 +10,7 @@ export default function PrivateFriendPublicSlider({mode, setMode}: Props)
         type="range"
         min="0"
         max="2"
-		value={mode}
+		value={state.settings.mode}
         className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
         step="1"
 		onChange={(e) => setMode(Number(e.target.value))}

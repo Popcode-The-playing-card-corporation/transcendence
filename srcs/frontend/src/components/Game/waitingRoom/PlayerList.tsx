@@ -2,16 +2,14 @@ import { MdClose } from "react-icons/md";
 import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
 import { type playerT } from "../../../utils/type/playerType";
 import { useAuth } from "../../hooks/useAuth";
+import { useGame } from "../context/GameContext";
 
-type Props = {
-	kickPlayer:(playerId:number) => void;
-	roomCode: string;
-	listPlayer: playerT[];
-}
-
-export default function PlayerList({kickPlayer, listPlayer}:Props) {
+export default function PlayerList() {
 
 	const auth = useAuth();
+	const { kickPlayer, state } = useGame();
+	const listPlayer = state.settings.listPlayer;
+
 	if (!listPlayer) {
 		return ;
 	}

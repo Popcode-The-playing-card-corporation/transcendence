@@ -2,13 +2,19 @@ import { useState } from "react";
 import { addBot } from "../../../api/http/game";
 import { useNotif } from "../../hooks/useNotif";
 
-export default function AddingBot({roomCode}:{roomCode:string}) {
+type Props = {
+	roomCode: string;
+	updateSettings: () => void;
+}
+
+export default function AddingBot({roomCode, updateSettings}:Props) {
 
 	const [botDif, setDif] = useState(0);
 	const [numBot, setNum] = useState(1);
 	const notif = useNotif();
 
 	async function addClick() {
+		updateSettings();
 		const res = await addBot(roomCode, numBot, botDif === 0 ? "easy" : botDif === 1 ? "medium" : "hard")
 		if ("code" in res) {
 			notif?.showNotif("Bot Error", res.response, 5000);

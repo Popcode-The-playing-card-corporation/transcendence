@@ -1,5 +1,4 @@
 import type { cardType } from "./handCardsType"
-import type { playerT } from "./playerType"
 
 type playerScoreT = {
 	id: number,
@@ -24,4 +23,18 @@ export type boardDataT = {
 	round_time: string,
 	round: number,
 	last_fold: cardType[],
+}
+
+export const default_board : boardDataT = {
+	self_id: 0,
+	board: [],
+	asked: {color: "", value:"", id:0},
+	points: [],
+	detailed_points: [],
+	playing: 0,
+	player_list: [],
+	started_at: "",
+	round_time: "",
+	round: 0,
+	last_fold: [],
 }

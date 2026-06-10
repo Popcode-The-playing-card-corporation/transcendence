@@ -1,11 +1,11 @@
 import { type ThreeElements } from "@react-three/fiber";
 import { useRef, useState } from "react";
 import type { Mesh } from "three";
-import type { cardType } from "../../../../utils/type/handCardsType";
+// import type { cardType } from "../../../../utils/type/handCardsType";
 
-function sendCard(card: cardType) {
-  console.log(card.value + " of " + card.color + " played!");
-}
+// function sendCard(card: cardType) {
+//   console.log(card.value + " of " + card.color + " played!");
+// }
 
 export default function PCard(props: ThreeElements["mesh"]) {
   const [active, setActive] = useState<boolean>(false);
@@ -13,7 +13,7 @@ export default function PCard(props: ThreeElements["mesh"]) {
 
   function handleClick() {
     setActive(!active);
-    sendCard(cardRef.current.userData.card);
+    cardRef.current.userData.playCard(cardRef.current.userData.card.id);
   }
 
   function handleHover() {

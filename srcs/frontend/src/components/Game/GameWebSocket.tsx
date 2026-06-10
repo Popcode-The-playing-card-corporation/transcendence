@@ -4,20 +4,17 @@ import useWebSocketModule from "react-use-websocket";
 import host from "../../api/http/host";
 import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
-import { useEffect, useState, type SetStateAction } from "react";
-import { type playerT } from "../../utils/type/playerType";
-import type { boardDataT } from "../../utils/type/boardDataType";
+import { useEffect, useReducer, type SetStateAction } from "react";
+import { gameReducer } from "./context/gameReducer";
+import { initialState } from "./context/GameType";
 import { useNavigate } from "react-router";
+import { GameContext } from "./context/GameContext";
 
 export default function GameWebSocket({code, setCode} : {code:string; setCode:React.Dispatch<SetStateAction<string>>}) {
 	
 	const notif = useNotif();
 	const auth = useAuth();
-	const [mode, setMode] = useState(0);
-	const [maxSize, setSize] = useState(2);
-	const [listPlayer, setPlayers] = useState<playerT[]>([]);
-	const [connected, setConnected] = useState(false);
-	const [timeout, setTimeout] = useState(new Date(0,0,0));
+	const [state, dispatch] = useReducer(gameReducer, initialState);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -27,14 +24,6 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	function leaveRoom() {
 		localStorage.removeItem("code");
 		setCode("");
-	}
-
-	function getTime(datetime:string) {
-		const dateTimeParts = datetime.split(' ');
-		const time = dateTimeParts[1].split(':');
-		const date = dateTimeParts[0].split('-');
-		const res = new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]), Number(time[0]), Number(time[1]), Number(time[2]))
-		return res;
 	}
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
@@ -64,10 +53,11 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 			},
 	
 			onOpen: () => {
-				setConnected(true);
+				dispatch({ type: "CONNECTED"});
 			},
 	
 			onClose: () => {
+				dispatch({ type: "DISCONNECTED"});
 			},
 
 			onMessage: (event) => {
@@ -78,20 +68,19 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 				const payload = data.payload;
 
 				if (data.type === "list_player") {
-					setConnected(true);
-					setPlayers(payload.players)
+					if (data.event === "init_cards") {
+						dispatch({ type: "SET_CARDS", payload: payload.hand});
+					} else if (data.event === "update") {
+						dispatch({ type: "SET_PLAYERS", payload: payload.players});
+					}
 				}
 				else if (data.type === "params") {
-					setSize(payload.max_player);
-					const type = payload.type;
-					setMode(type === "private" ? 0 : type === "public" ? 2 : 1);
-					setTimeout(getTime(payload.timestamp));
+					dispatch({ type: "SET_PARAMS", payload: payload});
 				} else if (data.type === "event") {
 					if (data.event === "kicked") {
 						leaveRoom();
 					} else if (data.event === "board_data") {
-						const board_data : boardDataT = data.payload;
-						console.debug(board_data);
+						dispatch({ type: "SET_BOARD", payload: payload});
 						auth.setGame(true);
 					}
 				} else if (data.type === "game_started") {
@@ -137,16 +126,23 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 			sendJson("kick", {playerId : playerId});
 		}
 
-	if (connected === false)
+	if (state.connected === false)
 	  return (
 		<div className="page-content flex items-center justify-center min-h-screen">
 			<span className="loading loading-spinner loading-xl"></span>
 		</div>)
+
+	function setSize(size: number) {
+		dispatch({ type: "SET_SIZE", payload: size})
+	}
+
+	function setMode(mode: number) {
+		dispatch({ type: "SET_MODE", payload: mode})
+	}
 	
 	return (
-		<>
-		{auth.in_game ? <GameMain board_data={board_data} playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
-		: <WaitingRoom timeout={timeout} leaveRoom={leaveRoom} roomCode={code} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
-		</>
+		<GameContext.Provider value={{state, leaveRoom, startGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize}}>
+		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
+		</GameContext.Provider>
 	);
 }

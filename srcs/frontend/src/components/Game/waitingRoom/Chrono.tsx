@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useGame } from "../context/GameContext";
 
-export default function Chrono({timeout}:{timeout:Date}) {
+export default function Chrono() {
+	const timeout = useGame().state.settings.timeout;
 	const [timeLeft, setTimeLeft] = useState<number>((timeout.getTime() - new Date().getTime()) / 1000) 
 
 	useEffect(() => {

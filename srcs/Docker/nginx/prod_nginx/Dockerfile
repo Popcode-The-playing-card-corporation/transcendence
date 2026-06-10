@@ -33,7 +33,7 @@ ARG DOMAIN_NAME
 
 RUN mkdir -p /etc/nginx/ssl 
 
-COPY Docker/nginx/prod_nginx/ssl.cert /etc/nginx/ssl/ssl.cert 
+COPY Docker/nginx/prod_nginx/ssl.crt /etc/nginx/ssl/ssl.crt 
 COPY Docker/nginx/prod_nginx/ssl.key /etc/nginx/ssl/ssl.key
 COPY Docker/nginx/prod_nginx/nginx.conf /etc/nginx/nginx.conf
 

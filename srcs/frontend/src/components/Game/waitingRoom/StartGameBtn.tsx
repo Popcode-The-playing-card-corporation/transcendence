@@ -1,7 +1,9 @@
 import { useRef } from "react";
+import { useGame } from "../context/GameContext";
 
-export default function StartGameBtn({startGame}:{startGame:() => void}) {
+export default function StartGameBtn() {
  const confirmStartRef = useRef<HTMLDialogElement>(null);
+ const { startGame } = useGame();
 
   return (
     <div>

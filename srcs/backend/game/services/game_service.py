@@ -202,7 +202,7 @@ class GameService:
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         if send_init_callback:
                 await send_init_callback()
-                
+        
         game_state = await BotService.play_until_human(
             room,
             game_state,
