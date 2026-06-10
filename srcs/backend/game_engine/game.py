@@ -92,6 +92,9 @@ class GameEngine:
 		data["lastCard"] = {"value": last.values, "color": last.colors, "id": last.id}
 		data["tricks"] = "none"
 		data["round"] = 0
+		if ("game" not in data.keys()):
+			data["game"] = 0
+		
 
 		if ("start" in data.keys()):
 			data["start"] = int(data["start"]) + 1
@@ -155,7 +158,8 @@ class GameEngine:
 		data["playing"] = s
 		data["last_fold"] = last_fold
 		data["round"] = data["round"] + 1
-		return data
+  
+		return data, melds
 
 	def play(self, data: dict, idPlayer: int , idCard: int):
 		card = data["players"][idPlayer]["cards"][idCard].copy()
@@ -228,6 +232,25 @@ class GameEngine:
 
 		return data
 
+	def get_final_score(self, data: dict):
+		players = []
+		for p in data["players"].values():
+			points = 0
+			if (data["tricks"] in p["shtokr"]):
+				points -= 20
+			for c in p["taken"]:
+				if (c["color"] == data["tricks"]):
+					if (c["value"] == "J"):
+						points += 20
+						continue
+					elif (c["value"] == "9"):
+						points += 14
+						continue
+				points += self.cardPoint[c["value"]]
+			players.append(points)
+
+		return players
+
 	def board_melds(self, state: dict, idPlayer: int , idCard: int):
 		data = copy.deepcopy(state)
 		card = data["players"][idPlayer]["cards"][idCard].copy()
@@ -293,6 +316,9 @@ class GameEngine:
 
 		if (action == "point"):
 			return self.points(data)
+
+		if (action == "get_final_score"):
+			return self.get_final_score(data)
 
 		if (action == "point_meld"):
 			return self.point_melds(data, idPlayer, meldIndex)
