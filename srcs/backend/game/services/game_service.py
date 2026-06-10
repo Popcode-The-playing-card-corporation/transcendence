@@ -11,6 +11,7 @@ from datetime import timedelta
 import copy
 from .board_service import BoardService
 from .stats_service import StatsService
+from .score_service import ScoreService
 from .bot_service import BotService
 from channels.layers import get_channel_layer
 
@@ -31,6 +32,7 @@ class GameService:
         await start_room(room.uuid, game_state)
 
         await GameService.create_scores(room, game_state)
+        await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         
         if send_init_callback:
                 await send_init_callback()
@@ -70,7 +72,7 @@ class GameService:
         if idx is None:
             return {"error": "Card not found"}
 
-        if idx >= len(legal) or not legal[idx]:
+        if idx >= len(legal) and not legal[idx]:
             return {"error": "Illegal move"}
 
         state, taker, melds = await BoardService.resolve_if_needed(
@@ -109,9 +111,11 @@ class GameService:
         if (card_on_board == nb_players):
             game = GameEngine(room.uuid)
 
-            game_state = game.handleAction("take_fold", game_state)
+            game_state, melds = game.handleAction("take_fold", game_state)
             await save_room_state(room.uuid, game_state)
-
+            
+            await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
+            await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
             return True, game_state
         
         return False, game_state
@@ -131,7 +135,13 @@ class GameService:
     async def ask_host_continue(room, game_state):
         
         await save_room_state(room.uuid, game_state)
-    
+   
+        game = GameEngine(room.uuid)
+
+        points = game.handleAction("get_final_score", game_state)
+        
+        await ScoreService.save_final_score(room.code, room.game_state["game"], room.game_state["round"], points)
+
         host_presence = await sync_to_async(PlayerPresence.objects.get)(
             room=room,
             player=room.host
@@ -180,12 +190,16 @@ class GameService:
             room.game_state,
             await count_player(room.code)
         )
+        
+        room.game_state["game"] += 1
+        
+        await save_room_state(room.uuid, room.game_state)
 
         await start_room(
             room.uuid,
             game_state
         )
-        
+        await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         if send_init_callback:
                 await send_init_callback()
                 

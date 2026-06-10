@@ -2,6 +2,7 @@ from ..db import save_room_state, get_player_pos
 from .game_service import GameService
 from .stats_service import StatsService
 from game_engine.game import GameEngine
+from .score_service import ScoreService
 
 CARD_VALUES = {
     "6": 6,
@@ -62,6 +63,7 @@ class MeldService:
             idPlayer=str(position),
             meldIndex=selected_cards_idx
         )
+        
 
         points = game.handleAction(
             "point_meld",
@@ -69,7 +71,9 @@ class MeldService:
             idPlayer=str(position),
             meldIndex=selected_cards_idx
         )
-
+        
+        await ScoreService.save_meld(room.code, position, room.game_state["game"], room.game_state["round"], points * -1)
+        
         await save_room_state(room.uuid, game_state)
 
         await StatsService.add_meld_points(
