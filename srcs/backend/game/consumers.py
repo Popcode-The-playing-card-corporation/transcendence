@@ -135,7 +135,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         room = await get_room_with_host(self.code)
         game = GameEngine(room.uuid)
-        if await GameService.check_game_end(room, game):
+        if await GameService.check_game_end(room, game) and room.status == "start":
             await GameService.ask_host_continue(room, room.game_state)
         
         if room.status == "start":
