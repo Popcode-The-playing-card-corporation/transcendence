@@ -12,7 +12,7 @@ export default function Hand() {
     loadedTextures.push(loadTexture(card.value + card.color)!);
   });
   const textures = useLoader(TextureLoader, loadedTextures);
-  const startPos = ((0.4 * hand.cards.length / 2) - 0.15);
+  const startPos = ((0.4 * hand.cards.length / 2) - 0.20);
 
   return (
     <mesh>
