@@ -6,6 +6,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
 import { useEffect, useState, type SetStateAction } from "react";
 import { type playerT } from "../../utils/type/playerType";
+import type { boardDataT } from "../../utils/type/boardDataType";
+import { useNavigate } from "react-router";
 
 export default function GameWebSocket({code, setCode} : {code:string; setCode:React.Dispatch<SetStateAction<string>>}) {
 	
@@ -16,6 +18,7 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	const [listPlayer, setPlayers] = useState<playerT[]>([]);
 	const [connected, setConnected] = useState(false);
 	const [timeout, setTimeout] = useState(new Date(0,0,0));
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		localStorage.setItem("code", code);
@@ -42,6 +45,10 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 			shouldReconnect: (event) => {
 				if (event.code === 4001) {
 					leaveRoom();
+					return false;
+				} else if (event.code === 4003) {
+					leaveRoom();
+					navigate("/");
 					return false;
 				}
 				return auth.logged_in ? true : false
@@ -83,6 +90,8 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 					if (data.event === "kicked") {
 						leaveRoom();
 					} else if (data.event === "board_data") {
+						const board_data : boardDataT = data.payload;
+						console.debug(board_data);
 						auth.setGame(true);
 					}
 				} else if (data.type === "game_started") {
@@ -136,7 +145,7 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	
 	return (
 		<>
-		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
+		{auth.in_game ? <GameMain board_data={board_data} playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
 		: <WaitingRoom timeout={timeout} leaveRoom={leaveRoom} roomCode={code} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
 		</>
 	);

@@ -27,7 +27,7 @@ class GameService:
             await count_player(room.code)
         )
 
-        game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+        game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%d/%m/%Y %H:%M:%S")
 
         await start_room(room.uuid, game_state)
 
@@ -83,7 +83,7 @@ class GameService:
 
         state = game.handleAction("play", state, idPlayer=str(position), idCard=idx)
         
-        state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+        state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%d/%m/%Y %H:%M:%S")
             
         await save_room_state(room.uuid, state)
 
