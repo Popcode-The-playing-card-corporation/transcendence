@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from .models import PlayerPresence, Room, PlayerScore, Stat
+from .models import PlayerPresence, Room, PlayerScore, Stat, GameLog
 from api.models import Friendship, User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
@@ -292,6 +292,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = room.game_state
 
         take_fold, game_state = await GameService.check_take_fold(game_state, room)
+
         if (take_fold):
             await self.send_data()
 
@@ -565,14 +566,59 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
             
         
+        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+			room_id=room.id,
+            player=self.user
+        )
+        
+        logs = await sync_to_async(list)(
+            GameLog.objects.filter(room=room)
+        )
+        detailed_points = {}
+
+        nb_round = int(36 / room.nb_player)
+        for log in logs:
+            player = await sync_to_async(
+                PlayerPresence.objects.select_related("player").get
+            )(
+                room_id=log.room_id,
+                player_id=log.player_id
+            )
+        
+            if log.game not in detailed_points:
+                detailed_points[log.game] = {}
+            
+            if log.round == nb_round:
+                if "total" not in detailed_points[log.game]:
+                    detailed_points[log.game]["total"] = []
+            
+                detailed_points[log.game]["is_finished"] = True
+            
+                detailed_points[log.game]["total"].append({
+                    "id": player.player_id,
+                    "username": player.player.username,
+                    "score": log.score,
+                })
+            else:
+                if log.round not in detailed_points[log.game]:
+                    detailed_points[log.game][log.round] = []
+            
+                detailed_points[log.game][log.round].append({
+                    "id": player.player_id,
+                    "username": player.player.username,
+                    "score": log.score,
+                })
+                
         await self.channel_layer.group_send(
             self.group_name,
             {
                 "type": "room_event",
                 "event": "board_data",
                 "payload": {
+                    "self_id": p.position,
                     "board": game_state["board"],
-                    "puntos": player_puntos,
+                    "points": player_puntos,
+                    "detailed_points": detailed_points,
                     "playing": game_state["playing"],
                     "player_list": player_list,
                     "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
@@ -582,8 +628,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
-    
-    
     
     def get_username(self):
         user = self.scope.get("user")

@@ -456,6 +456,7 @@ def invite_friend(request, friend_id):
     
     if not Friendship.objects.filter(
             Q(from_user=request.user) | Q(to_user=request.user),
+            status="accepted",
             id=friend_id,
         ).exists():
         return Response(
@@ -465,6 +466,7 @@ def invite_friend(request, friend_id):
     
     friendship = Friendship.objects.get(
             Q(from_user=request.user) | Q(to_user=request.user),
+            status="accepted",
             id=friend_id,
         )
     target = (
