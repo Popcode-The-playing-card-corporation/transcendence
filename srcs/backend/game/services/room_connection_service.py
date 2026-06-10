@@ -29,7 +29,12 @@ class RoomConnectionService:
 
         if not user or not user.is_authenticated:
             return {"close": True, "code": 4001}
-
+        
+        if room.status == "open":
+            await RoomTaskService.schedule_lobby_kick_all(
+                room.code
+            )
+        
         await RoomTaskService.cancel_delete(room.code)
 
         is_member = await sync_to_async(

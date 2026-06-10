@@ -88,9 +88,11 @@ class RoomService:
                 ).count
             )()
             
-            if room.status == "open" and room.nb_player - bots <= 0:
+            if room.status == "open" and room.nb_player - bots <= 0 and not room.cleanup_scheduled:
                 await RoomTaskService.schedule_delete(room.code)
-            
+            if room.cleanup_scheduled and room.nb_player - bots <= 0:
+                await sync_to_async(room.delete)()
+                return
             await sync_to_async(
                 PlayerPresence.objects.filter(
                     player=user,

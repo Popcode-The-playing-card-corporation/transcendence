@@ -1,6 +1,6 @@
 from asgiref.sync import sync_to_async
 from ..models import Room
-from game.tasks import delete_room, change_host
+from game.tasks import delete_room, change_host, lobby_kick_all
 
 
 class RoomTaskService:
@@ -22,6 +22,17 @@ class RoomTaskService:
         await sync_to_async(room.save)()
 
         change_host.apply_async(args=[room_code, user_id], countdown=delay)
+
+    @staticmethod
+    async def schedule_lobby_kick_all(room_code, delay=900):
+        #room = await sync_to_async(Room.objects.get)(code=room_code)
+
+        lobby_kick_all.apply_async(args=[room_code], countdown=delay)
+
+
+
+
+
 
     @staticmethod
     async def cancel_delete(room_code):

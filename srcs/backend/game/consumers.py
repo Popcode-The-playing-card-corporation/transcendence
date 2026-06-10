@@ -81,6 +81,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
             "message": message
         }))
     
+    async def room_closed(self, event):
+        await self.send_json({
+            "event": "room_closed",
+            "reason": event["reason"]
+        })
+    
+        await self.close()
+    
     #TODO avoid does not exist error on room connection
     
     async def connect(self):
@@ -106,6 +114,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             return
     
         await self.accept()
+        
         await self.channel_layer.group_add(self.group_name, self.channel_name)
     
         await RoomConnectionService.finalize_join(

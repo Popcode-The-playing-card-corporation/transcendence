@@ -15,12 +15,11 @@ def delete_room(room_code):
     try:
         room = Room.objects.select_related("host").filter(code=room_code).first()
         
-        print("caca1")
         if not room.delete_scheduled:
             return
         if room.status != "open":
             return
-        print("caca")
+        
         bots = PlayerPresence.objects.filter(room=room, is_human=False).count()
     
         real_players = room.nb_player - bots
@@ -54,7 +53,6 @@ def change_host(room_code, user_id):
             room.host = next_player.player
             room.save()
 
-        # broadcast websocket
         channel_layer = get_channel_layer()
         presences = list(
             PlayerPresence.objects.select_related("player").filter(
@@ -83,3 +81,35 @@ def change_host(room_code, user_id):
 
     except (Room.DoesNotExist, User.DoesNotExist):
         pass
+    
+    
+@shared_task
+def lobby_kick_all(room_code):
+    room = Room.objects.select_related("host").filter(code=room_code).first()
+    
+    if not room:
+        return
+    
+    if room.status != "open":
+        return
+    
+    room.cleanup_scheduled = True
+    room.save()
+    
+    channel_layer = get_channel_layer()
+    
+    async_to_sync(channel_layer.group_send)(
+        f"room_{room.code}",
+        {
+            "type": "room_closed",
+            "reason": "Lobby timeout"
+        }
+    )
+
+
+    
+    
+    
+    
+    
+    
