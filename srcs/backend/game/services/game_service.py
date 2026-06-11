@@ -75,6 +75,8 @@ class GameService:
 
         if idx >= len(legal) and not legal[idx]:
             return {"error": "Illegal move"}
+        if room.game_state["playing"] != position:
+            return {"error": "Not your turn bitch !!!"}
 
         state, taker, melds = await BoardService.resolve_if_needed(
             game, state, room, position, idx
