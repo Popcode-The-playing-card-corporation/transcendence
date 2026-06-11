@@ -8,12 +8,15 @@ from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
 from django.db.models import Q
 import copy
+from django.utils import timezone
 from .services.game_service import GameService
 from .services.room_service import RoomService
 from .services.meld_service import MeldService
 from .services.bot_service import BotService
 from .services.room_connection_service import RoomConnectionService
+from .services.game_snapshot_service import GameSnapshotService
 
+import asyncio
 from channels.exceptions import ChannelFull
 
 CARD_VALUES = {
@@ -65,6 +68,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         }))
 
     async def room_event(self, event):
+        print("ROOM_EVENT", timezone.now())
         if event["event"] == "force_disconnect":
             await self.close(code=4001)  # close WebSocket
             return
@@ -515,127 +519,55 @@ class RoomConsumer(AsyncWebsocketConsumer):
 #TODO send all melds possible
     async def send_data(self):
         room = await get_room_with_host(self.code)
-        game_state = room.game_state
-
-        game = GameEngine(room.uuid)
-        
-        p = await sync_to_async(
-            PlayerPresence.objects.select_related("player").get
-        )(
-            room=room,
-            position=int(game_state["playing"])
-        )
-        try:
-            if p.position == game_state["playing"]:
-                legal = game.handleAction("legal", game_state, idPlayer=str(p.position))
-                if p.channel_name:
-                    player_data = game_state["players"][str(p.position)]
-                    await self.channel_layer.send(
-                        p.channel_name,
-                        {
-                            "type": "private_event",
-                            "event": "init_cards",
-                            "payload": {
-                                "hand": player_data["cards"],
-                                "legal": legal,
-                            }
-                        }
-                    )
-
-                    await self.channel_layer.group_send(
-                        f"user_{p.player.id}",
-                        {
-                            "type": "notify",
-                            "event": "notification",
-                            "type_notify": "your_turn",
-                    
-                            "payload": {
-                                "message": f"It's your time to play"
-                            }
-                        }
-                    )
-            
-            await self.send_board(game_state, room)
-            
-        except ChannelFull:
-            print("Channel is full. Dropping message.")
     
-     
-    async def send_board(self, game_state, room):
-        player_puntos = {}
-        player_list = {}
+        payload = await GameSnapshotService.build(self.code, self.user)
+    
+        game_state = room.game_state
+        game = GameEngine(room.uuid)
+    
         for player_id, player_data in game_state["players"].items():
-            
+    
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
-				room_id=room.id,
+                room_id=room.id,
                 position=int(player_id)
-			)
-            
-            player_puntos[str(player_id)] = player_data["puntos"]
-            player_list[str(player_id)] = {
-                "hand": len(player_data["cards"]),
-                "user": {"id": p.player.id, "username": p.player.username, "avatar": p.player.avatar}
-            }
-        
-        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
-			room_id=room.id,
-            player=self.user
-        )
-        
-        logs = await sync_to_async(list)(
-            GameLog.objects.filter(room=room)
-        )
-        detailed_points = {}
-
-        nb_round = int(36 / room.nb_player)
-        for log in logs:
-            player = await sync_to_async(
-                PlayerPresence.objects.select_related("player").get
-            )(
-                room_id=log.room_id,
-                player_id=log.player_id
             )
-        
-            if log.game not in detailed_points:
-                detailed_points[log.game] = {}
-            
-            if log.round == nb_round:
-                if "total" not in detailed_points[log.game]:
-                    detailed_points[log.game]["total"] = []
-            
-                detailed_points[log.game]["is_finished"] = True
-            
-                detailed_points[log.game]["total"].append({
-                    "id": player.player_id,
-                    "username": player.player.username,
-                    "score": log.score,
-                })
-            else:
-                if log.round not in detailed_points[log.game]:
-                    detailed_points[log.game][log.round] = []
-            
-                detailed_points[log.game][log.round].append({
-                    "id": player.player_id,
-                    "username": player.player.username,
-                    "score": log.score,
-                })
-                
+    
+            init_cards = {
+                "hand": player_data["cards"],
+                "legal": game.handleAction(
+                    "legal",
+                    game_state,
+                    idPlayer=str(player_id)
+                ) if game_state["playing"] == int(player_id) else None
+            }
+    
+            if p.channel_name:
+                await self.channel_layer.send(
+                    p.channel_name,
+                    {
+                        "type": "room_event",
+                        "event": "game_state",
+                        "payload": {
+                            "init_cards": init_cards,
+                            "board_data": payload,
+                        }
+                    }
+                )
+    
+        current_player = str(game_state["playing"])
+        current = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+            room_id=room.id,
+            position=int(current_player)
+        )
+    
         await self.channel_layer.group_send(
-            self.group_name,
+            f"user_{current.player.id}",
             {
-                "type": "room_event",
-                "event": "board_data",
+                "type": "notify",
+                "event": "notification",
+                "type_notify": "your_turn",
                 "payload": {
-                    "self_id": p.position,
-                    "board": game_state["board"],
-                    "points": player_puntos,
-                    "detailed_points": detailed_points,
-                    "playing": game_state["playing"],
-                    "player_list": player_list,
-                    "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-                    "round_time": game_state["round_time"],
-                    "round": game_state["round"],
-                    "last_fold": game_state.get("last_fold")
+                    "message": "It's your time to play"
                 }
             }
         )
