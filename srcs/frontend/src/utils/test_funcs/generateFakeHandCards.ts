@@ -36,8 +36,8 @@ export default function generateFakeHandCards(): handCardsType {
 			},
 			{
 				color: "spade",
-				value: "Q",
-				id: 15,
+				value: "A",
+				id: 17,
 			},
 			{
 				color: "spade",
