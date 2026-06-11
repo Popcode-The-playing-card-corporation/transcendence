@@ -14,6 +14,7 @@ export default function Hand() {
   const textures = useLoader(TextureLoader, loadedTextures);
   const startPos = ((0.4 * hand.cards.length / 2) - 0.20);
 
+  
   return (
     <mesh>
       {hand.cards.map((card) => {
