@@ -20,7 +20,7 @@ export default function AdversaryCard({angle,distance, textureBack} : Props){
   return (
     <mesh
       rotation={[Math.PI / 2, angle, 0]}
-      position={[Math.sin(angle) * distance, -Math.cos(angle) * distance, 0]}
+      position={[Math.sin(angle) * distance, -Math.cos(angle) * distance, 1]}
       material={materials}
     >
       <boxGeometry args={[1, 1.4, 0.01]}/>

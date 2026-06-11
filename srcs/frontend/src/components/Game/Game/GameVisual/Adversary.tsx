@@ -12,7 +12,7 @@ export default function Adversary() {
     <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, -2]}>
       {cards.map((cardHand) => {
         return(
-          <AdversaryHand cardHand={cardHand} textureBack={textureBack} total={cards.length + 2}/>
+          <AdversaryHand cardHand={cardHand} textureBack={textureBack} total={cards.length + 1}/>
         );
       })}
     </mesh>
