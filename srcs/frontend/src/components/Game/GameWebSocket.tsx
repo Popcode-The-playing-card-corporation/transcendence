@@ -67,29 +67,53 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 				}
 				const payload = data.payload;
 
-				if (data.type === "list_player") {
-					if (data.event === "init_cards") {
-						dispatch({ type: "SET_CARDS", payload: payload.hand});
-					} else if (data.event === "update") {
-						dispatch({ type: "SET_PLAYERS", payload: payload.players});
+				if (data.type === "settings") {
+					if (data.event === "host_join") {
+						//
+					} else if (data.event === "player_join") {
+						//
+					} else if (data.event === "settings_changed") {
+						//
+					} else if (data.event === "bot_added") {
+						//
+					} else if (data.event === "player_kicked") {
+						//
+					}
+				} else if (data.type === "game") {
+					if (data.event === "game_started") {
+						//
+					} else if (data.event === "annonces_valid") { // where you tell me if valid or not
+						//
+					} else if (data.event === "card_valid") {
+						//
+					} else if (data.event === "finish_round") {
+						//
+					} else if (data.event === "game_finish") {
+						//
+					} else if (data.event === "game_continued") {
+						//
+					} else if (data.event === "game_ended") {
+						//
+					} else if (data.event === "player_replace") {
+						//
+					} else if (data.event === "player_reconnect") {
+						//
 					}
 				}
-				else if (data.type === "params") {
-					dispatch({ type: "SET_PARAMS", payload: payload});
-				} else if (data.type === "event") {
-					if (data.event === "kicked") {
-						leaveRoom();
-					} else if (data.event === "board_data") {
-						dispatch({ type: "SET_BOARD", payload: payload});
-						auth.setGame(true);
-					}
-				} else if (data.type === "game_started") {
-					auth.setGame(true);
-				} else if (data.event === "error") {
-					notif?.showNotif("Game Error", data.message);
-				} else {
-					console.debug("Unknown event: ", data)
-				}
+				// } else if (data.type === "event") {
+				// 	if (data.event === "kicked") {
+				// 		leaveRoom();
+				// 	} else if (data.event === "board_data") {
+				// 		dispatch({ type: "SET_BOARD", payload: payload});
+				// 		auth.setGame(true);
+				// 	}
+				// } else if (data.type === "game_started") {
+				// 	auth.setGame(true);
+				// } else if (data.event === "error") {
+				// 	notif?.showNotif("Game Error", data.message);
+				// } else {
+				// 	console.debug("Unknown event: ", data)
+				// }
 			},
 	
 		});
