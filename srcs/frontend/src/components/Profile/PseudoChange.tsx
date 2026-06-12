@@ -3,7 +3,7 @@ import { changeUsername } from "../../api/http/profile";
 import { type errorT } from "../../utils/type/errorType";
 import { useNotif } from "../hooks/useNotif";
 
-export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, has_pass}:{dialogRef: React.RefObject<HTMLDialogElement| null>; updatedProfile:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; old_user:string, has_pass:boolean}) {
+export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, has_pass}:{dialogRef: React.RefObject<HTMLDialogElement| null>; updatedProfile:boolean | null; setUpdate:React.Dispatch<React.SetStateAction<boolean>> | null; old_user:string, has_pass:boolean}) {
 
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
@@ -45,7 +45,9 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, ha
 		clean_close();
 		return ;
 	}
-	setUpdate(!updatedProfile);
+	if (setUpdate) {
+		setUpdate(!updatedProfile);
+	}
 	clean_close();
 	return ;
   }

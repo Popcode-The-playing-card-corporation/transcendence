@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { useNotif } from "../hooks/useNotif";
 import { deleteAccount } from "../../api/http/profile";
+import { PseudoChange } from "../Profile/PseudoChange";
 
 export default function Account() {
 
@@ -23,7 +24,7 @@ export default function Account() {
       <div className="flex flex-col w-1/3 mx-auto gap-4">
         <h3>Personnal information</h3>
         <button className="btn">Change password</button>
-        <button className="btn">Change username</button>
+        <button className="btn" >Change username</button>
 	  <button
 		onClick={() => confirmDeleteRef.current?.showModal()}
 		className="btn"

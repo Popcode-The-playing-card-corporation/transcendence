@@ -46,7 +46,7 @@ export function LoginForm({
 		return ;
 	}
 
-    const result = await loginRequest(name, password, auth.setUserID);
+    const result = await loginRequest(name, password, auth.setUserID, auth.setPass);
     if (result.code == 200) {
 		auth.setLoggedIn(true);
 		loginSuccess();
