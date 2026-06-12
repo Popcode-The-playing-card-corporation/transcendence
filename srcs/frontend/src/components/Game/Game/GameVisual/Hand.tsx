@@ -11,6 +11,7 @@ export default function Hand({
 }) {
   const hand = generateFakeHandCards();
   const startPos = (0.4 * hand.cards.length) / 2 - 0.2;
+  const oldStartPos = (0.4 * hand.cards.length + 1) / 2 - 0.2;
 
 
   return (
@@ -24,6 +25,7 @@ export default function Hand({
               cardIndex={cardIndex}
               card={card}
               startPos={startPos}
+			  oldStartPos={oldStartPos}
               front={cardsTex[card.id]}
               back={back}
             />

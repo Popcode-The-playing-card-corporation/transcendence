@@ -18,6 +18,7 @@ type Props = {
   startPos: number;
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
   back: Texture<HTMLImageElement, TextureEventMap> | undefined;
+  oldStartPos: number,
 };
 
 export default function PCard({
@@ -26,6 +27,7 @@ export default function PCard({
   startPos,
   front,
   back,
+  oldStartPos,
 }: Props) {
   const [active, setActive] = useState<boolean>(false);
   const [overed, setOvered] = useState<boolean>(false);
@@ -88,10 +90,14 @@ export default function PCard({
         setHidden(true);
       }
     }
+	if (cardRef.current.position.x > startPos - cardIndex * 0.4)
+		cardRef.current.position.x -= 0.01
+	if (cardRef.current.position.x < startPos - cardIndex * 0.4)
+		cardRef.current.position.x += 0.01
   });
   return (
     <mesh
-      position={[startPos - cardIndex * 0.4, -2.5, 1.5 - 0.001 * cardIndex]}
+      position={[oldStartPos - cardIndex * 0.4, -2.5, 1.5 - 0.001 * cardIndex]}
       material={materials}
       scale={active ? 1.4 : 1}
       rotation={[0, 3.14, 0]}
