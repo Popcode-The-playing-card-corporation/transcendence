@@ -17,7 +17,7 @@ type Props = {
   card: cardType;
   startPos: number;
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
-  back: Texture;
+  back: Texture<HTMLImageElement, TextureEventMap> | undefined;
 };
 
 export default function PCard({
@@ -48,7 +48,7 @@ export default function PCard({
   }
 
   function handleClick() {
-    if (hidden) return;
+    if (hidden || played) return;
     if (!active) {
       cardRef.current.translateY(1.3);
       cardRef.current.translateZ(0.1);
@@ -61,7 +61,7 @@ export default function PCard({
     }
   }
   function replaceCard() {
-    if (hidden) return;
+    if (hidden || played) return;
     cardRef.current!.position.set(
       startPos - cardIndex * 0.4,
       -2.5,
@@ -82,11 +82,10 @@ export default function PCard({
       if (cardRef.current.rotation.x > -0.4) cardRef.current.rotation.x -= 0.1;
       if (
         cardRef.current.position.z < -1.1 &&
-        cardRef.current.position.x < 0.1 &&
-        cardRef.current.position.x > -0.1
+        cardRef.current.position.x < 0.01 &&
+        cardRef.current.position.x > -0.01
       ) {
         setHidden(true);
-        setPlayed(false);
       }
     }
   });
