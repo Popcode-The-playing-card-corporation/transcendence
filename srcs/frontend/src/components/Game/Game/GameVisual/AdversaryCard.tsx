@@ -3,27 +3,29 @@ import type { Texture, TextureEventMap } from "three";
 
 type Props = {
   angle: number, 
-  distance: number, 
-  textureBack: Texture<HTMLImageElement, TextureEventMap> 
+  littleRadius: number, 
+  textureBack: Texture<HTMLImageElement, TextureEventMap>,
+  second: number
 }
 
-export default function AdversaryCard({angle,distance, textureBack} : Props){
+export default function AdversaryCard({angle, littleRadius, textureBack, second} : Props){
   const materials = [
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
-    new MeshPhongMaterial({map: textureBack}),
+    new MeshPhongMaterial({color: 0xf345ab}),
     new MeshPhongMaterial({map: textureBack})
   ];
 
   return (
     <mesh
       rotation={[Math.PI / 2, angle, 0]}
-      position={[Math.sin(angle) * distance, -Math.cos(angle) * distance, 1]}
+      // position={[0, 0, 0]}
+      position={[Math.sin(angle) * littleRadius, -Math.cos(angle) * littleRadius, 0]}
       material={materials}
     >
-      <boxGeometry args={[1, 1.4, 0.01]}/>
+      <boxGeometry args={[1, 1.4, 0.001]}/>
       <axesHelper />
     </mesh>
   );

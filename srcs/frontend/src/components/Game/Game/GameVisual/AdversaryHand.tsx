@@ -1,20 +1,17 @@
-import { useThree } from "@react-three/fiber";
 import AdversaryCard from "./AdversaryCard";
 import type { adversaryT } from "../../../../utils/type/adversaryType";
 import type { Texture, TextureEventMap } from "three";
 
 type Props = {
+  angleCenter:number,
   cardHand: adversaryT, 
-  textureBack: Texture<HTMLImageElement, TextureEventMap>,
-  total: number
+  textureBack: Texture<HTMLImageElement, TextureEventMap>
 }
 
-export default function AdversaryHand({cardHand, textureBack, total} : Props) {
-  const { viewport } = useThree();
-  const angleBetween = 0.05;
-  const distanceBetweenCard = 0.04;
-  const distanceStart = viewport.height / 2 + 0.3;
-  const angleStart = (360 * (cardHand.position + 1) / total) * (Math.PI / 180) - (cardHand.nbCards - 1) * angleBetween / 2;
+export default function AdversaryHand({angleCenter, cardHand, textureBack} : Props) {
+  const angleBetween = Math.PI / 15;
+  const littleRadius = Math.sin(angleCenter / 2) * 3;
+  const angleStart = angleCenter * (cardHand.position + 1) - (cardHand.nbCards - 1) * angleBetween / 2;
   const allAngle : number[] = [];
   for (let i = 0; i < cardHand.nbCards; i++)
     allAngle.push(angleStart + i * angleBetween);
@@ -24,9 +21,12 @@ export default function AdversaryHand({cardHand, textureBack, total} : Props) {
     >
       {allAngle.map((angle) => {
         return (
-          <AdversaryCard distance={distanceStart + allAngle.indexOf(angle) * distanceBetweenCard} angle={angle} textureBack={textureBack}/>
+          <AdversaryCard littleRadius={littleRadius + (allAngle.indexOf(angle) % (cardHand.nbCards / 2) * 0.05)} second={0} textureBack={textureBack} angle={angle}/>
         );
       })}
     </mesh>
   );
 }
+// Math.asin(0.4 / 3)
+// Math.sin()
+// -Math.cos(angleCenter * (cardHand.position + 1))
