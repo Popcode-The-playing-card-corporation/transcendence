@@ -1,7 +1,6 @@
-import { Mesh, Texture, type TextureEventMap } from "three";
+import { Texture, type TextureEventMap } from "three";
 import PCard from "./PCard";
 import generateFakeHandCards from "../../../../utils/test_funcs/generateFakeHandCards";
-import { useEffect, useRef } from "react";
 
 export default function Hand({
   cardsTex,
@@ -12,16 +11,7 @@ export default function Hand({
 }) {
   const hand = generateFakeHandCards();
   const startPos = (0.4 * hand.cards.length) / 2 - 0.2;
-  const handRef = useRef<Mesh>(null)
 
-  useEffect(() => {
-
-	  handRef.current?.clear()
-	  handRef.current?.remove()
-	  // console.log("New hand");
-	  handRef.current?.updateMatrix()
-	  
-  }, [hand])
 
   return (
       <mesh>
