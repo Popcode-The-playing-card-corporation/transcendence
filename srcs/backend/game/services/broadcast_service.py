@@ -2,19 +2,16 @@ from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host, get_params
 from datetime import timedelta
 
-from ..models import PlayerPresence, Room
-from api.models import User
-from django.db.models import F
+from ..models import PlayerPresence
 
 from channels.layers import get_channel_layer
-from .room_task_service import RoomTaskService
 
 import asyncio
 
 class BroadcastService:
 
     @staticmethod
-    async def get_players(room):
+    async def _get_players(room):
         if room == None:
             return {"error": "No room send"}
 
@@ -38,7 +35,7 @@ class BroadcastService:
         return players
 
     @staticmethod
-    async def get_room_snapshot(room):
+    async def _get_room_snapshot(room):
         
         return {
             "code": room.code,
@@ -49,8 +46,10 @@ class BroadcastService:
         }
             
     @staticmethod
-    async def broadcast_settings(room, channel_layer, message, group):
-        players = await BroadcastService.get_players(room)
+    async def broadcast_settings(room_code, channel_layer, message, group):
+        room = await get_room_with_host(room_code)
+        players = await BroadcastService._get_players(room)
+        params = await BroadcastService._get_room_snapshot(room)
 
         await channel_layer.group_send(
             group,
@@ -59,7 +58,7 @@ class BroadcastService:
                 "event": message,
                 "payload": {
                     "players": players,
-                    "params": await get_params(room.code)
+                    "params": params
                 }
             }
         )

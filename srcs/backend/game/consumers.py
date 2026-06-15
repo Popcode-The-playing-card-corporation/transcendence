@@ -137,17 +137,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
             code=self.code,
             channel_name=self.channel_name
         )
-        room = await get_room_with_host(self.code)
         if self.user.id == room.host_id:
             await BroadcastService.broadcast_settings(
-                room,
+                self.code,
                 self.channel_layer,
                 "host_join",
                 f"player_{room.host_id}",
             )
         else:
             await BroadcastService.broadcast_settings(
-                room,
+                self.code,
                 self.channel_layer,
                 "player_join",
                 f"room_{room.code}",
@@ -180,9 +179,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if result == None:
             return
         room = result["room"]
-    
-        await RoomConnectionService.broadcast_player_list(
-            room,
+    #TODO if lobby open status
+        await BroadcastService.broadcast_settings(
+            room.code,
             self.channel_layer,
             "player_left",
             f"room_{room.code}",
@@ -354,9 +353,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
     
-        room = await get_room_with_host(self.code)
+
         await BroadcastService.broadcast_settings(
-            room,
+            self.code,
             self.channel_layer,
             "player_kicked",
             f"room_{room.code}",

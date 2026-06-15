@@ -106,7 +106,7 @@ def add_bot(request, code, nb_bot):
             nb_bot -= 1
         
         channel_layer = get_channel_layer()
-        BroadcastService.broadcast_settings(room, channel_layer, "bot_added", f"room_{room.code}",)
+        BroadcastService.broadcast_settings(room.code, channel_layer, "bot_added", f"room_{room.code}",)
 
         return Response(status=200)
     
@@ -407,10 +407,9 @@ def update_params(request, code):
     serializer = RoomSerializer(room, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
-        room = get_room_with_host(code)
         channel_layer = get_channel_layer()
 
-        BroadcastService.broadcast_settings(room, channel_layer, "settings_changed", f"room_{room.code}")
+        BroadcastService.broadcast_settings(room.code, channel_layer, "settings_changed", f"room_{room.code}")
         
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
