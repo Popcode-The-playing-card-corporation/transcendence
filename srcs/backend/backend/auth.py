@@ -12,7 +12,7 @@ from django.conf import settings
 def VerifyCookie(request):
 
 	if request.user.is_authenticated:
-		return Response({"status":"success", "id":request.user.id})
+		return Response({"status":"success", "id":request.user.id, "has_pass":request.user.has_password})
 	return RefreshCookie(request)
 
 @permission_classes([AllowAny])

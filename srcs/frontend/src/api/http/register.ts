@@ -3,18 +3,19 @@ import host from './host'
 import { getError, type backendErrorT, type errorT } from '../../utils/type/errorType';
 import type { SetStateAction } from 'react';
 
-export async function registerRequest(in_email:string, in_user:string, in_pass:string, in_avatar: string, setUserID:React.Dispatch<SetStateAction<number | null>>): Promise<errorT> {
+export async function registerRequest(in_email:string, in_user:string, in_pass:string, re_pass: string, in_avatar: string, setUserID:React.Dispatch<SetStateAction<number | null>>, setPass:React.Dispatch<SetStateAction<boolean>>): Promise<errorT> {
 	const formData = new FormData();
 
 	formData.set('email', in_email);
 	formData.set('username', in_user);
 	formData.set('password', in_pass);
 	formData.set('avatar', in_avatar)
+	formData.set('re_password', re_pass)
 
 	try {
-
 		const res = await axios.post(host.http + 'register/', formData, { timeout: 2000, withCredentials:true});
 		setUserID(res.data.id)
+		setPass(res.data.has_pass)
 		return {code:200, response:"success"};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

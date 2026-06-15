@@ -468,7 +468,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "payload": {
                                 "hand": player_data["cards"],
                                 "legal": legal,
-                                
+                                "melds": await GameService.count_melds(player_data["cards"])
                             }
                         }
                     )
@@ -495,6 +495,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "event": "init_cards",
                             "payload": {
                                 "hand": player_data["cards"],
+                                "melds": await GameService.count_melds(player_data["cards"])
                             }
                         }
                     )

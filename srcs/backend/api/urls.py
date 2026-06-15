@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.user_views import register, change_password, login, logout, user, user_data
+from .views.user_views import register, change_password, login, logout, user, user_data, delete
 from .views.friend_view import get_friends, unblock_friend, list_user, list_propal, accept_friend_request, block_friend, list_blocked, delete_friend_request, send_friend_request
 from .views.stat_view import get_stat, room_data, game_history, leaderboard, game_history_friend
 from .views.OAuth_view import GoogleLogin, FortyTwoLogin, GitLogin
@@ -11,6 +11,7 @@ urlpatterns = [
     path("user/", user),
     path("user/<int:user_id>/", user_data),
     path("user/pswd/", change_password),
+	path("delete/", delete),
 
 	path("logout/", logout),
 	# #OAuth part

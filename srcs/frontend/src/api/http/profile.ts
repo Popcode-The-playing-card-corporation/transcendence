@@ -21,6 +21,20 @@ export async function profileRequest(): Promise<accountT | errorT> {
 	}
 }
 
+export async function deleteAccount(): Promise<errorT> {
+	try {
+		await axios.post(host.http + 'delete/', {}, { timeout: 2000, withCredentials: true});
+		return {code: 200, response: "success"};
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
 export async function changeUsername(in_user:string, old_pass:string, has_pass:boolean) {
 
 	const formData = new FormData();

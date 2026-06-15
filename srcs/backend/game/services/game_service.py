@@ -8,6 +8,7 @@ from game_engine.bot.bot import bot
 from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
+from game_engine.card import Card
 import copy
 from .board_service import BoardService
 from .stats_service import StatsService
@@ -59,6 +60,71 @@ class GameService:
                 player=user,
                 room=room
             )           
+
+    def findSuit(bucket):
+        cardValue = {"6": 1, "7": 2, "8": 3, "9": 4, "10": 5, "J": 6, "Q": 7, "K": 8, "A": 9}
+        suitePoint = {3: 20, 4: 50, 5: 100, 6: 150, 7: 200, 8: 250, 9: 300}
+
+        ret = []
+
+        for b in bucket.values():
+            cards = {"cards": [], "point": 0}
+            if (len(b) >= 3):
+                b = sorted(b)
+                value = 0
+                suite = 1
+                for c in b:
+                    if (value == 0):
+                        value = cardValue[c.values]
+                        cards["cards"].append(c.id)
+                        continue
+                    if (cardValue[c.values] == value + 1):
+                        value += 1
+                        suite += 1
+                        cards["cards"].append(c.id)
+                    else:
+                        if (suite > 2):
+                            cards["point"] = suitePoint[len(cards["cards"])]
+                            ret.append(copy.deepcopy(cards))
+                        value = 0
+                        suite = 1
+                        cards["cards"] = []
+                if (suite > 2):
+                    cards["point"] = suitePoint[len(cards["cards"])]
+                    ret.append(copy.deepcopy(cards))
+
+        return ret
+    
+    @staticmethod
+    async def count_melds(cards):
+        clubs = []
+        spades = []
+        diamonds = []
+        hearts = []
+        bucket = {"club": clubs, "spade": spades, "diamond": diamonds, "heart": hearts}
+
+        ex = Card("-1", "none")
+        for c in cards:
+            if (type(ex) == type(c)):
+                cList = bucket[c.colors]
+                cList.append(Card(c.values, c.colors, c.id))
+            else:
+                cList = bucket[c["color"]]
+                cList.append(Card(c["value"], c["color"], c["id"]))
+
+        ret = GameService.findSuit(bucket)
+        for c in clubs:
+            if (c in spades and c in diamonds and c in hearts):
+                cards = {"cards": [c.id, c.id + 9, c.id + 18, c.id + 27], "point": 0}
+                if (c.values == "J"):
+                    cards["point"] = 200
+                elif (c.values == "9"):
+                    cards["point"] = 150
+                else:
+                    cards["point"] = 100
+                ret.append(copy.deepcopy(cards))
+
+        return ret
 
     @staticmethod
     async def play_card(room, user, position, card_id):

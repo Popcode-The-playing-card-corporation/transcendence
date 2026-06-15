@@ -16,7 +16,7 @@ def OAUTH_Success(user, message):
 	access_token = refresh.access_token
 
 	res = Response()
-	res.data = {'success': True, 'message': message, id:user.id}
+	res.data = {'success': True, 'message': message, "id": user.id, "has_pass":user.has_password}
 	res.set_cookie(
 		key='access_token',
 		value=access_token,
