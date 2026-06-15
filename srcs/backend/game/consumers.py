@@ -14,7 +14,6 @@ from .services.room_service import RoomService
 from .services.meld_service import MeldService
 from .services.bot_service import BotService
 from .services.room_connection_service import RoomConnectionService
-from .services.game_snapshot_service import GameSnapshotService
 from .services.broadcast_service import BroadcastService
 
 import asyncio
@@ -53,6 +52,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
             "event": event["event"],
             "payload": event["payload"]
         }))
+
+    async def game_event(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "game",
+            "event": event["event"],
+            "payload": event["payload"]
+        }))
+
 
     async def settings_event(self, event):
         await self.send(text_data=json.dumps({
@@ -95,8 +102,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
     
-        game_state = await BotService.play_until_human(room, room.game_state, game, 
-                                                       send_data_callback=self.send_data, 
+        game_state = await BotService.play_until_human(room, room.game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold
                                                        )
@@ -159,7 +165,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.ask_host_continue(room, room.game_state)
         
         if room.status == "start":
-            await self.send_data()
+            await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_reconnect")
     
     async def disconnect(self, close_code):
     
@@ -269,7 +275,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
 
-        game_state = await GameService.start_game(room, send_data_callback=self.send_data, send_init_callback=self.send_init)
+        game_state = await GameService.start_game(room)
 
     async def handle_play_card(self, payload):
         room = await get_room_with_host(self.code)
@@ -286,7 +292,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.error(result["error"])
             return
 
-        await self.send_data()
+        await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_valid")
 
         room = await get_room_with_host(self.code)
         game_state = room.game_state
@@ -294,11 +300,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         take_fold, game_state = await GameService.check_take_fold(game_state, room)
 
         if (take_fold):
-            await self.send_data()
+            await BroadcastService.broadcast_game(self.code, self.channel_layer, "finish_round")
 
         game = GameEngine(room.uuid)
-        game_state = await BotService.play_until_human(room, game_state, game, 
-                                                       send_data_callback=self.send_data, 
+        game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold
                                                        )
@@ -320,7 +325,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if result.get("error"):
             return await self.error(result["error"])
     
-        await self.send_data()
+        await BroadcastService.broadcast_game(self.code, self.channel_layer, "annonces_valid")
 
     async def handle_verify_melds(self, payload):
         room = await get_room_with_host(self.code)
@@ -409,9 +414,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
     
         game_state = await GameService.continue_game(
-            room,
-            send_data_callback=self.send_data,
-            send_init_callback=self.send_init
+            room
         )
 
     async def handle_end_game(self, payload=None):
@@ -433,6 +436,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         await end_room(room.uuid, room.game_state)
     
+        await BroadcastService.broadcast_game(self.code, self.channel_layer, "game_ended")
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -442,122 +446,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
         await self.channel_layer.group_send(
-        self.group_name,
-        {
-            "type": "room_event",
-            "event": "force_disconnect",
-            "payload": {
-                "message": "Room closed by host"
-            }
-        }
-)
-
-    async def send_init(self):
-        room = await get_room_with_host(self.code)
-        game_state = room.game_state
-        
-        game = GameEngine(room.uuid)
-        for player_id, player_data in game_state["players"].items():
-            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
-                room=room,
-                position=int(player_id)
-            )
-            if int(player_id) == game_state["playing"]:
-                legal = game.handleAction("legal", game_state, idPlayer=str(player_id))
-                if p.channel_name:
-                    await self.channel_layer.send(
-                        p.channel_name,
-                        {
-                            "type": "private_event",
-                            "event": "init_cards",
-                            "payload": {
-                                "hand": player_data["cards"],
-                                "legal": legal,
-                                "melds": await GameService.count_melds(player_data["cards"])
-                            }
-                        }
-                    )
-
-        
-                    await self.channel_layer.group_send(
-                        f"user_{p.player.id}",
-                        {
-                            "type": "notify",
-                            "event": "notification",
-                            "type_notify": "your_turn",
-                    
-                            "payload": {
-                                "message": f"It's your time to play"
-                            }
-                        }
-                    )
-            else:
-                if p.channel_name:
-                    await self.channel_layer.send(
-                        p.channel_name,
-                        {
-                            "type": "private_event",
-                            "event": "init_cards",
-                            "payload": {
-                                "hand": player_data["cards"],
-                                "melds": await GameService.count_melds(player_data["cards"])
-                            }
-                        }
-                    )
-        await self.send_data()
-
-#TODO send all melds possible
-    async def send_data(self):
-        room = await get_room_with_host(self.code)
-    
-        payload = await GameSnapshotService.build(self.code, self.user)
-    
-        game_state = room.game_state
-        game = GameEngine(room.uuid)
-    
-        for player_id, player_data in game_state["players"].items():
-    
-            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
-                room_id=room.id,
-                position=int(player_id)
-            )
-    
-            init_cards = {
-                "hand": player_data["cards"],
-                "legal": game.handleAction(
-                    "legal",
-                    game_state,
-                    idPlayer=str(player_id)
-                ) if game_state["playing"] == int(player_id) else None
-            }
-    
-            if p.channel_name:
-                await self.channel_layer.send(
-                    p.channel_name,
-                    {
-                        "type": "room_event",
-                        "event": "game_state",
-                        "payload": {
-                            "init_cards": init_cards,
-                            "board_data": payload,
-                        }
-                    }
-                )
-    
-        current_player = str(game_state["playing"])
-        current = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
-            room_id=room.id,
-            position=int(current_player)
-        )
-          
-        await self.channel_layer.group_send(
-            f"user_{current.player.id}",
+            self.group_name,
             {
-                "type": "notify",
-                "event": "notification",
-                "type_notify": "your_turn",
+                "type": "room_event",
+                "event": "force_disconnect",
                 "payload": {
-                    "message": "It's your time to play"
+                    "message": "Room closed by host"
                 }
             }
         )

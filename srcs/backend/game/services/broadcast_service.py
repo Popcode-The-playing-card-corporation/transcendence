@@ -1,10 +1,12 @@
 from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host, get_params
 from datetime import timedelta
+from ..models import PlayerPresence, GameLog
 
-from ..models import PlayerPresence
-
+from game_engine.game import GameEngine
 from channels.layers import get_channel_layer
+from game_engine.card import Card
+import copy
 
 import asyncio
 
@@ -63,3 +65,210 @@ class BroadcastService:
             }
         )
     
+    @staticmethod
+    async def _board_data(room, player_position):
+        game_state = room.game_state
+
+        player_puntos = {}
+        player_list = {}
+        detailed_points = {}
+
+        for player_id, player_data in game_state["players"].items():
+
+            p = await sync_to_async(
+                PlayerPresence.objects.select_related("player").get
+            )(
+                room_id=room.id,
+                position=int(player_id)
+            )
+
+            player_id_str = str(player_id)
+
+            player_puntos[player_id_str] = player_data["puntos"]
+            player_list[player_id_str] = {
+                "hand": len(player_data["cards"]),
+                "user": {
+                    "id": p.player.id,
+                    "username": p.player.username,
+                    "avatar": p.player.avatar
+                }
+            }
+
+        logs = await sync_to_async(list)(
+            GameLog.objects.filter(room=room)
+        )
+
+        nb_round = int(36 / room.nb_player)
+
+        for log in logs:
+            player = await sync_to_async(
+                PlayerPresence.objects.select_related("player").get
+            )(
+                room_id=log.room_id,
+                player_id=log.player_id
+            )
+
+            game_key = str(log.game)
+            round_key = str(log.round)
+
+            if game_key not in detailed_points:
+                detailed_points[game_key] = {}
+
+            if round_key == str(nb_round):
+                if "total" not in detailed_points[game_key]:
+                    detailed_points[game_key]["total"] = []
+
+                detailed_points[game_key]["is_finished"] = True
+
+                detailed_points[game_key]["total"].append({
+                    "id": str(player.player_id),
+                    "username": player.player.username,
+                    "score": log.score,
+                })
+            else:
+                if round_key not in detailed_points[game_key]:
+                    detailed_points[game_key][round_key] = []
+
+                detailed_points[game_key][round_key].append({
+                    "id": str(player.player_id),
+                    "username": player.player.username,
+                    "score": log.score,
+                })
+                    
+            tmp_board = game_state['board']
+            asked = tmp_board.get('asked')
+            if asked:
+                board = []
+                for id, cards in tmp_board.items():
+                    if id == "asked":
+                        continue
+                    board.append({"room_id":id, "card":cards})
+            else:
+                board = []
+    #TODO add take_by
+    #TODO palyer_id == right player ?
+        return {
+            "self_id": player_position,
+            "board": board,
+            "asked": asked,
+            "points": player_puntos,
+            "detailed_points": detailed_points,
+            "playing": game_state["playing"],
+            "player_list": player_list,
+            "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "round_time": room.round_time.strftime("%H:%M:%S"),
+            "round": game_state["round"],
+            "last_fold": game_state.get("last_fold")
+        }       
+
+    def _find_suit(bucket):
+        cardValue = {"6": 1, "7": 2, "8": 3, "9": 4, "10": 5, "J": 6, "Q": 7, "K": 8, "A": 9}
+        suitePoint = {3: 20, 4: 50, 5: 100, 6: 150, 7: 200, 8: 250, 9: 300}
+
+        ret = []
+
+        for b in bucket.values():
+            cards = {"cards": [], "point": 0}
+            if (len(b) >= 3):
+                b = sorted(b)
+                value = 0
+                suite = 1
+                for c in b:
+                    if (value == 0):
+                        value = cardValue[c.values]
+                        cards["cards"].append(c.id)
+                        continue
+                    if (cardValue[c.values] == value + 1):
+                        value += 1
+                        suite += 1
+                        cards["cards"].append(c.id)
+                    else:
+                        if (suite > 2):
+                            cards["point"] = suitePoint[len(cards["cards"])]
+                            ret.append(copy.deepcopy(cards))
+                        value = 0
+                        suite = 1
+                        cards["cards"] = []
+                if (suite > 2):
+                    cards["point"] = suitePoint[len(cards["cards"])]
+                    ret.append(copy.deepcopy(cards))
+
+        return ret
+    
+    @staticmethod
+    async def _count_melds(cards):
+        clubs = []
+        spades = []
+        diamonds = []
+        hearts = []
+        bucket = {"club": clubs, "spade": spades, "diamond": diamonds, "heart": hearts}
+
+        ex = Card("-1", "none")
+        for c in cards:
+            if (type(ex) == type(c)):
+                cList = bucket[c.colors]
+                cList.append(Card(c.values, c.colors, c.id))
+            else:
+                cList = bucket[c["color"]]
+                cList.append(Card(c["value"], c["color"], c["id"]))
+
+        ret = BroadcastService._find_suit(bucket)
+        for c in clubs:
+            if (c in spades and c in diamonds and c in hearts):
+                cards = {"cards": [c.id, c.id + 9, c.id + 18, c.id + 27], "point": 0}
+                if (c.values == "J"):
+                    cards["point"] = 200
+                elif (c.values == "9"):
+                    cards["point"] = 150
+                else:
+                    cards["point"] = 100
+                ret.append(copy.deepcopy(cards))
+
+        return ret
+    
+    @staticmethod
+    async def _get_cards(room, player_data, player_id):
+        
+        game_state = room.game_state
+        game = GameEngine(room.uuid)
+        
+        init_cards = {
+                "hand": player_data["cards"],
+                "legal": game.handleAction(
+                    "legal",
+                    game_state,
+                    idPlayer=str(player_id),
+                    
+                ) if game_state["playing"] == int(player_id) else None,
+                "melds": await BroadcastService._count_melds(player_data["cards"])
+            }
+        
+        return init_cards
+    
+    @staticmethod
+    async def broadcast_game(room_code, channel_layer, message):
+        room = await get_room_with_host(room_code)
+        
+        game_state = room.game_state
+        
+        for player_id, player_data in game_state["players"].items():
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+                room_id=room.id,
+                position=int(player_id)
+            )
+            
+            board_data = await BroadcastService._board_data(room, player_id)
+            init_cards = await BroadcastService._get_cards(room, player_data, player_id)
+            
+            if p.channel_name:
+                await channel_layer.send(
+                    p.channel_name,
+                    {
+                        "type": "game_event",
+                        "event": message,
+                        "payload": {
+                            "self_card": init_cards,
+                            "board_data": board_data,
+                        }
+                    }
+                )

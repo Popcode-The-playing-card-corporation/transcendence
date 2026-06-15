@@ -1,19 +1,21 @@
 from asgiref.sync import sync_to_async
 from ..models import PlayerPresence
 from .room_task_service import RoomTaskService
+from .broadcast_service import BroadcastService
 from django.utils import timezone
 from datetime import timedelta
 from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
 from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
+from channels.layers import get_channel_layer
 import asyncio
 
 
 class BotService:
 
     @staticmethod
-    async def play_until_human(room, game_state, game, send_data_callback=None, check_end=None, check_take_fold_callback=None):
-
+    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None):
+        channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
             return game_state
@@ -27,8 +29,8 @@ class BotService:
             game_state = await BotService.play_bot(game, room.code, check_end=check_end)
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
-                if (take_fold and send_data_callback):
-                    await send_data_callback()
+                if (take_fold):
+                    await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
@@ -46,14 +48,13 @@ class BotService:
             
             game_state = await BotService.play_bot(game, room.code, check_end=check_end)
             await save_room_state(room.uuid, game_state)
-            if send_data_callback:
-                await send_data_callback()
+            await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
 
             #await asyncio.sleep(1.2)
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
-                if (take_fold and send_data_callback):
-                    await send_data_callback()
+                if (take_fold):
+                    await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
 
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)

@@ -81,8 +81,6 @@ class ScoreService:
             )(
                 score=F("score") + scores[int(player_id)]
             )
-    #@staticmethod
-    #async def save_score(room, game_state, game, send_data_callback=None, check_end=None, check_take_fold_callback=None):
 
 
 

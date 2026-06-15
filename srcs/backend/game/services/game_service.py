@@ -8,20 +8,21 @@ from game_engine.bot.bot import bot
 from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
-from game_engine.card import Card
 import copy
 from .board_service import BoardService
 from .stats_service import StatsService
 from .score_service import ScoreService
 from .bot_service import BotService
+from .broadcast_service import BroadcastService
 from .room_task_service import RoomTaskService
 from channels.layers import get_channel_layer
 
 class GameService:
 
     @staticmethod
-    async def start_game(room, send_data_callback=None, send_init_callback=None):
+    async def start_game(room):
         game = GameEngine(room.uuid)
+        channel_layer = get_channel_layer()
 
         game_state = game.handleAction(
             "start",
@@ -37,11 +38,9 @@ class GameService:
         await GameService.create_scores(room, game_state)
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         
-        if send_init_callback:
-                await send_init_callback()
+        await BroadcastService.broadcast_game(room.code, channel_layer, "game_started")
                 
-        game_state = await BotService.play_until_human(room, game_state, game, 
-                                                       send_data_callback=send_data_callback, 
+        game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold
                                                 )
@@ -67,72 +66,7 @@ class GameService:
             await sync_to_async(PlayerScore.objects.get_or_create)(
                 player=user,
                 room=room
-            )           
-
-    def findSuit(bucket):
-        cardValue = {"6": 1, "7": 2, "8": 3, "9": 4, "10": 5, "J": 6, "Q": 7, "K": 8, "A": 9}
-        suitePoint = {3: 20, 4: 50, 5: 100, 6: 150, 7: 200, 8: 250, 9: 300}
-
-        ret = []
-
-        for b in bucket.values():
-            cards = {"cards": [], "point": 0}
-            if (len(b) >= 3):
-                b = sorted(b)
-                value = 0
-                suite = 1
-                for c in b:
-                    if (value == 0):
-                        value = cardValue[c.values]
-                        cards["cards"].append(c.id)
-                        continue
-                    if (cardValue[c.values] == value + 1):
-                        value += 1
-                        suite += 1
-                        cards["cards"].append(c.id)
-                    else:
-                        if (suite > 2):
-                            cards["point"] = suitePoint[len(cards["cards"])]
-                            ret.append(copy.deepcopy(cards))
-                        value = 0
-                        suite = 1
-                        cards["cards"] = []
-                if (suite > 2):
-                    cards["point"] = suitePoint[len(cards["cards"])]
-                    ret.append(copy.deepcopy(cards))
-
-        return ret
-    
-    @staticmethod
-    async def count_melds(cards):
-        clubs = []
-        spades = []
-        diamonds = []
-        hearts = []
-        bucket = {"club": clubs, "spade": spades, "diamond": diamonds, "heart": hearts}
-
-        ex = Card("-1", "none")
-        for c in cards:
-            if (type(ex) == type(c)):
-                cList = bucket[c.colors]
-                cList.append(Card(c.values, c.colors, c.id))
-            else:
-                cList = bucket[c["color"]]
-                cList.append(Card(c["value"], c["color"], c["id"]))
-
-        ret = GameService.findSuit(bucket)
-        for c in clubs:
-            if (c in spades and c in diamonds and c in hearts):
-                cards = {"cards": [c.id, c.id + 9, c.id + 18, c.id + 27], "point": 0}
-                if (c.values == "J"):
-                    cards["point"] = 200
-                elif (c.values == "9"):
-                    cards["point"] = 150
-                else:
-                    cards["point"] = 100
-                ret.append(copy.deepcopy(cards))
-
-        return ret
+            )   
 
     @staticmethod
     async def play_card(room, user, position, card_id):
@@ -219,23 +153,9 @@ class GameService:
         points = game.handleAction("get_final_score", game_state)
         
         await ScoreService.save_final_score(room.code, room.game_state["game"], room.game_state["round"], points)
-
-        host_presence = await sync_to_async(PlayerPresence.objects.get)(
-            room=room,
-            player=room.host
-        )
+        
         channel_layer = get_channel_layer()
-        await channel_layer.send(
-            host_presence.channel_name,
-            {
-                "type": "room_event",
-                "event": "game_finished",
-                "payload": {
-                    "message": "Game finished. Continue or stop?",
-                    "actions": ["continue", "end_game"]
-                }
-            }
-        )
+        await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
     
 
     @staticmethod
@@ -257,9 +177,7 @@ class GameService:
 
     @staticmethod
     async def continue_game(
-        room,
-        send_data_callback=None,
-        send_init_callback=None
+        room
     ):
         game = GameEngine(room.uuid)
 
@@ -277,15 +195,15 @@ class GameService:
             room.uuid,
             game_state
         )
+        channel_layer = get_channel_layer()
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
-        if send_init_callback:
-                await send_init_callback()
+        await BroadcastService.broadcast_game(room.code, channel_layer, "game_continued")
+          
         
         game_state = await BotService.play_until_human(
             room,
             game_state,
             game,
-            send_data_callback,
             check_end=GameService.check_game_end,
             check_take_fold_callback=GameService.check_take_fold
         )
