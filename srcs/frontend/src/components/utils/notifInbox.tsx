@@ -14,39 +14,38 @@ export function Notif_Inbox() {
 
 
   return (
-		<div className="dropdown dropdown-end">
+	<div className="dropdown dropdown-end">
 		<div className="indicator">
 		<span
 			className={
-			"indicator-item badge bg-(--nav-color) " +
-			(notif?.inbox.length === 0 ? " hidden" : "")
+			"indicator-item badge badge-sm bg-(--nav-color) " +
+			(notif?.inbox.length === 0 ? "hidden" : "")
 			}
 		>
 			{notif?.inbox.length}
 		</span>
-		<div tabIndex={0} className="btn btn-sm" role="button">
-			<IoNotificationsOutline />
+
+		<button tabIndex={0} className="btn btn-square btn-sm" role="button">
+			<IoNotificationsOutline className="text-xl" />
+		</button>
 		</div>
-		</div>
+
 		<ul
 		tabIndex={-1}
-			className={
-			"dropdown-content bg-(--hover-color) rounded-box z-1 p-2 shadow-sm h-fit overflow-scroll" +
-			(notif?.inbox.length === 0 ? " hidden" : "")
-			}
+		className={
+			"dropdown-content menu bg-(--hover-color) rounded-box z-50 mt-2 w-72 max-h-80 overflow-y-auto p-2 shadow " +
+			(notif?.inbox.length === 0 ? "hidden" : "")
+		}
 		>
-			{notif?.inbox.map((notification) => {
-			return (
-				<li className="flex w-full my-3" key={notification.title}>
-				<div className="flex gap-6 w-full">	
-					<div className="username-request flex items-center w-2/3">
-					<p>{notification.message}</p>
-					</div>
-				</div>
-				</li>
-			);
-			})}
+		{notif?.inbox.map((notification, index) => (
+			<li key={index}>
+			<div className="block whitespace-normal">
+				<p className="font-semibold">{notification.title}</p>
+				<p className="text-sm break-words">{notification.message}</p>
+			</div>
+			</li>
+		))}
 		</ul>
 	</div>
-  );
+	);
 }

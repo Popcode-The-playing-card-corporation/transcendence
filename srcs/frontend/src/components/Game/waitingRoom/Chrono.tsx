@@ -1,19 +1,33 @@
+import { useEffect, useState } from "react";
+import { useGame } from "../context/GameContext";
+
 export default function Chrono() {
-  return (
-    <div className="flex flex-col gap-2 text-center items-center ">
-      <div className="content-center text-center">Time left</div>
-      <div className="flex flex-row w-1/2 justify-center gap-2">
-        <div className="flex flex-col p-2 bg-(--nav-color) rounded-box ">
-          <span className="countdown text-3xl font-mono">
-            <span style={{"--value":18} as React.CSSProperties} aria-live="polite">18</span>
-          </span>
-        </div>
-        <div className="flex flex-col p-2 bg-(--nav-color) rounded-box ">
-          <span className="countdown text-3xl font-mono">
-            <span style={{"--value":59, "--digits":2} as React.CSSProperties}  >59</span>
-          </span>
-        </div>
-      </div>
-    </div>
-  );
+	const timeout = useGame().state.settings.timeout;
+	const [timeLeft, setTimeLeft] = useState<number>((timeout.getTime() - new Date().getTime()) / 1000) 
+
+	useEffect(() => {
+
+	const intervalId = setInterval(() => {
+		setTimeLeft(Math.max( 0, Math.floor((timeout.getTime() - Date.now()) / 1000)));
+	}, 1000);
+
+ 	 return () => clearInterval(intervalId);
+	}, [timeout]);
+
+	const sec = timeLeft % 60;
+	const min = Math.floor(timeLeft / 60) ;
+	return (
+		<div className="grid grid-flow-col gap-5 text-center auto-cols-max">
+		<div className="flex flex-col p-2 rounded-box text-neutral-content bg-(--nav-color)">
+			<span className="countdown font-mono text-2xl">
+			<span style={{"--value":min}  as React.CSSProperties  } className="">{min}</span>
+			</span>
+		</div>
+		<div className="flex flex-col p-2 rounded-box text-neutral-content bg-(--nav-color)">
+			<span className="countdown font-mono text-2xl">
+			<span style={{"--value":sec}  as React.CSSProperties } >{sec}</span>
+			</span>
+		</div>
+		</div>
+	)
 }

@@ -1,19 +1,15 @@
-import type { SetStateAction } from "react";
+import { useGame } from "../context/GameContext";
 
-type Props = {
-	maxSize: number;
-	setSize: React.Dispatch<SetStateAction<number>>
-}
+export default function RoomSize() {
 
-export default function RoomSize({maxSize, setSize}: Props) {
-
+	const { state, setSize } = useGame();
   return (
     <div className="w-full max-w-xs">
       <input
         type="range"
         min="2"
         max="7"
-        value={maxSize}
+        value={state.settings.maxSize}
         className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
         step="1"
 		onChange={(e) => setSize(Number(e.target.value))} />

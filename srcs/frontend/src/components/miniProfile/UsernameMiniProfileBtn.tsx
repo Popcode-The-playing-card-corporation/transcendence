@@ -30,7 +30,8 @@ export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpd
 	}
 
 	async function load_mini() {
-
+		console.debug("id_passed: ", id);
+		console.debug("id from auth: ", auth.userID);
 		if (!auth.logged_in || auth.userID === id || (id >= 1 && id <= 6)) {
 			return ;
 		}

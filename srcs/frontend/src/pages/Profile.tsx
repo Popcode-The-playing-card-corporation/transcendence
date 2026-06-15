@@ -10,7 +10,7 @@ import { type friendT, type requestT } from "../utils/type/friendType";
 import { friendArray, getFriends, getRecs } from "../api/http/friend"
 import { defaultAccount, type accountT } from "../utils/type/accountType";
 import { profileRequest } from "../api/http/profile";
-import avatar1 from "../assets/avatars/avatar1.png";
+import avatar1 from "../../public/avatars/avatar1.png";
 import { type historyT } from "../utils/type/historyType";
 import { getHistory, historyArray } from "../api/http/history";
 import { useNotif } from "../components/hooks/useNotif";

@@ -38,8 +38,8 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
   return (
         <BrowserRouter>
 		  <Presence />
-		  <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/> : <></>
-		  <Navbar /> : <></>
+		  <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
+		  {auth.in_game ? null : <Navbar />}
           <NotifPopUp />
           <Routes>	
 			<Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
@@ -59,7 +59,7 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
             <Route path="/login/github/callback" element={<GitCallback />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
-		  <Footer /> : <></>
+		  {auth.in_game ? null : <Footer />}
         </BrowserRouter>
   );
 }
