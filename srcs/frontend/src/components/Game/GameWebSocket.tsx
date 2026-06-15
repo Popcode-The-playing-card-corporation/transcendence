@@ -99,6 +99,9 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 					} else if (data.event === "player_reconnect") {
 						//
 					}
+				} else if (data.event === "board_data") {
+					dispatch({ type: "SET_BOARD", payload: payload});
+					auth.setGame(true);
 				}
 				// } else if (data.type === "event") {
 				// 	if (data.event === "kicked") {
