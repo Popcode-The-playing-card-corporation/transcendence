@@ -14,7 +14,7 @@ export default function FilterGame({
   const [search, setSearch] = useState<string>("");
   const [dispFilter, setDispFilter] = useState<boolean>(false);
   const [maxPlayers, setMaxPlayers] = useState<number>(0);
-  const [typeFilter, setTypeFilter] = useState<string>("");
+  const [typeFilter, setTypeFilter] = useState<string>("All");
 
   useEffect(() => {
     const searchedGames = rawList.filter((game: availableGameT) => {
@@ -25,7 +25,7 @@ export default function FilterGame({
 
     const filteredMaxPlayerGames = searchedGames.filter(
       (game: availableGameT) => {
-        return game.max_player >= maxPlayers + 2;
+        return game.max_player >= maxPlayers;
       },
     );
 
@@ -37,7 +37,7 @@ export default function FilterGame({
     );
 
     setFilteredGames(finalFilteredGames);
-  }, [maxPlayers, search, typeFilter]);
+  }, [maxPlayers, search, typeFilter, rawList, setFilteredGames]);
 
   return (
     <div className="filterGame flex justify-between my-2 items-center sticky -top-10 bg-(--bg-color) z-10 p-3 rounded-4xl shadow-2xl -mt-12">
@@ -65,15 +65,15 @@ export default function FilterGame({
             max players
             <input
               type="range"
-              min={0}
-              max="50"
-              defaultValue="0"
+              min="2"
+              max="7"
+              defaultValue="2"
               // value={maxPlayers}
               onChange={(e) => setMaxPlayers(+e.target.value / 10)}
               className={
                 "range [--range-progress:var(--hover-color)] [--range-thumb:var(--font-color)] [--range-thumb-size:20px] glass transition-all duration-500 "
               }
-              step="10"
+              step="1"
             />
           </label>
           <div className="flex justify-between px-2.5 mt-2 text-xs">
@@ -97,7 +97,7 @@ export default function FilterGame({
             name="filter"
             aria-label="friends"
             value="friend"
-            onClick={() => setTypeFilter("friend")}
+            onClick={() => setTypeFilter("friends_only")}
           />
           <input
             className={

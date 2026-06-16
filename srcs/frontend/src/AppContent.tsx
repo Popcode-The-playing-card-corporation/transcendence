@@ -19,11 +19,11 @@ import { useState } from "react";
 import { Presence } from "./api/websockets/presence";
 import { Notifications } from "./api/websockets/notifcations";
 import { useAuth } from "./components/hooks/useAuth";
+import PrivateRoute from "./utils/routing/PrivateRoutes";
 
 function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetStateAction<string>>}) {
   const [updatedProfile, setProfile] = useState(false);
   const [updateLeaderboard, setLeaderboard] = useState(false);
-  const [isGamePage, setIsGamePage] = useState<boolean>(false)
 
   const auth = useAuth();
 
@@ -38,14 +38,14 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
   return (
         <BrowserRouter>
 		  <Presence />
-		  {!isGamePage ? <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/> : <></>}
-		  {!isGamePage ? <Navbar /> : <></>}
+		  <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
+		  {auth.in_game ? null : <Navbar />}
           <NotifPopUp />
-          <Routes>
+          <Routes>	
+			<Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
+			<Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
             <Route path="/" element={<Home />} />
-            <Route path="/game" element={<Game setIsGamePage={setIsGamePage} />} />
             <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
-            <Route path="/profile" element={<Profile setUpdate={setProfile} updatedProfile={updatedProfile} />} />
             <Route
               path="/settings"
               element={<Settings setFontChoice={setFontChoice} />}
@@ -59,7 +59,7 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
             <Route path="/login/github/callback" element={<GitCallback />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
-		  { !isGamePage ? <Footer /> : <></>}
+		  {auth.in_game ? null : <Footer />}
         </BrowserRouter>
   );
 }

@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+import tempfile
 from asgiref.sync import sync_to_async
 from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
@@ -131,11 +134,20 @@ def add_bot_to_room(user, code, difficulty):
     except Room.DoesNotExist:
         return False
 
+def getFile(code):
+		tmp_dir = Path(tempfile.gettempdir())
+
+		file_name = f"chat_{code}.tmp"
+		file = tmp_dir / file_name
+
+		return file
+
 @sync_to_async
-def remove_player_from_room(user, code, room_delete=None):
+def remove_player_from_room(user, code):
     if not user or not code:
         return
     try:
+        should_change_host = False
         room = Room.objects.select_related("host").get(code=code)
         if room.status == "start":
             PlayerPresence.objects.filter(
@@ -144,6 +156,10 @@ def remove_player_from_room(user, code, room_delete=None):
             ).update(is_online=False)
              
         if room.status not in ["start", "end"]:
+            pos = PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).values_list("position", flat=True).first()
             if room.host == user:
                 next_player = PlayerPresence.objects.filter(
                     room=room,
@@ -151,8 +167,13 @@ def remove_player_from_room(user, code, room_delete=None):
                 ).exclude(player=user).order_by("position").first()
 
                 if next_player:
-                    room.host = next_player.player
-                    room.save()
+                    bots = PlayerPresence.objects.filter(
+                        room=room,
+                        is_human=False
+                    ).count()
+                    
+                    if room.status == "open" and room.nb_player - bots > 0:
+                        should_change_host = True
                 else:
                     room.nb_player -= 1
                     room.save()
@@ -161,12 +182,7 @@ def remove_player_from_room(user, code, room_delete=None):
                         player=user,
                         room=room
                     ).delete()
-                    return
     
-            pos = PlayerPresence.objects.filter(
-                player=user,
-                room=room
-            ).values_list("position", flat=True).first()
             
             if pos is None:
                 PlayerPresence.objects.filter(
@@ -191,18 +207,18 @@ def remove_player_from_room(user, code, room_delete=None):
                 player=user,
                 room=room
             ).delete()
-
+        return {
+            "should_change_host": should_change_host,
+            "room_id": room.id,
+            "user": user
+        }
     except Room.DoesNotExist:
         pass
 
 
 @sync_to_async
 def get_room_with_host(code):
-    if not sync_to_async(
-        Room.objects.filter(code=code).exists
-    )():
-        return None
-    return Room.objects.select_related("host").get(code=code)
+    return Room.objects.select_related("host").filter(code=code).first()
 
 @sync_to_async
 def start_room(uuid, data):

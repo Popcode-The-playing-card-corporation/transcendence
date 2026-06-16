@@ -2,7 +2,7 @@ import type { accountT } from '../../utils/type/accountType'
 import axios, { AxiosError } from 'axios'
 import { getError, type backendErrorT, type errorT } from '../../utils/type/errorType';
 import host from './host'
-import avatar1 from "../../assets/avatars/avatar1.png";
+import avatar1 from "../../../public/avatars/avatar1.png";
 
 export async function profileRequest(): Promise<accountT | errorT> {
 	try {
@@ -11,6 +11,20 @@ export async function profileRequest(): Promise<accountT | errorT> {
 		if (result.avatar === "")
 			changeAvatar(avatar1);
 		return result;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
+export async function deleteAccount(): Promise<errorT> {
+	try {
+		await axios.post(host.http + 'delete/', {}, { timeout: 2000, withCredentials: true});
+		return {code: 200, response: "success"};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {

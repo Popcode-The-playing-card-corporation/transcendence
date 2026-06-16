@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import React, { useState, useEffect, type SetStateAction } from "react";
 import { Friends } from "../components/Profile/FriendsPart";
 import { History } from "../components/Profile/HistoryPart";
@@ -10,7 +10,7 @@ import { type friendT, type requestT } from "../utils/type/friendType";
 import { friendArray, getFriends, getRecs } from "../api/http/friend"
 import { defaultAccount, type accountT } from "../utils/type/accountType";
 import { profileRequest } from "../api/http/profile";
-import avatar1 from "../assets/avatars/avatar1.png";
+import avatar1 from "../../public/avatars/avatar1.png";
 import { type historyT } from "../utils/type/historyType";
 import { getHistory, historyArray } from "../api/http/history";
 import { useNotif } from "../components/hooks/useNotif";
@@ -45,14 +45,11 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
 	const [profile, setProfile] = useState<accountT>(defaultAccount);
   	const [updatedFriends, setFriendUpdate] = useState(false);
 	const navigate = useNavigate();
+	const location = useLocation();
 	const notif = useNotif();
 	const auth = useAuth();
 
 	useEffect(() => {
-
-		if (!auth.logged_in) {
-			return login_error("Authentication error:", "Please log in again.");
-		}
 
 		function login_error(title:string, message:string) {
 			if (!auth.logging) {
@@ -64,7 +61,11 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
 		}
 
 		function other_error(title:string, message:string) {
-			navigate('/', {state: "/profile"});
+			if (location.state) {
+				navigate(location.state, {state: "/profile"});
+			} else {
+				navigate('/', {state: "/profile"})
+			}
 			notif?.showNotif(title, message, 5000);
 			setValid(false);
 			return ;

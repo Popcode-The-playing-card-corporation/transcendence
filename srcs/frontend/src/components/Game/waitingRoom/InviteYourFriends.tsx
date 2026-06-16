@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState} from "react";
 import { friendArray, getFriends } from "../../../api/http/friend";
-import { useNavigate } from "react-router";
 import { useNotif } from "../../hooks/useNotif";
 import type { friendT, requestT } from "../../../utils/type/friendType";
 import { useAuth } from "../../hooks/useAuth";
+import { inviteFriend } from "../../../api/http/game";
 
 function getRequests(friend_list: friendT[]): {
     friends: friendT[];
@@ -26,15 +26,14 @@ export default function InviteYourFriends() {
   const showFriendsList = useRef<HTMLDialogElement>(null);
 	const [friends, setFriends] = useState<friendT[]>([]);
 	const [valid, setValid] = useState<boolean | null>(null);
-	const navigate = useNavigate();
 	const notif = useNotif();
 	const auth = useAuth();
+	const [invites, setInvites] = useState<number[]>([]);
 
   useEffect(() => {
 
 		function login_error(title:string, message:string) {
 			if (!auth.logging) {
-				navigate('/login', {state: "/profile"});
 				notif?.showNotif(title, message, 5000);
 			}
 			setValid(false);
@@ -42,7 +41,6 @@ export default function InviteYourFriends() {
 		}
 
 		function other_error(title:string, message:string) {
-			navigate('/', {state: "/profile"});
 			notif?.showNotif(title, message, 5000);
 			setValid(false);
 			return ;
@@ -52,18 +50,18 @@ export default function InviteYourFriends() {
       const friendlist = await getFriends();
 			if ("code" in friendlist) {
 				if (friendlist.code === 401) {
-					return login_error("Authentication error:", "Please log in again.");
+					return login_error("Authentication error:", "Please try again.");
 				} else {
 					return other_error("Error " + friendlist.code + ":", friendlist.response);
 				}
 			}
-
-			setFriends(getRequests(friendArray(friendlist)).friends);
+			const tmp_list = getRequests(friendArray(friendlist)).friends
+			setFriends(tmp_list);
 
       setValid(true);
     }
     getFriendList();
-  }, [navigate, notif, auth.logging])
+  }, [notif, auth.logging])
 
 	if (valid === null) {
 		return (
@@ -77,11 +75,27 @@ export default function InviteYourFriends() {
 		return ;
 	}
 
+	async function sendInvite(friendID:number) {
+		if (invites.includes(friendID))
+			return ;
+		const res = await inviteFriend(friendID);
+		if ("code" in res) {
+			notif?.showNotif("Invite Error", res.response, 5000);
+		} else {
+			setInvites((prev) => [...prev, friendID]);
+		}
+	}
+
+	function handleJoin() {
+		setInvites([]);
+		showFriendsList.current?.showModal()
+	}
+
   return (
     <div className="flex justify-center">
       <button
         className="btn "
-        onClick={() => showFriendsList.current?.showModal()}
+        onClick={handleJoin}
       >
         Invite your friends
       </button>
@@ -98,15 +112,12 @@ export default function InviteYourFriends() {
                     {friend.user.username}
                   </td>
                   <td>
-                    <label className="swap btn">
-                      <input type="checkbox" />
-                      <div className="swap-off fill-current">
-                        Invite
-                      </div>
-                      <div className="swap-on fill-current" onClick={() => notif?.showNotif("Invitation", friend.user.username)}>
-                        Sent
-                      </div>
-                    </label>
+					<button
+						className="swap btn"
+						onClick={() => sendInvite(friend.id)}
+					>
+						{!(invites.includes(friend.id)) ? "Invite" : "Sent"}
+					</button>
                   </td>
                 </tr>
               ))}

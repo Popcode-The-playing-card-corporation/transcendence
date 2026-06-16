@@ -27,10 +27,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
     
-        await self.channel_layer.group_discard(
-            self.user_group,
-            self.channel_name
-        )
+        if self.user_group:
+            await self.channel_layer.group_discard(
+				self.user_group,
+				self.channel_name
+			)
     
     async def notify(self, event):
 

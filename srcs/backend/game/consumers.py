@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from .models import PlayerPresence, Room, PlayerScore, Stat
+from .models import PlayerPresence, Room, PlayerScore, Stat, GameLog
 from api.models import Friendship, User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
@@ -153,7 +153,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             self.user,
             self.code
         )
-    
+        
+        if result == None:
+            return
         room = result["room"]
     
         await RoomConnectionService.broadcast_player_list(
@@ -198,13 +200,18 @@ class RoomConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-        
+            if data.get("type") == "heartbeat":
+                await self.send(text_data=json.dumps({
+					"type": "acknowledge"
+				}))
+                return
+                
             if data.get("type") != "action":
                 return await self.error("Unknown message type")
         
             action = data.get("action")
             payload = data.get("payload", {})
-        
+            
             handler_name = ACTION_HANDLERS.get(action)
         
             if not handler_name:
@@ -285,6 +292,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = room.game_state
 
         take_fold, game_state = await GameService.check_take_fold(game_state, room)
+
         if (take_fold):
             await self.send_data()
 
@@ -346,6 +354,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
     
+        room = await get_room_with_host(self.code)
+        await RoomConnectionService.broadcast_player_list(room, self.channel_layer)
+        
         if result["kicked_channel"]:
             await self.channel_layer.send(
                 result["kicked_channel"],
@@ -553,15 +564,73 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "hand": len(player_data["cards"]),
                 "user": {"id": p.player.id, "username": p.player.username, "avatar": p.player.avatar}
             }
+            
         
+        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+			room_id=room.id,
+            player=self.user
+        )
+        
+        logs = await sync_to_async(list)(
+            GameLog.objects.filter(room=room)
+        )
+        detailed_points = {}
+
+        nb_round = int(36 / room.nb_player)
+        for log in logs:
+            player = await sync_to_async(
+                PlayerPresence.objects.select_related("player").get
+            )(
+                room_id=log.room_id,
+                player_id=log.player_id
+            )
+        
+            if log.game not in detailed_points:
+                detailed_points[log.game] = {}
+            
+            if log.round == nb_round:
+                if "total" not in detailed_points[log.game]:
+                    detailed_points[log.game]["total"] = []
+            
+                detailed_points[log.game]["is_finished"] = True
+            
+                detailed_points[log.game]["total"].append({
+                    "id": player.player_id,
+                    "username": player.player.username,
+                    "score": log.score,
+                })
+            else:
+                if log.round not in detailed_points[log.game]:
+                    detailed_points[log.game][log.round] = []
+            
+                detailed_points[log.game][log.round].append({
+                    "id": player.player_id,
+                    "username": player.player.username,
+                    "score": log.score,
+                })
+                
+        tmp_board = game_state['board']
+        asked = tmp_board.get('asked')
+        if asked:
+            board = []
+            for id, cards in tmp_board.items():
+                if id == "asked":
+                    continue
+                board.append({"room_id":id, "card":cards})
+        else:
+            board = []
+            
         await self.channel_layer.group_send(
             self.group_name,
             {
                 "type": "room_event",
                 "event": "board_data",
                 "payload": {
-                    "board": game_state["board"],
-                    "puntos": player_puntos,
+                    "self_id": p.position,
+                    "board": board,
+                    "asked": asked,
+                    "points": player_puntos,
+                    "detailed_points": detailed_points,
                     "playing": game_state["playing"],
                     "player_list": player_list,
                     "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
@@ -571,8 +640,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
-    
-    
     
     def get_username(self):
         user = self.scope.get("user")

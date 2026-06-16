@@ -30,8 +30,7 @@ export function Presence() {
 
 		},
 
-		onMessage: (event) => {
-			console.log("Presence message: ", event.data);
+		onMessage: () => {
 		},
 	});
 	return null;

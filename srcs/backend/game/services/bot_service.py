@@ -30,7 +30,7 @@ class BotService:
 
             game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
             
-            game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+            game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%d/%m/%Y %H:%M:%S")
             
             await save_room_state(room.uuid, game_state)
             
