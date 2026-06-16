@@ -10,7 +10,6 @@ export default function GameVisual() {
       <Board />
       <Hand />
       <OrbitControls />
-      <axesHelper />
 
     </Canvas>
   );

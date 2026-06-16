@@ -12,12 +12,13 @@ export default function Board() {
   const textureBack = useLoader(TextureLoader, loadTexture("back")!);
   const idPlayer = 3;
   const totalPlayer = adversaries.length + 1;
+  const boardRadius = 3;
 
 
   return (
     <>
       <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, -2]}>
-        <circleGeometry args={[3, 50]}/>
+        <circleGeometry args={[boardRadius, 50]}/>
         <meshStandardMaterial color={"#7d02b4"}/>
         {cards.map((card) => {
           return (
@@ -31,7 +32,9 @@ export default function Board() {
         );})}
         {adversaries.map((adversary) => {
           return(
-            <Adversary cardHand={adversary} textureBack={textureBack} totalPlayer={totalPlayer}/>
+            <>
+              <Adversary cardHand={adversary} textureBack={textureBack} totalPlayer={totalPlayer} boardRadius={boardRadius}/>
+            </>
           );
         })}
       </mesh>

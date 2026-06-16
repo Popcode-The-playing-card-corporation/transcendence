@@ -5,23 +5,25 @@ import AdversaryHand from "./AdversaryHand";
 type Props = {
   cardHand: adversaryT, 
   textureBack: Texture<HTMLImageElement, TextureEventMap>,
-  totalPlayer: number
+  totalPlayer: number,
+  boardRadius: number
 }
 
-export default function Adversary({cardHand, textureBack, totalPlayer} : Props) {
+export default function Adversary({cardHand, textureBack, totalPlayer, boardRadius} : Props) {
   const angleCenter = 360 / totalPlayer * Math.PI / 180;
-  const distance = Math.cos(angleCenter / 2) * 3;
+  const distance = Math.cos(angleCenter / 2) * boardRadius;
 
   return (
       <mesh
         rotation={[0, 0, angleCenter * (cardHand.position + 1)]}
-        position={[distance * Math.sin(angleCenter * (cardHand.position + 1)) * 3, distance *  -Math.cos(angleCenter * (cardHand.position + 1)) * 3, 0]}
+        position={[distance * Math.sin(angleCenter * (cardHand.position + 1)), distance *  -Math.cos(angleCenter * (cardHand.position + 1)), 0]}
       >
           <AdversaryHand
             angleCenter={angleCenter}
             cardHand={cardHand}
             textureBack={textureBack}
             totalPlayer={totalPlayer}
+            boardRadius={boardRadius}
           />
       </mesh>
   );

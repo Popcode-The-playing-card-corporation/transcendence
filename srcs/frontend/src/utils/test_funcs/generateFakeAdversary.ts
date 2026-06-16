@@ -4,15 +4,15 @@ export default function generateFakeAdversary() : adversaryT[]{
   return [
     {
       position: 0,
-      nbCards: 9
+      nbCards: 5
     },
     {
       position: 1,
-      nbCards: 9
+      nbCards: 5
     },
     {
       position: 2,
-      nbCards: 9
+      nbCards: 5
     },
     {
       position: 3,
