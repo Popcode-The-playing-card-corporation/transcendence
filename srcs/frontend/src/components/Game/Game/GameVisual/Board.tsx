@@ -1,18 +1,40 @@
-import generateFakeBoard from "../../../../utils/test_funcs/generateBoard";
+import generateFakeBoard from "../../../../utils/test_funcs/generateFakeBoard";
+import Adversary from "./Adversary";
 import PlayedCard from "./PlayedCard";
+import generateFakeAdversary from "../../../../utils/test_funcs/generateFakeAdversary";
+import { Texture, type TextureEventMap } from "three";
 
-export default function Board() {
+export default function Board({back} : {back: Texture<HTMLImageElement, TextureEventMap>}) {
   const cards = generateFakeBoard();
+  const adversaries = generateFakeAdversary();
   const idPlayer = 3;
+  const totalPlayer = adversaries.length + 1;
+  const boardRadius = 3;
+
 
   return (
-    <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, -2]}>
-      <circleGeometry args={[3, 50]}/>
-      <meshStandardMaterial color={"#7d02b4"}/>
-      {cards.map((card) => {
-        return (
-          <PlayedCard card={card.value + card.color} id={(card.id - idPlayer) % 4} total={cards.length}/>
-      );})}
-    </mesh>
+    <>
+      <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, -2]}>
+        <circleGeometry args={[boardRadius, 50]}/>
+        <meshStandardMaterial color={"#7d02b4"}/>
+        {cards.map((card) => {
+          return (
+            <>
+              {card.position === idPlayer ? "" : (
+                <>
+                  <PlayedCard card={card.card.value + card.card.color} id={(card.position - idPlayer) % totalPlayer} total={totalPlayer}/>
+                </>
+              )}
+            </>
+        );})}
+        {adversaries.map((adversary) => {
+          return(
+            <>
+              <Adversary cardHand={adversary} back={back} totalPlayer={totalPlayer} boardRadius={boardRadius}/>
+            </>
+          );
+        })}
+      </mesh>
+    </>
   );
 }

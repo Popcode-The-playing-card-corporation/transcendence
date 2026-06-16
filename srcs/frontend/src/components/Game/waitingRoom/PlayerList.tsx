@@ -4,7 +4,7 @@ import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
 import { useState } from "react";
 import { type playerT } from "../../../utils/type/playerType";
 
-export default function PlayerList({logged_in} : {logged_in : boolean}) {
+export default function PlayerList() {
   const [fakePlayers, setFakePlayers] = useState<playerT[]>(generateFakePlayerList())
 
   function removePlayer(playerId: number) {
@@ -28,7 +28,7 @@ export default function PlayerList({logged_in} : {logged_in : boolean}) {
                   {fakePlayers.indexOf(player) + 1}
                 </td>
                 <td >
-                  <UsernameMiniProfileBtn id={player.id} name={player.username} logged_in={logged_in}/>
+                  <UsernameMiniProfileBtn id={player.id} name={player.username}/>
                 </td>
                 <td>
                   {player.id !== 0 ? (

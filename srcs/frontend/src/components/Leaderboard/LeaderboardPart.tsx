@@ -1,7 +1,7 @@
 import type { leaderboardT } from "../../utils/type/leaderboardType";
 import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 
-export function LeaderboardPart({tmp_leaderboard, logged_in}:{tmp_leaderboard:leaderboardT, logged_in:boolean}) {
+export function LeaderboardPart({tmp_leaderboard}:{tmp_leaderboard:leaderboardT}) {
 
   const current = tmp_leaderboard.current;
   const leaderboard = tmp_leaderboard.leaderboard;
@@ -22,7 +22,7 @@ export function LeaderboardPart({tmp_leaderboard, logged_in}:{tmp_leaderboard:le
         {leaderboard.map((player) => (
           <tr className="h-10 border-y border-(--bg-color)">
             <td className="text-center">{leaderboard.indexOf(player) + 1}</td>
-            <td className="text-center"><UsernameMiniProfileBtn id={player.id} name={player.username} logged_in={logged_in} /></td>
+            {current.username === player.username ? <td className="text-center">{player.username}</td> : <td className="text-center"><UsernameMiniProfileBtn id={player.id} name={player.username} /></td>}
             <td className="text-center">{player.score}</td>
           </tr>
         ))}

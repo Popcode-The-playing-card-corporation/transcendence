@@ -20,7 +20,7 @@ export default function FilterGame({
     const searchedGames = rawList.filter((game: availableGameT) => {
       if (!search) return true;
       const lower = search.toLocaleLowerCase();
-      return game.host.toLocaleLowerCase().includes(lower);
+      return game.host.username.toLocaleLowerCase().includes(lower);
     });
 
     const filteredMaxPlayerGames = searchedGames.filter(

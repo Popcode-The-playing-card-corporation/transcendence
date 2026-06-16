@@ -8,11 +8,10 @@ import type { errorT } from "../../utils/type/errorType";
 type Props = {
   history:historyT[] | errorT;
   updatedProfile:boolean;
-  logged_in:boolean;
   setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function MiniHistory({history, updatedProfile, logged_in, setUpdate}:Props) {
+export function MiniHistory({history, updatedProfile, setUpdate}:Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10);
 
@@ -84,7 +83,7 @@ export function MiniHistory({history, updatedProfile, logged_in, setUpdate}:Prop
                   >
                     {game.players.map((player: playerT) => (
 					<li>
-							<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} logged_in={logged_in} setUpdate={setUpdate}/>
+							<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate}/>
 					</li>
                     ))}
                   </ul>

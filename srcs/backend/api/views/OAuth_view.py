@@ -42,8 +42,11 @@ def OAUTH_Success(user, message):
 def check_username(User, new_username, api):
 	if (api == 'google'):
 		new_username = new_username.split('@')[0]
-	i = 1
-	while (User.objects.filter(username=new_username)):
+	i = ""
+	tmp_user = new_username
+	while (User.objects.filter(username=(tmp_user + str(i)))):
+		if not i:
+			i = 1
 		new_username = new_username + str(i)
 		i += 1
 	new_username = new_username.strip()

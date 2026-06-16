@@ -16,13 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .auth import VerifyCookie, RefreshCookie
+from .auth import VerifyCookie
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('api.urls')),
     path('', include('game.urls')),
-    path("api/token/refresh/", RefreshCookie),
     path("api/token/verify/", VerifyCookie)
 ]

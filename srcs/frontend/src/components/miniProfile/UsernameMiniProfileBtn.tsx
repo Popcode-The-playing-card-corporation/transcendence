@@ -7,29 +7,30 @@ import { getProfile } from "../../api/http/friend";
 import { type historyT } from "../../utils/type/historyType";
 import { getPlayerHistory, historyArray } from "../../api/http/history";
 import { useNotif } from "../hooks/useNotif";
+import { useAuth } from "../hooks/useAuth";
 
 type Props = {
   id: number;
   name: string;
   updatedFriends?: boolean;
-  logged_in: boolean;
   setUpdate?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 
-export default function UsernameMiniProfileBtn({id, name, updatedFriends, logged_in, setUpdate}: Props) {
+export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpdate}: Props) {
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
   	
   const [account, setAccount] = useState<profileT | errorT>({code:200, response:""})
   const [history, setHistory] = useState<historyT[] | errorT>({code:200, response:""});
   const notif = useNotif();
+  const auth = useAuth();
 
 	async function Sendnotif(title:string, message:string) {
 		notif?.showNotif(title, message, 5000);
 	}
 
 	async function load_mini() {
-		if (!logged_in) {
+		if (!auth.logged_in) {
 			return ;
 		}
 		const tmp_account = await getProfile(id);
@@ -62,7 +63,7 @@ export default function UsernameMiniProfileBtn({id, name, updatedFriends, logged
       className="modal"
       ref={showMiniProfileRef}
     >
-      <MiniProfile account={account} updatedFriends={updatedFriends} logged_in={logged_in} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef}/>
+      <MiniProfile account={account} updatedFriends={updatedFriends} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef}/>
     </dialog>
       </>
 	);

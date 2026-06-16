@@ -4,17 +4,18 @@ import { defaultLeaderboard, type leaderboardT } from "../utils/type/leaderboard
 import { useEffect, useState } from "react";
 import { getLeaderboard, leaderboardArray } from "../api/http/leaderboard";
 import { useNotif } from "../components/hooks/useNotif";
+import { useAuth } from "../components/hooks/useAuth";
 
 type Props = {
-	logged_in: boolean;
 	updateLeaderboard: boolean;
 }
-export function Leaderboard({logged_in, updateLeaderboard}:Props) {
+export function Leaderboard({updateLeaderboard}:Props) {
 
 	const navigate = useNavigate();
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [leaderboard, setLeaderboard] = useState<leaderboardT>(defaultLeaderboard)
 	const notif = useNotif();
+	const auth = useAuth();
 
 	useEffect(() => {
 
@@ -27,7 +28,7 @@ export function Leaderboard({logged_in, updateLeaderboard}:Props) {
 
 		async function load_leaderboard() {
 			
-			const tmp_leaderboard = await getLeaderboard(logged_in);
+			const tmp_leaderboard = await getLeaderboard(auth.logged_in);
 			if ("code" in tmp_leaderboard) {
 				return other_error(tmp_leaderboard.response);
 			}
@@ -35,12 +36,12 @@ export function Leaderboard({logged_in, updateLeaderboard}:Props) {
 			setValid(true);
 		}
 		load_leaderboard();
-	}, [navigate, logged_in, notif, updateLeaderboard])
+	}, [navigate, auth.logged_in, notif, updateLeaderboard])
 
 	if (valid === null) {
 	  return (
-		<div className="page-content mt-17">
-			<span className="loading loading-spinner text-secondary"></span>
+		<div className="page-content flex items-center justify-center min-h-screen">
+			<span className="loading loading-spinner loading-xl"></span>
 		</div>
 	);
 	}
@@ -56,7 +57,7 @@ export function Leaderboard({logged_in, updateLeaderboard}:Props) {
   return (
     <div className="page-content my-17">
       <h1>Leaderboard</h1>
-      <LeaderboardPart tmp_leaderboard={leaderboard} logged_in={logged_in} />
+      <LeaderboardPart tmp_leaderboard={leaderboard}/>
     </div>
   );
 }

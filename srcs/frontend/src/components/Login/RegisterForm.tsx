@@ -5,13 +5,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import avatar from "../../assets/avatars/avatar1.png";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
+import { useAuth } from "../hooks/useAuth";
 
 export function RegisterForm({
   setCreated,
-  setLoggedIn,
 }: {
   setCreated: Dispatch<SetStateAction<boolean>>;
-  setLoggedIn: Dispatch<SetStateAction<boolean>>;
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,6 +19,7 @@ export function RegisterForm({
   const [failure, setFailure] = useState(false);
   const [reason, setReason] = useState<errorT>({code:200, response:""});
 
+  const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -79,7 +79,7 @@ export function RegisterForm({
 
     const result = await registerRequest(trimmedEmail, trimmedName, password, avatar);
     if (!('code' in result)) {
-        setLoggedIn(true);
+        (auth.setLoggedIn(true));
 		registerSuccess();
         return;
     }

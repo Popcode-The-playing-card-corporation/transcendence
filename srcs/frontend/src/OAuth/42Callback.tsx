@@ -1,13 +1,15 @@
-import { useEffect, useRef, type SetStateAction } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import host from "../api/http/host";
 import { useNotif } from "../components/hooks/useNotif";
+import { useAuth } from "../components/hooks/useAuth";
 
-export function FortyTwoCallback({setLoggedIn}:{setLoggedIn:React.Dispatch<SetStateAction<boolean>>}) {
+export function FortyTwoCallback() {
   const navigate = useNavigate();
   const location = useLocation();
   const notif = useNotif();
+  const auth = useAuth();
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export function FortyTwoCallback({setLoggedIn}:{setLoggedIn:React.Dispatch<SetSt
           { code:code },
           { withCredentials: true }
         );
-		setLoggedIn(true);
+		auth.setLoggedIn(true);
 		const redirect = sessionStorage.getItem("login_redirect") || "/";
 		sessionStorage.removeItem("login_redirect");
 		navigate(redirect);
@@ -40,7 +42,7 @@ export function FortyTwoCallback({setLoggedIn}:{setLoggedIn:React.Dispatch<SetSt
     }
 
     FortyTwoLogin();
-  }, [navigate, location, setLoggedIn, notif]);
+  }, [navigate, location, auth, auth.setLoggedIn, notif]);
 
 return (
 	<div className="page-content flex items-center justify-center min-h-screen">

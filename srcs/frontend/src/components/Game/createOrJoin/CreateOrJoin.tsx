@@ -1,11 +1,12 @@
 import { FaPlay } from "react-icons/fa";
-import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable";
+// import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable";
 import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
 import React, { useState, type SetStateAction } from "react";
 import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
+import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable.tsx";
 
-export default function CreateOrJoin({logged_in, setIsInGame}: {logged_in: boolean, setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
+export default function CreateOrJoin({setIsInGame}: {setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
   const availableGames = createFakeGame();
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
 
@@ -42,7 +43,7 @@ export default function CreateOrJoin({logged_in, setIsInGame}: {logged_in: boole
               {filteredGames.map((game) => {
                 return (
                   <tr>
-                    <td>{game.host}'s room</td>
+                    <td>{game.host.username}'s room</td>
                     <td>{game.type}</td>
                     <td>
                       <div className="dropdown">
@@ -63,7 +64,6 @@ export default function CreateOrJoin({logged_in, setIsInGame}: {logged_in: boole
                                 <UsernameMiniProfileBtn
                                   id={player.id}
                                   name={player.username}
-								  logged_in={logged_in}
                                 />
                               </a>
                             </li>

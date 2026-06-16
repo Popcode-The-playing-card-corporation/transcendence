@@ -6,11 +6,10 @@ import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 type Props = {
   gameHistory:historyT[];
   updatedProfile:boolean;
-  logged_in:boolean;
   setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function History({gameHistory, updatedProfile, logged_in, setUpdate}: Props) {
+export function History({gameHistory, updatedProfile, setUpdate}: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10)
 
@@ -65,7 +64,7 @@ export function History({gameHistory, updatedProfile, logged_in, setUpdate}: Pro
               >
                 {game.players.map((player: playerT) => (
                   <li>
-			  			<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} logged_in={logged_in} setUpdate={setUpdate}/>
+			  			<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate}/>
                   </li>
                 ))}
               </ul>

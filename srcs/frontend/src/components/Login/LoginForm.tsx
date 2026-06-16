@@ -4,13 +4,12 @@ import { loginRequest } from "../../api/http/login";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
+import { useAuth } from "../hooks/useAuth";
 
 export function LoginForm({
   setCreated,
-  setLoggedIn,
 }: {
   setCreated: Dispatch<SetStateAction<boolean>>;
-  setLoggedIn: React.Dispatch<SetStateAction<boolean>>;
 }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -18,6 +17,7 @@ export function LoginForm({
   const [reason, setReason] = useState<errorT>({ code: 200, response: "" });
   const location = useLocation();
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -48,7 +48,7 @@ export function LoginForm({
 
     const result = await loginRequest(name, password);
     if (result.code == 200) {
-		setLoggedIn(true);
+		auth.setLoggedIn(true);
 		loginSuccess();
         return;
     }

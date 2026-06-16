@@ -7,6 +7,8 @@ from ..models import Room, PlayerPresence, GameLog
 from api.models import User, Friendship
 from ..serializers import RoomSerializer
 from django.db.models import Q
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from ..db import add_bot_to_room
 import uuid
 
@@ -19,6 +21,41 @@ def create_room(request):
         code=room_code,
         host=request.user
     )
+    
+    friendships = list(
+        Friendship.objects.filter(
+            Q(from_user=request.user) |
+            Q(to_user=request.user),
+            status="accepted"
+        ).select_related("from_user", "to_user")
+    )
+    channel_layer = get_channel_layer()
+    for friendship in friendships:
+        target = (
+            friendship.to_user
+            if friendship.from_user == request.user
+            else friendship.from_user
+        )
+
+        if target.is_online:
+
+            async_to_sync(channel_layer.group_send)(
+                f"user_{target.id}",
+                {
+                    "type": "notify",
+                    "event": "notification",
+                    "type_notify": "game_created",
+            
+                    "payload": {
+                        "code": room_code,
+                        "from_user": request.user.username,
+                        "from_user_id": request.user.id,
+                        "message": f"{request.user.username} create a game"
+                    }
+                }
+            )
+    
+    
     return Response(RoomSerializer(room).data, status=201)
 
 @api_view(["POST"])
@@ -36,7 +73,8 @@ def add_bot(request, code, nb_bot):
     room = Room.objects.get(
         code=code
     )
-    if room.nb_player + nb_bot >= room.max_player:
+
+    if (room.nb_player + nb_bot) > room.max_player:
         return Response(
             {"message": "too many player in that room"},
             status= 401
@@ -198,13 +236,13 @@ def list_public_room(request, data):
         ]
 
         data.append({
-            "id": room.id,
             "code": room.code,
             "type": "public",
             "is_friend": value["has_friend"],
             "nb_player": room.nb_player,
+            "max_player": room.max_player,
             "list_player": list_player,
-            "host": room.host.username if room.host else None,
+            "host": { "username":room.host.username, "id":room.host.id },
         })
     
     return data
@@ -268,13 +306,13 @@ def list_friend_room(request, data):
         ]
 
         data.append({
-            "id": room.id,
             "code": room.code,
             "type": "friends_only",
             "is_friend": True,
             "nb_player": room.nb_player,
+            "max_player": room.max_player,
             "list_player": list_player,
-            "host": room.host.username if room.host else None,
+            "host": { "username":room.host.username, "id":room.host.id },
         })
 
     return data
@@ -290,61 +328,19 @@ def list_room(request):
     return Response(data, status=200)
     
 
-#TODO only one game start at the time in the db by user
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def list_my_started_room(request):
 
-    rooms = Room.objects.filter(
-        status="start"
-    )
+    presence = PlayerPresence.objects.select_related("room").filter(
+        player=request.user,
+        room__status="start"
+    ).first()
 
-    presences = PlayerPresence.objects.filter(
-        room__in=rooms,
-    ).select_related("player", "room")
-
-    room_map = {}
-
-    for p in presences:
-        print(p)
-        room_id = p.room.id
-
-        if room_id not in room_map:
-            room_map[room_id] = {
-                "room": p.room,
-                "players": [],
-                "present": False
-            }
-
-        room_map[room_id]["players"].append(p)
-
-        if request.user == p.player:
-            room_map[room_id]["present"] = True
-
-    data = []
-
-    for value in room_map.values():
-
-        if not value["present"]:
-            continue
-
-        room = value["room"]
-
-        list_player = [
-            {
-                "username": p.player.username
-            }
-            for p in value["players"]
-        ]
-
-        data.append({
-            "id": room.id,
-            "code": room.code,
-            "nb_player": room.nb_player,
-            "list_player": list_player,
-            "host": room.host.username if room.host else None,
-        })
+    data ={
+        "code": presence.room.code,
+    }
 
     return Response(data, status=200)
 
@@ -359,8 +355,16 @@ def update_params(request, code):
             {"message": "No room with this code"},
             status= 401
         )
+    room = Room.objects.get(code=code)
+    
+    if room.host != request.user:
+        return Response(
+            {"message": "Only host can do this"},
+            status= 403
+        )
+    
     if "max_player" in request.data:
-        if request.data["max_player"] > 7 or request.data["max_player"] < 2:
+        if request.data["max_player"] > 7 or request.data["max_player"] < 1:
             return Response(
                 {"message": "Invalid number of player max"},
                 status= 401
@@ -379,10 +383,73 @@ def update_params(request, code):
                 status= 401
             )
     
-    room = Room.objects.get(code=code)
+    
     serializer = RoomSerializer(room, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
+        room = Room.objects.get(code=code)
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            f"room_{room.code}",
+            {
+                "type": "params_event",
+                "event": "update",
+                "payload": {
+                    "code": room.code,
+                    "status": room.status,
+                    "max_player": room.max_player,
+                    "type": room.type
+				}
+            }
+        )
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
+
+@api_view(["POST"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def invite_friend(request, friend_id):
+    
+    if not Friendship.objects.filter(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            id=friend_id,
+        ).exists():
+        return Response(
+            {"message": "This is not your friend"},
+            status= 404
+		)
+    
+    friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            id=friend_id,
+        )
+    target = (
+        friendship.to_user
+        if friendship.from_user == request.user
+        else friendship.from_user
+    )
+    p = PlayerPresence.objects.filter(
+		player=request.user,
+        room__status="open"
+	).select_related("player", "room").first()
+    
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"user_{target.id}",
+        {
+            "type": "notify",
+            "event": "notification",
+            "type_notify": "friend_invite",
+    
+            "payload": {
+                "code": p.room.code,
+                "from_user": request.user.username,
+                "from_user_id": request.user.id,
+                "message": f"{request.user.username} invite you"
+            }
+        }
+    )
+    
+    return Response({"success": True}, status=200)
 

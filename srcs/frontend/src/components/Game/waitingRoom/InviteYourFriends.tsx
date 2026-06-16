@@ -3,6 +3,7 @@ import { friendArray, getFriends } from "../../../api/http/friend";
 import { useNavigate } from "react-router";
 import { useNotif } from "../../hooks/useNotif";
 import type { friendT, requestT } from "../../../utils/type/friendType";
+import { useAuth } from "../../hooks/useAuth";
 
 function getRequests(friend_list: friendT[]): {
     friends: friendT[];
@@ -21,17 +22,18 @@ function getRequests(friend_list: friendT[]): {
     return { friends: friends, requests: requests };
   }
 
-export default function InviteYourFriends({logging}:{logging:boolean}) {
+export default function InviteYourFriends() {
   const showFriendsList = useRef<HTMLDialogElement>(null);
 	const [friends, setFriends] = useState<friendT[]>([]);
 	const [valid, setValid] = useState<boolean | null>(null);
 	const navigate = useNavigate();
 	const notif = useNotif();
+	const auth = useAuth();
 
   useEffect(() => {
 
 		function login_error(title:string, message:string) {
-			if (!logging) {
+			if (!auth.logging) {
 				navigate('/login', {state: "/profile"});
 				notif?.showNotif(title, message, 5000);
 			}
@@ -61,7 +63,7 @@ export default function InviteYourFriends({logging}:{logging:boolean}) {
       setValid(true);
     }
     getFriendList();
-  }, [navigate, notif, logging])
+  }, [navigate, notif, auth.logging])
 
 	if (valid === null) {
 		return (

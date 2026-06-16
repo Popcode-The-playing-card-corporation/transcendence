@@ -1,0 +1,2 @@
+
+ROOM_DELETE_TASKS = {}

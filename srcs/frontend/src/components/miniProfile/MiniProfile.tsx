@@ -11,12 +11,11 @@ type Props = {
   account: profileT | errorT;
   updatedFriends?: boolean;
   setUpdate?: React.Dispatch<React.SetStateAction<boolean>>;
-  logged_in:boolean;
   history: historyT[] | errorT;
   profileRef: React.RefObject<HTMLDialogElement | null>
 };
 
-export default function MiniProfile({account, updatedFriends, setUpdate, logged_in, history, profileRef}: Props) {
+export default function MiniProfile({account, updatedFriends, setUpdate, history, profileRef}: Props) {
   
   const [dummy, setDummy] = useState(false);
 
@@ -62,7 +61,7 @@ export default function MiniProfile({account, updatedFriends, setUpdate, logged_
       {/* {* if friend *} 
 				 need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}
       <div className="mt-10">
-		<MiniHistory history={history} updatedProfile={updatedFriends} setUpdate={setUpdate} logged_in={logged_in}/>
+		<MiniHistory history={history} updatedProfile={updatedFriends} setUpdate={setUpdate}/>
       </div>
     </div>
       <form method="dialog" className="modal-backdrop">

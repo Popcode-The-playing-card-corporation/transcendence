@@ -38,7 +38,8 @@ all:
 	@echo "Make usage:\n\nLaunch in production mode: $(GREEN)make prod\n$(RESET)Launch in developer mode: $(GREEN)make dev$(RESET)"
 	@echo "\n\nDeveloper tools:\n"
 	@echo "Clean up unused images/containers: $(GREEN)make clean$(RESET)"
-	@echo "Force rebuild and relaunch containers: $(GREEN)make prod-build $(RESET)||$(GREEN) make dev-build\n$(RESET)Reset volumes and clean up: $(GREEN)make fclean$(RESET)"
+	@echo "Force rebuild and relaunch containers: $(GREEN)make prod-build $(RESET)||$(GREEN) make dev-build$(RESET)"
+	@echo "Force rebuild and relaunch containers without cache: $(GREEN)make prod-build-cache $(RESET)||$(GREEN) make dev-build-cache\n$(RESET)Reset volumes and clean up: $(GREEN)make fclean$(RESET)"
 	@echo "All of the above: $(GREEN)make prod-re$(RESET) || $(GREEN)make dev-re$(RESET)"
 
 dev: header dev-up
@@ -96,14 +97,24 @@ fclean:
 	@echo "Clearing volumes.."
 	@$(COMPOSE) --profile "*" down -v --rmi local --remove-orphans
 
-prod-build: down
+prod-build-cache: down
 	@$(COMPOSE) build --no-cache django
 	@$(PROD_COMPOSE) build --no-cache nginx_prod
 	@$(MAKE) prod-up
 
-dev-build: down
+dev-build-cache: down
 	@$(COMPOSE) build --no-cache django
 	@$(COMPOSE) build --no-cache frontend
+	@$(MAKE) dev-up
+
+prod-build: down
+	@$(COMPOSE) build django
+	@$(PROD_COMPOSE) build nginx_prod
+	@$(MAKE) prod-up
+
+dev-build: down
+	@$(COMPOSE) build django
+	@$(COMPOSE) build frontend
 	@$(MAKE) dev-up
 
 prod-re: fclean prod-up

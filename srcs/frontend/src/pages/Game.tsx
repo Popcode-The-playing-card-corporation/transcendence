@@ -3,12 +3,8 @@ import CreateOrJoin from "../components/Game/createOrJoin/CreateOrJoin";
 import GameWebSocket from "../components/Game/GameWebSocket";
 
 export function Game({
-  logged_in,
-  logging,
   setIsGamePage,
 }: {
-  logged_in: boolean;
-  logging: boolean;
   setIsGamePage: React.Dispatch<SetStateAction<boolean>>;
 }) {
   const [isInWaitingRoom, setIsInWaitingRoom] = useState<boolean>(true);
@@ -25,13 +21,9 @@ export function Game({
         />
       </label>
       {!isInWaitingRoom ? (
-        <CreateOrJoin logged_in={logged_in} setIsInGame={setIsGamePage}/>
+        <CreateOrJoin setIsInGame={setIsGamePage}/>
       ) : (
-        <GameWebSocket
-          logged_in={logged_in}
-          logging={logging}
-          setIsInGame={setIsGamePage}
-        />
+        <GameWebSocket setIsInGame={setIsGamePage}/>
       )}
     </>
   );
