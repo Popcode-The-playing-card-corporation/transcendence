@@ -27,11 +27,11 @@ class BroadcastService:
         
         for p in presences:
             players.append({
-				"id": p.player.id,
+                "id": p.player.id,
                 "username": p.player.username,
                 "is_host": p.player == room.host,
                 "position": p.position
-			})
+            })
 
 
         return players
@@ -160,13 +160,14 @@ class BroadcastService:
             "round": game_state["round"],
             "last_fold": game_state.get("last_fold")
         }       
-
+    
+    @staticmethod
     def _find_suit(bucket):
         cardValue = {"6": 1, "7": 2, "8": 3, "9": 4, "10": 5, "J": 6, "Q": 7, "K": 8, "A": 9}
         suitePoint = {3: 20, 4: 50, 5: 100, 6: 150, 7: 200, 8: 250, 9: 300}
-
+    
         ret = []
-
+    
         for b in bucket.values():
             cards = {"cards": [], "point": 0}
             if (len(b) >= 3):
@@ -186,17 +187,18 @@ class BroadcastService:
                         if (suite > 2):
                             cards["point"] = suitePoint[len(cards["cards"])]
                             ret.append(copy.deepcopy(cards))
-                        value = 0
+                        value = cardValue[c.values]
                         suite = 1
                         cards["cards"] = []
+                        cards["cards"].append(c.id)
                 if (suite > 2):
                     cards["point"] = suitePoint[len(cards["cards"])]
                     ret.append(copy.deepcopy(cards))
-
+    
         return ret
     
     @staticmethod
-    async def _count_melds(cards):
+    def _count_melds(cards):
         clubs = []
         spades = []
         diamonds = []
@@ -231,6 +233,7 @@ class BroadcastService:
         
         game_state = room.game_state
         game = GameEngine(room.uuid)
+        melds = BroadcastService._count_melds(player_data["cards"])
         
         init_cards = {
                 "hand": player_data["cards"],
@@ -240,7 +243,7 @@ class BroadcastService:
                     idPlayer=str(player_id),
                     
                 ) if game_state["playing"] == int(player_id) else None,
-                "melds": await BroadcastService._count_melds(player_data["cards"])
+                "melds": melds
             }
         
         return init_cards
