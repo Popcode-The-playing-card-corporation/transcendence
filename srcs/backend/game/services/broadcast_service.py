@@ -246,7 +246,7 @@ class BroadcastService:
         return init_cards
     
     @staticmethod
-    async def broadcast_game(room_code, channel_layer, message):
+    async def broadcast_game(room_code, channel_layer, message, user=None):
         room = await get_room_with_host(room_code)
         
         game_state = room.game_state
@@ -270,6 +270,11 @@ class BroadcastService:
                         "payload": {
                             "self_card": init_cards,
                             "board_data": board_data,
+                            **(
+                                {"player_name": user}
+                                if message in ("player_disconnect", "player_reconnect") and user
+                                else {}
+                            )
                         }
                     }
                 )

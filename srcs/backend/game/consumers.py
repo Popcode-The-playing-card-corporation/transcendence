@@ -151,7 +151,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.ask_host_continue(room, room.game_state)
             
         if room.status == "start":
-            await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_reconnect")
+            await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_reconnect", self.user.username)
     
     async def disconnect(self, close_code):
     
@@ -181,7 +181,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 f"room_{room.code}",
             )
         if room.status == "start":
-            await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_disconnect")
+            await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_disconnect", self.user.username)
     
         try:
             room = await get_room_with_host(room.code)
