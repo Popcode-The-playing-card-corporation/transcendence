@@ -322,6 +322,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.send(json.dumps(result))
 
     async def handle_kick(self, payload: dict):
+        if "playerId" not in payload:
+            await self.send_json({
+                "error": "missing_playerId"
+            })
+            return
         room = await get_room_with_host(self.code)
     
         result = await RoomService.kick_player(
