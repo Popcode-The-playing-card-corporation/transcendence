@@ -182,11 +182,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
     
         try:
-            await BotService.replace_disconnected_player(
-                room,
-                self.user,
-                self.handle_play_card
-            )
+            room = await get_room_with_host(room.code)
+            game = GameEngine(room.uuid)
+        
+            game_state = await BotService.play_until_human(room, room.game_state, game,
+                                                           check_end=GameService.check_game_end, 
+                                                           check_take_fold_callback=GameService.check_take_fold
+                                                           )
         except Exception:
             pass
 
@@ -266,6 +268,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         if result.get("error"):
             await self.error(result["error"])
+            return
+        
+        if result.get("invalid"):
             return
 
         await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_valid")

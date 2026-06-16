@@ -252,7 +252,8 @@ class BroadcastService:
         game_state = room.game_state
         
         for player_id, player_data in game_state["players"].items():
-            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get
+            )(
                 room_id=room.id,
                 position=int(player_id)
             )

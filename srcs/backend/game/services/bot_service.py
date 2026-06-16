@@ -26,8 +26,9 @@ class BotService:
         )
         
         if p.is_human and p.is_afk:
-            game_state = await BotService.play_bot(game, room.code, check_end=check_end)
             await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
+            game_state = await BotService.play_bot(game, room.code, check_end=check_end)
+            await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
@@ -36,7 +37,7 @@ class BotService:
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
-                return
+                return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
                 position=int(game_state["playing"])
@@ -46,7 +47,9 @@ class BotService:
         while (not is_end and (not p.is_human or not p.is_online)):
             
             #await asyncio.sleep(2.0)
-            
+            if p.is_human and not p.is_online:
+                await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
+                
             game_state = await BotService.play_bot(game, room.code, check_end=check_end)
             await save_room_state(room.uuid, game_state)
             await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
@@ -60,16 +63,16 @@ class BotService:
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
-                return
+                return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
                 position=int(game_state["playing"])
             )
-            #TODO add here task for ? idk xD
             
             if p.is_human and p.is_online:
                 await RoomTaskService.schedule_play_for_player(room.code, p.player_id, 30 if game_state["round"] == 0 else 15)
             
+        return game_state
                 
     @staticmethod
     async def play_bot(game, room_code, check_end=None):
@@ -100,32 +103,3 @@ class BotService:
         
         return game_state
      
-    
-    @staticmethod
-    async def replace_disconnected_player(room, user, play_callback):
-
-        position = await get_player_pos(user, room.code)
-
-        if not room.game_state:
-            return
-
-        if str(position) != str(room.game_state.get("playing")):
-            return
-
-        game = GameEngine(room.uuid)
-
-        legal = game.handleAction(
-            "legal",
-            room.game_state,
-            idPlayer=str(position)
-        )
-
-        payload = {
-            "cardId": bot(
-                room.game_state,
-                str(position),
-                legal
-            )
-        }
-
-        await play_callback(payload)

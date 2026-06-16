@@ -40,11 +40,12 @@ class GameService:
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         
         await BroadcastService.broadcast_game(room.code, channel_layer, "game_started")
-                
+          
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold
                                                 )
+        
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
             room=room,
             position=int(game_state["playing"])
@@ -73,6 +74,8 @@ class GameService:
     async def play_card(room, user, position, card_id):
         game = GameEngine(room.uuid)
         state = copy.deepcopy(room.game_state)
+        
+        channel_layer = get_channel_layer()
 
         legal = game.handleAction("legal", state, idPlayer=str(position))
         if len(legal) == 0:
@@ -82,8 +85,20 @@ class GameService:
         if idx is None:
             return {"error": "Card not found"}
 
-        if idx >= len(legal) and not legal[idx]:
-            return {"error": "Illegal move"}
+        if idx >= len(legal):
+            return {"error": "Card not found"}
+        
+        if not legal[idx]:
+            await channel_layer.group_send(
+                f"player_{user.id}",
+                {
+                    "type": "game_event",
+                    "event": "card_valid",
+                    "payload": {"status": "invalid !"}
+                }
+            )
+            return {"invalid": "Card not found"}
+        
         if room.game_state["playing"] != position:
             return {"error": "Not your turn bitch !!!"}
         state, taker, melds = await BoardService.resolve_if_needed(
@@ -158,7 +173,6 @@ class GameService:
         channel_layer = get_channel_layer()
         await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
     
-
     @staticmethod
     async def check_game_end(room, game):
         game_state = room.game_state
