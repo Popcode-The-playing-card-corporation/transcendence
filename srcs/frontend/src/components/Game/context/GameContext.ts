@@ -6,7 +6,6 @@ type GameContextT = {
 	leaveRoom: () => void;
 	startGame: () => void;
 	playCard: (cardId: number) => void;
-	fakePlay: (cardID: number) => void;
 	continueGame: () => void;
 	endGame: () => void;
 	annonces: (cards: number[]) => void;

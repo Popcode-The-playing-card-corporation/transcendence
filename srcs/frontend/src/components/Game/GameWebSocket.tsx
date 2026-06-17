@@ -4,21 +4,18 @@ import useWebSocketModule from "react-use-websocket";
 import host from "../../api/http/host";
 import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
-import { useEffect, useReducer, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useReducer, type SetStateAction } from "react";
 import { gameReducer } from "./context/gameReducer";
 import { initialState } from "./context/GameType";
 import { useNavigate } from "react-router";
 import { GameContext } from "./context/GameContext";
-import generateFakeHandCards from "../../utils/test_funcs/generateFakeHandCards";
 
 export default function GameWebSocket({
   code,
   setCode,
-	setInGame,
 }: {
   code: string;
   setCode: React.Dispatch<SetStateAction<string>>;
-  setInGame: Dispatch<SetStateAction<boolean>>
 }) {
   const notif = useNotif();
   const auth = useAuth();
@@ -129,21 +126,42 @@ export default function GameWebSocket({
 	
 	});
 
-  function sendJson(action: string, message?: object) {
-    sendJsonMessage({ type: "action", action: action, payload: message });
-  }
+		function sendJson(action:string, message?:object) {
+			sendJsonMessage({type: "action", action: action, payload: message })
+		}
 
-  function startGame() {
-    sendJson("start_game");
-  }
+		function startGame() {
+			sendJson("start_game");
+		}
 
-  function playCard(cardId: number) {
-    sendJson("play_card", { cardId: cardId });
-  }
+		function playCard(cardId:number) {
+			sendJson("play_card", {cardId: cardId});
+		}
 
-  function continueGame() {
-    sendJson("continue");
-  }
+		function continueGame() {
+			sendJson("continue");
+		}
+
+		function endGame() {
+			sendJson("end_game");
+		}
+
+		function annonces(cards: number[]) {
+			const parsed_cards:{cardId:number}[] = [];
+			cards.forEach((card) => {
+				parsed_cards.push({cardId: card})
+			})
+			sendJson("melds", parsed_cards);
+		}
+		
+		function kickPlayer(playerId:number) { //RoomId of player/ position
+			sendJson("kick", {playerId : playerId});
+		}
+
+
+	function setSize(size: number) {
+		dispatch({ type: "SET_SIZE", payload: size})
+	}
 
 	function setMode(mode: number) {
 		dispatch({ type: "SET_MODE", payload: mode})
