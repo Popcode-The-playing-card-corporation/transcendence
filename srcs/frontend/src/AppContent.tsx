@@ -24,6 +24,7 @@ import PrivateRoute from "./utils/routing/PrivateRoutes";
 function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetStateAction<string>>}) {
   const [updatedProfile, setProfile] = useState(false);
   const [updateLeaderboard, setLeaderboard] = useState(false);
+	const [isGame, setIsGame] = useState<boolean>(false)
 
   const auth = useAuth();
 
@@ -39,10 +40,10 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
         <BrowserRouter>
 		  <Presence />
 		  <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
-		  {auth.in_game ? null : <Navbar />}
+		  {auth.in_game || isGame ? null : <Navbar />}
           <NotifPopUp />
           <Routes>	
-			<Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
+			<Route path="/game" element={<PrivateRoute> <Game setIsGamePage={setIsGame}/> </PrivateRoute>} />
 			<Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
             <Route path="/" element={<Home />} />
             <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
@@ -59,7 +60,7 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
             <Route path="/login/github/callback" element={<GitCallback />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
-		  {auth.in_game ? null : <Footer />}
+		  {auth.in_game  || isGame ? null : <Footer />}
         </BrowserRouter>
   );
 }

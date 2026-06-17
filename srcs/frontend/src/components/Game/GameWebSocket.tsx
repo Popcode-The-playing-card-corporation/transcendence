@@ -4,7 +4,7 @@ import useWebSocketModule from "react-use-websocket";
 import host from "../../api/http/host";
 import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
-import { useEffect, useReducer, type SetStateAction } from "react";
+import { useEffect, useReducer, useState, type Dispatch, type SetStateAction } from "react";
 import { gameReducer } from "./context/gameReducer";
 import { initialState } from "./context/GameType";
 import { useNavigate } from "react-router";
@@ -14,9 +14,11 @@ import generateFakeHandCards from "../../utils/test_funcs/generateFakeHandCards"
 export default function GameWebSocket({
   code,
   setCode,
+	setInGame,
 }: {
   code: string;
   setCode: React.Dispatch<SetStateAction<string>>;
+  setInGame: Dispatch<SetStateAction<boolean>>
 }) {
   const notif = useNotif();
   const auth = useAuth();
@@ -135,7 +137,7 @@ export default function GameWebSocket({
     sendJson("kick", { playerId: playerId });
   }
 
-  if (state.connected === false)
+  if (state.connected === true)
     return (
       <div className="page-content flex items-center justify-center min-h-screen">
         <span className="loading loading-spinner loading-xl"></span>
@@ -154,6 +156,7 @@ export default function GameWebSocket({
     dispatch({ type: "FAKE_PLAY", payload: cardID });
   }
 
+
   return (
     <GameContext.Provider
       value={{
@@ -170,7 +173,7 @@ export default function GameWebSocket({
         setSize,
       }}
     >
-      {auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code} />}
+      {auth.in_game ? <GameMain setInGame={setInGame}/> : <WaitingRoom roomCode={code} setSimGame={setInGame}/>}
     </GameContext.Provider>
   );
 }

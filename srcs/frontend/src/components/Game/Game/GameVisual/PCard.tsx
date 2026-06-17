@@ -1,16 +1,15 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
-  log,
+  // log,
   MeshPhongMaterial,
   Texture,
   type Mesh,
   type TextureEventMap,
 } from "three";
-import type {
-  cardType,
-} from "../../../../utils/type/handCardsType";
+import type { cardType } from "../../../../utils/type/handCardsType";
 import { useGame } from "../../context/GameContext";
+// import { RoundedBoxGeometry } from "@react-three/drei";
 
 // function sendCard(card: cardType) {
 //   console.log(card.value + " of " + card.color + " played!");
@@ -65,8 +64,8 @@ export default function PCard({
   function handleClick() {
     if (hidden || played) return;
     if (!active) {
-      cardRef.current.translateY(1.3);
-      cardRef.current.translateZ(0.1);
+      // cardRef.current.translateY(1.3);
+      // cardRef.current.translateZ(0.1);
       setOvered(false);
       setActive(true);
     } else {
@@ -86,14 +85,29 @@ export default function PCard({
   }
   useFrame(() => {
     if (hidden) return;
-    // Playing card
+
+    // begin animation
     if (cardRef.current.rotation.y > 0.01)
       cardRef.current.rotation.y -= 0.029 * cardRef.current.rotation.y;
+
+    // Selection animation
+    if (active) {
+      const deltaY = cardRef.current.position.y - -1.2;
+      const deltaZ = cardRef.current.position.z - 1.5 - 0.001 * cardIndex + 0.1;
+
+      if (cardRef.current.position.y < -1.2)
+        cardRef.current.position.y += 0.05 * deltaY * -1 * 5;
+      if (cardRef.current.position.z < 1.5 - 0.001 * cardIndex + 0.1)
+        cardRef.current.position.z += 0.01 * deltaZ * 5;
+    }
+
+    // Playing card
     if (played) {
       const deltaY = cardRef.current.position.y - (1 * distance + 0.5);
       const deltaX = cardRef.current.position.x;
       const deltaZ = cardRef.current.position.z - -1.15;
       const deltaRotX = cardRef.current.rotation.x - -0.4;
+
       if (cardRef.current.position.x < 0)
         cardRef.current.position.x += 0.1 * deltaX * -1;
       if (cardRef.current.position.x > 0)
@@ -105,7 +119,7 @@ export default function PCard({
       if (cardRef.current.rotation.x > -0.4)
         cardRef.current.rotation.x -= 0.1 * deltaRotX;
 
-      // when is finished
+      // when is finished remove card from hand
       if (
         cardRef.current.position.z < -1.1 &&
         cardRef.current.position.x < 0.1 &&
@@ -118,7 +132,7 @@ export default function PCard({
           }),
         );
         setLastCardPlayed(cardIndex);
-		return ;
+        return;
       }
     }
 
@@ -163,6 +177,15 @@ export default function PCard({
       }}
     >
       <boxGeometry args={[1, 1.4, 0.03]} />
+      {/* <RoundedBoxGeometry */}
+      {/*   args={[1, 1.4, 0.03]} */}
+      {/*   radius={0.05} */}
+      {/*   steps={1} */}
+      {/*   smoothness={4} */}
+      {/*   bevelSegments={4} */}
+      {/*   creaseAngle={0.4} */}
+      {/*   material={materials} */}
+      {/* /> */}
     </mesh>
   );
 }
