@@ -23,7 +23,7 @@ class ScoreService:
             GameLog.objects.get_or_create
         )(
             room=room,
-            player=p.player,
+            player=p,
             game=game,
             round=round
         )
