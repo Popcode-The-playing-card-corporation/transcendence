@@ -14,7 +14,7 @@ export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccoun
     <div>
       <div className="avatar mt-8 flex-col">
         <AvatarSelection currentAvatar={realAccount.avatar} />
-        <p className="text-green-200 font-extrabold my-2 mx-auto">
+        <p className="tex/assets/avatars/t-green-200 font-extrabold my-2 mx-auto">
           {realAccount.is_online ? "Online" : ""}
         </p>
       </div>

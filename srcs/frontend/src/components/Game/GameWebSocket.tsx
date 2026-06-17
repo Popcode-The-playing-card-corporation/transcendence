@@ -1,12 +1,179 @@
-import { useState, type SetStateAction } from "react"
 import WaitingRoom from "./waitingRoom/WaitingRoom";
 import GameMain from "./Game/GameMain";
+import useWebSocketModule from "react-use-websocket";
+import host from "../../api/http/host";
+import { useAuth } from "../hooks/useAuth";
+import { useNotif } from "../hooks/useNotif";
+import { useEffect, useReducer, useState, type Dispatch, type SetStateAction } from "react";
+import { gameReducer } from "./context/gameReducer";
+import { initialState } from "./context/GameType";
+import { useNavigate } from "react-router";
+import { GameContext } from "./context/GameContext";
+import generateFakeHandCards from "../../utils/test_funcs/generateFakeHandCards";
 
-export default function GameWebSocket({setIsInGame} : {setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
-	const [inGame, setInGame] = useState(false);
-	return (
-		<>
-		{inGame ? <GameMain setIsGamePage={setIsInGame} /> : <WaitingRoom setIsInGame={setIsInGame} setInGame={setInGame}/>}
-		</>
-	);
+export default function GameWebSocket({
+  code,
+  setCode,
+	setInGame,
+}: {
+  code: string;
+  setCode: React.Dispatch<SetStateAction<string>>;
+  setInGame: Dispatch<SetStateAction<boolean>>
+}) {
+  const notif = useNotif();
+  const auth = useAuth();
+  const [state, dispatch] = useReducer(gameReducer, initialState);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("code", code);
+  }, [code]);
+
+  function leaveRoom() {
+    localStorage.removeItem("code");
+    setCode("");
+  }
+
+  const { default: useWebSocket = useWebSocketModule } =
+    useWebSocketModule as unknown as {
+      default: typeof useWebSocketModule;
+    };
+
+  const { sendJsonMessage } = useWebSocket(
+    auth.logged_in ? host.ws + "room/" + code + "/" : null,
+    {
+      shouldReconnect: (event) => {
+        if (event.code === 4001) {
+          leaveRoom();
+          return false;
+        } else if (event.code === 4003) {
+          leaveRoom();
+          navigate("/");
+          return false;
+        }
+        return auth.logged_in ? true : false;
+      },
+      reconnectAttempts: 30,
+      reconnectInterval: 1000,
+
+      heartbeat: {
+        message: JSON.stringify({ type: "heartbeat" }),
+        returnMessage: JSON.stringify({ type: "acknowledge" }),
+        interval: 30000,
+        timeout: 60000,
+      },
+
+      onOpen: () => {
+        dispatch({ type: "CONNECTED" });
+      },
+
+      onClose: () => {
+        dispatch({ type: "DISCONNECTED" });
+      },
+
+      onMessage: (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type == "acknowledge") {
+          return;
+        }
+        const payload = data.payload;
+
+        if (data.type === "list_player") {
+          if (data.event === "init_cards") {
+            dispatch({ type: "SET_CARDS", payload: payload.hand });
+          } else if (data.event === "update") {
+            dispatch({ type: "SET_PLAYERS", payload: payload.players });
+          }
+        } else if (data.type === "params") {
+          dispatch({ type: "SET_PARAMS", payload: payload });
+        } else if (data.type === "event") {
+          if (data.event === "kicked") {
+            leaveRoom();
+          } else if (data.event === "board_data") {
+            dispatch({ type: "SET_BOARD", payload: payload });
+            auth.setGame(true);
+          }
+        } else if (data.type === "game_started") {
+          auth.setGame(true);
+        } else if (data.event === "error") {
+          notif?.showNotif("Game Error", data.message);
+        } else {
+          console.debug("Unknown event: ", data);
+        }
+      },
+    },
+  );
+
+  function sendJson(action: string, message?: object) {
+    sendJsonMessage({ type: "action", action: action, payload: message });
+  }
+
+  function startGame() {
+    sendJson("start_game");
+  }
+
+  function playCard(cardId: number) {
+    sendJson("play_card", { cardId: cardId });
+  }
+
+  function continueGame() {
+    sendJson("continue");
+  }
+
+  function endGame() {
+    sendJson("end_game");
+  }
+
+  function annonces(cards: number[]) {
+    const parsed_cards: { cardId: number }[] = [];
+    cards.forEach((card) => {
+      parsed_cards.push({ cardId: card });
+    });
+    sendJson("melds", parsed_cards);
+  }
+
+  function kickPlayer(playerId: number) {
+    //RoomId of player/ position
+    sendJson("kick", { playerId: playerId });
+  }
+
+  if (state.connected === true)
+    return (
+      <div className="page-content flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-xl"></span>
+      </div>
+    );
+
+  function setSize(size: number) {
+    dispatch({ type: "SET_SIZE", payload: size });
+  }
+
+  function setMode(mode: number) {
+    dispatch({ type: "SET_MODE", payload: mode });
+  }
+
+  function fakePlay(cardID: number) {
+    dispatch({ type: "FAKE_PLAY", payload: cardID });
+  }
+
+
+  return (
+    <GameContext.Provider
+      value={{
+        state,
+        fakePlay,
+        leaveRoom,
+        startGame,
+        playCard,
+        continueGame,
+        endGame,
+        annonces,
+        kickPlayer,
+        setMode,
+        setSize,
+      }}
+    >
+      {auth.in_game ? <GameMain setInGame={setInGame}/> : <WaitingRoom roomCode={code} setSimGame={setInGame}/>}
+    </GameContext.Provider>
+  );
 }

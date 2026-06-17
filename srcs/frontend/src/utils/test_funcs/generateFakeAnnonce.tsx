@@ -1,4 +1,6 @@
-export default function generateFakeAnnonce() {
+import type { annonceT } from "../type/annonceType";
+
+export default function generateFakeAnnonce() : annonceT[] {
   return [
     {
       annonce: "suite 3 cards",

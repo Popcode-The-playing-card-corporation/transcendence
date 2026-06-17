@@ -1,10 +1,11 @@
-import type React from "react"
+import type { Dispatch, SetStateAction } from "react"
 import GameVisual from "./GameVisual"
 import Interface from "./Interface"
-import type { SetStateAction } from "react"
 
-export default function  GameMain({setIsGamePage} : {setIsGamePage: React.Dispatch<SetStateAction<boolean>>}) {
-	setIsGamePage(true);
+
+export default function  GameMain({setInGame} : {setInGame: Dispatch<SetStateAction<boolean>>}) {
+	
+	setInGame(true)
 	return (
 		<div className="w-sceen h-screen flex">
 		<GameVisual />

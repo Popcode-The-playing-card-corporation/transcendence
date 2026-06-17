@@ -26,11 +26,13 @@ export function GitCallback() {
       }
 
       try {
-        await axios.post(
+        const res = await axios.post(
           host.http + 'login/github/',
           { code:code },
           { withCredentials: true }
         );
+		auth.setUserID(res.data.id);
+		auth.setPass(res.data.has_pass);
 		auth.setLoggedIn(true);
 		const redirect = sessionStorage.getItem("login_redirect") || "/";
 		sessionStorage.removeItem("login_redirect");

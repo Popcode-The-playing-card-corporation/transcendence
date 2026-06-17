@@ -105,5 +105,5 @@ class GameLog(models.Model):
     player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player')
     game = models.IntegerField(default=0)
     round = models.IntegerField(default=0)
-    meld = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
 

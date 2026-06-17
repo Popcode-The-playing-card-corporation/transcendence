@@ -1,42 +1,45 @@
-import { MeshPhongMaterial, TextureLoader } from "three";
+import { Texture, type TextureEventMap } from "three";
 import PCard from "./PCard";
-import { loadTexture } from "../../../../utils/imports/textures";
-import { useLoader } from "@react-three/fiber";
 import generateFakeHandCards from "../../../../utils/test_funcs/generateFakeHandCards";
+import { useState } from "react";
+import type { cardType,  } from "../../../../utils/type/handCardsType";
+// import { useGame } from "../../context/GameContext";
 
-export default function Hand() {
-  const back = useLoader(TextureLoader, loadTexture("back")!);
-  const hand = generateFakeHandCards();
-  const loadedTextures: string[] = [];
-  hand.cards.forEach((card) => {
-    loadedTextures.push(loadTexture(card.value + card.color)!);
-  });
-  const textures = useLoader(TextureLoader, loadedTextures);
+export default function Hand({
+  cardsTex,
+  back,
+}: {
+  cardsTex: Texture<HTMLImageElement, TextureEventMap>[];
+  back: Texture<HTMLImageElement, TextureEventMap>;
+}) {
+  // const game = useGame();
+  const [hand, setHand] = useState<cardType[]>(generateFakeHandCards().cards);
+  const startPos = (0.4 * hand.length) / 2 - 0.2;
+  const oldStartPos = (0.4 * (hand.length + 1)) / 2 - 0.2;
+  const [lastCardPlayed, setLastCardPlayed] = useState<number>(19)
+
 
   return (
-    <mesh>
-      {hand.cards.map((card) => {
-        const cardIndex = hand.cards.indexOf(card);
-        const front = textures.at(cardIndex);
-        const materials = [
-          new MeshPhongMaterial({ color: 0xffffff }),
-          new MeshPhongMaterial({ color: 0xffffff }),
-          new MeshPhongMaterial({ color: 0xffffff }),
-          new MeshPhongMaterial({ color: 0xffffff }),
-          new MeshPhongMaterial({ map: front }),
-          new MeshPhongMaterial({ map: back }),
-        ]
+      <mesh>
+        {hand.map((card) => {
+          const cardIndex = hand.indexOf(card);
 
-        return (
-          <PCard
-            key={card.id}
-            position={[cardIndex * 1.1 - 1.5, -2.5 , 2]}
-            material={materials}
-			userData-cardIndex={cardIndex}
-			userData-card={card}
-          />
-        );
-      })}
-    </mesh>
+          return (
+            <PCard
+              key={card.id}
+              cardIndex={cardIndex}
+              card={card}
+              startPos={startPos}
+			  setHand={setHand}
+			  hand={hand}
+			  oldStartPos={oldStartPos}
+              front={cardsTex[card.id]}
+              back={back}
+			  lastCardPlayed={lastCardPlayed}
+			  setLastCardPlayed={setLastCardPlayed}
+            />
+          );
+        })}
+      </mesh>
   );
 }

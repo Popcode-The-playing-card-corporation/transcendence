@@ -14,7 +14,7 @@ export function Settings({
   return (
     <div className="page-content mt-17">
       <h1 className="text-4xl text-center">Settings</h1>
-	  <p>Customize your interface and manage your blocklist and your profile</p>
+	  <p>Customize your interface, manage your blocklist, and your profile</p>
       <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
@@ -27,7 +27,7 @@ export function Settings({
       <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
-          <h2 className="text-center">Appareance</h2>
+          <h2 className="text-center">Appearance</h2>
         </div>
         <div className="collapse-content">
 		<Appareance setFontChoice={setFontChoice}/>

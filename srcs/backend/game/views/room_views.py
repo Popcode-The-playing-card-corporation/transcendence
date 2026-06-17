@@ -11,6 +11,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from ..db import add_bot_to_room
 import uuid
+from datetime import timedelta
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -66,7 +67,7 @@ def add_bot(request, code, nb_bot):
     if "difficulty" in request.data:
         if request.data["difficulty"] != "easy" and request.data["difficulty"] != "medium" and request.data["difficulty"] != "hard":
             return Response(
-                {"message": "Invalid difficulty of bot"},
+                {"error": "Invalid difficulty of bot"},
                 status= 401
             )
         difficulty = request.data["difficulty"]
@@ -76,47 +77,60 @@ def add_bot(request, code, nb_bot):
 
     if (room.nb_player + nb_bot) > room.max_player:
         return Response(
-            {"message": "too many player in that room"},
+            {"error": "too many player in that room"},
             status= 401
         )
 
     if (room.nb_player == 7):
         return Response(
-            {"message": "too many player in that room"},
+            {"error": "too many players in that room"},
             status= 401
         )
         
     if (room.host == request.user):
-
+        bots = list(User.objects.filter(is_bot=True))
+        bots_room = list((PlayerPresence.objects.filter(is_human=False, room=room)).select_related("player"))
+        valid_bots = []
+        remove_bots = []
+        for bot in bots:
+            for bot_room in bots_room:
+                if bot.id == bot_room.player_id:
+                    remove_bots.append(bot)
+        for bot in bots:
+            if (bot not in remove_bots):
+                valid_bots.append(bot)
         while nb_bot > 0:
-            last_bot = PlayerPresence.objects.filter(is_human=False, room=room).last()
-            if (last_bot == None):
-                user = User.objects.get(username= "BOT0")
-            else:
-                user = User.objects.get(id= int(last_bot.player_id))
-                
-                result = user.username.removeprefix("BOT")
-                if (result == ""):
-                    nbr = 0
-                else:
-                    nbr = int(result) + 1
-                user = User.objects.get(username= f"BOT{nbr}")
-            add_bot_to_room(user, code, difficulty)
-            room = Room.objects.get(
-                code=code
-            )
-            
+            add_bot_to_room(valid_bots[0], code, difficulty)
+            valid_bots.remove(valid_bots[0])
             nb_bot -= 1
-        ret = {}
         
-        for i in range(room.nb_player):
-            p =  PlayerPresence.objects.get(
-                room=room,
-                position= i
+        presences = (list)(
+            PlayerPresence.objects.select_related("player").filter(
+                room=room
             )
-            user = User.objects.get(id=p.player_id)
-            ret[str(i)] = user.username
-        return Response(ret, status=201)
+        )
+        
+        players = []
+        
+        for p in presences:
+            players.append({
+				"id": p.player.id,
+                "username": p.player.username,
+                "is_host": p.player == room.host,
+                "position": p.position
+			})
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"room_{room.code}",
+            {
+                "type": "list_player_event",
+                "event": "update",
+                "payload": {
+                    "players": players
+                }
+            }
+        )
+        return Response(status=200)
     
     return Response(
         {"error": "You are not the host. BAD"},
@@ -240,6 +254,7 @@ def list_public_room(request, data):
             "type": "public",
             "is_friend": value["has_friend"],
             "nb_player": room.nb_player,
+            "max_player": room.max_player,
             "list_player": list_player,
             "host": { "username":room.host.username, "id":room.host.id },
         })
@@ -337,11 +352,39 @@ def list_my_started_room(request):
         room__status="start"
     ).first()
 
+    if (not presence) :
+        return Response({"message": "failed", "code": ""}, status=200)
     data ={
+        "message": "success",
         "code": presence.room.code,
     }
 
     return Response(data, status=200)
+
+@api_view(["GET"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def validate_room(request, code):
+    room = Room.objects.filter(
+        code=code,
+        status="open"
+    ).first()
+
+    if not room:
+        return Response({
+            "valid": False,
+            "error": "Room no longer joinable",
+        }, status=404)
+    
+    if room.max_player == room.nb_player:
+        return Response({
+            "valid": False,
+            "error": "Room is full",
+        }, status=401)
+
+    return Response({
+        "valid": True,
+    }, status=200)
 
 @api_view(["PATCH"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -354,6 +397,14 @@ def update_params(request, code):
             {"message": "No room with this code"},
             status= 401
         )
+    room = Room.objects.get(code=code)
+    
+    if room.host != request.user:
+        return Response(
+            {"message": "Only host can do this"},
+            status= 403
+        )
+    
     if "max_player" in request.data:
         if request.data["max_player"] > 7 or request.data["max_player"] < 1:
             return Response(
@@ -374,10 +425,27 @@ def update_params(request, code):
                 status= 401
             )
     
-    room = Room.objects.get(code=code)
+    
     serializer = RoomSerializer(room, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
+        room = Room.objects.get(code=code)
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            f"room_{room.code}",
+            {
+                "type": "params_event",
+                "event": "update",
+                "payload": {
+                    "code": room.code,
+                    "status": room.status,
+                    "max_player": room.max_player,
+                    "type": room.type,
+                    "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
+				}
+            }
+        )
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
 
@@ -388,6 +456,7 @@ def invite_friend(request, friend_id):
     
     if not Friendship.objects.filter(
             Q(from_user=request.user) | Q(to_user=request.user),
+            status="accepted",
             id=friend_id,
         ).exists():
         return Response(
@@ -397,6 +466,7 @@ def invite_friend(request, friend_id):
     
     friendship = Friendship.objects.get(
             Q(from_user=request.user) | Q(to_user=request.user),
+            status="accepted",
             id=friend_id,
         )
     target = (
@@ -407,7 +477,7 @@ def invite_friend(request, friend_id):
     p = PlayerPresence.objects.filter(
 		player=request.user,
         room__status="open"
-	).select_related("player", "room").first()
+	).select_related("player", "room").last()
     
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -421,7 +491,7 @@ def invite_friend(request, friend_id):
                 "code": p.room.code,
                 "from_user": request.user.username,
                 "from_user_id": request.user.id,
-                "message": f"{request.user.username} invite you"
+                "message": f"{request.user.username} invited you"
             }
         }
     )

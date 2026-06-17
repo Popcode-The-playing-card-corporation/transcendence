@@ -1,9 +1,6 @@
-export type boardT = {
-  id: number,
-  card: string
-}
+import type { cardType } from "./handCardsType"
 
-export const defaultBoard:boardT = {
-  id: 0,
-  card: ""
+export type boardT = {
+  position: number,
+  card: cardType
 }
