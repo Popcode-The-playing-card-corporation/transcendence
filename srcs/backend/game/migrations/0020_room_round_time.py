@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('game', '0018_playerpresence_is_afk_playerpresence_is_afk_count'),
+        ('game', '0019_playerpresence_is_afk_playerpresence_is_afk_count'),
     ]
 
     operations = [

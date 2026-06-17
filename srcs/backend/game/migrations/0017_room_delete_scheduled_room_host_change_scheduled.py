@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('game', '0015_rename_meld_gamelog_score'),
+        ('game', '0016_alter_gamelog_player_alter_playerpresence_player_and_more'),
     ]
 
     operations = [

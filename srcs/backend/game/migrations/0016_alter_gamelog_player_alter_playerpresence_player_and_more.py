@@ -9,15 +9,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('game', '0015_rename_meld_gamelog_score'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='gamelog',
-            name='player',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='player', to=settings.AUTH_USER_MODEL),
-        ),
         migrations.AlterField(
             model_name='playerpresence',
             name='player',

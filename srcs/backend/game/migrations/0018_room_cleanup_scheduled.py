@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('game', '0016_room_delete_scheduled_room_host_change_scheduled'),
+        ('game', '0017_room_delete_scheduled_room_host_change_scheduled'),
     ]
 
     operations = [
