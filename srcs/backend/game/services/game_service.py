@@ -42,8 +42,9 @@ class GameService:
         await BroadcastService.broadcast_game(room.code, channel_layer, "game_started")
           
         game_state = await BotService.play_until_human(room, game_state, game,
-                                                       check_end=GameService.check_game_end, 
-                                                       check_take_fold_callback=GameService.check_take_fold
+                                                        check_end=GameService.check_game_end, 
+                                                        check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.ask_host_continue
                                                 )
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -220,7 +221,8 @@ class GameService:
             game_state,
             game,
             check_end=GameService.check_game_end,
-            check_take_fold_callback=GameService.check_take_fold
+            check_take_fold_callback=GameService.check_take_fold,
+            ask_continue=GameService.ask_host_continue
         )
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
             room=room,

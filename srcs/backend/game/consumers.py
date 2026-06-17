@@ -84,7 +84,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         game_state = await BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
-                                                        check_take_fold_callback=GameService.check_take_fold
+                                                        check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.ask_host_continue
                                                         )
         finished, game_state = await GameService.check_game_end(room, game)
 
@@ -188,7 +189,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
             game_state = await BotService.play_until_human(room, room.game_state, game,
                                                             check_end=GameService.check_game_end, 
-                                                            check_take_fold_callback=GameService.check_take_fold
+                                                            check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.ask_host_continue
                                                             )
         except Exception:
             pass
@@ -290,7 +292,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game = GameEngine(room.uuid)
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
-                                                       check_take_fold_callback=GameService.check_take_fold
+                                                       check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.ask_host_continue
                                                        )
 
         is_end, gs = await GameService.check_game_end(room, game)
