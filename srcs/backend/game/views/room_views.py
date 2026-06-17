@@ -9,9 +9,10 @@ from ..serializers import RoomSerializer
 from django.db.models import Q
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from ..db import add_bot_to_room
+from ..db import add_bot_to_room, get_room_with_host
 import uuid
 from datetime import timedelta
+from ..services.broadcast_service import BroadcastService
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -104,32 +105,8 @@ def add_bot(request, code, nb_bot):
             valid_bots.remove(valid_bots[0])
             nb_bot -= 1
         
-        presences = (list)(
-            PlayerPresence.objects.select_related("player").filter(
-                room=room
-            )
-        )
-        
-        players = []
-        
-        for p in presences:
-            players.append({
-				"id": p.player.id,
-                "username": p.player.username,
-                "is_host": p.player == room.host,
-                "position": p.position
-			})
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"room_{room.code}",
-            {
-                "type": "list_player_event",
-                "event": "update",
-                "payload": {
-                    "players": players
-                }
-            }
-        )
+        async_to_sync(BroadcastService.broadcast_settings)(room, channel_layer, "bot_added", f"room_{room.code}")
         return Response(status=200)
     
     return Response(
@@ -430,23 +407,10 @@ def update_params(request, code):
     serializer = RoomSerializer(room, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
-        room = Room.objects.get(code=code)
         channel_layer = get_channel_layer()
 
-        async_to_sync(channel_layer.group_send)(
-            f"room_{room.code}",
-            {
-                "type": "params_event",
-                "event": "update",
-                "payload": {
-                    "code": room.code,
-                    "status": room.status,
-                    "max_player": room.max_player,
-                    "type": room.type,
-                    "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
-				}
-            }
-        )
+        async_to_sync(BroadcastService.broadcast_settings)(room, channel_layer, "settings_changed", f"room_{room.code}")
+        
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
 

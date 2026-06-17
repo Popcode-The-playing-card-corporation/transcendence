@@ -5,6 +5,7 @@ from asgiref.sync import sync_to_async
 from django.db.models import Q, F
 
 from .room_service import RoomService
+from .room_task_service import RoomTaskService
 
 class RoomConnectionService:
 
@@ -28,8 +29,13 @@ class RoomConnectionService:
 
         if not user or not user.is_authenticated:
             return {"close": True, "code": 4001}
-
-        RoomService.cancel_room_delete(room.id)
+        
+        if room.status == "open":
+            await RoomTaskService.schedule_lobby_kick_all(
+                room.code
+            )
+        
+        await RoomTaskService.cancel_delete(room.code)
 
         is_member = await sync_to_async(
             PlayerPresence.objects.filter(
@@ -176,7 +182,7 @@ class RoomConnectionService:
         room = await sync_to_async(Room.objects.get)(code=code)
 
         if room:
-            RoomService.cancel_room_delete(room.id)
+            await RoomTaskService.cancel_delete(room.code)
             
         await add_player_to_room(user, code)
 
@@ -187,33 +193,6 @@ class RoomConnectionService:
             ).update
         )(channel_name=channel_name)
 
-    @staticmethod
-    async def broadcast_player_list(room, channel_layer):
-        players = await RoomService.get_players(room)
-
-        await channel_layer.group_send(
-            f"room_{room.code}",
-            {
-                "type": "list_player_event",
-                "event": "update",
-                "payload": {
-                    "players": players
-                }
-            }
-        )
-    
-    @staticmethod
-    async def broadcast_room_params(room, channel_layer):
-        snapshot = await RoomService.get_room_snapshot(room)
-        
-        await channel_layer.group_send(
-            f"room_{room.code}",
-            {
-                "type": "params_event",
-                "event": "update",
-                "payload": snapshot
-            }
-        )
         
         
         

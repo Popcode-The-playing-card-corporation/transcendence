@@ -32,7 +32,7 @@ class Player:
 					else:
 						if (suite > 2):
 							ret += self.suitePoint[suite]
-						value = 0
+						value = self.cardValue[c.values]
 						suite = 1
 				if (suite > 2):
 					ret += self.suitePoint[suite]

@@ -17,6 +17,7 @@ class GameEngine:
 			for p in data["players"].values():
 				p["cards"].clear()
 				p["taken"].clear()
+				p["melds"].clear()
 			return data
 
 		i = 0
@@ -24,6 +25,7 @@ class GameEngine:
 			data["players"][str(i)] = {}
 			data["players"][str(i)]["cards"] = []
 			data["players"][str(i)]["taken"] = []
+			data["players"][str(i)]["melds"] = []
 			if ("puntos" not in data["players"][str(i)].keys()):
 				data["players"][str(i)]["puntos"] = 0
 			i += 1

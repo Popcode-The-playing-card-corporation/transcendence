@@ -6,7 +6,20 @@ from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
+from datetime import timedelta
 import asyncio
+
+@sync_to_async
+def get_params(code):
+    room = get_room_with_host(code)
+    params = {
+            "code": room.code,
+            "status": room.status,
+            "max_player": room.max_player,
+            "type": room.type,
+            "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
+	}
+    return params
 
 @sync_to_async
 def count_player(code):
@@ -209,7 +222,7 @@ def remove_player_from_room(user, code):
             ).delete()
         return {
             "should_change_host": should_change_host,
-            "room_id": room.id,
+            "room_code": room.code,
             "user": user
         }
     except Room.DoesNotExist:
