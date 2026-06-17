@@ -36,7 +36,7 @@ urlpatterns = [
     #stat part
     path("leaderboard/", leaderboard),
     path("history/", game_history),
-    path("room/data/<str:uuid>/", room_data),
+    path("room/data/<str:code>/", room_data),
     path("user/<int:user_id>/stats/", get_stat),
     path("user/<int:user_id>/history/", game_history_friend),
     #TODO add achivment models et table to connect to user

@@ -85,6 +85,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		try:
 			data = json.loads(text_data)
+			if data.get("type") == "heartbeat":
+				await self.send(text_data=json.dumps({
+					"type": "acknowledge"
+				}))
+				return
 
 			if (data.get("type") == "message"):
 				file = self.getFile()

@@ -162,7 +162,8 @@ def get_game_scorelog(request, code):
         data.append(
             {
                 "id": room.id,
-                "username": player.player.username,
+                "username": "deleted user" if player.player == None 
+                            else player.player.username,
                 "list_score": list_score,
             }
 	    )

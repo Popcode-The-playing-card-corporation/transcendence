@@ -33,7 +33,7 @@ class Room(models.Model):
     
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     code = models.CharField(max_length=8, unique=True)
-    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosted_rooms')
+    host = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='hosted_rooms')
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
     game_state = models.JSONField(default=default_state)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -51,7 +51,7 @@ class Room(models.Model):
         return f"{self.code}"
 
 class PlayerScore(models.Model):
-    player = models.ForeignKey(User, on_delete=models.CASCADE)
+    player = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     rank = models.IntegerField(null=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='scores')
     score = models.IntegerField(default=0)
@@ -66,7 +66,7 @@ class PlayerPresence(models.Model):
         ("hard", "Hard"),
     ]
         
-    player = models.ForeignKey(User, on_delete=models.CASCADE)
+    player = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='presences')
 
     is_online = models.BooleanField(default=False)

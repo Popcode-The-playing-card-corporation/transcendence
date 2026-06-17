@@ -176,7 +176,7 @@ def delete(request):
     res = Response({"success": True})
     res.delete_cookie("access_token")
     res.delete_cookie("refresh_token")
-    return res   
+    return res
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
