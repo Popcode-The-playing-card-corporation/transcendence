@@ -18,8 +18,6 @@ export default function AdversaryHand({angleCenter, cardHand, back, totalPlayer,
   for (let i = 0; i < cardHand.nbCards; i++)
     allAngle.push(angleStart + i * angleBetween);
 
-  console.log("little radius : " + littleRadius);
-  console.log("cos : " + Math.cos(angleCenter * (cardHand.position + 1)));
   return (
       <mesh
       >
@@ -32,6 +30,7 @@ export default function AdversaryHand({angleCenter, cardHand, back, totalPlayer,
                 back={back}
                 positionCard={allAngle.indexOf(angle)}
                 totalPlayer={totalPlayer}
+                angleAdversary={angleCenter * (cardHand.position + 1)}
               />
             </>
           );
