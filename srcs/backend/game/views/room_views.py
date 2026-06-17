@@ -178,14 +178,15 @@ def get_game_scorelog(request, code):
             {
                 "game": score.game,
                 "round": score.round,
-                "meld": score.meld,
+                "meld": score.score,
             }
             for score in scores
         ]
         data.append(
             {
                 "id": room.id,
-                "username": player.player.username,
+                "username": "deleted user" if player.player == None 
+                            else player.player.username,
                 "list_score": list_score,
             }
 	    )
