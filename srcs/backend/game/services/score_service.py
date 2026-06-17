@@ -14,7 +14,7 @@ class ScoreService:
     async def save_meld(room_code, player_id, game, round, score):
         room = await get_room_with_host(room_code)
     
-        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+        p = await sync_to_async(PlayerPresence.objects.get)(
             room=room,
             position=int(player_id)
         )
@@ -47,7 +47,7 @@ class ScoreService:
                 GameLog.objects.get_or_create
             )(
                 room=room,
-                player=p.player,
+                player=p,
                 game=game,
                 round=round
             )
@@ -71,7 +71,7 @@ class ScoreService:
                 GameLog.objects.get_or_create
             )(
                 room=room,
-                player=p.player,
+                player=p,
                 game=game,
                 round=round
             )

@@ -105,7 +105,7 @@ class BroadcastService:
                 PlayerPresence.objects.select_related("player").get
             )(
                 room_id=log.room_id,
-                player_id=log.player_id
+                id=log.player_id
             )
 
             game_key = str(log.game)
@@ -145,8 +145,7 @@ class BroadcastService:
                     board.append({"room_id":id, "card":cards})
             else:
                 board = []
-    #TODO add take_by
-    #TODO palyer_id == right player ?
+
         return {
             "self_id": player_position,
             "board": board,
