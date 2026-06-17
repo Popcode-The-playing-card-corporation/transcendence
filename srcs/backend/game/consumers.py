@@ -171,7 +171,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if result == None:
             return
         room = result["room"]
-    #TODO if lobby open status
+
         if room.status == "open":
             await BroadcastService.broadcast_settings(
                 room.code,
@@ -257,7 +257,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        game_state = await GameService.start_game(room, self.send)
+        game_state = await GameService.start_game(room)
 
     async def handle_play_card(self, payload):
         room = await get_room_with_host(self.code)
