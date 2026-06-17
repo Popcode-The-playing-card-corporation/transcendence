@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
-  log,
+  // log,
   MeshPhongMaterial,
   Texture,
   type Mesh,
@@ -9,7 +9,7 @@ import {
 } from "three";
 import type { cardType } from "../../../../utils/type/handCardsType";
 import { useGame } from "../../context/GameContext";
-import { RoundedBoxGeometry } from "@react-three/drei";
+// import { RoundedBoxGeometry } from "@react-three/drei";
 
 // function sendCard(card: cardType) {
 //   console.log(card.value + " of " + card.color + " played!");
