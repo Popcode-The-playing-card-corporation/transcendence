@@ -105,7 +105,7 @@ class BroadcastService:
                 PlayerPresence.objects.select_related("player").get
             )(
                 room_id=log.room_id,
-                player_id=log.player_id
+                id=log.player_id
             )
 
             game_key = str(log.game)
