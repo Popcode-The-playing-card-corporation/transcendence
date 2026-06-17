@@ -9,6 +9,7 @@ from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
 from channels.layers import get_channel_layer
 import asyncio
+import random
 
 
 class BotService:
@@ -46,7 +47,8 @@ class BotService:
 
         while (not is_end and (not p.is_human or not p.is_online)):
             
-            #await asyncio.sleep(2.0)
+            await asyncio.sleep(random.randint(3, 7))
+
             if p.is_human and not p.is_online:
                 await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
                 
@@ -54,7 +56,6 @@ class BotService:
             await save_room_state(room.uuid, game_state)
             await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
 
-            #await asyncio.sleep(1.2)
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
@@ -87,7 +88,7 @@ class BotService:
             position=int(game_state["playing"])
         )
         if not p.is_online or not p.is_human or p.is_afk:
-            await asyncio.sleep(2.0)
+            # await asyncio.sleep(2.0)
             position = str(game_state["playing"])
     
             legal = game.handleAction("legal", game_state, idPlayer= position)
