@@ -6,6 +6,12 @@ type playerScoreT = {
 	score: number,
 }
 
+export type DetailedPointsT = {
+  rounds: {players: playerScoreT[]}[];
+  is_finished: boolean;
+  total: playerScoreT[];
+};
+
 type playerGameT = {
 	hand: number,
 	user: { id: number, username: string, avatar: string},
@@ -16,7 +22,7 @@ export type boardDataNT = {
 	board: {room_id: number, card: cardType}[],
 	asked: cardType,
 	points: { id:number, username:string, score:number }[],
-	detailed_points: Record<string, Record<string, playerScoreT[] | boolean>>;
+	detailed_points: DetailedPointsT[];
 	playing: number,
 	player_list: { [k: string] : playerGameT},
 	started_at: string,
@@ -30,7 +36,7 @@ export const default_board : boardDataNT = {
 	board: [],
 	asked: {color: "", value:"", id:0},
 	points: [],
-	detailed_points: {},
+	detailed_points: [],
 	playing: -1,
 	player_list: {},
 	started_at: "",
@@ -44,7 +50,7 @@ export type boardDataT = {
 	board: {room_id: number, card: cardType}[],
 	asked: cardType,
 	points: { id:number, username:string, score:number }[],
-	detailed_points: Record<string, Record<string, playerScoreT[] | boolean>>;
+	detailed_points: DetailedPointsT[];
 	playing: number,
 	player_list: { [k: string] : playerGameT},
 	started_at: Date,
@@ -58,7 +64,7 @@ export const default_Nboard : boardDataT = {
 	board: [],
 	asked: {color: "", value:"", id:0},
 	points: [],
-	detailed_points: {},
+	detailed_points: [],
 	playing: -1,
 	player_list: {},
 	started_at: new Date(0,0,0),

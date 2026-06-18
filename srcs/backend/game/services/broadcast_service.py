@@ -71,7 +71,7 @@ class BroadcastService:
 
         player_puntos = []
         player_list = {}
-        detailed_points = {}
+        detailed_points = []
 
         for player_id, player_data in game_state["players"].items():
 
@@ -95,45 +95,59 @@ class BroadcastService:
             }
 
         logs = await sync_to_async(list)(
-            GameLog.objects.filter(room=room)
+            GameLog.objects.filter(room=room).order_by("game", "round", "player_id")
         )
 
         nb_round = int(36 / room.nb_player)
 
         for log in logs:
-            player = await sync_to_async(
+            p = await sync_to_async(
                 PlayerPresence.objects.select_related("player").get
             )(
                 room_id=log.room_id,
                 id=log.player_id
             )
 
-            game_key = str(log.game)
-            round_key = str(log.round)
+            game_num=int(log.game)
+            round_num=int(log.round)
 
-            if game_key not in detailed_points:
-                detailed_points[game_key] = {}
-
-            if round_key == str(nb_round):
-                if "total" not in detailed_points[game_key]:
-                    detailed_points[game_key]["total"] = []
-
-                detailed_points[game_key]["is_finished"] = True
-
-                detailed_points[game_key]["total"].append({
-                    "id": str(player.player_id),
-                    "username": player.player.username,
-                    "score": log.score,
-                })
+            game = None
+            for cur_game in detailed_points:
+                if cur_game["game"] == game_num:
+                    game = cur_game
+                    break
+                
+            if game is None:
+                game = {
+                    "game": game_num,
+                    "rounds": [],
+                    "is_finished": False,
+                    "total": [],
+				}
+                detailed_points.append(game)
+                
+            player_score = {"id":p.player.id, "username":p.player.username, "score":log.score}
+            
+            if round_num == nb_round:
+                game['is_finished'] = True
+                game['total'].append(player_score)
             else:
-                if round_key not in detailed_points[game_key]:
-                    detailed_points[game_key][round_key] = []
-
-                detailed_points[game_key][round_key].append({
-                    "id": str(player.player_id),
-                    "username": player.player.username,
-                    "score": log.score,
-                })
+                round = None
+                for cur_round in game["rounds"]:
+                    if cur_round["round"] == round_num:
+                        round = cur_round
+                        break
+                        
+                if round is None:
+                    round = {"round":round_num, "players":[]}
+                    game["rounds"].append(round)
+            round["players"].append(player_score)
+            
+        for game in detailed_points:
+            del game ["game"]
+            for round in game["rounds"]:
+                del round["round"]
+                            
                     
             tmp_board = game_state['board']
             asked = tmp_board.get('asked')
