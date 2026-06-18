@@ -23,7 +23,7 @@ export default function GameVisual() {
       <ambientLight />
       <Board back={back}/>
       <Hand cardsTex={cardsTex} back={back}/>
-      <OrbitControls />
+      {/* <OrbitControls /> */}
     </Canvas>
   );
 }
