@@ -139,7 +139,9 @@ class GameService:
 
         if (card_on_board == nb_players):
             game = GameEngine(room.uuid)
-
+            channel_layer = get_channel_layer()
+            await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
+            
             game_state, melds = game.handleAction("take_fold", game_state)
             await save_room_state(room.uuid, game_state)
             
