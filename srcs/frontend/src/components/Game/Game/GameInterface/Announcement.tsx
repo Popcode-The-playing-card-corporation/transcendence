@@ -6,6 +6,10 @@ export default function Announcement() {
   const showAnnonceRef = useRef<HTMLDialogElement>(null);
   const annonces = generateFakeAnnonce();
 
+  function updateSettings() {
+    console.log("confirmed !");
+  }
+
   return (
     <>
       <button
@@ -22,6 +26,7 @@ export default function Announcement() {
       <div className="modal-box bg-(--nav-color)">
         <table className="table">
           <thead>
+            <th></th>
             <th>Annonce available</th>
             <th>Cards</th>
           </thead>
@@ -29,8 +34,14 @@ export default function Announcement() {
             {annonces.map((annonce) => {
               return (
                 <tr>
-                  <td >
-                    <button className="link-hover">{annonce.annonce}</button>
+                  <td>
+                    <input
+                      type="checkbox"
+                      className="h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-slate-300 checked:bg-(--bg-color)"
+                    />
+                      </td>
+                      <td >
+                        <p>{annonce.annonce}</p>
                   </td>
                   <td>
                     {annonce.cards} in {annonce.colour}
@@ -40,9 +51,11 @@ export default function Announcement() {
             })}
           </tbody>
         </table>
+        <div className="flex items-center justify-center col-span-3 pt-6">
+          <button className="btn" onClick={updateSettings}>Confirm</button>
+        </div>
       </div>
       <form method="dialog" className="modal-backdrop">
-        <button ></button>
       </form>
       </dialog>
     </>
