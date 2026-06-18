@@ -5,11 +5,11 @@ export default function ChatText({info}: {info: chatT}) {
 
   return (
     <div className={"chat " + (isOtherPlayers ? "chat-start": "chat-end")}>
-      <div className="chat-header">
+      <div className="text-sm chat-header">
         {info.username}
-        <time className="text-xs opacity-50">{info.time}</time>
+        <time className="flex justify-center text-xs opacity-50">{info.time}</time>
       </div>
-      <div className="chat-bubble bg-(--hover-color)">
+      <div className="chat-bubble bg-(--hover-color) w-max-3/4">
         {info.message}
       </div>
     </div>
