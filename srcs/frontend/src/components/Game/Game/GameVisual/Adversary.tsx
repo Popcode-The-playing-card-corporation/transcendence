@@ -7,12 +7,13 @@ import PlayedCard from "./PlayedCard";
 type Props = {
   cardHand: adversaryT, 
   playedCard: boardT,
+  front: Texture<HTMLImageElement, TextureEventMap>,
   back: Texture<HTMLImageElement, TextureEventMap>,
   totalPlayer: number,
   boardRadius: number
 }
 
-export default function Adversary({cardHand, playedCard, back, totalPlayer, boardRadius} : Props) {
+export default function Adversary({cardHand, playedCard, front, back, totalPlayer, boardRadius} : Props) {
   const angleCenter = 360 / totalPlayer * Math.PI / 180;
   const idPlayer = 3;
   if (!playedCard)
@@ -29,7 +30,8 @@ export default function Adversary({cardHand, playedCard, back, totalPlayer, boar
         position={[centerHand* Math.sin(angleCenter * (cardHand.position + 1)), centerHand *  -Math.cos(angleCenter * (cardHand.position + 1)), 0]}
       >
         <PlayedCard
-          card={playedCard.card.value + playedCard.card.color}
+          front={front}
+		  back={back}
           id={id}
           posPlayedCard={posPlayedCard}
         />

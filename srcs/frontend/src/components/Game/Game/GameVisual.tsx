@@ -21,7 +21,7 @@ export default function GameVisual() {
   return (
     <Canvas className="bg-(--green-color) w-3/4">
       <ambientLight />
-      <Board back={back}/>
+      <Board front={cardsTex} back={back}/>
       <Hand cardsTex={cardsTex} back={back}/>
       {/* <OrbitControls /> */}
     </Canvas>

@@ -3,7 +3,7 @@ import Adversary from "./Adversary";
 import generateFakeAdversary from "../../../../utils/test_funcs/generateFakeAdversary";
 import { Texture, type TextureEventMap } from "three";
 
-export default function Board({back} : {back: Texture<HTMLImageElement, TextureEventMap>}) {
+export default function Board({front, back} : {front: Texture<HTMLImageElement, TextureEventMap>, back: Texture<HTMLImageElement, TextureEventMap>}) {
   const cards = generateFakeBoard();
   const adversaries = generateFakeAdversary();
   const totalPlayer = adversaries.length + 1;
@@ -30,6 +30,7 @@ export default function Board({back} : {back: Texture<HTMLImageElement, TextureE
               <Adversary
                 cardHand={adversary}
                 playedCard={cards[adversaries.indexOf(adversary)]}
+				front={front}
                 back={back}
                 totalPlayer={totalPlayer}
                 boardRadius={boardRadius}
