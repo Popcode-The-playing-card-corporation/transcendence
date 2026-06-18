@@ -6,13 +6,13 @@ export default function generateFakeChat() : chatT[] {
       id: 0,
       username: "help",
       time: "06:45",
-      message: "blblblbbl"
+      message: "blblblbblgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
     },
     {
       id: 1,
       username: "I",
       time: "06:46",
-      message: "haha"
+      message: "hahahdashbdhasbdjhbdhabsdhjbasbjd"
     },
     {
       id: 2,
