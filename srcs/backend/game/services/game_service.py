@@ -18,6 +18,10 @@ from .room_task_service import RoomTaskService
 from .meld_service import MeldService
 from channels.layers import get_channel_layer
 
+import asyncio
+
+
+
 class GameService:
 
     @staticmethod
@@ -147,12 +151,14 @@ class GameService:
                 room = await get_room_with_host(room.code)
                 game_state = room.game_state
                 await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
+                await asyncio.sleep(7)
             
             game_state, melds = game.handleAction("take_fold", game_state)
             await save_room_state(room.uuid, game_state)
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
+            
             return True, game_state
         
         return False, game_state
