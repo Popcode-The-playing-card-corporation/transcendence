@@ -127,6 +127,7 @@
   @apply w-50 h-8;
 }
 
-.range {
-  
+.chat-bubble {
+  word-wrap: break-word;
+   @apply max-w-3xs;
 }
