@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Chrono from "../GameInterface/Chrono";
+import ExitBtn from "./ExitBtn";
 
 export default function Time() {
 	const [timeLeft, setTimeLeft] = useState<number>(15) // new to calculate with backend
@@ -27,6 +28,7 @@ export default function Time() {
 	  {timeLeft}s
       </div>
 	  <Chrono />
+	  <ExitBtn />
     </div>
   );
 }
