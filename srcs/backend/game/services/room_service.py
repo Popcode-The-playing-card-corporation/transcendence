@@ -2,7 +2,7 @@ from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host
 from datetime import timedelta
 
-from ..models import PlayerPresence, Room
+from ..models import PlayerPresence, Room, PlayerScore
 from api.models import User
 from django.db.models import F
 
@@ -116,6 +116,33 @@ class RoomService:
                 "old_host": old_host,
             }
 
+    @staticmethod
+    async def handle_player_exit(user, code):
+        room = await get_room_with_host(code)
+        p = await sync_to_async(PlayerPresence.objects.get)(player=user, room=room)
+        bots = await sync_to_async(list)(User.objects.filter(is_bot=True))
+        bots_room = await sync_to_async(list)((PlayerPresence.objects.filter(is_human=False, room=room)).select_related("player"))
+        valid_bots = []
+        remove_bots = []
+        for bot in bots:
+            for bot_room in bots_room:
+                if bot.id == bot_room.player_id:
+                    remove_bots.append(bot)
+        for bot in bots:
+            if (bot not in remove_bots):
+                valid_bots.append(bot)
+        
+        ps = await sync_to_async(PlayerScore.objects.get)(room=room, player=user)
+        
+        ps.player = valid_bots[0]
+        p.player = valid_bots[0]
+        p.channel_name = None
+        p.is_human = False
+        
+        await sync_to_async(ps.save)()
+        await sync_to_async(p.save)()
+        
+        return True
 
 
 

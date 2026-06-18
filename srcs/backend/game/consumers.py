@@ -38,6 +38,7 @@ ACTION_HANDLERS = {
     "end_game": "handle_end_game",
     "melds": "handle_melds",
     "kick": "handle_kick",
+    "exit_game": "handle_exit_game",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -312,6 +313,25 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
     
         await self.send(json.dumps(result))
+        
+        
+    async def handle_exit_game(self, payload=None):    
+        result = await RoomService.handle_player_exit(
+            code=self.code,
+            user=self.user
+        )
+        if result:
+            await self.channel_layer.group_send(
+            f"player_{self.user.id}",
+            {
+                "type": "game_event",
+                "event": "force_disconnect",
+                "payload": {
+                    "message": "Exit game"
+                }
+            }
+        )
+        #await self.send(json.dumps(result))
 
     async def handle_kick(self, payload: dict):
         if "playerId" not in payload:
