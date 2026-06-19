@@ -389,6 +389,28 @@ def update_params(request, code):
                 {"message": "Invalid number of player max"},
                 status= 401
             )
+    
+    if "nb_games" in request.data:
+        if request.data["nb_games"] < 0:
+            return Response(
+                {"message": "Invalid number of points's number"},
+                status= 401
+			)
+            
+    if "nb_points" in request.data:
+        if request.data["nb_points"] < 0:
+            return Response(
+                {"message": "Invalid number of games's number"},
+                status= 401
+			)
+
+    if "goal" in request.data:
+        if request.data["goal"] != "games" and request.data["goal"] != "points":
+            return Response(
+                {"message": "Invalid type of goal"},
+                status= 401
+            )
+
     if "type" in request.data:
         if request.data["type"] != "public" and request.data["type"] != "private" and request.data["type"] != "friends_only":
             return Response(
