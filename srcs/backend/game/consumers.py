@@ -80,6 +80,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = await BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
+                                                        verify_meld_callback=MeldService.verify_meld,
                                                         ask_continue=GameService.ask_host_continue
                                                         )
         finished, game_state = await GameService.check_game_end(room, game)
@@ -187,7 +188,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             game_state = await BotService.play_until_human(room, room.game_state, game,
                                                             check_end=GameService.check_game_end, 
                                                             check_take_fold_callback=GameService.check_take_fold,
-                                                        ask_continue=GameService.ask_host_continue
+                                                            verify_meld_callback=MeldService.verify_meld,
+                                                            ask_continue=GameService.ask_host_continue
                                                             )
         except Exception:
             pass
@@ -256,7 +258,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        game_state = await GameService.start_game(room)
+        game_state = await GameService.start_game(room, MeldService.verify_melds)
 
     async def handle_play_card(self, payload):
         room = await get_room_with_host(self.code)
@@ -291,6 +293,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold,
+                                                        verify_meld_callback=MeldService.verify_melds,
                                                         ask_continue=GameService.ask_host_continue
                                                        )
 
@@ -402,7 +405,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         game_state = await GameService.continue_game(
             room,
-            self.send
+            MeldService.verify_melds
         )
 
     async def handle_end_game(self, payload=None):

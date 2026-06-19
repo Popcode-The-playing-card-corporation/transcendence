@@ -9,9 +9,11 @@ import { useGame } from "../../context/GameContext";
 export default function Hand({
   cardsTex,
   back,
+  setIsEnd,
 }: {
   cardsTex: Texture<HTMLImageElement, TextureEventMap>[];
   back: Texture<HTMLImageElement, TextureEventMap>;
+  setIsEnd: Dispatch<SetStateAction<boolean>>;
 }) {
   const { state } = useGame();
 //   const [hand, setHand] = useState<cardType[]>(state.game.self_cards);
@@ -19,8 +21,7 @@ export default function Hand({
   const [simHand, setHand] = useState(hand);
   const startPos = (0.4 * hand.length) / 2 - 0.2;
   const oldStartPos = (0.4 * (hand.length + 1)) / 2 - 0.2;
-  const [lastCardPlayed, setLastCardPlayed] = useState<number>(19)
-
+  const [lastCardPlayed, setLastCardPlayed] = useState<number>(19);
 
   return (
       <mesh>

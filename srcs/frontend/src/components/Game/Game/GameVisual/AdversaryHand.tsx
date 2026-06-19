@@ -7,10 +7,11 @@ type Props = {
   cardHand: adversaryT, 
   back: Texture<HTMLImageElement, TextureEventMap>
   totalPlayer:number,
-  boardRadius: number
+  boardRadius: number,
+  posPlayedCard: number
 }
 
-export default function AdversaryHand({angleCenter, cardHand, back, totalPlayer, boardRadius} : Props) {
+export default function AdversaryHand({angleCenter, cardHand, back, totalPlayer, boardRadius, posPlayedCard} : Props) {
   const angleBetween = Math.PI / 30;
   const littleRadius = Math.sin(angleCenter / 2) * boardRadius;
   const angleStart = - (cardHand.nbCards - 1) * angleBetween / 2;
@@ -18,8 +19,6 @@ export default function AdversaryHand({angleCenter, cardHand, back, totalPlayer,
   for (let i = 0; i < cardHand.nbCards; i++)
     allAngle.push(angleStart + i * angleBetween);
 
-  console.log("little radius : " + littleRadius);
-  console.log("cos : " + Math.cos(angleCenter * (cardHand.position + 1)));
   return (
       <mesh
       >
@@ -32,6 +31,7 @@ export default function AdversaryHand({angleCenter, cardHand, back, totalPlayer,
                 back={back}
                 positionCard={allAngle.indexOf(angle)}
                 totalPlayer={totalPlayer}
+                posPlayedCard={posPlayedCard}
               />
             </>
           );

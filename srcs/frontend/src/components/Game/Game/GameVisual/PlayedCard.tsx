@@ -1,27 +1,29 @@
-import { MeshPhongMaterial, TextureLoader } from "three";
+import { MeshPhongMaterial, Texture, type TextureEventMap } from "three";
 import { loadTexture } from "../../../../utils/imports/textures";
 import { useLoader } from "@react-three/fiber";
 
-export default function PlayedCard({card, id, total} : {card:string, id: number, total:number}) {
+type Props = {
+  front: Texture<HTMLImageElement, TextureEventMap>,
+  back: Texture<HTMLImageElement, TextureEventMap>,
+  id: number,
+  posPlayedCard: number 
+}
 
-  const angle = (360* id /total) * (Math.PI / 180);
-  const distance = 1.8;
-  const textureFront = useLoader(TextureLoader, loadTexture(card)!);
-  const back = useLoader(TextureLoader, loadTexture("back")!);
+export default function PlayedCard({front, back, id, posPlayedCard} : Props) {
+
   const materials = [
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
-    new MeshPhongMaterial({map: textureFront}),
+    new MeshPhongMaterial({map: front}),
     new MeshPhongMaterial({map: back})
   ];
 
   return (
   <>
     <mesh
-      rotation={[0, 0, angle]}
-      position={[Math.sin(angle) * distance, -Math.cos(angle) * distance, 0]}
+      position={[0, posPlayedCard, 0]}
       material={materials}
     >
 	{ <boxGeometry args={[1, 1.4, 0.01]}/>}
