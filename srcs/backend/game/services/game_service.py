@@ -20,7 +20,7 @@ from channels.layers import get_channel_layer
 class GameService:
 
     @staticmethod
-    async def start_game(room):
+    async def start_game(room, verify_meld_callback=None):
         game = GameEngine(room.uuid)
         room = await get_room_with_host(room.code)
         channel_layer = get_channel_layer()
@@ -42,8 +42,9 @@ class GameService:
         await BroadcastService.broadcast_game(room.code, channel_layer, "game_started")
           
         game_state = await BotService.play_until_human(room, game_state, game,
-                                                       check_end=GameService.check_game_end, 
-                                                       check_take_fold_callback=GameService.check_take_fold
+                                                        check_end=GameService.check_game_end, 
+                                                        check_take_fold_callback=GameService.check_take_fold,
+                                                        verify_meld_callback=verify_meld_callback
                                                 )
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -192,7 +193,8 @@ class GameService:
 
     @staticmethod
     async def continue_game(
-        room
+        room,
+        verify_meld_callback=None
     ):
         game = GameEngine(room.uuid)
 
@@ -220,7 +222,8 @@ class GameService:
             game_state,
             game,
             check_end=GameService.check_game_end,
-            check_take_fold_callback=GameService.check_take_fold
+            check_take_fold_callback=GameService.check_take_fold,
+            verify_meld_callback=verify_meld_callback
         )
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
             room=room,
