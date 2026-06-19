@@ -56,12 +56,10 @@ class BotService:
 
             if (game_state["round"] == 0):
                 melds = BroadcastService._count_melds(game_state["players"][str(game_state["playing"])]["cards"])
-                print("melds = ", melds)
                 for a in melds:
                     cards = []
                     for c in a["cards"]:
                         cards.append({"cardId": c})
-                    print("cards = ", cards)
                     await MeldService.verify_melds(room, await sync_to_async(User.objects.get)(id=p.player_id), cards)
 
             if p.is_human and not p.is_online:
