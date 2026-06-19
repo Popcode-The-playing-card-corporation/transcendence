@@ -15,7 +15,7 @@ export default function SliderLimiters({ lim, setValue, value }: Props) {
           min="0"
           max="2"
           value={value}
-          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--nav-color)] glass"
           step="1"
           onChange={(e) => setValue(Number(e.target.value))}
         />
