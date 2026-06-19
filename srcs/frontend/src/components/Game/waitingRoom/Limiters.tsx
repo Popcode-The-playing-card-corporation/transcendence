@@ -7,13 +7,13 @@ export default function Limiters() {
 
   return (
     <div className="w-full max-w-xs ">
-      <div className="flex mb-10 gap-4 justify-center">
-        <p>Games</p>
+      <div className="flex mb-10 gap-4 justify-center items-center">
+        <p>Rounds</p>
         <input
           type="checkbox"
           defaultChecked
           checked={lim}
-          className="toggle toggle-xl border-(--hover-color) bg-(--hover-color) text-(--font-color) checked:border-(--hover-color) checked:bg-(--hover-color) checked:text-(--font-color)"
+          className="toggle border-(--hover-color) bg-(--hover-color) text-(--font-color) checked:border-(--nav-color) checked:bg-(--nav-color) checked:text-(--font-color)"
           onClick={() => setLim(!lim)}
         />
         <p>Points</p>
