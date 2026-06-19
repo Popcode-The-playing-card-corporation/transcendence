@@ -11,7 +11,7 @@ import { useNavigate } from "react-router";
 import { GameContext } from "./context/GameContext";
 import type { playerT } from "../../utils/type/playerType";
 import type { cardType } from "../../utils/type/handCardsType";
-import type { boardDataT } from "../../utils/type/boardDataType";
+import type { boardDataNT } from "../../utils/type/boardDataType";
 
 export default function GameWebSocket({
   code,
@@ -134,7 +134,7 @@ export default function GameWebSocket({
 			dispatch({type:"SET_PLAYERS", payload:players})
 		}
 
-		function setGame(cards:cardType[], board:boardDataT) {
+		function setGame(cards:{hand:cardType[], legal:cardType[], melds:cardType[][]}, board:boardDataNT) {
 			dispatch({type:"SET_CARDS", payload:cards})
 			dispatch({type:"SET_BOARD", payload:board})
 		}
@@ -157,6 +157,13 @@ export default function GameWebSocket({
 
 		function endGame() {
 			sendJson("end_game");
+		}
+
+		function exitGame() {
+			sendJson("exit_game")
+			leaveRoom();
+			auth.setGame(false);
+			notif?.showNotif("Left Game", "You have left the game and can no longer rejoin the lobby.")
 		}
 
 		function annonces(cards: number[]) {
@@ -234,7 +241,7 @@ export default function GameWebSocket({
 
 	
 	return (
-		<GameContext.Provider value={{state, leaveRoom, startGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, sendMessage}}>
+		<GameContext.Provider value={{state, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, sendMessage}}>
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);

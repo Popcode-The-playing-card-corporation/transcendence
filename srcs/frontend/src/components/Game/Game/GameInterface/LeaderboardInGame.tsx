@@ -2,7 +2,7 @@ import { useRef } from "react";
 // import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
 import type { userInGameT } from "../../../../utils/type/userInGameType";
 import UsernameMiniProfileBtn from "../../../miniProfile/UsernameMiniProfileBtn";
-import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
+// import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
 import type {
   detailedGameT,
   detailedRoundT,
@@ -15,7 +15,7 @@ export default function LeaderboardInGame() {
   const { state } = useGame();
   const auth = useAuth();
   const listPlayer = state.game.boardData.points;
-  const detailedGame = generateFakeDetailedGame();
+  const detailedGame = state.game.boardData.detailed_points;
   const currentID = auth.userID;
   const scoreDetailsRef = useRef<HTMLDialogElement>(null);
   function compareFn(a: userInGameT, b: userInGameT) {

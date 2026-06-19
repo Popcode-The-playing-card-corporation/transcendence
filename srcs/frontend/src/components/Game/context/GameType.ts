@@ -11,7 +11,7 @@ type SettingsT = {
 
 type GameT = {
 	boardData: boardDataT;
-	self_cards: cardType[];
+	self_cards: {hand:cardType[], legal:cardType[], melds:cardType[][]};
 }
 
 export type roomT = "private" | "friends_only" | "public"
@@ -39,7 +39,7 @@ export type GameAction =
 	| { type: "CONNECTED" }
 	| { type: "DISCONNECTED" }
 	| { type: "SET_PLAYERS"; payload: playerT[] }
-	| { type: "SET_CARDS"; payload: cardType[] }
+	| { type: "SET_CARDS"; payload: {hand:cardType[], legal:cardType[], melds:cardType[][]} }
 	| { type: "SET_BOARD"; payload: boardDataNT }
 	| { type: "SET_PARAMS"; payload: paramsT }
 	| { type: "SET_MODE"; payload: number }
@@ -62,7 +62,7 @@ export const initialState: GameState = {
 	},
 	game: {
 		boardData: default_Nboard,
-		self_cards:[],
+		self_cards:{hand:[], legal:[], melds:[[]]},
 	},
 	messages: [],
 	event:"",

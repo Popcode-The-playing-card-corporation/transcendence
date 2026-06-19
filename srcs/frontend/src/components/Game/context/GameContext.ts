@@ -5,6 +5,7 @@ type GameContextT = {
 	state: GameState;
 	leaveRoom: () => void;
 	startGame: () => void;
+	exitGame: () => void;
 	playCard: (cardId: number) => void;
 	continueGame: () => void;
 	endGame: () => void;
