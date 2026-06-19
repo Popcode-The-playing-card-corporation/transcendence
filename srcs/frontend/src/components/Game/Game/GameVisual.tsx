@@ -13,7 +13,7 @@ export default function GameVisual({setIsEnd} : {setIsEnd : Dispatch<SetStateAct
   const loadedTextures: string[] = [];
   const back = useLoader(TextureLoader, loadTexture("back")!);
   deck.forEach((card) => {
-	  console.log(card.value + card.color);
+	  // console.log(card.value + card.color);
 	  
     loadedTextures.push(loadTexture(card.value + card.color)!);
   });
@@ -22,7 +22,7 @@ export default function GameVisual({setIsEnd} : {setIsEnd : Dispatch<SetStateAct
   return (
     <Canvas className="w-3/4 bg-cover rounded-2xl" style={{backgroundImage: `url(${bgimg})`}}>
       <ambientLight />
-      <Board back={back}/>
+      <Board front={cardsTex} back={back}/>
       <Hand cardsTex={cardsTex} back={back} setIsEnd={setIsEnd}/>
     </Canvas>
   );
