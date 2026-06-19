@@ -1,5 +1,5 @@
 from ..models import User, Friendship
-from game.models import Stat, PlayerScore, Room, Stat
+from game.models import Stat, PlayerScore, Room, Stat, PlayerPresence
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -72,8 +72,8 @@ def game_history(request):
 
     scores = (
         PlayerScore.objects
-        .filter(player=request.user, room__status="end")
-        .select_related("room")
+        .filter(player__player_id=request.user, room__status="end")
+        .select_related("room", "player")
         .order_by("-room__started_at")
     )
 
@@ -114,7 +114,6 @@ def game_history_friend(request, user_id):
         Q(from_user_id=user_id, to_user=viewer)
     ).exists()
 
-    # autoriser accès seulement si ami OU soi-même
     if not is_friend and viewer.id != user_id:
         return Response(
             {"error": "Forbidden: not friends"},
@@ -155,20 +154,14 @@ def game_history_friend(request, user_id):
 @permission_classes([IsAuthenticated])
 def room_data(request, code):
     room = Room.objects.get(code=code)
-    players = (
-        PlayerScore.objects
-        .filter(room=room)
-        .order_by("rank")
-	)
-    
+    players = PlayerPresence.objects.filter(room=room).select_related("player")
+	    
     users = []
-    for ps in players:
-        username = "deleted user"
-        if ps.player_id != None:
-            username = User.objects.get(id=ps.player_id).username
+    for p in players:
+        ps = PlayerScore.objects.get(player=p)
         users.append({
-			"id": ps.player_id,
-            "username": username,
+			"id": p.player.id,
+            "username": p.player.username,
             "score": ps.score,
             "rank": ps.rank
 		})

@@ -1,5 +1,4 @@
 from ..db import save_room_state, get_player_pos, get_room_with_host
-from .game_service import GameService
 from .stats_service import StatsService
 from game_engine.game import GameEngine
 from .score_service import ScoreService
@@ -23,71 +22,78 @@ CARD_VALUES = {
 class MeldService:
 
     @staticmethod
-    async def play_meld(room, user, cards):
-        position = await get_player_pos(user, room.code)
+    async def play_melds(room):
+        room = await get_room_with_host(room.code)
+        game_state = room.game_state
+        for player_id, player_data in game_state["players"].items():
+            p = await sync_to_async(
+                PlayerPresence.objects.select_related("player").get
+            )(
+                room_id=room.id,
+                position=int(player_id)
+            )
 
-        error = await MeldService.validate_turn(
-            room,
-            position
-        )
-
-        if error:
-            return {"error": error}
-
-        selected_cards_idx = await MeldService.extract_card_indexes(
-            room,
-            user,
-            cards
-        )
+            cards = []
+            for meld in player_data.get("melds", []):
+                for card in meld["cards"]:
+                    cards.append({
+                        "cardId": card["id"]
+                    })
+            if len(cards) > 0:
+                selected_cards_idx = await MeldService.extract_card_indexes(
+                    room,
+                    p.player,
+                    cards
+                )
+                
+                selected_cards = await MeldService.extract_cards(
+                    room,
+                    p.player,
+                    player_id,
+                    cards
+                )
+                
+                if selected_cards_idx is None:
+                    return {"error": "Carte invalide"}
         
-        selected_cards = await MeldService.extract_cards(
-            room,
-            user,
-            position,
-            cards
-        )
-
-        if selected_cards_idx is None:
-            return {"error": "Carte invalide"}
-
-        valid = MeldService.compute_sequences(
-            selected_cards
-        )
-
-        if not valid:
-            return {
-                "error": "Toutes les cartes doivent appartenir à des suites valides"
-            }
-
-        game = GameEngine(room.uuid)
-
-        game_state = game.handleAction(
-            "meld",
-            room.game_state,
-            idPlayer=str(position),
-            meldIndex=selected_cards_idx
-        )
+                valid, _ = MeldService.compute_sequences(
+                    selected_cards
+                )
         
-
-        points = game.handleAction(
-            "point_meld",
-            room.game_state,
-            idPlayer=str(position),
-            meldIndex=selected_cards_idx
-        )
+                if not valid:
+                    return {
+                        "error": "Toutes les cartes doivent appartenir à des suites valides"
+                    }
         
-        await ScoreService.save_meld(room.code, position, room.game_state["game"], room.game_state["round"], points * -1)
+                game = GameEngine(room.uuid)
         
-        await save_room_state(room.uuid, game_state)
-
-        await StatsService.add_meld_points(
-            user,
-            points
-        )
+                game_state = game.handleAction(
+                    "meld",
+                    game_state,
+                    idPlayer=str(player_id),
+                    meldIndex=selected_cards_idx
+                )
+    
+                points = game.handleAction(
+                    "point_meld",
+                    game_state,
+                    idPlayer=str(player_id),
+                    meldIndex=selected_cards_idx
+                )
+            
+                await ScoreService.save_meld(room.code, player_id, game_state["game"], game_state["round"], points * -1)
+            
+                await StatsService.add_meld_points(
+                    p.player,
+                    points
+                )
+                await save_room_state(room.uuid, game_state)
+            
+            room = await get_room_with_host(room.code)
+            game_state = room.game_state
 
         return {
-            "success": True,
-            "points": points
+            "success": True
         }
         
     @staticmethod
@@ -115,7 +121,7 @@ class MeldService:
         selected_idx = []
     
         for card in cards:
-            idx = await GameService.get_card_index(
+            idx = await MeldService.get_card_index(
                 user,
                 room,
                 card["cardId"]
@@ -137,7 +143,7 @@ class MeldService:
     
         for card in cards:
     
-            idx = await GameService.get_card_index(
+            idx = await MeldService.get_card_index(
                 user,
                 room,
                 card["cardId"]
@@ -154,7 +160,6 @@ class MeldService:
 
     @staticmethod
     async def verify_melds(room, user, cards):
-
         position = await get_player_pos(user, room.code)
 
         error = await MeldService.validate_player_can_announce(
@@ -205,9 +210,11 @@ class MeldService:
                 "message": "Toutes les cartes doivent appartenir à des suites valides"
             }
         bucket = [
-                [card["raw"] for card in seq]
-                for seq in sequences
-            ]
+            {
+                "cards": [card["raw"] for card in seq]
+            }
+            for seq in sequences
+        ]
         await MeldService.save_melds(room.id, user.id, bucket)
         return {
             "type": "game_event",
@@ -226,7 +233,12 @@ class MeldService:
         room = await sync_to_async(Room.objects.get)(id=room_id)
         game_state = room.game_state
         
-        game_state["players"][str(p.position)]["melds"].append(sequences)
+        player_melds = game_state["players"][str(p.position)]["melds"]
+        
+        for sequence in sequences:
+            if sequence not in player_melds:
+                game_state["players"][str(p.position)]["melds"].append(sequence)
+                
         await save_room_state(room.uuid, game_state)
     
     @staticmethod
@@ -295,6 +307,17 @@ class MeldService:
         valid = used_ids == selected_ids
     
         return valid, melds
+    
+    @staticmethod
+    async def get_card_index(user, room, card_id):
+        room = await get_room_with_host(room.code)
+        position = await get_player_pos(user, room.code)
+        i = 0
+        for card in room.game_state["players"][str(position)]["cards"]:
+            if card["id"] == card_id:
+                return i
+            i += 1
+        return -1
     
     @staticmethod
     async def validate_player_can_announce(room, position):

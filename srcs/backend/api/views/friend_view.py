@@ -347,3 +347,46 @@ def list_propal(request):
                 my_friend_ids.add(suggested_user.id)
 
     return Response(suggestions)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_user_not_friend(request):
+    friendships = Friendship.objects.filter(
+        Q(from_user=request.user) | Q(to_user=request.user)
+    ).select_related("from_user", "to_user")
+
+    friends = []
+
+    for friendship in friendships:
+        friend = (
+            friendship.to_user
+            if friendship.from_user == request.user
+            else friendship.from_user
+        )
+
+        friends.append(friend)
+
+    users = User.objects.filter(is_bot=False)
+
+    suggestions = []
+    
+    for user in users:
+        if user != request.user:
+            if user not in friends:
+                suggestions.append({
+                    "id": user.id,
+                    "username": user.username
+                })
+    
+    
+
+    
+    
+    return Response(suggestions)
+
+
+
+
+
+
