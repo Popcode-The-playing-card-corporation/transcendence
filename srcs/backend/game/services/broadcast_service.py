@@ -2,7 +2,7 @@ from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host, get_params
 from datetime import timedelta
 from ..models import PlayerPresence, GameLog
-
+import json
 from game_engine.game import GameEngine
 from channels.layers import get_channel_layer
 from game_engine.card import Card
@@ -44,6 +44,12 @@ class BroadcastService:
             "status": room.status,
             "max_player": room.max_player,
             "type": room.type,
+            "goal": room.goal,
+            **(
+                {"nb_games": room.nb_games}
+                if room.goal == "games"
+                else {"nb_points": room.nb_points}
+            ),
             "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
         }
             
@@ -66,13 +72,15 @@ class BroadcastService:
         )
     
     @staticmethod
-    async def _board_data(room, player_position):
+    async def _board_data(room, player_position, is_r0_finish=False):
+        room = await get_room_with_host(room.code)
         game_state = room.game_state
 
         player_puntos = {}
         player_list = {}
         detailed_points = {}
-
+        player_annonces = []
+        
         for player_id, player_data in game_state["players"].items():
 
             p = await sync_to_async(
@@ -83,7 +91,14 @@ class BroadcastService:
             )
 
             player_id_str = str(player_id)
-
+            
+            if is_r0_finish:
+                for meld in player_data.get("melds", []):
+                    player_annonces.append({
+                        "room_id": player_id,
+                        "cards": meld["cards"]
+                    })
+                
             player_puntos[player_id_str] = player_data["puntos"]
             player_list[player_id_str] = {
                 "hand": len(player_data["cards"]),
@@ -145,9 +160,14 @@ class BroadcastService:
                     board.append({"room_id":id, "card":cards})
             else:
                 board = []
-
+                
         return {
             "self_id": player_position,
+            **(
+                {"annonces": player_annonces}
+                if is_r0_finish
+                else {}
+            ),
             "board": board,
             "asked": asked,
             "points": player_puntos,
@@ -259,8 +279,8 @@ class BroadcastService:
                 room_id=room.id,
                 position=int(player_id)
             )
-            
-            board_data = await BroadcastService._board_data(room, player_id)
+            #TODO dont send legal if it's not player turn
+            board_data = await BroadcastService._board_data(room, player_id, (message == "reveal_announces" and game_state["round"] == 0))
             init_cards = await BroadcastService._get_cards(room, player_data, player_id)
             
             if p.channel_name:
@@ -280,3 +300,4 @@ class BroadcastService:
                         }
                     }
                 )
+            

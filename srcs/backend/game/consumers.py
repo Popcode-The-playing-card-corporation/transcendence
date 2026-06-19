@@ -1,14 +1,9 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from .models import PlayerPresence, Room, PlayerScore, Stat, GameLog
-from api.models import Friendship, User
+from .db import  end_room, get_room_with_host, get_player_pos
+from .models import PlayerPresence
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
-from game_engine.bot.bot import bot
-from django.db.models import Q
-import copy
-from django.utils import timezone
 from .services.game_service import GameService
 from .services.room_service import RoomService
 from .services.meld_service import MeldService
@@ -17,7 +12,6 @@ from .services.room_connection_service import RoomConnectionService
 from .services.broadcast_service import BroadcastService
 
 import asyncio
-from channels.exceptions import ChannelFull
 
 CARD_VALUES = {
     "6": 6,
@@ -38,6 +32,7 @@ ACTION_HANDLERS = {
     "end_game": "handle_end_game",
     "melds": "handle_melds",
     "kick": "handle_kick",
+    "exit_game": "handle_exit_game",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -84,7 +79,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         game_state = await BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
-                                                        check_take_fold_callback=GameService.check_take_fold
+                                                        check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.ask_host_continue
                                                         )
         finished, game_state = await GameService.check_game_end(room, game)
 
@@ -188,7 +184,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
             game_state = await BotService.play_until_human(room, room.game_state, game,
                                                             check_end=GameService.check_game_end, 
-                                                            check_take_fold_callback=GameService.check_take_fold
+                                                            check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.ask_host_continue
                                                             )
         except Exception:
             pass
@@ -286,31 +283,19 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         if (take_fold):
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "finish_round")
+            await asyncio.sleep(12)
 
         game = GameEngine(room.uuid)
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
-                                                       check_take_fold_callback=GameService.check_take_fold
+                                                       check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.ask_host_continue
                                                        )
 
         is_end, gs = await GameService.check_game_end(room, game)
         
         if (is_end):
             await GameService.ask_host_continue(room, gs)
-        
-    async def handle_send_melds(self, payload):
-        room = await get_room_with_host(self.code)
-    
-        result = await MeldService.play_meld(
-            room=room,
-            user=self.user,
-            cards=payload["cards"]
-        )
-    
-        if result.get("error"):
-            return await self.error(result["error"])
-    
-        #await BroadcastService.broadcast_game(self.code, self.channel_layer, "annonces_valid")
 
     async def handle_melds(self, payload):
         room = await get_room_with_host(self.code)
@@ -322,6 +307,25 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
     
         await self.send(json.dumps(result))
+        
+        
+    async def handle_exit_game(self, payload=None):    
+        result = await RoomService.handle_player_exit(
+            code=self.code,
+            user=self.user
+        )
+        if result:
+            await self.channel_layer.group_send(
+            f"player_{self.user.id}",
+            {
+                "type": "game_event",
+                "event": "force_disconnect",
+                "payload": {
+                    "message": "Exit game"
+                }
+            }
+        )
+        #await self.send(json.dumps(result))
 
     async def handle_kick(self, payload: dict):
         if "playerId" not in payload:

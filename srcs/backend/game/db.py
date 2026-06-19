@@ -261,18 +261,18 @@ def end_room(uuid, data):
 
         p, _ = PlayerScore.objects.get_or_create(
             room=room,
-            player_id=pp.player_id
+            player=pp
         )
 
         p.score = player_data["puntos"]
         p.save()
         
-        stat = Stat.objects.get(user_id=p.player_id)
+        stat = Stat.objects.get(user_id=pp.player_id)
         stat.total_points += p.score
         stat.save()
 
         scores.append({
-            "player_id": pp.player_id,
+            "player": pp,
             "score": p.score
         })
 
@@ -283,9 +283,9 @@ def end_room(uuid, data):
     for rank, entry in enumerate(scores, start=1):
         PlayerScore.objects.filter(
             room=room,
-            player_id=entry["player_id"]
+            player=entry["player"]
         ).update(rank=rank)
-        user = User.objects.get(id=entry["player_id"])
+        user = User.objects.get(id=entry["player"].player_id)
         stat = Stat.objects.get(user_id=user.id)
         
         user.elo += elo
