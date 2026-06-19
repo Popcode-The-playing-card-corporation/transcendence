@@ -32,23 +32,23 @@ export default function GameButtons() {
 
   return (
     <div className="h-1/2 flex p-2 flex-col justify-end">
-	{isChatOpen ? (
-		<Chat setNewMessage={setNewMessage} isAlreadyOpen={isChatOpen}/>
-	) : ""}
-	{isInfoOpen ? (
-		<FunctionnementInfos />
-	) : ""}
-      <div className="flex gap-2 mt-2 items-center justify-between">
-        <Announcement />
-        <div className="flex gap-2">
+      {isChatOpen ? (
+        <Chat setNewMessage={setNewMessage} isAlreadyOpen={isChatOpen}/>
+      ) : ""}
+      {isInfoOpen ? (
+        <FunctionnementInfos />
+      ) : ""}
+      <div className="flex gap-2 justify-between">
+        <div className="flex gap-1">
+          <Announcement />
           <div className="indicator">
             {newMessage ? (
               <span className="indicator-item badge bg-(--nav-color) border-2 border-(--accent-color) w-1 "></span>
             ) : ""}
             <ChatBtn changeState={changeState} />
           </div>
-          <InfoBtn changeState={changeState} />
         </div>
+        <InfoBtn changeState={changeState} />
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 import { useRef } from "react";
 import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
+import { GrAnnounce } from "react-icons/gr";
+
 
 export default function Announcement() {
   const isFirstFold = true;
@@ -13,10 +15,10 @@ export default function Announcement() {
   return (
     <>
       <button
-        className={"btn " + (isFirstFold ? "" : "btn-disabled")}
+        className={"btn btn-lg btn-circle " + (isFirstFold ? "" : "btn-disabled")}
         onClick={() => showAnnonceRef.current?.showModal()}
         >
-        Annonces
+        <GrAnnounce />
       </button>
       <dialog
         id="showAnnonce"
