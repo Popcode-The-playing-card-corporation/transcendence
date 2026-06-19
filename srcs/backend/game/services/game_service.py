@@ -22,7 +22,7 @@ import asyncio
 class GameService:
 
     @staticmethod
-    async def start_game(room, verify_meld_callback=None):
+    async def start_game(room):
         game = GameEngine(room.uuid)
         room = await get_room_with_host(room.code)
         channel_layer = get_channel_layer()
@@ -47,7 +47,6 @@ class GameService:
         game_state = await BotService.play_until_human(room, game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
-                                                        verify_meld_callback=verify_meld_callback,
                                                         ask_continue=GameService.ask_host_continue
                                                 )
         
@@ -194,8 +193,7 @@ class GameService:
 
     @staticmethod
     async def continue_game(
-        room,
-        verify_meld_callback=None
+        room
     ):
         game = GameEngine(room.uuid)
 
@@ -224,7 +222,6 @@ class GameService:
             game,
             check_end=GameService.check_game_end,
             check_take_fold_callback=GameService.check_take_fold,
-            verify_meld_callback=verify_meld_callback,
             ask_continue=GameService.ask_host_continue
         )
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(

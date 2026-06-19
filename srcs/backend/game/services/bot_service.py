@@ -8,6 +8,7 @@ from ..db import add_player_to_room, remove_player_from_room, end_room, save_roo
 from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
 from channels.layers import get_channel_layer
+from .meld_service import MeldService
 import asyncio
 import random
 
@@ -15,7 +16,7 @@ import random
 class BotService:
 
     @staticmethod
-    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, verify_meld_callback=None, ask_continue=None):
+    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
         channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
@@ -61,7 +62,7 @@ class BotService:
                     for c in a["cards"]:
                         cards.append({"cardId": c})
                     print("cards = ", cards)
-                    await verify_meld_callback(room, await sync_to_async(User.objects.get)(id=p.player_id), cards)
+                    await MeldService.verify_melds(room, await sync_to_async(User.objects.get)(id=p.player_id), cards)
 
             if p.is_human and not p.is_online:
                 await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
