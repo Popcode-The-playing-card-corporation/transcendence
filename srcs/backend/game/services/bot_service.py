@@ -20,7 +20,7 @@ class BotService:
         channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
-            await ask_continue(room, game_state)
+            await ask_continue(room.code)
             return game_state
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -42,7 +42,7 @@ class BotService:
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
-                await ask_continue(room, game_state)
+                await ask_continue(room.code)
                 return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
@@ -79,7 +79,7 @@ class BotService:
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
-                await ask_continue(room, game_state)
+                await ask_continue(room.code)
                 return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
@@ -97,7 +97,7 @@ class BotService:
         game_state = room.game_state
         is_end, gs = await check_end(room, game)
         if is_end:
-            await ask_continue(room, game_state)
+            await ask_continue(room.code)
             return game_state
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
