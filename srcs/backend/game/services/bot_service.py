@@ -8,6 +8,7 @@ from ..db import add_player_to_room, remove_player_from_room, end_room, save_roo
 from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
 from channels.layers import get_channel_layer
+from .meld_service import MeldService
 import asyncio
 import random
 
@@ -15,11 +16,11 @@ import random
 class BotService:
 
     @staticmethod
-    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, verify_meld_callback=None, ask_continue=None):
+    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
         channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
-            await ask_continue(room, game_state)
+            await ask_continue(room.code)
             return game_state
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -36,11 +37,12 @@ class BotService:
                 if (take_fold):
                     await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
                     await asyncio.sleep(12)
+                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
-                await ask_continue(room, game_state)
+                await ask_continue(room.code)
                 return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
@@ -54,13 +56,11 @@ class BotService:
 
             if (game_state["round"] == 0):
                 melds = BroadcastService._count_melds(game_state["players"][str(game_state["playing"])]["cards"])
-                print("melds = ", melds)
                 for a in melds:
                     cards = []
                     for c in a["cards"]:
                         cards.append({"cardId": c})
-                    print("cards = ", cards)
-                    await verify_meld_callback(room, await sync_to_async(User.objects.get)(id=p.player_id), cards)
+                    await MeldService.verify_melds(room, await sync_to_async(User.objects.get)(id=p.player_id), cards)
 
             if p.is_human and not p.is_online:
                 await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
@@ -74,11 +74,12 @@ class BotService:
                 if (take_fold):
                     await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
                     await asyncio.sleep(12)
+                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
-                await ask_continue(room, game_state)
+                await ask_continue(room.code)
                 return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
@@ -96,7 +97,7 @@ class BotService:
         game_state = room.game_state
         is_end, gs = await check_end(room, game)
         if is_end:
-            await ask_continue(room, game_state)
+            await ask_continue(room.code)
             return game_state
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(

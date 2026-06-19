@@ -271,12 +271,15 @@ class BroadcastService:
         
         init_cards = {
                 "hand": player_data["cards"],
-                "legal": game.handleAction(
-                    "legal",
-                    game_state,
-                    idPlayer=str(player_id),
-                    
-                ) if game_state["playing"] == int(player_id) else None,
+                **(
+                    {"legal": game.handleAction(
+                        "legal",
+                        game_state,
+                        idPlayer=str(player_id),
+                        
+                    )} if game_state["playing"] == int(player_id)
+                       else {}
+                ),
                 "melds": melds
             }
         
@@ -294,7 +297,7 @@ class BroadcastService:
                 room_id=room.id,
                 position=int(player_id)
             )
-            #TODO dont send legal if it's not player turn
+            
             board_data = await BroadcastService._board_data(room, player_id, (message == "reveal_announces" and game_state["round"] == 0))
             init_cards = await BroadcastService._get_cards(room, player_data, player_id)
             

@@ -1,7 +1,8 @@
 from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host
 
-from ..models import PlayerPresence
+import uuid
+from ..models import PlayerPresence, Room
 from api.models import User
 from django.db.models import F
 
@@ -135,6 +136,23 @@ class RoomService:
         await sync_to_async(p.save)()
         
         return True
+    
+    @staticmethod
+    async def handle_create_room(user, code):
+        old_room = await get_room_with_host(code)
+        room_code = str(uuid.uuid4())[:8]
+        room = await sync_to_async(Room.objects.create)(
+            code=room_code,
+            host=user,
+            max_player = old_room.max_player,
+            type = old_room.type,
+            goal = old_room.goal,
+            nb_games = old_room.nb_games,
+            nb_points = old_room.nb_points
+            
+        )
+    
+        return room.code
 
 
 

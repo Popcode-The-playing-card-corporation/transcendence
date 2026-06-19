@@ -8,7 +8,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'code', 'host', 'created_at', 'status', 'max_player', 'type']
+        fields = ['id', 'code', 'host', 'created_at', 'status', 'max_player', 'type', 'nb_games', 'nb_points', 'goal']
         extra_kwargs = {
             "id": {"read_only": True},
             "code": {"read_only": True},

@@ -1,5 +1,5 @@
 
-from ..db import save_room_state, get_room_with_host, start_room, count_player
+from ..db import save_room_state, get_room_with_host, start_room, count_player, end_room
 from ..models import PlayerPresence,  PlayerScore
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
@@ -22,7 +22,7 @@ import asyncio
 class GameService:
 
     @staticmethod
-    async def start_game(room, verify_meld_callback=None):
+    async def start_game(room):
         game = GameEngine(room.uuid)
         room = await get_room_with_host(room.code)
         channel_layer = get_channel_layer()
@@ -42,12 +42,12 @@ class GameService:
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         
         await BroadcastService.broadcast_game(room.code, channel_layer, "game_started")
-          
+        await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+        
         game_state = await BotService.play_until_human(room, game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
-                                                        verify_meld_callback=verify_meld_callback,
-                                                        ask_continue=GameService.ask_host_continue
+                                                        ask_continue=GameService.check_goal_reached
                                                 )
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -136,7 +136,7 @@ class GameService:
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished:
-            await GameService.ask_host_continue(room, game_state)
+            await GameService.check_goal_reached(room.code)
             return
         
         return {"state": state}
@@ -163,7 +163,7 @@ class GameService:
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
-            #TODO maybe put await here to wait before send round_finished message or put another type of message when round start
+    
             return True, game_state
         
         return False, game_state
@@ -178,10 +178,7 @@ class GameService:
         points = game.handleAction("get_final_score", game_state)
         
         await ScoreService.save_final_score(room.code, room.game_state["game"], room.game_state["round"], points)
-        
-        channel_layer = get_channel_layer()
-        await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
-    
+            
     @staticmethod
     async def check_game_end(room, game):
         game_state = room.game_state
@@ -198,11 +195,36 @@ class GameService:
         await save_room_state(room.uuid, game_state)
     
         return True, game_state
+    
+    @staticmethod
+    async def check_goal_reached(room_code):
+        room = await get_room_with_host(room_code)
+        game_state = room.game_state
+        is_finished = False
+        if room.goal == "games":
+            if game_state["game"] >= room.nb_games - 1:
+                is_finished = True
+        elif room.goal == "points":
+            for player_id, player_data in game_state["players"].items():
+                if int(player_data["puntos"]) >= room.nb_points:
+                    is_finished = True
+        
+        if is_finished:
+            await GameService.ask_host_continue(room, game_state)
+            channel_layer = get_channel_layer()
+            room.status = "end"
+            await sync_to_async(room.save)()
+        
+            await end_room(room.uuid, game_state)
+            await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
+        else:
+            await GameService.continue_game(room)
+            
+        
 
     @staticmethod
     async def continue_game(
-        room,
-        verify_meld_callback=None
+        room
     ):
         game = GameEngine(room.uuid)
 
@@ -231,8 +253,7 @@ class GameService:
             game,
             check_end=GameService.check_game_end,
             check_take_fold_callback=GameService.check_take_fold,
-            verify_meld_callback=verify_meld_callback,
-            ask_continue=GameService.ask_host_continue
+            ask_continue=GameService.check_goal_reached
         )
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
             room=room,
