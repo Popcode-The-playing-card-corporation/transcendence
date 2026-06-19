@@ -1,11 +1,8 @@
 
-from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from ..models import PlayerPresence, Room, PlayerScore, Stat
-from api.models import Friendship, User
+from ..db import save_room_state, get_room_with_host, start_room, count_player
+from ..models import PlayerPresence,  PlayerScore
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
-from game_engine.bot.bot import bot
-from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 import copy
@@ -15,7 +12,12 @@ from .score_service import ScoreService
 from .bot_service import BotService
 from .broadcast_service import BroadcastService
 from .room_task_service import RoomTaskService
+from .meld_service import MeldService
 from channels.layers import get_channel_layer
+
+import asyncio
+
+
 
 class GameService:
 
@@ -45,6 +47,7 @@ class GameService:
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
                                                         verify_meld_callback=verify_meld_callback
+                                                        ask_continue=GameService.ask_host_continue
                                                 )
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -64,10 +67,8 @@ class GameService:
                 position=int(player_id)
             )
     
-            user = presence.player
-    
             await sync_to_async(PlayerScore.objects.get_or_create)(
-                player=user,
+                player=presence,
                 room=room
             )   
 
@@ -81,7 +82,7 @@ class GameService:
         legal = game.handleAction("legal", state, idPlayer=str(position))
         if len(legal) == 0:
             return {"error": "No card in hand"}
-        idx = await GameService.get_card_index(user, room, card_id)
+        idx = await MeldService.get_card_index(user, room, card_id)
 
         if idx is None:
             return {"error": "Card not found"}
@@ -123,7 +124,7 @@ class GameService:
             taker=taker,
             melds=melds
         )
-
+        #TODO delete this double id player finished ?
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished:
@@ -134,31 +135,30 @@ class GameService:
 
     @staticmethod
     async def check_take_fold(game_state, room):
+        room = await get_room_with_host(room.code)
         card_on_board = len(game_state["board"]) - 1
         nb_players = len(game_state["players"])
 
         if (card_on_board == nb_players):
             game = GameEngine(room.uuid)
-
+            if room.game_state["round"] == 0:
+                #TODO verify if this is at least 1 melds
+                channel_layer = get_channel_layer()
+                await MeldService.play_melds(room)
+                room = await get_room_with_host(room.code)
+                game_state = room.game_state
+                await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
+                await asyncio.sleep(7)
+            
             game_state, melds = game.handleAction("take_fold", game_state)
             await save_room_state(room.uuid, game_state)
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
+            #TODO maybe put await here to wait before send round_finished message or put another type of message when round start
             return True, game_state
         
         return False, game_state
-
-    @staticmethod
-    async def get_card_index(user, room, card_id):
-        room = await get_room_with_host(room.code)
-        position = await get_player_pos(user, room.code)
-        i = 0
-        for card in room.game_state["players"][str(position)]["cards"]:
-            if card["id"] == card_id:
-                return i
-            i += 1
-        return -1
     
     @staticmethod
     async def ask_host_continue(room, game_state):
@@ -224,6 +224,7 @@ class GameService:
             check_end=GameService.check_game_end,
             check_take_fold_callback=GameService.check_take_fold,
             verify_meld_callback=verify_meld_callback
+            ask_continue=GameService.ask_host_continue
         )
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
             room=room,

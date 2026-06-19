@@ -43,9 +43,16 @@ class RoomConnectionService:
                 room=room
             ).exists
         )()
-
-        if room.status == "start" and is_member:
-            return {"close": False}
+        
+        if room.status == "start":
+            if is_member:
+                return {"close": False}
+            else:
+                return {
+                    "close": True,
+                    "code": 4003,
+                    "message": {"event": "game_event", "message": "room already started"}
+                }
 
         if room.nb_player == room.max_player:
             return {

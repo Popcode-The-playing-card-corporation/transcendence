@@ -15,10 +15,11 @@ import random
 class BotService:
 
     @staticmethod
-    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, verify_meld_callback=None):
+    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, verify_meld_callback=None, ask_continue=None):
         channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
+            await ask_continue(room, game_state)
             return game_state
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -28,16 +29,18 @@ class BotService:
         #TODO merge this and under while
         if p.is_human and (p.is_afk or not p.is_online):
             await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
-            game_state = await BotService.play_bot(game, room.code, check_end=check_end)
+            game_state = await BotService.play_bot(game, room.code, check_end=check_end, ask_continue=ask_continue)
             await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
                     await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
+                    await asyncio.sleep(12)
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
+                await ask_continue(room, game_state)
                 return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
@@ -62,7 +65,7 @@ class BotService:
             if p.is_human and not p.is_online:
                 await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
                 
-            game_state = await BotService.play_bot(game, room.code, check_end=check_end)
+            game_state = await BotService.play_bot(game, room.code, check_end=check_end, ask_continue=ask_continue)
             await save_room_state(room.uuid, game_state)
             await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
 
@@ -70,10 +73,12 @@ class BotService:
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
                     await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
+                    await asyncio.sleep(12)
 
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
             if is_end:
+                await ask_continue(room, game_state)
                 return game_state
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
@@ -86,11 +91,12 @@ class BotService:
         return game_state
                 
     @staticmethod
-    async def play_bot(game, room_code, check_end=None):
+    async def play_bot(game, room_code, check_end=None, ask_continue=None):
         room = await get_room_with_host(room_code)
         game_state = room.game_state
         is_end, gs = await check_end(room, game)
         if is_end:
+            await ask_continue(room, game_state)
             return game_state
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(

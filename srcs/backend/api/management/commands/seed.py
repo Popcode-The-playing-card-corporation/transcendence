@@ -41,7 +41,7 @@ class Command(BaseCommand):
                     "email": f"{username}@test.com",
                     "avatar": fake.image_url(),
                     "is_online": random.choice([True, False]),
-                    "is_bot": random.choice([False, False, False, True]),
+                    "is_bot": False,
                     "elo": random.randint(0, 3000),
                     "has_password": True,
                 }
