@@ -110,6 +110,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         await self.accept()
         
+        await self.send_json({"type": "global", "event": "set_user", "username":self.get_username(), "id": self.user.id})
+        
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         
         await self.channel_layer.group_add(f"player_{self.user.id}", self.channel_name)

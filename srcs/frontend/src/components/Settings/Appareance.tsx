@@ -45,10 +45,11 @@ export default function Appareance({
           </ul>
         </div>
       </div>
-	  <div className="skin-selection">
-	  <h3>Skin selection</h3>
-	  <p>Not implementeed, fuck you</p>
-	  </div>
+	  {//<div className="skin-selection">
+	  //<h3>Skin selection</h3>
+	  //<p>Not implementeed, fuck you</p>
+	  //</div>
+	  }
     </div>
   );
 }

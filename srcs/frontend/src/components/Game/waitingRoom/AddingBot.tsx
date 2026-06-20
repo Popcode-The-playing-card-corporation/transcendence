@@ -12,7 +12,7 @@ export default function AddingBot({roomCode, updateSettings}:Props) {
 	const [botDif, setDif] = useState(0);
 	const [numBot, setNum] = useState(1);
 	const notif = useNotif();
-
+	
 	async function addClick() {
 		updateSettings();
 		const res = await addBot(roomCode, numBot, botDif === 0 ? "easy" : botDif === 1 ? "medium" : "hard")

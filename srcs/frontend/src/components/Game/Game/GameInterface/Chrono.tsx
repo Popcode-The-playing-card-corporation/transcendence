@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
+import { useGame } from "../../context/GameContext";
 
 export default function Chrono() {
-	const [stopWatch, setStopWatch] = useState<number>(0);
+	const { state } = useGame(); 
+	const [stopWatch, setStopWatch] = useState<number>(Math.floor((new Date().getTime() -state.game.boardData.started_at.getTime()) / 1000));
 
 
 	useEffect(() => {
 
 	const intervalId = setInterval(() => {
-			setStopWatch(stopWatch + 1);
+			setStopWatch(Math.floor((new Date().getTime() - state.game.boardData.started_at.getTime()) / 1000));
 	}, 1000)
 
 	return () => clearInterval(intervalId)
-	})
+
+	}, [state.game.boardData.started_at])
 	const sec = stopWatch % 60;
 	const min = Math.floor(stopWatch / 60) ;
 	return (

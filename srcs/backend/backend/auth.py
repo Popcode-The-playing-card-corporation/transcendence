@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from api.auth.authentication import OptionalJWTAuthentication
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.decorators import authentication_classes
 from django.conf import settings
 
@@ -31,9 +32,10 @@ def RefreshCookie(request):
 	except Exception:
 		return Response({"status": "failed"})
 	access = serializer.validated_data['access']
+	user_id = AccessToken(access)["user_id"]
 
 	res = Response()
-	res.data = {'status': "success",  "id":request.user.id}
+	res.data = {'status': "success",  "id":user_id}
 	res.set_cookie(
 		key='access_token',
 		value=access,

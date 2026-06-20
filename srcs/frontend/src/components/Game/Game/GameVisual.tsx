@@ -6,13 +6,12 @@ import { loadTexture } from "../../../utils/imports/textures";
 import { TextureLoader } from "three";
 import bgimg from "../../../assets/bg_game.png"
 
-
 export default function GameVisual() {
   const deck = generateDeck();
   const loadedTextures: string[] = [];
   const back = useLoader(TextureLoader, loadTexture("back")!);
   deck.forEach((card) => {
-	  console.log(card.value + card.color);
+	  // console.log(card.value + card.color);
 	  
     loadedTextures.push(loadTexture(card.value + card.color)!);
   });
@@ -21,7 +20,7 @@ export default function GameVisual() {
   return (
     <Canvas className="w-3/4 bg-cover rounded-2xl" style={{backgroundImage: `url(${bgimg})`}}>
       <ambientLight />
-      <Board back={back}/>
+      <Board front={cardsTex} back={back}/>
       <Hand cardsTex={cardsTex} back={back}/>
     </Canvas>
   );

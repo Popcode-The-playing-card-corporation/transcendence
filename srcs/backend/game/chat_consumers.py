@@ -17,12 +17,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			"payload": event.get("payload", {}),
 		}))
 
-	async def message(self, event):
+	async def chat_message(self, event):
 		await self.send(text_data=json.dumps({
-			"type": "message",
+			"type": "chat_message",
+			"payload": {
 			"user": event["user"],
 			"message": event["message"],
 			"time": event["time"]
+			}
 		}))
 
 	def getFile(self):
@@ -35,7 +37,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		self.code = self.scope["url_route"]["kwargs"]["code"]
-		self.group_name = f"room_{self.code}"
+		self.group_name = f"chat_{self.code}"
 		self.user = self.scope["user"]
 
 		if not self.user.is_authenticated:
@@ -71,10 +73,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+		content = []
 		file = self.getFile()
-		if (file.exists()):
-			content = file.open().readlines()
-			await self.send(json.dumps(content))
+		if file.exists():
+			for line in file.read_text().splitlines():
+				content.append(json.loads(line))
+
+		await self.send(text_data=json.dumps({"type": "history", "payload": content}))
 
 	async def disconnect(self, close_code):
 		await self.channel_layer.group_discard(
@@ -91,7 +96,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				}))
 				return
 
-			if (data.get("type") == "message"):
+			if (data.get("type") == "chat_message"):
 				file = self.getFile()
 
 				message = data.get("message")
@@ -107,7 +112,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				time = timezone.now().strftime('%H:%M')
 
 				event = {
-					"type": "message",
+					"type": "chat_message",
 					"user": user_data,
 					"message": message,
 					"time": time
@@ -116,10 +121,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				await self.channel_layer.group_send(self.group_name, event)
 
 				data = str(event)
-				if (file.exists()):
-					data = file.read_text() + data
-				file.write_text(data + os.linesep)
-				print(file.open().readlines())
+				with file.open("a") as f:
+					f.write(json.dumps(event) + os.linesep)
 
 		except json.JSONDecodeError:
 			await self.send(text_data=json.dumps({

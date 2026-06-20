@@ -18,6 +18,7 @@ export default function PlayerList() {
 	if (host_user) {
 		id = host_user.id;
 	}
+	const orderedPlayers = host_user ? [host_user, ...listPlayer.filter(player => player.id !== host_user.id)] : listPlayer;
 
   return (
     <div className="bordered h-">
@@ -27,11 +28,11 @@ export default function PlayerList() {
           <th>List of players</th>
         </thead>
         <tbody >
-          {listPlayer.map((player:playerT) => {
+          {orderedPlayers.map((player:playerT) => {
             return (
               <tr className="h-10 text-lg">
                 <td className="w-1/12">
-                  {listPlayer.indexOf(player) + 1}
+                  {orderedPlayers.indexOf(player) + 1}
                 </td>
                 <td >
                   <UsernameMiniProfileBtn id={player.id} name={player.username}/>

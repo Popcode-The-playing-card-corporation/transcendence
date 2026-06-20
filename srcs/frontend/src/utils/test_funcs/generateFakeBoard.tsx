@@ -3,7 +3,7 @@ import type { boardT } from "../type/boardType";
 export default function generateFakeBoard() : boardT[] {
   return[
     {
-      position: 0,
+      playerPos: 0,
       card:{
         id: 0,
         value: "A",
@@ -11,7 +11,7 @@ export default function generateFakeBoard() : boardT[] {
       }
     },
     {
-      position: 1,
+      playerPos: 1,
       card:{
         id: 1,
         value: "6",
@@ -19,7 +19,7 @@ export default function generateFakeBoard() : boardT[] {
       }
     },
     {
-      position: 2,
+      playerPos: 2,
       card:{
         id: 2,
         value: "8",
@@ -27,7 +27,7 @@ export default function generateFakeBoard() : boardT[] {
       }
     },
     // {
-    //   position: 3,
+    //   playerPos: 3,
     //   card:{
     //     id: 3,
     //     value: "J",
@@ -35,7 +35,7 @@ export default function generateFakeBoard() : boardT[] {
     //   }
     // },
     // {
-    //   position: 4,
+    //   playerPos: 4,
     //   card:{
     //     id: 4,
     //     value: "Q",
@@ -43,7 +43,7 @@ export default function generateFakeBoard() : boardT[] {
     //   }
     // },
     // {
-    //   position: 5,
+    //   playerPos: 5,
     //   card:{
     //     id: 5,
     //     value: "8",
@@ -51,7 +51,7 @@ export default function generateFakeBoard() : boardT[] {
     //   }
     // },
     // {
-    //   position: 6,
+    //   playerPos: 6,
     //   card:{
     //     id: 6,
     //     value: "9",

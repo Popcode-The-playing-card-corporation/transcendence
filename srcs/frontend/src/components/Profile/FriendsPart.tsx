@@ -15,12 +15,13 @@ import type { recommendationT } from "../../utils/type/recommendationType";
 type Props = {
   friends:friendT[];
   requests:requestT[];
+  users:requestT[];
   recs:recommendationT[];
   updatedFriends:boolean;
   setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function Friends({friends, requests, recs, updatedFriends, setUpdate}: Props) {
+export function Friends({friends, requests, users, recs, updatedFriends, setUpdate}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
@@ -69,7 +70,7 @@ export function Friends({friends, requests, recs, updatedFriends, setUpdate}: Pr
             <FaPlus />{" "}
           </button>
           <dialog id="add_new_friends" className="modal" ref={addFriendsRef}>
-            <AddFriends recs={recs}/>
+            <AddFriends recs={recs} users={users} updatedFriends={updatedFriends} setUpdate={setUpdate} ref={addFriendsRef}/>
           </dialog>
           <div className="dropdown dropdown-end">
             <div className="indicator">

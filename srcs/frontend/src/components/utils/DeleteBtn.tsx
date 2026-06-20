@@ -10,47 +10,54 @@ type Props = {
   profileRef: React.RefObject<HTMLDialogElement | null> | null;
 };
 
-export default function DeleteBtn({req_id, updatedFriends, setUpdate, profileRef}: Props) {
+export default function DeleteBtn({
+  req_id,
+  updatedFriends,
+  setUpdate,
+  profileRef,
+}: Props) {
   const confirmDelRef = useRef<HTMLDialogElement>(null);
   const notif = useNotif();
 
   return (
     <div>
       <button
-      onClick={() => confirmDelRef.current?.showModal()}
-      className="btn del "
+        onClick={() => confirmDelRef.current?.showModal()}
+        className="btn del "
       >
-      {" "}
-      <FaRegTrashAlt />{" "}
+        {" "}
+        <FaRegTrashAlt />{" "}
       </button>
-      <dialog
-      id="modal_confirm_del"
-      className="modal "
-      ref={confirmDelRef}
-      >
-      <div className="modal-box bg-(--bg-color)">
-        <h3 className="font-bold text-lg">
-        Are you sure?
-        </h3>
-        <p className="py-4">
-        Are you sure you want to delete your friend?
-        <br />
-        You can always add them back.
-        </p>
-        <div className="modal-action">
-        <form method="dialog">
-          <button
-          className="btn mr-5 del"
-          onClick={() => changeHandler(req_id, "delete", updatedFriends, setUpdate, profileRef, notif)}
-          >
-          Confirm
-          </button>
-          <button className="btn">Cancel</button>
-        </form>
+      <dialog id="modal_confirm_del" className="modal " ref={confirmDelRef}>
+        <div className="modal-box bg-(--bg-color)">
+          <h3 className="font-bold text-lg">Are you sure?</h3>
+          <p className="py-4">
+            Are you sure you want to delete your friend?
+            <br />
+            You can always add them back.
+          </p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button
+                className="btn mr-5 del"
+                onClick={() =>
+                  changeHandler(
+                    req_id,
+                    "delete",
+                    updatedFriends,
+                    setUpdate,
+                    profileRef,
+                    notif,
+                  )
+                }
+              >
+                Confirm
+              </button>
+              <button className="btn">Cancel</button>
+            </form>
+          </div>
         </div>
-      </div>
       </dialog>
     </div>
   );
 }
-

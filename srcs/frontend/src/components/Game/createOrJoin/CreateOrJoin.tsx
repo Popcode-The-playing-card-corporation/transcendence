@@ -10,10 +10,11 @@ import { useNotif } from "../../hooks/useNotif";
 
 type Props = {
 	availableGames:availableGameT[],
+	refreshLobby:() => void,
 	setJoined:React.Dispatch<SetStateAction<string>>,
 }
 
-export default function CreateOrJoin({availableGames, setJoined}: Props) {
+export default function CreateOrJoin({availableGames, refreshLobby, setJoined}: Props) {
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
   const notif = useNotif();
   const [code, setCode] = useState("");
@@ -62,7 +63,7 @@ const codeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         </div>
         <div className="listAvailableGame w-2/3 flex justify-center bordered overflow-scroll max-h-8/12">
 		<div className="w-full">
-		<FilterGame rawList={availableGames} setFilteredGames={setFilteredGames}/>
+		<FilterGame refreshLobby={refreshLobby} rawList={availableGames} setFilteredGames={setFilteredGames}/>
           <table className="table ml-10 ">
             <thead>
               <tr>

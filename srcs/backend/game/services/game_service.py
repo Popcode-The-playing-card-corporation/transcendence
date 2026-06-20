@@ -96,13 +96,21 @@ class GameService:
                 {
                     "type": "game_event",
                     "event": "card_valid",
-                    "payload": {"status": "invalid !"}
+                    "payload": {"status": "invalid"}
                 }
             )
             return {"invalid": "Card not found"}
         
         if room.game_state["playing"] != position:
-            return {"error": "Not your turn bitch !!!"}
+            await channel_layer.group_send(
+                f"player_{user.id}",
+                {
+                    "type": "game_event",
+                    "event": "card_valid",
+                    "payload": {"status": "invalid"}
+                }
+            )
+            return {"invalid": "Not your turn bitch !!!"}
         state, taker, melds = await BoardService.resolve_if_needed(
             game, state, room, position, idx
         )

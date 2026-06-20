@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext,  } from "react";
 import type { AuthContextType } from "./AuthContext";
 
 export const authContext = createContext<AuthContextType>({
@@ -7,6 +7,8 @@ export const authContext = createContext<AuthContextType>({
 	checking:true,
 	in_game:false,
 	userID: null,
+	has_pass: true,
+	setPass: () => {},
     setGame: () => {},
     setLogging: () => {},
 	setLoggedIn: () => {},

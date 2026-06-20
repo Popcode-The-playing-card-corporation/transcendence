@@ -20,6 +20,20 @@ export async function getFriends() {
 	}
 }
 
+export async function getUsers() {
+	try {
+		const res = await axios.get(host.http + 'list_not_friend/', { timeout: 2000, withCredentials: true});
+		return res;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
 export async function getRecs() { 
 	try {
 		const res = await axios.get(host.http + 'propal/', { timeout: 2000, withCredentials: true});
