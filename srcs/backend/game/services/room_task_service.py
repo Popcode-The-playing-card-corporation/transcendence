@@ -15,13 +15,13 @@ class RoomTaskService:
         delete_room.apply_async(args=[room_code], countdown=delay)
 
     @staticmethod
-    async def schedule_change_host(room_code, user_id, delay=5):
+    async def schedule_change_host(room_code, user, delay=5):
         room = await sync_to_async(Room.objects.get)(code=room_code)
 
         room.host_change_scheduled = True
         await sync_to_async(room.save)()
 
-        change_host.apply_async(args=[room_code, user_id], countdown=delay)
+        change_host.apply_async(args=[room_code, user.id], countdown=delay)
 
     @staticmethod
     async def schedule_lobby_kick_all(room_code, delay=900):
