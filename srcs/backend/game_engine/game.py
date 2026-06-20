@@ -159,6 +159,7 @@ class GameEngine:
 
 		data["playing"] = s
 		data["last_fold"] = last_fold
+		data["last_fold_player"] = s
 		data["round"] = data["round"] + 1
   
 		return data, melds

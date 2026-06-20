@@ -282,8 +282,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         take_fold, game_state = await GameService.check_take_fold(game_state, room)
 
         if (take_fold):
-            await BroadcastService.broadcast_game(self.code, self.channel_layer, "finish_round")
-            await asyncio.sleep(12)
+            
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
 
         game = GameEngine(room.uuid)
@@ -299,6 +298,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.check_goal_reached(room.code)
 
     async def handle_melds(self, payload):
+        #TODO if missing cards in payload error send
         room = await get_room_with_host(self.code)
     
         result = await MeldService.verify_melds(

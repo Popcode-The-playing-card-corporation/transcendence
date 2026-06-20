@@ -101,12 +101,22 @@ class BroadcastService:
                         "cards": meld["cards"]
                     })
                 
+            player_puntos[player_id_str] = player_data["puntos"]
+            p_name = p.player.username
+            if not p.is_human:
+                if p.difficulty == "easy":
+                    p_name += " [kILIAN]"
+                elif p.difficulty == "medium":
+                    p_name += " [Alex]"
+                elif p.difficulty == "hard":
+                    p_name += " [Dana]"
+                    
             player_list[player_id_str] = {
                 "hand": len(player_data["cards"]),
                 "user": {
                     "id": p.player.id,
-                    "username": p.player.username,
-                    "avatar": p.player.avatar
+                    "username": p_name,
+                    "avatar": p.player.avatar,
                 }
             }
 
@@ -178,6 +188,7 @@ class BroadcastService:
                 
         return {
             "self_id": player_position,
+            "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
             **(
                 {"annonces": player_annonces}
                 if is_r0_finish
@@ -192,7 +203,10 @@ class BroadcastService:
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
             "round_time": room.round_time.strftime("%Y-%m-%d %H:%M:%S"),
             "round": game_state["round"],
-            "last_fold": game_state.get("last_fold")
+            "last_fold": {
+                    "room_id": game_state.get("last_fold_player"),
+                    "cards": game_state.get("last_fold"),
+                }
         }       
     
     @staticmethod
