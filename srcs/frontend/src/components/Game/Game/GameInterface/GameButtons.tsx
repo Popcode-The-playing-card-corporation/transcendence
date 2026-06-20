@@ -4,6 +4,7 @@ import ChatBtn from "./ChatBtn";
 import InfoBtn from "./InfoBtn";
 import Chat from "./Chat";
 import FunctionnementInfos from "./FunctionnementInfos";
+import FoldModal from "./FoldModal";
 
 export default function GameButtons() {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
@@ -39,6 +40,7 @@ export default function GameButtons() {
 		<FunctionnementInfos />
 	) : ""}
       <div className="flex gap-2 mt-2 items-center justify-between">
+	  <FoldModal />
         <Announcement />
         <div className="flex gap-2">
           <div className="indicator">
