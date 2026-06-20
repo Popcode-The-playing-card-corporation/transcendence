@@ -1,7 +1,8 @@
 import { IoSend } from "react-icons/io5";
-import generateFakeChat from "../../../../utils/test_funcs/generateFakeChat";
+// import generateFakeChat from "../../../../utils/test_funcs/generateFakeChat";
 import ChatText from "./ChatText"
-import { useEffect, useRef, type KeyboardEvent, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type SetStateAction, type KeyboardEvent} from "react";
+import { useGame } from "../../context/GameContext";
 
 type Props = {
   setNewMessage: React.Dispatch<SetStateAction<boolean>>
@@ -9,23 +10,38 @@ type Props = {
 }
 
 export default function Chat({setNewMessage, isAlreadyOpen}: Props) {
-  const messages = generateFakeChat();
+  const game = useGame();
+  const messages = game.state.messages;
   const messageEndRef = useRef<HTMLDivElement>(null);
+  const [message, setMessage] = useState("");
+  const messageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter")
-      console.log(`Key pressed: ${event.key}`);
+    	handleSend();
   };
 
   useEffect(() => {
     if (messageEndRef.current)
       messageEndRef.current.scrollTop = messageEndRef.current.scrollHeight;
-    if (!isAlreadyOpen)
-      setNewMessage(true);
-  }, [messages])
+	async function setterMessage() { 
+	  if (!isAlreadyOpen)
+      	setNewMessage(true);
+	}
+	setterMessage();
+  }, [messages, setNewMessage, isAlreadyOpen])
 
   if (!messages)
     return (null);
+
+  function handleSend() {
+	if (message.trim().length !== 0) {
+		game.sendMessage("chat_message", message);
+		setMessage("");
+	}
+  }
 
   return (
     <div
@@ -41,8 +57,8 @@ export default function Chat({setNewMessage, isAlreadyOpen}: Props) {
       })}
       <div ref={messageEndRef}></div>
       <div className="join w-full sticky -bottom-5 pb-4 bg-(--nav-color) " onKeyDown={handleKeyDown}>
-        <input type="text" placeholder="Type here" className="input join-item" />
-        <button className="btn join-item" >
+        <input type="text" placeholder="Type here" className="input join-item" value={message} onChange={messageChange}/>
+        <button className="btn join-item" onClick={handleSend} >
           <IoSend />
         </button>
       </div>

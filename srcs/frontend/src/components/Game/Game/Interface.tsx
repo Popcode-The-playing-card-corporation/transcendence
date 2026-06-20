@@ -1,17 +1,9 @@
 import LeaderboardInGame from "./GameInterface/LeaderboardInGame";
 import GameButtons from "./GameInterface/GameButtons";
 import EndingModal from "./GameInterface/EndingModal";
-import { type Dispatch, type SetStateAction } from "react";
+// import { type Dispatch, type SetStateAction } from "react";
 
-export default function Interface(
-{
-  isEnd,
-  setIsEnd,
-}: {
-  isEnd: boolean;
-  setIsEnd: Dispatch<SetStateAction<boolean>>;
-}
-) {
+export default function Interface() {
 
   return (
     <div className="w-1/4 h-full ">
@@ -20,7 +12,7 @@ export default function Interface(
       {/* </button> */}
       <LeaderboardInGame />
       <GameButtons />
-      <EndingModal isEnd={isEnd} setIsEnd={setIsEnd} />
+      <EndingModal />
     </div>
   );
 }

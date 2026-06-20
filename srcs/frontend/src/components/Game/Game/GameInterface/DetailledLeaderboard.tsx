@@ -1,12 +1,14 @@
 import { useRef } from "react";
-import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
-import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
+// import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
+// import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
 import type { detailedGameT, detailedRoundT } from "../../../../utils/type/detailedGame";
 import type { userInGameT } from "../../../../utils/type/userInGameType";
+import { useGame } from "../../context/GameContext";
 
 export default function DetailledLeaderboard() {
-  const listPlayer = generateFakeUsersInGame();
-  const detailedGame = generateFakeDetailedGame();
+  const { state } = useGame();
+  const listPlayer = state.game.boardData.points;
+  const detailedGame = state.game.boardData.detailed_points;
   const scoreDetailsRef = useRef<HTMLDialogElement>(null);
 
   return (

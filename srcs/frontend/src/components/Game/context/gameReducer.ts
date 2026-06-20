@@ -1,6 +1,9 @@
 import type { GameAction, GameState, roomT } from "./GameType";
 
 function getTime(datetime:string) {
+	if (datetime === "" || !datetime) {
+		return new Date(0,0,0);
+	}
 	const dateTimeParts = datetime.split(' ');
 	const time = dateTimeParts[1].split(':');
 	const date = dateTimeParts[0].split('-');
@@ -34,19 +37,43 @@ export function gameReducer( state: GameState, action: GameAction): GameState {
 				{...state.game, self_cards: action.payload}};
 		case "SET_BOARD":
 			return {...state , game:
-				{...state.game, boardData: action.payload}};
+				{...state.game, boardData:
+					{...action.payload, started_at:getTime(action.payload.started_at), round_time:getTime(action.payload.round_time)}}};
 		case "SET_PARAMS":
 			return {...state , settings:
 				{...state.settings, maxSize: action.payload.max_player, 
-					mode: roomToMode(action.payload.type), timeout: getTime(action.payload.timestamp)}};
+					mode: roomToMode(action.payload.type), timeout: getTime(action.payload.timestamp), goal: action.payload.goal}};
+		case "SET_GOAL":
+			return {...state , settings:
+				{...state.settings, goal: action.payload}};
+		case "SET_NBGAME":
+			return {...state , settings:
+				{...state.settings, nb_games: action.payload}};
+		case "SET_NBPOINT":
+			return {...state , settings:
+				{...state.settings, nb_points: action.payload}};
 		case "SET_MODE":
 			return {...state , settings:
 				{...state.settings, mode: action.payload}};
 		case "SET_SIZE":
 			return {...state , settings:
 				{...state.settings, maxSize: action.payload}};
-		case "FAKE_PLAY":
-			return{...state, game: {...state.game, self_cards: state.game.self_cards.splice(action.payload, 1)}}
+		
+		case "SET_HISTORY":
+			return {...state, messages:action.payload};
+
+		case "ADD_MESSAGE":
+			return {...state, messages: [...state.messages, action.payload]};
+
+		case "SET_USER":
+			return {...state, user: action.payload};
+
+		case "SET_EVENT":
+			return {...state, event: action.payload, eventID: state.eventID + 1};
+		
+		case "SET_MESSAGE":
+			return {...state, message: action.payload};
+
 		default:
 			return state;
 	}

@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
   // log,
   MeshPhongMaterial,
@@ -22,9 +22,10 @@ type Props = {
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
   back: Texture<HTMLImageElement, TextureEventMap> | undefined;
   oldStartPos: number;
-  setHand: Dispatch<SetStateAction<cardType[]>>;
-  hand: cardType[];
+//   setHand: Dispatch<SetStateAction<cardType[]>>;
+//   hand: cardType[];
   lastCardPlayed: number;
+  setHand: Dispatch<any>;
   setLastCardPlayed: Dispatch<SetStateAction<number>>;
 };
 
@@ -35,9 +36,10 @@ export default function PCard({
   front,
   back,
   oldStartPos,
-  setHand,
-  hand,
+//   setHand,
+//   hand,
   lastCardPlayed,
+  setHand,
   setLastCardPlayed,
 }: Props) {
   const [active, setActive] = useState<boolean>(false);
@@ -56,10 +58,42 @@ export default function PCard({
   ];
   const game = useGame();
 
+  useEffect(() => {
+	async function handle_play() {
+		const inHand = game.state.game.self_cards.hand.some((thisCard) => {return card.id === thisCard.id})
+		if (!inHand && !played && !hidden) {
+			setPlayed(true);
+		}
+	}
+	handle_play();
+  }, [game.state.game.self_cards.hand, card.id, hidden, played])
+
+  
+
+	useEffect(() => {
+
+		function resetCard() {
+
+			cardRef.current!.position.set(
+			startPos - cardIndex * 0.4,
+			-2.5,
+			1.5 - 0.001 * cardIndex,
+			);
+			setActive(false);
+		} 
+
+		if (game.state.event === "card_valid" && game.state.message === "invalid") {
+			
+			resetCard();
+		}
+	
+	}, [game.state.event, game.state.message, game.state.eventID]);
+
+
   function handleDoubleClick() {
-    setPlayed(true);
-    game.fakePlay(3);
+    game.playCard(card.id);
   }
+  
 
   function handleClick() {
     if (hidden || played) return;
@@ -126,12 +160,13 @@ export default function PCard({
         cardRef.current.position.x > -0.1
       ) {
         setHidden(true);
-        setHand(
-          hand.filter((currCard) => {
-            return currCard.id !== card.id;
-          }),
-        );
+        // setHand(
+        //   hand.filter((currCard) => {
+        //     return currCard.id !== card.id;
+        //   }),
+        // );
         setLastCardPlayed(cardIndex);
+		setHand(game.state.game.self_cards.hand);
         return;
       }
     }

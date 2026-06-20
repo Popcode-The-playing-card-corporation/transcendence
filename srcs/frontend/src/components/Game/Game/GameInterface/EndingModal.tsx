@@ -1,20 +1,14 @@
-import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
+import { useRef } from "react";
 import LittleLeaderboard from "./LittleLeaderboard";
 import DetailledLeaderboard from "./DetailledLeaderboard";
 
-export default function EndingModal({
-  isEnd,
-  setIsEnd,
-}: {
-  isEnd: boolean;
-  setIsEnd: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function EndingModal() {
   const endRef = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
-    if (isEnd) endRef.current?.showModal();
-    else endRef.current?.close();
-  }, [isEnd]);
+//   useEffect(() => {
+//     if (isEnd) endRef.current?.showModal();
+//     else endRef.current?.close();
+//   }, [isEnd]);
 
   return (
     <div>

@@ -1,15 +1,13 @@
 import { MeshPhongMaterial, Texture, type TextureEventMap } from "three";
-import { loadTexture } from "../../../../utils/imports/textures";
-import { useLoader } from "@react-three/fiber";
 
 type Props = {
+  show: boolean;
   front: Texture<HTMLImageElement, TextureEventMap>,
   back: Texture<HTMLImageElement, TextureEventMap>,
-  id: number,
   posPlayedCard: number 
 }
 
-export default function PlayedCard({front, back, id, posPlayedCard} : Props) {
+export default function PlayedCard({show, front, back, posPlayedCard} : Props) {
 
   const materials = [
     new MeshPhongMaterial({color: 0xffffff}),
@@ -20,13 +18,17 @@ export default function PlayedCard({front, back, id, posPlayedCard} : Props) {
     new MeshPhongMaterial({map: back})
   ];
 
+  if (!show) {
+	return
+  }
+
   return (
   <>
     <mesh
       position={[0, posPlayedCard, 0]}
       material={materials}
     >
-	{/* { id === 0 ? <></> : <boxGeometry args={[1, 1.4, 0.01]}/>} */}
+	{ <boxGeometry args={[1, 1.4, 0.01]}/>}
     </mesh>
   </>
   );

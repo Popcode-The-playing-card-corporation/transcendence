@@ -1,13 +1,21 @@
 export type chatT = {
-    id: number,
-    username: string,
-    time: string,
-    message: string
+    type: string;
+    user: {
+        id: number;
+        username: string;
+        avatar: string;
+    };
+    message: string;
+    time: string;
 }
 
 export const defaultChat: chatT = {
-    id: 0,
-    username: "",
+    type: "message",
+    user: {
+		id: 0,
+		username: "",
+		avatar: "",
+	},
     time: "",
     message: ""
 }

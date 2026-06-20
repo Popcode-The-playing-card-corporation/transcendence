@@ -5,11 +5,14 @@ import InfoBtn from "./InfoBtn";
 import Chat from "./Chat";
 import FunctionnementInfos from "./FunctionnementInfos";
 import FoldModal from "./FoldModal";
+import { useGame } from "../../context/GameContext";
 
 export default function GameButtons() {
+  const game = useGame();
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
   const [newMessage, setNewMessage] = useState<boolean>(false);
+  const [messageCount, setCount] = useState(game.state.messages.length);
 
   function changeState(whichButton: string) {
     if (whichButton === "chat")
@@ -27,9 +30,23 @@ export default function GameButtons() {
   }
 
   useEffect(() => {
-    if (isChatOpen)
-      setNewMessage(false);
+	async function setMessage() {
+		if (isChatOpen) {
+			setNewMessage(false);
+		} 
+	}
+	setMessage();
   }, [isChatOpen])
+
+    useEffect(() => {
+	async function setMessage() {
+		if (!isChatOpen && game.state.messages.length !== messageCount && game.state.messages.at(-1)?.user.username !== game.state.user) {
+			setNewMessage(true);
+			setCount(game.state.messages.length);
+		}
+	}
+	setMessage();
+  }, [isChatOpen, game.state.messages, game.state.user, messageCount])
 
   return (
     <div className="h-1/2 flex p-2 flex-col justify-end">
@@ -45,7 +62,7 @@ export default function GameButtons() {
         <div className="flex gap-2">
           <div className="indicator">
             {newMessage ? (
-              <span className="indicator-item badge bg-(--nav-color) border-2 border-(--accent-color) w-1 "></span>
+              <span className="indicator-item badge badge-xs  bg-(--nav-color)"></span>
             ) : ""}
             <ChatBtn changeState={changeState} />
           </div>

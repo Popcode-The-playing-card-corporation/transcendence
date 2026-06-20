@@ -1,9 +1,21 @@
-import { useState } from "react";
 import SliderLimiters from "./SliderLimiters";
+import { useGame } from "../context/GameContext";
 
 export default function Limiters() {
-  const [lim, setLim] = useState(false);
-  const [value, setValue] = useState(0);
+
+	const { state, setGoal } = useGame(); 
+	let is_host = false;
+	if (state.settings.listPlayer.filter(user => user.is_host)[0]) {
+		is_host = state.user === state.settings.listPlayer.filter(user => user.is_host)[0].username;
+	}
+
+  function handle_click() {
+		if (state.settings.goal === "games") {
+			setGoal("points");
+		} else {
+			setGoal("games");
+		}
+  }
 
   return (
     <div className="w-full max-w-xs ">
@@ -11,14 +23,14 @@ export default function Limiters() {
         <p>Rounds</p>
         <input
           type="checkbox"
-          defaultChecked
-          checked={lim}
-          className="toggle border-(--hover-color) bg-(--hover-color) text-(--font-color) checked:border-(--nav-color) checked:bg-(--nav-color) checked:text-(--font-color)"
-          onClick={() => setLim(!lim)}
+          checked={state.settings.goal !== "games"}
+          className="toggle toggle-xl border-(--hover-color) bg-(--hover-color) text-(--font-color) checked:border-(--hover-color) checked:bg-(--hover-color) checked:text-(--font-color)"
+          onClick={handle_click}
+		  disabled={!is_host}
         />
         <p>Points</p>
       </div>
-      <SliderLimiters lim={lim} value={value} setValue={setValue} />
+      <SliderLimiters  />
     </div>
   );
 }

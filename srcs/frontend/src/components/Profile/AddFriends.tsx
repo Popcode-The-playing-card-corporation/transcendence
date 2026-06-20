@@ -1,34 +1,24 @@
-import { useState } from "react";
+import { useState, type RefObject } from "react";
 import { FaPlus } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import type { recommendationT } from "../../utils/type/recommendationType";
+import type { requestT } from "../../utils/type/friendType";
+import { changeHandler } from "../../api/http/friend";
+import { useNotif } from "../hooks/useNotif";
 
-export function AddFriends({recs}:{recs:recommendationT[]}) {
+type Props = {
+  users:requestT[];
+  recs:recommendationT[];
+  updatedFriends:boolean;
+  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+  ref:RefObject<HTMLDialogElement | null>;
+};
+
+export function AddFriends({recs, users, updatedFriends, setUpdate, ref}:Props) {
   console.log(recs); // just here as a placeholder until recommendations are implemented
 
+  const notif = useNotif();
   const [search, setSearch] = useState("");
-  const result = [
-    {
-      id: 0,
-      username: "danouille",
-    },
-    {
-      id: 2,
-      username: "dananas",
-    },
-    {
-      id: 3,
-      username: "danube",
-    },
-    {
-      id: 4,
-      username: "danazi",
-    },
-    {
-      id: 5,
-      username: "danabelle",
-    },
-  ];
   return (
     <>
        <div className="modal-box bg-(--nav-color) w-fit">
@@ -52,12 +42,12 @@ export function AddFriends({recs}:{recs:recommendationT[]}) {
                 <th></th>
               </tr>
               {
-                result.map((res) => {
+                users.map((res) => {
                   return (
 
                   <tr className="h-14">
                     <td>{res.username}</td>
-                    <td><button className="btn btn-circle"> <FaPlus/> </button></td>
+                    <td><button className="btn btn-circle" onClick={() => changeHandler(res.id, "request", updatedFriends, setUpdate, ref, notif)}> <FaPlus/> </button></td>
                   </tr>
                   )
                 })

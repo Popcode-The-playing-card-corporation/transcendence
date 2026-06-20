@@ -1,3 +1,4 @@
+import { useGame } from "../context/GameContext";
 import AddingBot from "./AddingBot";
 import Limiters from "./Limiters";
 import PrivatePublicSlider from "./PrivateFriendPublicSlider";
@@ -8,7 +9,13 @@ type Props = {
   updateSettings: () => void;
 };
 
-export default function ParameterRoom({ roomCode, updateSettings }: Props) {
+export default function ParameterRoom({roomCode, updateSettings}  : Props) {
+
+	const { state } = useGame();
+	let is_host = false;
+	if (state.settings.listPlayer.filter(user => user.is_host)[0]) {
+		is_host = state.user === state.settings.listPlayer.filter(user => user.is_host)[0].username;
+	}
   return (
     <div className="bordered grid grid-cols-3 gap-4">
       <div className="col-span-3 grid grid-cols-3 pt-6">
@@ -35,7 +42,7 @@ export default function ParameterRoom({ roomCode, updateSettings }: Props) {
           <Limiters />
         </div>
       </div>
-      <div className="col-span-3 grid grid-cols-3 border-t border-(--hover-color) pt-6">
+      { is_host ? <div className="col-span-3 grid grid-cols-3 border-t border-(--hover-color) pt-6">
         <div className="">
           <p>Choose the level and the number of bots you want : </p>
         </div>
@@ -47,7 +54,7 @@ export default function ParameterRoom({ roomCode, updateSettings }: Props) {
             Confirm
           </button>
         </div>
-      </div>
+      </div> : null}
     </div>
   );
 }

@@ -5,9 +5,11 @@ import { MdClose } from "react-icons/md";
 import type { availableGameT } from "../../../utils/type/availableGameType";
 
 export default function FilterGame({
+  refreshLobby,
   rawList,
   setFilteredGames,
 }: {
+  refreshLobby:() => void;
   rawList: availableGameT[];
   setFilteredGames: React.Dispatch<React.SetStateAction<availableGameT[]>>;
 }) {
@@ -52,6 +54,7 @@ export default function FilterGame({
           }}
         />
       </label>
+	  <button onClick={refreshLobby} className="btn"> Refresh </button>
       <div className="flex gap-3 justify-end items-center">
         <div
           className={

@@ -1,10 +1,13 @@
-import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
+// import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
 import type { userInGameT } from "../../../../utils/type/userInGameType";
+import { useAuth } from "../../../hooks/useAuth";
 import UsernameMiniProfileBtn from "../../../miniProfile/UsernameMiniProfileBtn";
+import { useGame } from "../../context/GameContext";
 
 export default function LittleLeaderboard() {
-  const listPlayer = generateFakeUsersInGame();
-  const current = { id: 4, username: "alexouille", score: 69 };
+  const { state } = useGame();
+  const auth = useAuth();
+  const listPlayer = state.game.boardData.points;
 
   function compareFn(a: userInGameT, b: userInGameT) {
     if (a.score > b.score) return 1;
@@ -26,7 +29,7 @@ export default function LittleLeaderboard() {
               <tr
                 className={
                   "h-10 border-y border-(--bg-color)" +
-                  (current.id === player.id ? " bg-(--nav-color) font-bold " : "")
+                  (auth.userID === player.id ? " bg-(--nav-color) font-bold " : "")
                 }
               >
                 <td className="text-center">

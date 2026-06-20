@@ -7,7 +7,7 @@ import { StatisticsPart } from "../components/Profile/StatisticPart";
 import { defaultStat, type statisticsT } from "../utils/type/statisticsType";
 import { getStats } from "../api/http/stats";
 import { type friendT, type requestT } from "../utils/type/friendType";
-import { friendArray, getFriends, getRecs } from "../api/http/friend"
+import { friendArray, getFriends, getRecs, getUsers } from "../api/http/friend"
 import { defaultAccount, type accountT } from "../utils/type/accountType";
 import { profileRequest } from "../api/http/profile";
 import avatar1 from "../../public/avatars/avatar1.png";
@@ -42,6 +42,7 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
 	const [recs, setRecs] = useState<recommendationT[]>([]);
 	const [requests, setRequests] = useState<requestT[]>([]);
 	const [gameHistory, setHistory] = useState<historyT[]>([])
+	const [users, setUsers] = useState<requestT[]>([])
 	const [profile, setProfile] = useState<accountT>(defaultAccount);
   	const [updatedFriends, setFriendUpdate] = useState(false);
 	const navigate = useNavigate();
@@ -105,6 +106,15 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
 				}
 			}
 			setRecs(recommendations);
+			const list_users = await getUsers();
+			if ("code" in list_users) {
+				if (list_users.code === 401) {
+					return login_error("Authentication error:", "Please log in again.");
+				} else {
+					return other_error("Error " + list_users.code + ":", list_users.response);
+				}
+			}
+			setUsers(list_users.data);
  			const gameHistory = await getHistory();
 			if ("code" in gameHistory) {
 				if (gameHistory.code === 401) {
@@ -160,7 +170,7 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
           <h2 className="text-center">Friends</h2>
         </div>
         <div className="collapse-content overflow-auto">
-          <Friends friends={friends} requests={requests} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
+          <Friends friends={friends} requests={requests} users={users} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

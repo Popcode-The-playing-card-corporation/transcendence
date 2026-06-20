@@ -1,8 +1,10 @@
 import { useRef } from "react";
 import { IoMdExit } from "react-icons/io";
+import { useGame } from "../../context/GameContext";
 
 export default function ExitBtn() {
   const confirmExitModal = useRef<HTMLDialogElement>(null);
+  const { exitGame } = useGame();
 
   return (
     <div>
@@ -25,7 +27,7 @@ export default function ExitBtn() {
             <form method="dialog">
               <button
                 className="btn mr-5 del"
-                onClick={() => console.log("Game exited!")}
+                onClick={exitGame}
               >
                 Confirm
               </button>
