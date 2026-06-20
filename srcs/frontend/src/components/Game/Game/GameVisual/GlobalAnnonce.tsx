@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 import { useGame } from "../../context/GameContext";
+import CardImg from "../GameInterface/CardImg";
 
 export default function GlobalAnnonce() {
   const annonces = generateFakeAnnonce();
@@ -29,6 +30,13 @@ export default function GlobalAnnonce() {
             return(
               <>
                 {state.game.boardData.player_list[String(annonce.room_id)].user.username}
+                <div className="flex gap-1 flex-wrap justify-center">
+                  {annonce.cards.map((card) => {
+                    return(
+                      <CardImg name={card.value + card.color} />
+                    );
+                  })}
+                </div>
               </>
             );
           })}
