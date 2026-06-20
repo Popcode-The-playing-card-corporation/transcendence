@@ -49,8 +49,8 @@ export default function GameButtons() {
             ) : ""}
             <ChatBtn changeState={changeState} />
           </div>
-          <InfoBtn changeState={changeState} />
         </div>
+        <InfoBtn changeState={changeState} />
       </div>
     </div>
   );

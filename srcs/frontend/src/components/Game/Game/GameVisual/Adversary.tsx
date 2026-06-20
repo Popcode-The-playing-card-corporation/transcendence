@@ -43,11 +43,7 @@ export default function Adversary({cardHand, playedCard, front, back, totalPlaye
           boardRadius={boardRadius}
           posPlayedCard={posPlayedCard}
         />
-        <axesHelper />
       </mesh>
       </>
   );
 }
-
-  // posPlayedCard.push(Math.sin(angleCenter * id) * distanceBoard);
-  // posPlayedCard.push(-Math.cos(angleCenter * id) * distanceBoard);
