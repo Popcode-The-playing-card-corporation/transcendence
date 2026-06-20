@@ -100,12 +100,21 @@ class BroadcastService:
                     })
                 
             player_puntos[player_id_str] = player_data["puntos"]
+            p_name = p.player.username
+            if not p.is_human:
+                if p.difficulty == "easy":
+                    p_name += " [kILIAN]"
+                elif p.difficulty == "medium":
+                    p_name += " [Alex]"
+                elif p.difficulty == "hard":
+                    p_name += " [Dana]"
+                    
             player_list[player_id_str] = {
                 "hand": len(player_data["cards"]),
                 "user": {
                     "id": p.player.id,
-                    "username": p.player.username,
-                    "avatar": p.player.avatar
+                    "username": p_name,
+                    "avatar": p.player.avatar,
                 }
             }
 
