@@ -142,7 +142,7 @@ export default function GameWebSocket({
 			}
 		}
 
-		function setGame(cards:{hand:cardType[], legal:cardType[], melds:cardType[][]}, board:boardDataNT) {
+		function setGame(cards:{hand:cardType[], legal:cardType[], melds:{cards: number[], point:number}[]}, board:boardDataNT) {
 			dispatch({type:"SET_CARDS", payload:cards})
 			dispatch({type:"SET_BOARD", payload:board})
 		}
