@@ -18,6 +18,7 @@ type GameContextT = {
 	setNBGames: (games: number) => void;
 	setNBPoints: (points: number) => void;
 	sendMessage: (action:string, message:string) => void;
+	show_annonces: () => void;
 }
 
 export const GameContext = createContext<GameContextT | null>(null);

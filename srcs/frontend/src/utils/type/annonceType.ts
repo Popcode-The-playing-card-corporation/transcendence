@@ -1,5 +1,7 @@
+import type { cardType } from "./handCardsType";
+
 export type annonceT = {
-    annonce: string,
-    cards: string,
-    colour: string
+    room_id: number,
+    cards: cardType[][],
 }
+
