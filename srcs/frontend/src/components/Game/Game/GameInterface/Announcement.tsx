@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 // import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 import { useGame } from "../../context/GameContext";
 import generateDeck from "../../../../utils/createDeck";
+import { GrAnnounce } from "react-icons/gr";
 
 
 export default function Announcement() {

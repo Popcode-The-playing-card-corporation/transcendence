@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import generateFakeLastFold from "../../../../utils/test_funcs/generateFakeLastFold"
 import useImage from "../../../../utils/imports/useImage";
+import { MdHistory } from "react-icons/md";
 
 export default function FoldModal() {
 	const lastFold = generateFakeLastFold();
@@ -14,7 +15,7 @@ export default function FoldModal() {
         className={"btn btn-circle"}
         onClick={() => lastFoldRef.current?.showModal()}
         >
-        Annonces
+        <MdHistory />
       </button>
       <dialog id="endingGame" className="modal text-center" ref={lastFoldRef}>
         <div className="modal-box bg-(--bg-color)">
