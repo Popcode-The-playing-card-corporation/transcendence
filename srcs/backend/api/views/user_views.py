@@ -132,7 +132,7 @@ def register(request):
             key='access_token',
             value=access_token,
             httponly=True,  ## Prevents javascript from accessing cookie
-            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            secure=False, ## Only sends when request is https compliant ***Except on localhost
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host
             max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
@@ -142,7 +142,7 @@ def register(request):
             key='refresh_token',
             value=refresh_token,
             httponly=True,  ## Prevents javascript from accessing cookie
-            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            secure=False, ## Only sends when request is https compliant ***Except on localhost
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host
             max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
@@ -206,7 +206,7 @@ def login(request):
             key='access_token',
             value=access_token,
             httponly=True,  ## Prevents javascript from accessing cookie
-            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            secure=False, ## Only sends when request is https compliant ***Except on localhost
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host
             max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
@@ -216,7 +216,7 @@ def login(request):
             key='refresh_token',
             value=refresh_token,
             httponly=True,  ## Prevents javascript from accessing cookie
-            secure=True, ## Only sends when request is https compliant ***Except on localhost
+            secure=False, ## Only sends when request is https compliant ***Except on localhost
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host *** maybe should be changed to just refresh path but in production tbc ...
             max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
