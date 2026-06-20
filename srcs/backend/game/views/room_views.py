@@ -72,47 +72,61 @@ def add_bot(request, code, nb_bot):
                 status= 401
             )
         difficulty = request.data["difficulty"]
-    room = Room.objects.get(
-        code=code
-    )
 
-    if (room.nb_player + nb_bot) > room.max_player:
+    if (nb_bot < 1):
         return Response(
-            {"error": "too many player in that room"},
+            {"error": "Invalid number of bot"},
             status= 401
         )
 
-    if (room.nb_player == 7):
-        return Response(
-            {"error": "too many players in that room"},
-            status= 401
+    try:
+        room = Room.objects.get(
+            code=code
         )
+
+        if (room.nb_player + nb_bot) > room.max_player:
+            return Response(
+                {"error": "too many player in that room"},
+                status= 401
+            )
+
+        if (room.nb_player == 7):
+            return Response(
+                {"error": "too many players in that room"},
+                status= 401
+            )
+            
+        if (room.host == request.user):
+            bots = list(User.objects.filter(is_bot=True))
+            bots_room = list((PlayerPresence.objects.filter(is_human=False, room=room)).select_related("player"))
+            valid_bots = []
+            remove_bots = []
+            for bot in bots:
+                for bot_room in bots_room:
+                    if bot.id == bot_room.player_id:
+                        remove_bots.append(bot)
+            for bot in bots:
+                if (bot not in remove_bots):
+                    valid_bots.append(bot)
+            while nb_bot > 0:
+                add_bot_to_room(valid_bots[0], code, difficulty)
+                valid_bots.remove(valid_bots[0])
+                nb_bot -= 1
+            
+            channel_layer = get_channel_layer()
+            async_to_sync(BroadcastService.broadcast_settings)(room, channel_layer, "bot_added", f"room_{room.code}")
+            return Response(status=200)
         
-    if (room.host == request.user):
-        bots = list(User.objects.filter(is_bot=True))
-        bots_room = list((PlayerPresence.objects.filter(is_human=False, room=room)).select_related("player"))
-        valid_bots = []
-        remove_bots = []
-        for bot in bots:
-            for bot_room in bots_room:
-                if bot.id == bot_room.player_id:
-                    remove_bots.append(bot)
-        for bot in bots:
-            if (bot not in remove_bots):
-                valid_bots.append(bot)
-        while nb_bot > 0:
-            add_bot_to_room(valid_bots[0], code, difficulty)
-            valid_bots.remove(valid_bots[0])
-            nb_bot -= 1
-        
-        channel_layer = get_channel_layer()
-        async_to_sync(BroadcastService.broadcast_settings)(room, channel_layer, "bot_added", f"room_{room.code}")
-        return Response(status=200)
+        return Response(
+            {"error": "You are not the host. BAD"},
+            status=401
+        )
     
-    return Response(
-        {"error": "You are not the host. BAD"},
-        status=401
-    )
+    except Room.DoesNotExist:
+        return Response(
+            {"error": f"Room not found: no room with id {code}"},
+            status=404
+        )
 
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -440,7 +454,6 @@ def update_params(request, code):
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def invite_friend(request, friend_id):
-    
     if not Friendship.objects.filter(
             Q(from_user=request.user) | Q(to_user=request.user),
             status="accepted",
