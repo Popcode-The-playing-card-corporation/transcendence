@@ -6,6 +6,7 @@ import Chat from "./Chat";
 import FunctionnementInfos from "./FunctionnementInfos";
 import FoldModal from "./FoldModal";
 import { useGame } from "../../context/GameContext";
+import GlobalAnnonce from "../GameVisual/GlobalAnnonce";
 
 export default function GameButtons() {
   const game = useGame();
@@ -69,6 +70,7 @@ export default function GameButtons() {
         </div>
         <InfoBtn changeState={changeState} />
       </div>
+    <GlobalAnnonce />
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
 
   const cardRef = useRef<Mesh>(null!);
 
-  const factor = 0.26 * (7 - totalPlayer);
+  const factor = 0.23 * (7 - totalPlayer);
   const pf = [0, posPlayedCard, 0];
   
   
@@ -54,6 +54,7 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
     <mesh
       rotation={[Math.PI / 2, 0, angle]}
       position={[-Math.sin(angle) * littleRadius,- (littleRadius - factor) + 0.01 * positionCard, Math.cos(angle) * (littleRadius - factor)]}
+      scale={0.5}
       material={materials}
       ref={cardRef}
     >
