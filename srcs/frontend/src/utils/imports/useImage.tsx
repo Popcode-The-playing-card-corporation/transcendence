@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react"
+import { loadTexture } from "./textures"
 
-export default function useImage(fileName : string) {
+export default function useImage(fileName : string): {loading: boolean, image: string | undefined, error: unknown;
+} {
 const [loading, setLoading] = useState(true)
     const [error, setError] = useState<unknown>(null)
-    const [image, setImage] = useState<HTMLImageElement>()
+    const [image, setImage] = useState<string>()
 
     useEffect(() => {
         const fetchImage = async () => {
             try {
-                const response = await import(`../../assets/img/${fileName}.png`) // change relative path to suit your needs
+                const response = await import(loadTexture(fileName))
                 setImage(response.default)
             } catch (err) {
                 setError(err)
@@ -20,10 +22,6 @@ const [loading, setLoading] = useState(true)
         fetchImage()
     }, [fileName])
 
-	console.log(image);
-	console.log(fileName);
-	
-	
     return {
         loading,
         error,

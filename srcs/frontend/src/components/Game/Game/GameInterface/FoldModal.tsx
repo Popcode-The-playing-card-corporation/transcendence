@@ -1,34 +1,40 @@
 import { useRef } from "react";
-import generateFakeLastFold from "../../../../utils/test_funcs/generateFakeLastFold"
-import useImage from "../../../../utils/imports/useImage";
-import { MdHistory } from "react-icons/md";
+import generateFakeLastFold from "../../../../utils/test_funcs/generateFakeLastFold";
+import { GiCardPlay } from "react-icons/gi";
+import CardImg from "./CardImg";
+// import { useGame } from "../../context/GameContext";
+
 
 export default function FoldModal() {
-	const lastFold = generateFakeLastFold();
-	const lastFoldRef = useRef<HTMLDialogElement>(null)
-	const { image, loading } = useImage(lastFold[0].value + lastFold[0].color)
-	console.log(image);
+  // const lastFold = state.game.boardData.last_fold;
+  // const { state } = useGame()
+  const lastFold = generateFakeLastFold();
+  const takenBy = "danouille";
+  const lastFoldRef = useRef<HTMLDialogElement>(null);
 
-	return (
+  return (
     <div>
       <button
-        className={"btn btn-circle"}
+        className={"btn btn-lg btn-circle"}
         onClick={() => lastFoldRef.current?.showModal()}
-        >
-        <MdHistory />
+      >
+        <GiCardPlay />
       </button>
       <dialog id="endingGame" className="modal text-center" ref={lastFoldRef}>
         <div className="modal-box bg-(--bg-color)">
-          <h2>Last fold</h2>
-		  <div>
-		  {loading ? (<p>loading..</p>) :
-		  (<img src={image?.currentSrc}/>)
-
-		  }
-		  </div>
+          <h2 className="mb-4">Last fold</h2>
+          <p>Taken by {takenBy}</p>
+          <div className=" flex gap-2 my-6 flex-wrap justify-center">
+            {lastFold.map((card) => {
+              return <CardImg name={card.value + card.color} />;
+            })}
+          </div>
           <div className="modal-action">
             <form method="dialog" className="flex justify-between w-full">
-              <button className="btn" onClick={() => lastFoldRef.current?.close()}>
+              <button
+                className="btn mx-auto"
+                onClick={() => lastFoldRef.current?.close()}
+              >
                 Continue
               </button>
             </form>
@@ -36,5 +42,5 @@ export default function FoldModal() {
         </div>
       </dialog>
     </div>
-	)
+  );
 }

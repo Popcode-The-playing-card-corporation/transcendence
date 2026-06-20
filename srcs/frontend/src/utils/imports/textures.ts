@@ -36,7 +36,7 @@ import SK from "../../assets/cards/KSpades.png";
 import SA from "../../assets/cards/ASpades.png";
 import Back from "../../assets/cards/back.png";
 
-export function loadTexture(name: string) {
+export function loadTexture(name: string) : string {
   const textures = new Map([
     ["6heart", H6],
     ["7heart", H7],
