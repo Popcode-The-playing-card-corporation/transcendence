@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import  end_room, get_room_with_host, get_player_pos
-from .models import PlayerPresence
+from .models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from .services.game_service import GameService
@@ -72,14 +72,18 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.close()
         
     async def player_afk(self, event):
+        await self.send_json({
+            "event": "player_afk",
+            "reason": event["reason"]
+        })
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
-    
-        game_state = await BotService.play_until_human(room, room.game_state, game,
+        asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
-                                                        )
+                                                        ))
+
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished and room.status == "start":
@@ -90,7 +94,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
         self.user = self.scope.get("user")
-    
+        if not await sync_to_async(Room.objects.get)(code=self.code):
+                await self.send_json({"error": "The room does not exist"})
+                await self.close(code=4004)
+                return
+        
         result = await RoomConnectionService.handle_connect(
             user=self.user,
             code=self.code,
@@ -178,17 +186,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if room.status == "start":
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_disconnect", self.user.username)
     
-        try:
-            room = await get_room_with_host(room.code)
-            game = GameEngine(room.uuid)
-        
-            game_state = await BotService.play_until_human(room, room.game_state, game,
-                                                            check_end=GameService.check_game_end, 
-                                                            check_take_fold_callback=GameService.check_take_fold,
-                                                            ask_continue=GameService.check_goal_reached
-                                                            )
-        except Exception:
-            pass
+            try:
+                room = await get_room_with_host(room.code)
+                game = GameEngine(room.uuid)
+            
+                game_state = await BotService.play_until_human(room, room.game_state, game,
+                                                                check_end=GameService.check_game_end, 
+                                                                check_take_fold_callback=GameService.check_take_fold,
+                                                                ask_continue=GameService.check_goal_reached
+                                                                )
+            except Exception:
+                pass
 
     async def receive(self, text_data):
         asyncio.create_task(self.stream_message(text_data))
@@ -282,8 +290,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         take_fold, game_state = await GameService.check_take_fold(game_state, room)
 
         if (take_fold):
-            await BroadcastService.broadcast_game(self.code, self.channel_layer, "finish_round")
-            await asyncio.sleep(12)
+            
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
 
         game = GameEngine(room.uuid)
@@ -299,6 +306,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.check_goal_reached(room.code)
 
     async def handle_melds(self, payload):
+        #TODO if missing cards in payload error send
         room = await get_room_with_host(self.code)
     
         result = await MeldService.verify_melds(

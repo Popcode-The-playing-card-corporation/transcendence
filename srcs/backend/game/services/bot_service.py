@@ -35,8 +35,6 @@ class BotService:
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
-                    await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
-                    await asyncio.sleep(12)
                     await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
@@ -52,7 +50,7 @@ class BotService:
 
         while (not is_end and (not p.is_human or not p.is_online)):
             
-            await asyncio.sleep(random.randint(3, 7))
+            await asyncio.sleep(random.randint(1, 3))
 
             if (game_state["round"] == 0):
                 melds = BroadcastService._count_melds(game_state["players"][str(game_state["playing"])]["cards"])
@@ -72,8 +70,6 @@ class BotService:
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
-                    await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
-                    await asyncio.sleep(12)
                     await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)

@@ -7,23 +7,23 @@ import {
   type Mesh,
   type TextureEventMap,
 } from "three";
-import type { cardType } from "../../../../utils/type/handCardsType";
+import type { cardT } from "../../../../utils/type/handCardsType";
 import { useGame } from "../../context/GameContext";
 // import { RoundedBoxGeometry } from "@react-three/drei";
 
-// function sendCard(card: cardType) {
+// function sendCard(card: cardT) {
 //   console.log(card.value + " of " + card.color + " played!");
 // }
 
 type Props = {
   cardIndex: number;
-  card: cardType;
+  card: cardT;
   startPos: number;
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
   back: Texture<HTMLImageElement, TextureEventMap> | undefined;
   oldStartPos: number;
-//   setHand: Dispatch<SetStateAction<cardType[]>>;
-//   hand: cardType[];
+//   setHand: Dispatch<SetStateAction<cardT[]>>;
+//   hand: cardT[];
   lastCardPlayed: number;
   setHand: Dispatch<any>;
   setLastCardPlayed: Dispatch<SetStateAction<number>>;

@@ -1,8 +1,8 @@
-import type { cardType } from "./handCardsType"
+import type { cardT } from "./handCardsType"
 
 export type boardT = {
   playerPos: number,
-  card: cardType
+  card: cardT
 }
 
 

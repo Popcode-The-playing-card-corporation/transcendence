@@ -1,6 +1,6 @@
-import type { cardType } from "../type/handCardsType";
+import type { cardT } from "../type/handCardsType";
 
-export default function generateFakeLastFold(): cardType[] {
+export default function generateFakeLastFold(): cardT[] {
 	return (
 		[
 			{

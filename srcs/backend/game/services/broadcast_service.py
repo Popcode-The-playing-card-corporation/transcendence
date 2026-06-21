@@ -72,13 +72,10 @@ class BroadcastService:
         )
     
     @staticmethod
-    async def _board_data(room, player_position, is_r0_finish=False):
-        room = await get_room_with_host(room.code)
+    async def _get_player_data(room, is_r0_finish):
         game_state = room.game_state
-
         player_puntos = []
-        player_list = {}
-        detailed_points = []
+        player_list = []
         player_annonces = []
         
         for player_id, player_data in game_state["players"].items():
@@ -90,25 +87,50 @@ class BroadcastService:
                 position=int(player_id)
             )
 
-            player_id_str = str(player_id)
-
-            player_puntos.append({"id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
+            
+            player_puntos.append({"room_id":player_id, "user_id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
             
             if is_r0_finish:
+                melds = []
                 for meld in player_data.get("melds", []):
-                    player_annonces.append({
-                        "room_id": player_id,
-                        "cards": meld["cards"]
-                    })
+                    melds.append(meld["cards"])
                 
-            player_list[player_id_str] = {
+                player_annonces.append({
+                    "username": p.player.username,
+                    "room_id": int(player_id),
+                    "cards": melds
+                })
+                
+            p_name = p.player.username
+            if not p.is_human:
+                if p.difficulty == "easy":
+                    p_name += " [kILIAN]"
+                elif p.difficulty == "medium":
+                    p_name += " [Alex]"
+                elif p.difficulty == "hard":
+                    p_name += " [Dana]"
+                    
+            player_list.append( {
+                "room_id": int(player_id),
                 "hand": len(player_data["cards"]),
                 "user": {
                     "id": p.player.id,
-                    "username": p.player.username,
-                    "avatar": p.player.avatar
+                    "username": p_name,
+                    "avatar": p.player.avatar,
                 }
-            }
+            } )
+            
+        return player_puntos, player_list, player_annonces
+        
+    
+    @staticmethod
+    async def _board_data(room, player_position, is_r0_finish=False):
+        room = await get_room_with_host(room.code)
+        game_state = room.game_state
+
+        detailed_points = []
+        
+        player_puntos, player_list, player_annonces = await BroadcastService._get_player_data(room, is_r0_finish)
 
         logs = await sync_to_async(list)(
             GameLog.objects.filter(room=room).order_by("game", "round", "player_id")
@@ -157,7 +179,7 @@ class BroadcastService:
                 if round is None:
                     round = {"round":round_num, "players":[]}
                     game["rounds"].append(round)
-            round["players"].append(player_score)
+                    round["players"].append(player_score)
             
         for game in detailed_points:
             del game ["game"]
@@ -172,12 +194,18 @@ class BroadcastService:
                 for id, cards in tmp_board.items():
                     if id == "asked":
                         continue
-                    board.append({"room_id":id, "card":cards})
+                    board.append({"room_id":int(id), "card":cards})
             else:
                 board = []
                 
+        last_fold_id = game_state.get("last_fold_player")
+        last_fold_username = ""
+        if last_fold_id is not None:
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(room=room, position=last_fold_id)
+            last_fold_username = p.player.username
         return {
             "self_id": player_position,
+            "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
             **(
                 {"annonces": player_annonces}
                 if is_r0_finish
@@ -190,9 +218,13 @@ class BroadcastService:
             "playing": game_state["playing"],
             "player_list": player_list,
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "round_time": room.round_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "round_time": (room.round_time + timedelta(seconds=5)).strftime("%Y-%m-%d %H:%M:%S"),
             "round": game_state["round"],
-            "last_fold": game_state.get("last_fold")
+            "last_fold": {
+					"username": last_fold_username,
+                    "room_id": last_fold_id,
+                    "cards": game_state.get("last_fold"),
+                }
         }       
     
     @staticmethod
@@ -251,13 +283,13 @@ class BroadcastService:
         ret = BroadcastService._find_suit(bucket)
         for c in clubs:
             if (c in spades and c in diamonds and c in hearts):
-                cards = {"cards": [c.id, c.id + 9, c.id + 18, c.id + 27], "point": 0}
+                cards = {"cards": [c.id, c.id + 9, c.id + 18, c.id + 27], "points": 0}
                 if (c.values == "J"):
-                    cards["point"] = 200
+                    cards["points"] = 200
                 elif (c.values == "9"):
-                    cards["point"] = 150
+                    cards["points"] = 150
                 else:
-                    cards["point"] = 100
+                    cards["points"] = 100
                 ret.append(copy.deepcopy(cards))
 
         return ret

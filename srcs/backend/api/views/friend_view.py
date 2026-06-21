@@ -239,36 +239,6 @@ def list_blocked(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def list_user(request, name):
-
-    user = request.user
-
-    related_users = Friendship.objects.filter(
-        Q(from_user=user) | Q(to_user=user)
-    ).values_list("from_user", "to_user")
-
-    related_ids = set()
-    for from_id, to_id in related_users:
-        related_ids.add(from_id)
-        related_ids.add(to_id)
-
-    users = User.objects.exclude(
-        Q(id__in=related_ids) | Q(id=user.id)
-    ).filter(username__contains=name)
-
-    data = [
-        {
-            "id": u.id,
-            "username": u.username,
-            "is_online": u.is_online,
-        }
-        for u in users
-    ]
-
-    return Response(data)
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def list_propal(request):
 
     friendships = Friendship.objects.filter(

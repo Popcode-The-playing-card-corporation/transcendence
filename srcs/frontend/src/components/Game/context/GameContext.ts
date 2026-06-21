@@ -1,6 +1,5 @@
 import { createContext, useContext } from "react";
 import type { GameState } from "./GameType"
-import type { cardType } from "../../../utils/type/handCardsType";
 
 type GameContextT = {
 	state: GameState;
@@ -18,6 +17,7 @@ type GameContextT = {
 	setNBGames: (games: number) => void;
 	setNBPoints: (points: number) => void;
 	sendMessage: (action:string, message:string) => void;
+	show_annonces: () => void;
 }
 
 export const GameContext = createContext<GameContextT | null>(null);
