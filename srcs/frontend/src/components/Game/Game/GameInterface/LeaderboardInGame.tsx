@@ -1,6 +1,7 @@
 import Time from "./Time";
 import LittleLeaderboard from "./LittleLeaderboard";
 import DetailledLeaderboard from "./DetailledLeaderboard";
+import CurrentInfo from "./CurrentInfo";
 
 export default function LeaderboardInGame() {
   return (
@@ -8,6 +9,7 @@ export default function LeaderboardInGame() {
       <Time />
       <LittleLeaderboard />
       <DetailledLeaderboard />
+        <CurrentInfo />
     </div>
   );
 }
