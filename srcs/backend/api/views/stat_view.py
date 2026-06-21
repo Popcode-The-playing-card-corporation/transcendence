@@ -107,6 +107,15 @@ def game_history_friend(request, user_id):
 
     viewer = request.user
 
+    try:
+        User.objects.get(id=user_id)
+
+    except User.DoesNotExist:
+        return Response(
+            {"error": f"User not found: no user with id {user_id}"},
+            status=404
+        )
+
     is_friend = Friendship.objects.filter(
         status="accepted"
     ).filter(
@@ -114,7 +123,7 @@ def game_history_friend(request, user_id):
         Q(from_user_id=user_id, to_user=viewer)
     ).exists()
 
-    if not is_friend and viewer.id != user_id:
+    if not is_friend or viewer.id == user_id:
         return Response(
             {"error": "Forbidden: not friends"},
             status=403
@@ -153,19 +162,27 @@ def game_history_friend(request, user_id):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def room_data(request, code):
-    room = Room.objects.get(code=code)
-    players = PlayerPresence.objects.filter(room=room).select_related("player")
-	    
-    users = []
-    for p in players:
-        ps = PlayerScore.objects.get(player=p)
-        users.append({
-			"id": p.player.id,
-            "username": p.player.username,
-            "score": ps.score,
-            "rank": ps.rank
-		})
-    return Response(users)
+    try:
+        room = Room.objects.get(code=code)
+
+        players = PlayerPresence.objects.filter(room=room).select_related("player")
+            
+        users = []
+        for p in players:
+            ps = PlayerScore.objects.get(player=p)
+            users.append({
+                "id": p.player.id,
+                "username": p.player.username,
+                "score": ps.score,
+                "rank": ps.rank
+            })
+        return Response(users)
+
+    except Room.DoesNotExist:
+        return Response(
+            {"error": f"Room not found: no room with id {code}"},
+            status=404
+        )
 
 @api_view(["GET"])
 @permission_classes([AllowAny])

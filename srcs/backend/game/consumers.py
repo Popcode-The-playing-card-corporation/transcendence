@@ -78,12 +78,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
         })
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
-    
-        game_state = await BotService.play_until_human(room, room.game_state, game,
+        asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
-                                                        )
+                                                        ))
+
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished and room.status == "start":
@@ -182,17 +182,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if room.status == "start":
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_disconnect", self.user.username)
     
-        try:
-            room = await get_room_with_host(room.code)
-            game = GameEngine(room.uuid)
-        
-            game_state = await BotService.play_until_human(room, room.game_state, game,
-                                                            check_end=GameService.check_game_end, 
-                                                            check_take_fold_callback=GameService.check_take_fold,
-                                                            ask_continue=GameService.check_goal_reached
-                                                            )
-        except Exception:
-            pass
+            try:
+                room = await get_room_with_host(room.code)
+                game = GameEngine(room.uuid)
+            
+                game_state = await BotService.play_until_human(room, room.game_state, game,
+                                                                check_end=GameService.check_game_end, 
+                                                                check_take_fold_callback=GameService.check_take_fold,
+                                                                ask_continue=GameService.check_goal_reached
+                                                                )
+            except Exception:
+                pass
 
     async def receive(self, text_data):
         asyncio.create_task(self.stream_message(text_data))

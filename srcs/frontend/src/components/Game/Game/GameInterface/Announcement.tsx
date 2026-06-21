@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 // import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 import { useGame } from "../../context/GameContext";
 import generateDeck from "../../../../utils/createDeck";
+import { GrAnnounce } from "react-icons/gr";
 
 
 export default function Announcement() {
@@ -33,14 +34,13 @@ export default function Announcement() {
 	annonces(res);
   };
 
-
   return (
     <>
       <button
-        className={"btn " + (isFirstFold ? "" : "btn-disabled")}
+        className={"btn btn-lg btn-circle " + (isFirstFold ? "" : "btn-disabled")}
         onClick={() => showAnnonceRef.current?.showModal()}
         >
-        Annonces
+        <GrAnnounce />
       </button>
       <dialog
         id="showAnnonce"
@@ -115,6 +115,7 @@ export default function Announcement() {
         </div>
       </div>
       <form method="dialog" className="modal-backdrop">
+        <button ></button>
       </form>
       </dialog>
     </>

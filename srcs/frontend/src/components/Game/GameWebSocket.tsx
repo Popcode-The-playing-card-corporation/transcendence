@@ -203,6 +203,10 @@ export default function GameWebSocket({
 		dispatch({type: "SET_NBPOINT", payload:points});
 	}		
 	
+	function show_annonces() {
+		dispatch({type: "TEST_ANNONCES"});
+	}
+	
 	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
 		shouldReconnect: () => {
 			return auth.logged_in ? true : false
@@ -257,7 +261,7 @@ export default function GameWebSocket({
 
 	
 	return (
-		<GameContext.Provider value={{state, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
+		<GameContext.Provider value={{state, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);

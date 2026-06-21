@@ -19,8 +19,8 @@ export default function Limiters() {
 
   return (
     <div className="w-full max-w-xs ">
-      <div className="flex mb-10 gap-4 justify-center">
-        <p>Games</p>
+      <div className="flex mb-10 gap-4 justify-center items-center">
+        <p>Rounds</p>
         <input
           type="checkbox"
           checked={state.settings.goal !== "games"}

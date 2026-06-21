@@ -37,7 +37,8 @@ export type GameState = {
 	event: string;
 	eventID: number;
 	message: string;
-	user: string;
+	user: string,
+	show_annonces: boolean
 
 }
 
@@ -58,6 +59,8 @@ export type GameAction =
 	| { type: "SET_GOAL"; payload:string}
 	| { type: "SET_NBGAME"; payload:number}
 	| { type: "SET_NBPOINT"; payload:number}
+	| { type: "TEST_ANNONCES";}
+
 
 
 
@@ -81,4 +84,5 @@ export const initialState: GameState = {
 	eventID:0,
 	message:"",
 	user: "",
+	show_annonces: false
 }

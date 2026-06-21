@@ -20,7 +20,7 @@ export default function Adversary({isSelf, cardHand, playedCard, front, back, to
   const [show, setShow] = useState(true)
   if (!playedCard)
     playedCard = defaultBoard;
-  const distanceBoard = 1.8;
+  const distanceBoard = boardRadius * 3 / 5;
   const centerHand = Math.cos(angleCenter / 2) * boardRadius;
   const posPlayedCard = centerHand - distanceBoard;
 
@@ -50,6 +50,3 @@ export default function Adversary({isSelf, cardHand, playedCard, front, back, to
       </>
   );
 }
-
-  // posPlayedCard.push(Math.sin(angleCenter * id) * distanceBoard);
-  // posPlayedCard.push(-Math.cos(angleCenter * id) * distanceBoard);

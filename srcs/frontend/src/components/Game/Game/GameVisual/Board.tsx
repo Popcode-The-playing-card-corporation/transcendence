@@ -16,12 +16,12 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
   const obj = adversaries as Record<string, unknown>;
   const totalPlayer = Object.keys(obj).length;
 
-  const boardRadius = 3;
+  const boardRadius = 2.3;
 
 
   return (
     <>
-      <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, -2]}>
+      <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, 0]}>
         <circleGeometry args={[boardRadius, 50]}/>
         <meshStandardMaterial color={"#7d02b4"}/>
 
@@ -38,13 +38,13 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
           return(
             <>
               <Adversary
-			  	isSelf={Number(adversary[0]) === idPlayer}
+                isSelf={Number(adversary[0]) === idPlayer}
+                boardRadius={boardRadius}
                 cardHand={{position:position, nbCards:adversary[1].hand}}
                 playedCard={{playerPos:position, card}}
-				front={front}
+                front={front}
                 back={back}
                 totalPlayer={totalPlayer}
-                boardRadius={boardRadius}
               />
             </>
           );

@@ -11,7 +11,7 @@ import asyncio
 
 @sync_to_async
 def get_params(code):
-    room = get_room_with_host(code)
+    room = Room.objects.select_related("host").get(code=code)
     params = {
             "code": room.code,
             "status": room.status,

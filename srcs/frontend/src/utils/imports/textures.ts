@@ -1,5 +1,5 @@
 import C6 from "../../assets/cards/6Clubs.png";
-import C7 from "../../assets/cards/7Clubs.png";
+import C7 from "../../assets/cards/7Club.png";
 import C8 from "../../assets/cards/8Clubs.png";
 import C9 from "../../assets/cards/9Clubs.png";
 import C10 from "../../assets/cards/10Clubs.png";
@@ -36,7 +36,7 @@ import SK from "../../assets/cards/KSpades.png";
 import SA from "../../assets/cards/ASpades.png";
 import Back from "../../assets/cards/back.png";
 
-export function loadTexture(name: string) {
+export function loadTexture(name: string) : string {
   const textures = new Map([
     ["6heart", H6],
     ["7heart", H7],

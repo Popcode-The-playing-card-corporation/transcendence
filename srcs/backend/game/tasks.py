@@ -77,7 +77,7 @@ def change_host(room_code, user_id):
             {
                 "type": "settings_event",
                 "event": "host_changed",
-                "payload": {"players": players, "params": get_params(room.code)}
+                "payload": {"players": players, "params": async_to_sync(get_params)(room.code)}
             }
         )
 

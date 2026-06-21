@@ -4,7 +4,9 @@ import ChatBtn from "./ChatBtn";
 import InfoBtn from "./InfoBtn";
 import Chat from "./Chat";
 import FunctionnementInfos from "./FunctionnementInfos";
+import FoldModal from "./FoldModal";
 import { useGame } from "../../context/GameContext";
+import GlobalAnnonce from "../GameVisual/GlobalAnnonce";
 
 export default function GameButtons() {
   const game = useGame();
@@ -56,6 +58,7 @@ export default function GameButtons() {
 		<FunctionnementInfos />
 	) : ""}
       <div className="flex gap-2 mt-2 items-center justify-between">
+	  <FoldModal />
         <Announcement />
         <div className="flex gap-2">
           <div className="indicator">
@@ -64,9 +67,10 @@ export default function GameButtons() {
             ) : ""}
             <ChatBtn changeState={changeState} />
           </div>
-          <InfoBtn changeState={changeState} />
         </div>
+        <InfoBtn changeState={changeState} />
       </div>
+    <GlobalAnnonce />
     </div>
   );
 }

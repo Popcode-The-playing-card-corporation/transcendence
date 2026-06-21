@@ -72,13 +72,10 @@ class BroadcastService:
         )
     
     @staticmethod
-    async def _board_data(room, player_position, is_r0_finish=False):
-        room = await get_room_with_host(room.code)
+    async def _get_player_data(room, is_r0_finish):
         game_state = room.game_state
-
         player_puntos = []
         player_list = {}
-        detailed_points = []
         player_annonces = []
         
         for player_id, player_data in game_state["players"].items():
@@ -95,11 +92,14 @@ class BroadcastService:
             player_puntos.append({"id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
             
             if is_r0_finish:
+                melds = []
                 for meld in player_data.get("melds", []):
-                    player_annonces.append({
-                        "room_id": player_id,
-                        "cards": meld["cards"]
-                    })
+                    melds.append(meld["cards"])
+                
+                player_annonces.append({
+                    "room_id": int(player_id),
+                    "cards": melds
+                })
                 
             p_name = p.player.username
             if not p.is_human:
@@ -118,6 +118,18 @@ class BroadcastService:
                     "avatar": p.player.avatar,
                 }
             }
+            
+        return player_puntos, player_list, player_annonces
+        
+    
+    @staticmethod
+    async def _board_data(room, player_position, is_r0_finish=False):
+        room = await get_room_with_host(room.code)
+        game_state = room.game_state
+
+        detailed_points = []
+        
+        player_puntos, player_list, player_annonces = await BroadcastService._get_player_data(room, is_r0_finish)
 
         logs = await sync_to_async(list)(
             GameLog.objects.filter(room=room).order_by("game", "round", "player_id")
@@ -200,7 +212,7 @@ class BroadcastService:
             "playing": game_state["playing"],
             "player_list": player_list,
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "round_time": room.round_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "round_time": (room.round_time + timedelta(seconds=5)).strftime("%Y-%m-%d %H:%M:%S"),
             "round": game_state["round"],
             "last_fold": {
                     "room_id": game_state.get("last_fold_player"),
