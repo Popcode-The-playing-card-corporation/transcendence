@@ -19,12 +19,8 @@ export default function InfoAndActionPart({roomCode}:{roomCode:string}) {
         </p>
       </div>
       <Chrono />
-	  <div className="flex justify-center">
         <button className="btn mr-5" onClick={leaveRoom}>Leave Game</button>
-      </div>
-      { is_host ? <div className="flex justify-center">
-        <StartGameBtn />
-      </div> : null}
+      { is_host ?  <StartGameBtn /> : null}
     </div>
   );
 }
