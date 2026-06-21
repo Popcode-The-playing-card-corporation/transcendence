@@ -3,6 +3,7 @@ import type { annonceT } from "../type/annonceType";
 export default function generateFakeAnnonce() : annonceT[] {
   return [
     {
+	  username: "sorry Dana",
       room_id: 0,
       cards: [
         [
@@ -57,6 +58,7 @@ export default function generateFakeAnnonce() : annonceT[] {
       ]
     },
     {
+	  username: "I made changes",
       room_id: 1,
       cards: [
         [
@@ -79,6 +81,7 @@ export default function generateFakeAnnonce() : annonceT[] {
       ]
     },
     {
+	  username: "Don't hate me",
       room_id: 2,
       cards: [
         [

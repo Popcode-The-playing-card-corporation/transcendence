@@ -1,21 +1,6 @@
-import { type boardDataT, type boardDataNT, default_Nboard } from "../../../utils/type/boardDataType";
-import type { cardType } from "../../../utils/type/handCardsType";
+import { type boardDataNT, default_Nboard, type SettingsT, type GameT, type selfCardT } from "../../../utils/type/boardDataType";
 import type { playerT } from "../../../utils/type/playerType";
 
-type SettingsT = {
-	mode: number;
-	maxSize: number;
-	listPlayer: playerT[];
-	timeout: Date;
-	goal:string;
-	nb_games:number;
-	nb_points:number;
-}
-
-type GameT = {
-	boardData: boardDataT;
-	self_cards: {hand:cardType[], legal:cardType[], melds:{cards: number[], point:number}[]};
-}
 
 export type roomT = "private" | "friends_only" | "public"
 
@@ -46,7 +31,7 @@ export type GameAction =
 	| { type: "CONNECTED" }
 	| { type: "DISCONNECTED" }
 	| { type: "SET_PLAYERS"; payload: playerT[] }
-	| { type: "SET_CARDS"; payload: {hand:cardType[], legal:cardType[], melds:{cards: number[], point:number}[]} }
+	| { type: "SET_CARDS"; payload: selfCardT }
 	| { type: "SET_BOARD"; payload: boardDataNT }
 	| { type: "SET_PARAMS"; payload: paramsT }
 	| { type: "SET_MODE"; payload: number }
@@ -77,7 +62,7 @@ export const initialState: GameState = {
 	},
 	game: {
 		boardData: default_Nboard,
-		self_cards:{hand:[], legal:[], melds:[{cards:[],point:0}]},
+		self_cards:{hand:[], legal:[], melds:[{cards:[],points:0}]},
 	},
 	messages: [],
 	event:"",

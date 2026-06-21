@@ -10,7 +10,7 @@ import { initialState, type paramsT } from "./context/GameType";
 import { useNavigate } from "react-router";
 import { GameContext } from "./context/GameContext";
 import type { playerT } from "../../utils/type/playerType";
-import type { cardType } from "../../utils/type/handCardsType";
+import type { cardT } from "../../utils/type/handCardsType";
 import type { boardDataNT } from "../../utils/type/boardDataType";
 
 export default function GameWebSocket({
@@ -142,7 +142,7 @@ export default function GameWebSocket({
 			}
 		}
 
-		function setGame(cards:{hand:cardType[], legal:cardType[], melds:{cards: number[], point:number}[]}, board:boardDataNT) {
+		function setGame(cards:{hand:cardT[], legal:cardT[], melds:{cards: number[], point:number}[]}, board:boardDataNT) {
 			dispatch({type:"SET_CARDS", payload:cards})
 			dispatch({type:"SET_BOARD", payload:board})
 		}

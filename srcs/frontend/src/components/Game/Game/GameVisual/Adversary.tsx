@@ -23,7 +23,8 @@ export default function Adversary({isSelf, cardHand, playedCard, front, back, to
   const distanceBoard = boardRadius * 3 / 5;
   const centerHand = Math.cos(angleCenter / 2) * boardRadius;
   const posPlayedCard = centerHand - distanceBoard;
-
+	
+ 
   return (
     <>
       <mesh

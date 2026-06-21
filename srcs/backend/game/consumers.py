@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import  end_room, get_room_with_host, get_player_pos
-from .models import PlayerPresence
+from .models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from .services.game_service import GameService
@@ -94,7 +94,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
         self.user = self.scope.get("user")
-    
+        if not await sync_to_async(Room.objects.get)(code=self.code):
+                await self.send_json({"error": "The room does not exist"})
+                await self.close(code=4004)
+                return
+        
         result = await RoomConnectionService.handle_connect(
             user=self.user,
             code=self.code,
