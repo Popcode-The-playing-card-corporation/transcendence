@@ -2,14 +2,14 @@ import { useRef } from "react";
 import generateFakeLastFold from "../../../../utils/test_funcs/generateFakeLastFold";
 import { GiCardPlay } from "react-icons/gi";
 import CardImg from "./CardImg";
+import { useGame } from "../../context/GameContext";
 // import { useGame } from "../../context/GameContext";
 
 
 export default function FoldModal() {
-  // const lastFold = state.game.boardData.last_fold;
-  // const { state } = useGame()
-  const lastFold = generateFakeLastFold();
-  const takenBy = "danouille";
+	const { state } = useGame()
+  const lastFold = state.game.boardData.last_fold;
+  const takenBy = lastFold.username;
   const lastFoldRef = useRef<HTMLDialogElement>(null);
 
   return (
@@ -25,7 +25,7 @@ export default function FoldModal() {
           <h2 className="mb-4">Last fold</h2>
           <p>Taken by {takenBy}</p>
           <div className=" flex gap-2 my-6 flex-wrap justify-center">
-            {lastFold.map((card) => {
+            {lastFold.cards.map((card) => {
               return <CardImg name={card.value + card.color} />;
             })}
           </div>
