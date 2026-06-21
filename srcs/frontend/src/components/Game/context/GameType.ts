@@ -37,7 +37,7 @@ export type GameState = {
 	event: string;
 	eventID: number;
 	message: string;
-	user: string
+	user: string;
 
 }
 
@@ -80,5 +80,5 @@ export const initialState: GameState = {
 	event:"",
 	eventID:0,
 	message:"",
-	user: ""
+	user: "",
 }

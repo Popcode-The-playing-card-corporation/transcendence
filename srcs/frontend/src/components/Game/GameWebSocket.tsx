@@ -177,7 +177,7 @@ export default function GameWebSocket({
 		function annonces(cards: {cardId:number}[]) {
 			sendJson("melds", {cards:cards});
 		}
-		
+
 		function kickPlayer(playerId:number) { //RoomId of player/ position
 			sendJson("kick", {playerId : playerId});
 		}
@@ -201,7 +201,7 @@ export default function GameWebSocket({
 
 	function setNBPoints(points: number) {
 		dispatch({type: "SET_NBPOINT", payload:points});
-	}
+	}		
 	
 	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
 		shouldReconnect: () => {

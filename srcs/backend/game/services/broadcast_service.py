@@ -101,7 +101,6 @@ class BroadcastService:
                         "cards": meld["cards"]
                     })
                 
-            player_puntos[player_id_str] = player_data["puntos"]
             p_name = p.player.username
             if not p.is_human:
                 if p.difficulty == "easy":
