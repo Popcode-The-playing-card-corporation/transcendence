@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.user_views import register, change_password, login, logout, user, user_data, delete
-from .views.friend_view import get_friends, unblock_friend, list_user, list_propal, accept_friend_request, list_user_not_friend, block_friend, list_blocked, delete_friend_request, send_friend_request
+from .views.friend_view import get_friends, unblock_friend, list_propal, accept_friend_request, list_user_not_friend, block_friend, list_blocked, delete_friend_request, send_friend_request
 from .views.stat_view import get_stat, room_data, game_history, leaderboard, game_history_friend
 from .views.OAuth_view import GoogleLogin, FortyTwoLogin, GitLogin
 

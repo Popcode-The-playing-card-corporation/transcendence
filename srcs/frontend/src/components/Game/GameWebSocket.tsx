@@ -10,8 +10,8 @@ import { initialState, type paramsT } from "./context/GameType";
 import { useNavigate } from "react-router";
 import { GameContext } from "./context/GameContext";
 import type { playerT } from "../../utils/type/playerType";
-import type { cardType } from "../../utils/type/handCardsType";
-import type { boardDataNT } from "../../utils/type/boardDataType";
+import type { cardT } from "../../utils/type/handCardsType";
+import type { boardDataNT, selfAnnonceT } from "../../utils/type/boardDataType";
 
 export default function GameWebSocket({
   code,
@@ -142,7 +142,7 @@ export default function GameWebSocket({
 			}
 		}
 
-		function setGame(cards:{hand:cardType[], legal:cardType[], melds:{cards: number[], point:number}[]}, board:boardDataNT) {
+		function setGame(cards:{hand:cardT[], legal:boolean[], melds:selfAnnonceT[]}, board:boardDataNT) {
 			dispatch({type:"SET_CARDS", payload:cards})
 			dispatch({type:"SET_BOARD", payload:board})
 		}
@@ -177,7 +177,7 @@ export default function GameWebSocket({
 		function annonces(cards: {cardId:number}[]) {
 			sendJson("melds", {cards:cards});
 		}
-		
+
 		function kickPlayer(playerId:number) { //RoomId of player/ position
 			sendJson("kick", {playerId : playerId});
 		}
@@ -201,7 +201,7 @@ export default function GameWebSocket({
 
 	function setNBPoints(points: number) {
 		dispatch({type: "SET_NBPOINT", payload:points});
-	}
+	}		
 	
 	function show_annonces() {
 		dispatch({type: "TEST_ANNONCES"});

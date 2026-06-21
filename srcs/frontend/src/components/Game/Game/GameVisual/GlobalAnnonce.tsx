@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 import { useGame } from "../../context/GameContext";
 import CardImg from "../GameInterface/CardImg";
@@ -27,11 +27,10 @@ export default function GlobalAnnonce() {
           <div className="modal-box bg-(--nav-color) max-h-3/4">
             <h3 className="flex justify-center pb-2 overflow-scroll scrollbar-thumb-(--accent-color)">Annonces</h3>
             {annonces.map((annonce) => {
-              console.debug(state.game.boardData.player_list[String(annonce.room_id)].user.username);
               return(
                 <>
                   <div className="flex justify-center text-lg">
-                    {state.game.boardData.player_list[String(annonce.room_id)].user.username}
+                    {annonce.username}
                   </div>
                   <>
                     {annonce.cards.map((cards) => {

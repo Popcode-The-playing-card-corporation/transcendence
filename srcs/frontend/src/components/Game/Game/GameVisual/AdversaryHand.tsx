@@ -25,6 +25,15 @@ export default function AdversaryHand({setShow, angleCenter, cardHand, fronts, b
   const angleStart = - (cardHand.nbCards - 1) * angleBetween / 2;
   const allAngle : number[] = [];
 
+  useEffect(() => {
+	async function handle_continue() {
+		if (state.event === "game_continued") {
+			setCards(cardHand.nbCards);
+		}
+	}
+	handle_continue();
+  }, [state.event, cardHand.nbCards])
+
 
 	useEffect(() => {
 		function handle_less() {

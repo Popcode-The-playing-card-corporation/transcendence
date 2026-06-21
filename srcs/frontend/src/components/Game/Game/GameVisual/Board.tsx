@@ -13,10 +13,10 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
   const cards = state.game.boardData.board;
   const adversaries = state.game.boardData.player_list;
   const idPlayer = Number(state.game.boardData.self_id);
-  const obj = adversaries as Record<string, unknown>;
-  const totalPlayer = Object.keys(obj).length;
+  const totalPlayer = adversaries.length;
 
   const boardRadius = 2.3;
+  console.debug(cards);
 
 
   return (
@@ -25,11 +25,11 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
         <circleGeometry args={[boardRadius, 50]}/>
         <meshStandardMaterial color={"#7d02b4"}/>
 
-        {Object.entries(adversaries).map((adversary) => {
+        {adversaries.map((adversary) => {
 
-			const position =  (((Number(adversary[0]) - idPlayer) % totalPlayer) + totalPlayer) % totalPlayer;
+			const position =  (((adversary.room_id - idPlayer) % totalPlayer) + totalPlayer) % totalPlayer;
 
-			const new_cards = cards.filter((card) => card.room_id == Number(adversary[0]))[0]
+			const new_cards = cards.filter((card) => card.room_id === adversary.room_id)[0]
 			let card = {color:"", value:"", id:-1};
 			if (new_cards) {
 				card = new_cards.card;
@@ -38,9 +38,9 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
           return(
             <>
               <Adversary
-                isSelf={Number(adversary[0]) === idPlayer}
+                isSelf={adversary.room_id == idPlayer}
                 boardRadius={boardRadius}
-                cardHand={{position:position, nbCards:adversary[1].hand}}
+                cardHand={{position:position, nbCards:adversary.hand}}
                 playedCard={{playerPos:position, card}}
                 front={front}
                 back={back}

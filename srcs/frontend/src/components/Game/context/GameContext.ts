@@ -1,6 +1,5 @@
 import { createContext, useContext } from "react";
 import type { GameState } from "./GameType"
-import type { cardType } from "../../../utils/type/handCardsType";
 
 type GameContextT = {
 	state: GameState;

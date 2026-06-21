@@ -1,4 +1,4 @@
-export type accessT = {
-  access: string,
-  refresh: string,
-};
+// export type accessT = {
+//   access: string,
+//   refresh: string,
+// };
