@@ -30,7 +30,7 @@ ACTION_HANDLERS = {
     "play_card": "handle_play_card",
     "continue": "handle_create_room",
     "melds": "handle_melds", 
-    "kick": "handle_kick", #payload
+    "kick": "handle_kick", 
     "exit_game": "handle_exit_game",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
