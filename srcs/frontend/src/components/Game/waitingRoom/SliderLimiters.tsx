@@ -30,7 +30,7 @@ export default function SliderLimiters() {
           min="0"
           max="2"
           value={nb_points === 333 ? "0" : nb_points === 666 ? "1" : "2"}
-          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--nav-color)] glass"
           step="1"
           onChange={(e) => setNBPoints(get_points(e.target.value))}
 		  disabled={!is_host}
