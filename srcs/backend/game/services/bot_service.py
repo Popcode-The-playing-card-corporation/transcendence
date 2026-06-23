@@ -42,6 +42,7 @@ class BotService:
                         room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
                         await sync_to_async(room.save)()
                         await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+                        
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
@@ -53,6 +54,8 @@ class BotService:
                 position=int(game_state["playing"])
             )
             
+            if p.is_human and p.is_online:
+                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
 
         while (not is_end and (not p.is_human or not p.is_online)):
             
