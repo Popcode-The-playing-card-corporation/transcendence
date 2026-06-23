@@ -32,6 +32,7 @@ ACTION_HANDLERS = {
     "melds": "handle_melds", 
     "kick": "handle_kick", 
     "exit_game": "handle_exit_game",
+    "patch_param": "handle_patch_param",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -445,6 +446,51 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "event": "force_disconnect",
                 }
             )
+
+    async def handle_patch_param(self, payload: dict):
+        room = await get_room_with_host(self.code)
+
+        if room.host != self.user:
+            await self.error("Only host can do this")
+            return 
+
+        if "max_player" in payload["data"]:
+            if payload["data"]["max_player"] > 7 or payload["data"]["max_player"] < 1:
+                await self.error("Invalid number of player max")
+                return
+
+        if "nb_games" in payload["data"]:
+            if payload["data"]["nb_games"] < 0:
+                await self.error("Invalid number of points's number")
+                return 
+                
+        if "nb_points" in payload["data"]:
+            if payload["data"]["nb_points"] < 0:
+                await self.error("Invalid number of games's number")
+                return 
+
+        if "goal" in payload["data"]:
+            if payload["data"]["goal"] != "games" and \
+            payload["data"]["goal"] != "points":
+                await self.error("Invalid type of goal")
+                return 
+
+        if "type" in payload["data"]:
+            if payload["data"]["type"] != "public" and \
+            payload["data"]["type"] != "private" and \
+            payload["data"]["type"] != "friends_only":
+                await self.error("Invalid type of game")
+                return 
+
+        if "status" in payload["data"]:
+            if payload["data"]["status"] != "created" and \
+            payload["data"]["status"] != "open" and \
+            payload["data"]["status"] != "start" and \
+            payload["data"]["status"] != "close":
+                await self.error("Invalid status of game")
+                return 
+
+        await RoomService.handle_patch_room(room, payload)
 
     def get_username(self):
         user = self.scope.get("user")
