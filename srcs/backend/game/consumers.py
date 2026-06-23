@@ -10,6 +10,8 @@ from .services.meld_service import MeldService
 from .services.bot_service import BotService
 from .services.room_connection_service import RoomConnectionService
 from .services.broadcast_service import BroadcastService
+from django.utils import timezone
+from datetime import timedelta
 
 import asyncio
 
@@ -334,6 +336,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             room = await get_room_with_host(room.code)
             is_end, gs = await GameService.check_game_end(room, game)
             if (not is_end):
+                game_state = room.game_state
+                room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+                await sync_to_async(room.save)()
                 await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
 
         game_state = await BotService.play_until_human(room, game_state, game,
