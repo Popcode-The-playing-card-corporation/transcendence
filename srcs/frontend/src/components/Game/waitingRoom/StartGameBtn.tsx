@@ -6,7 +6,7 @@ export default function StartGameBtn() {
  const { startGame } = useGame();
 
   return (
-    <div>
+    <div className="flex z-1">
       <button
         onClick={() => confirmStartRef.current?.showModal()}
         className="btn"
