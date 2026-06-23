@@ -16,8 +16,7 @@ export default function InfoAndActionPart({ roomCode }: { roomCode: string }) {
   return (
     <div className=" mt-10 -mb-10 col-span-3 flex justify-between items-end">
       <div className="flex items-end gap-2">
-        <button className="btn mr-5 del" onClick={leaveRoom}>
-          {" "}
+        <button className="btn mr-5 del z-1" onClick={leaveRoom}>
           <IoMdExit />{" "}
         </button>
         <div className="flex gap-3 flex-col justify-center items-center text-center w-fit">
