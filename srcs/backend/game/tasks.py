@@ -118,10 +118,12 @@ def player_afk(room_code, user_id, round, game):
 
     if not room or not room.round_time:
         return
-    
+    print(round)
+    print(room.game_state["round"])
     if round != room.game_state["round"]:
         return
-        
+    print(game)
+    print(room.game_state["game"])
     if game != room.game_state["game"]:
         return
     
