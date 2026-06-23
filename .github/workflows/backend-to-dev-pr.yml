@@ -20,6 +20,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           COUNT=$(gh pr list \
+            --repo Cyraullie/transcendence \
             --base dev \
             --head backend \
             --state open \
