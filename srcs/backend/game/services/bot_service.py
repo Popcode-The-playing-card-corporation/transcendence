@@ -35,7 +35,10 @@ class BotService:
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
-                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+                    room = await get_room_with_host(room.code)
+                    is_end, gs = await check_end(room, game)
+                    if (not is_end):
+                        await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
@@ -70,7 +73,10 @@ class BotService:
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
-                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+                    room = await get_room_with_host(room.code)
+                    is_end, gs = await check_end(room, game)
+                    if (not is_end):
+                        await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
@@ -83,7 +89,7 @@ class BotService:
             )
             
             if p.is_human and p.is_online:
-                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, 30 if game_state["round"] == 0 else 15)
+                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state
                 

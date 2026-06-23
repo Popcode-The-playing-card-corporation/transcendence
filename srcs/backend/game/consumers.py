@@ -32,6 +32,7 @@ ACTION_HANDLERS = {
     "melds": "handle_melds",
     "kick": "handle_kick",
     "exit_game": "handle_exit_game",
+    "patch_param": "handle_patch_param",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -94,6 +95,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
         self.user = self.scope.get("user")
+
+        if not self.user.is_authenticated:
+            await self.close(code=4003)
+            return
+
         if not await sync_to_async(Room.objects.get)(code=self.code):
                 await self.send_json({"error": "The room does not exist"})
                 await self.close(code=4004)
@@ -212,9 +218,20 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 
             if data.get("type") != "action":
                 return await self.error("Unknown message type")
-        
+            
             action = data.get("action")
+            if (type(action) != str):
+                await self.send(text_data=json.dumps({
+                        "type": "error",
+                        "message": "Action not a string"
+                    }))
+                return 
+
             payload = data.get("payload", {})
+            room = await get_room_with_host(self.code)
+            if action == "play_card" and room.wait_schedule:
+                await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_invalid")
+                return
             
             handler_name = ACTION_HANDLERS.get(action)
         
@@ -231,6 +248,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }))
 
     async def handle_start_game(self, payload=None):
+        if (await RoomService.check_room_status("open", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         room = await get_room_with_host(self.code)
     
         if self.user != room.host:
@@ -265,15 +286,34 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = await GameService.start_game(room)
 
     async def handle_play_card(self, payload):
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+        
+        if (len(payload) == 0):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "payload's empty"
+                }))
+            return 
+
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
 
-        result = await GameService.play_card(
-            room=room,
-            user=self.user,
-            position=position,
-            card_id=payload["cardId"]
-        )
+        try:
+            result = await GameService.play_card(
+                room=room,
+                user=self.user,
+                position=position,
+                card_id=payload["cardId"]
+            )
+
+        except KeyError:
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "cardId not found in payload"
+                }))
+            return 
 
         if result.get("error"):
             await self.error(result["error"])
@@ -288,12 +328,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = room.game_state
 
         take_fold, game_state = await GameService.check_take_fold(game_state, room)
-
-        if (take_fold):
-            
-            await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
-
+        
         game = GameEngine(room.uuid)
+        if (take_fold):
+            room = await get_room_with_host(room.code)
+            is_end, gs = await GameService.check_game_end(room, game)
+            if (not is_end):
+                await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
+
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold,
@@ -306,19 +348,41 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.check_goal_reached(room.code)
 
     async def handle_melds(self, payload):
-        #TODO if missing cards in payload error send
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+
+        if (len(payload) == 0):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "payload's empty"
+                }))
+            return
+        
         room = await get_room_with_host(self.code)
     
-        result = await MeldService.verify_melds(
-            room=room,
-            user=self.user,
-            cards=payload["cards"]
-        )
-    
+        try:
+            result = await MeldService.verify_melds(
+                room=room,
+                user=self.user,
+                cards=payload["cards"]
+            )
+
+        except KeyError:
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "cards not found in payload"
+                }))
+            return 
+        
         await self.send(json.dumps(result))
         
         
-    async def handle_exit_game(self, payload=None):    
+    async def handle_exit_game(self, payload=None):  
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         result = await RoomService.handle_player_exit(
             code=self.code,
             user=self.user
@@ -337,6 +401,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #await self.send(json.dumps(result))
         
     async def handle_create_room(self, payload=None):
+        if (await RoomService.check_room_status("end", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         result = await RoomService.handle_create_room(
             code=self.code,
             user=self.user
@@ -355,6 +423,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #await self.send(json.dumps(result))
 
     async def handle_kick(self, payload: dict):
+        if (await RoomService.check_room_status("open", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         if "playerId" not in payload:
             await self.send_json({
                 "error": "missing_playerId"
@@ -409,6 +481,55 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "event": "force_disconnect",
                 }
             )
+
+    async def handle_patch_param(self, payload: dict):
+        if (await RoomService.check_room_status("open", self.code) == False):
+            await self.error("Forbidden")
+            return
+
+        room = await get_room_with_host(self.code)
+
+        if room.host != self.user:
+            await self.error("Only host can do this")
+            return 
+
+        if "max_player" in payload["data"]:
+            if payload["data"]["max_player"] > 7 or payload["data"]["max_player"] < 1:
+                await self.error("Invalid number of player max")
+                return
+
+        if "nb_games" in payload["data"]:
+            if payload["data"]["nb_games"] < 0:
+                await self.error("Invalid number of points's number")
+                return 
+                
+        if "nb_points" in payload["data"]:
+            if payload["data"]["nb_points"] < 0:
+                await self.error("Invalid number of games's number")
+                return 
+
+        if "goal" in payload["data"]:
+            if payload["data"]["goal"] != "games" and \
+            payload["data"]["goal"] != "points":
+                await self.error("Invalid type of goal")
+                return 
+
+        if "type" in payload["data"]:
+            if payload["data"]["type"] != "public" and \
+            payload["data"]["type"] != "private" and \
+            payload["data"]["type"] != "friends_only":
+                await self.error("Invalid type of game")
+                return 
+
+        if "status" in payload["data"]:
+            if payload["data"]["status"] != "created" and \
+            payload["data"]["status"] != "open" and \
+            payload["data"]["status"] != "start" and \
+            payload["data"]["status"] != "close":
+                await self.error("Invalid status of game")
+                return 
+
+        await RoomService.handle_patch_room(room, payload)
 
     def get_username(self):
         user = self.scope.get("user")

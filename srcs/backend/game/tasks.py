@@ -113,10 +113,16 @@ def lobby_kick_all(room_code):
 
 #TODO check bug when no player in websocket room task for player (took too long to shut down and was killed)
 @shared_task
-def player_afk(room_code, user_id):
+def player_afk(room_code, user_id, round, game):
     room = Room.objects.select_related("host").filter(code=room_code).first()
 
     if not room or not room.round_time:
+        return
+    
+    if round != room.game_state["round"]:
+        return
+        
+    if game != room.game_state["game"]:
         return
     
     if timezone.now() < room.round_time:
@@ -161,9 +167,18 @@ def player_afk(room_code, user_id):
         }
     )
     
+@shared_task
+def wait_time(room_code):
+    room = Room.objects.select_related("host").filter(code=room_code).first()
+    
+    if room.wait_schedule == False:
+        return
+    
+    room.wait_schedule = False
+    room.save()
     
     
-    
-    
-    
-    
+
+
+
+

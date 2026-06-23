@@ -101,6 +101,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 				message = data.get("message")
 
+				if (not message):
+					await self.send(text_data=json.dumps({
+						"type": "error",
+						"message": "Message's empty"
+					}))
+					return
+
+				if (type(message) != str):
+					await self.send(text_data=json.dumps({
+						"type": "error",
+						"message": "Message's not a string"
+					}))
+					return
+
 				user = await sync_to_async(User.objects.get)(id= self.user.id)
 
 				user_data = {
@@ -123,6 +137,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				data = str(event)
 				with file.open("a") as f:
 					f.write(json.dumps(event) + os.linesep)
+
+			else:
+				await self.send(text_data=json.dumps({
+					"type": "error",
+					"message": "Unknown action"
+				}))
 
 		except json.JSONDecodeError:
 			await self.send(text_data=json.dumps({

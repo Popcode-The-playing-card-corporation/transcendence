@@ -1,10 +1,12 @@
 from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host
-
+from ..serializers import RoomSerializer
+from . broadcast_service import BroadcastService
 import uuid
 from ..models import PlayerPresence, Room
 from api.models import User
 from django.db.models import F
+from channels.layers import get_channel_layer
 
 from .room_task_service import RoomTaskService
 
@@ -154,9 +156,25 @@ class RoomService:
     
         return room.code
 
-
-
-
+    @staticmethod
+    async def handle_patch_room(room, payload):
+        serializer = RoomSerializer(room, data=payload["data"], partial=True)
+        channel_layer = get_channel_layer()
+        if serializer.is_valid():
+            await sync_to_async(serializer.save)()
             
+            await BroadcastService.broadcast_settings(room, channel_layer, "settings_changed", f"room_{room.code}")
+        
+        else:
+            await BroadcastService.broadcast_settings(room, channel_layer, "settings_error", f"room_{room.code}")
+   
+    @staticmethod
+    async def check_room_status(status, code):
+        room = await sync_to_async(Room.objects.get)(code=code)
 
-    
+        print("room status = ", room.status, " - status = ", status)
+
+        if (room.status == status):
+            print("its true")
+            return True
+        return False

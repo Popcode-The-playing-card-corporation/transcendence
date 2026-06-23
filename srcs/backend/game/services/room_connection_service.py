@@ -54,6 +54,10 @@ class RoomConnectionService:
                     "message": {"event": "game_event", "message": "room already started"}
                 }
 
+        if room.status == "open":
+            if is_member:
+                return {"close": False}
+
         if room.nb_player == room.max_player:
             return {
                 "close": True,
@@ -199,6 +203,8 @@ class RoomConnectionService:
                 room=room
             ).update
         )(channel_name=channel_name)
+        
+        await RoomTaskService.cancel_play_for_player(room.code, user.id)
 
         
         

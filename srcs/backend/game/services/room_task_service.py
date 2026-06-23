@@ -1,6 +1,6 @@
 from asgiref.sync import sync_to_async
 from ..models import Room, PlayerPresence
-from game.tasks import delete_room, change_host, lobby_kick_all, player_afk
+from game.tasks import delete_room, change_host, lobby_kick_all, player_afk, wait_time
 
 
 class RoomTaskService:
@@ -31,16 +31,28 @@ class RoomTaskService:
 
 
     @staticmethod
-    async def schedule_play_for_player(room_code, user_id, delay=15):
-        player_afk.apply_async(args=[room_code, user_id], countdown=delay)
+    async def schedule_play_for_player(room_code, user_id, round, game, delay=15):
+        player_afk.apply_async(args=[room_code, user_id, round, game], countdown=delay)
+
+    @staticmethod
+    async def schedule_wait_time(room_code, delay=7):
+        room = await sync_to_async(Room.objects.get)(code=room_code)
+
+        room.wait_schedule = True
+        await sync_to_async(room.save)()
+
+        wait_time.apply_async(args=[room_code], countdown=delay)
 
 
 
 
 
+    @staticmethod
+    async def cancel_wait_time(room_code):
+        room = await sync_to_async(Room.objects.get)(code=room_code)
 
-
-
+        room.wait_schedule = False
+        await sync_to_async(room.save)()
 
     @staticmethod
     async def cancel_play_for_player(room_code, user_id):
