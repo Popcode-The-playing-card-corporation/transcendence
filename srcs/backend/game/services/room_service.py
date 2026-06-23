@@ -172,9 +172,6 @@ class RoomService:
     async def check_room_status(status, code):
         room = await sync_to_async(Room.objects.get)(code=code)
 
-        print("room status = ", room.status, " - status = ", status)
-
         if (room.status == status):
-            print("its true")
             return True
         return False
