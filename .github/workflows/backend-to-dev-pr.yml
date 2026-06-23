@@ -1,0 +1,40 @@
+name: Create PR backend -> dev
+
+on:
+  push:
+    branches:
+      - backend
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Check if PR already exists
+        id: check_pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          COUNT=$(gh pr list \
+            --base dev \
+            --head backend \
+            --state open \
+            --json number \
+            --jq 'length')
+
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+
+      - name: Create PR
+        if: steps.check_pr.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --base dev \
+            --head backend \
+            --title "Merge backend into dev" \
+            --body "PR créée automatiquement après un push sur backend."
