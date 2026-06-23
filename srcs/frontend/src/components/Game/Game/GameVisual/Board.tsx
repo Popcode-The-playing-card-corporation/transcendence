@@ -38,6 +38,7 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
           return(
             <>
               <Adversary
+                room_id={adversary.room_id}
                 isSelf={adversary.room_id == idPlayer}
                 boardRadius={boardRadius}
                 cardHand={{position:position, nbCards:adversary.hand}}

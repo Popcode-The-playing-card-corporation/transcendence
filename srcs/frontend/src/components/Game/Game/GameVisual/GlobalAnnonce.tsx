@@ -11,10 +11,10 @@ export default function GlobalAnnonce() {
 
   useEffect(() =>
   {
-    if (state.show_annonces)
+    if (state.event === "reveal_announces")
       showAnnonceRef.current?.showModal();
       
-  }, [state.show_annonces])
+  }, [state.event])
 
   return (
     <>
