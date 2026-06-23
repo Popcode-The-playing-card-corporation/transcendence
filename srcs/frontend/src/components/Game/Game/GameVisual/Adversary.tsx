@@ -53,7 +53,6 @@ export default function Adversary({room_id, isSelf, cardHand, playedCard, front,
             posPlayedCard={posPlayedCard}
           />
         }
-        <axesHelper />
       </mesh>
       </>
   );
