@@ -2,50 +2,62 @@ import { useEffect, useState } from "react";
 import Chrono from "../GameInterface/Chrono";
 import { useGame } from "../../context/GameContext";
 import ExitBtn from "./ExitBtn";
+import CurrentInfo from "./CurrentInfo";
 
 export default function Time() {
-	const { state } = useGame();
-	const selfTurn = state.game.boardData.self_id == state.game.boardData.playing
-	const timeout = state.game.boardData.round_time;
-	const [timeLeft, setTimeLeft] = useState<number>(Math.floor((timeout.getTime() - new Date().getTime()) / 1000)) // new to calculate with backend
+  const { state } = useGame();
+  const selfTurn = state.game.boardData.self_id == state.game.boardData.playing;
+  const timeout = state.game.boardData.round_time;
+  const [timeLeft, setTimeLeft] = useState<number>(
+    Math.floor((timeout.getTime() - new Date().getTime()) / 1000),
+  ); // new to calculate with backend
 
-	useEffect(() => {
-		
-		async function setTime() {
-			setTimeLeft(Math.max( 0, Math.floor((timeout.getTime() - Date.now()) / 1000)));
-		}
-		
-		setTime();
+  useEffect(() => {
+    async function setTime() {
+      setTimeLeft(
+        Math.max(0, Math.floor((timeout.getTime() - Date.now()) / 1000)),
+      );
+    }
 
-		const intervalId = setInterval(() => {
-			setTimeLeft(Math.max( 0, Math.floor((timeout.getTime() - Date.now()) / 1000)));
-		}, 1000)
+    setTime();
 
-		return () => clearInterval(intervalId)
-	}, [state.game.boardData.round_time])
+    const intervalId = setInterval(() => {
+      setTimeLeft(
+        Math.max(0, Math.floor((timeout.getTime() - Date.now()) / 1000)),
+      );
+    }, 1000);
 
-	if (!selfTurn) {
-		return (
-			<div className="flex justify-around items-center w-full">
-			<Chrono />
-			<ExitBtn />
-			</div>
-        );
-	}
+    return () => clearInterval(intervalId);
+  }, [state.game.boardData.round_time]);
+
+  if (!selfTurn) {
+    return (
+      <div className="flex justify-around items-center w-full">
+        <Chrono />
+        <ExitBtn />
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-around items-center w-full">
       <div
         className="radial-progress"
-        style={{ "--value": timeLeft / 15 * 100, "--size": "50px", "color": "var(--nav-color)"}  as React.CSSProperties }
+        style={
+          {
+            "--value": (timeLeft / 15) * 100,
+            "--size": "50px",
+            color: "var(--nav-color)",
+          } as React.CSSProperties
+        }
         aria-valuenow={timeLeft}
         role="progressbar"
-		aria-valuemax={15}
+        aria-valuemax={15}
       >
-	  {timeLeft}s
+        {timeLeft}s
       </div>
-	  <Chrono />
-	  <ExitBtn />
+      <Chrono />
+      <ExitBtn />
     </div>
   );
 }
