@@ -167,9 +167,18 @@ def player_afk(room_code, user_id, round, game):
         }
     )
     
+@shared_task
+def wait_time(room_code):
+    room = Room.objects.select_related("host").filter(code=room_code).first()
+    
+    if room.wait_schedule == False:
+        return
+    
+    room.wait_schedule = False
+    room.save()
     
     
-    
-    
-    
-    
+
+
+
+

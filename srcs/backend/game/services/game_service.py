@@ -170,7 +170,8 @@ class GameService:
                     room = await get_room_with_host(room.code)
                     game_state = room.game_state
                     await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
-                    await asyncio.sleep(7)
+                    await RoomTaskService.schedule_wait_time(room.code, 3)
+                    await asyncio.sleep(3)
             
             
             await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
@@ -179,11 +180,12 @@ class GameService:
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
-        
-            await asyncio.sleep(12)
+            
             
             game_state = game.handleAction("clear_board", game_state)
             await save_room_state(room.uuid, game_state)
+            await RoomTaskService.schedule_wait_time(room.code, 5)
+            await asyncio.sleep(5)
             
             return True, game_state
         

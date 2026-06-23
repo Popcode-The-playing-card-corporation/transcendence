@@ -54,6 +54,7 @@ class Room(models.Model):
     host_change_scheduled = models.BooleanField(default=False)
     cleanup_scheduled = models.BooleanField(default=False)
     round_time = models.DateTimeField(null=True, blank=True)
+    wait_schedule = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.code}"

@@ -212,9 +212,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 
             if data.get("type") != "action":
                 return await self.error("Unknown message type")
-        
+            
             action = data.get("action")
             payload = data.get("payload", {})
+            room = await get_room_with_host(self.code)
+            if action == "play_card" and room.wait_schedule:
+                await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_invalid")
+                return
             
             handler_name = ACTION_HANDLERS.get(action)
         
