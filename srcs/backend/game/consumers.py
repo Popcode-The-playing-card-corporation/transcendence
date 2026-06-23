@@ -95,6 +95,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
         self.user = self.scope.get("user")
+
+        if not self.user.is_authenticated:
+            await self.close(code=4003)
+            return
+
         if not await sync_to_async(Room.objects.get)(code=self.code):
                 await self.send_json({"error": "The room does not exist"})
                 await self.close(code=4004)
