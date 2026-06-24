@@ -35,13 +35,13 @@ class RoomTaskService:
         player_afk.apply_async(args=[room_code, user_id, round, game], countdown=delay)
 
     @staticmethod
-    async def schedule_wait_time(room_code, delay=7):
+    async def schedule_wait_time(room_code, round, game, delay=7):
         room = await sync_to_async(Room.objects.get)(code=room_code)
 
         room.wait_schedule = True
         await sync_to_async(room.save)()
 
-        wait_time.apply_async(args=[room_code], countdown=delay)
+        wait_time.apply_async(args=[room_code, round, game], countdown=delay)
 
 
 
