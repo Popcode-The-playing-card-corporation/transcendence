@@ -32,7 +32,6 @@
 	}
   body {
     background: var(--color-base-200);
-    /* height: 100vh; */
     font-family: "JetBrains Mono";
   }
   .page-content {
@@ -57,25 +56,6 @@
 	@apply bg-base-100
 }
 
-.del {
-  @apply bg-warning;
-}
-
-.avatar-hovered {
-  @apply opacity-30;
-}
-
-.pen-hovered {
-  @apply absolute text-3xl z-10;
-}
-
-.li-avatars {
-  @apply w-24 m-3 h-24 hover:scale-110 transition-all;
-}
-
-.item-menu {
-  @apply rounded-2xl;
-}
 
 @utility link-hover {
   @apply cursor-pointer;
@@ -109,6 +89,26 @@
 
 fieldset {
 	@apply border border-accent
+}
+
+.del {
+	@apply bg-warning;
+}
+
+.avatar-hovered {
+	@apply opacity-30;
+}
+
+.pen-hovered {
+	@apply absolute text-3xl z-10;
+}
+
+.li-avatars {
+	@apply w-24 m-3 h-24 hover:scale-110 transition-all;
+}
+
+.item-menu {
+	@apply rounded-2xl;
 }
 
 .modal-box {
