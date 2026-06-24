@@ -168,8 +168,18 @@ def player_afk(room_code, user_id, round, game):
     )
     
 @shared_task
-def wait_time(room_code):
+def wait_time(room_code, round, game):
     room = Room.objects.select_related("host").filter(code=room_code).first()
+    
+    if round != room.game_state["round"]:
+        room.wait_schedule = False
+        room.save()
+        return
+        
+    if game != room.game_state["game"]:
+        room.wait_schedule = False
+        room.save()
+        return
     
     if room.wait_schedule == False:
         return
