@@ -14,10 +14,9 @@ type Props = {
   posPlayedCard: number,
   animate: boolean,
   resetState: () => void,
-  boardRadius:number
 }
 
-export default function AdversaryCard({setShow, angle, littleRadius, front, back, positionCard, totalPlayer, posPlayedCard, animate, resetState, boardRadius} : Props){
+export default function AdversaryCard({setShow, angle, littleRadius, front, back, positionCard, totalPlayer, posPlayedCard, animate, resetState} : Props){
   const materials = [
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),

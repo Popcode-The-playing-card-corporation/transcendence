@@ -127,8 +127,8 @@ export default function GameWebSocket({
 					auth.setGame(false);
 					leaveRoom();
 				} else if (data.event === "new_room") {
-					console.debug(payload.code);
 					if (payload.host === state.user) {
+						dispatch({type:"SET_HOST", payload:payload.host})
 						setCode(payload.code)
 					}
 					dispatch({type:"SET_CODE", payload: payload.code})
@@ -271,10 +271,8 @@ export default function GameWebSocket({
 
 			if (data.type === "chat_message") {
 				dispatch({type: "ADD_MESSAGE", payload: payload})
-				console.debug("chat_message: ", payload)
 			} else if (data.type === "history") {
 				dispatch({type: "SET_HISTORY", payload: payload})
-				console.debug("history", payload)
 			} else if (data.event === "error") {
 				console.debug("Error: ", data)
 			} else {

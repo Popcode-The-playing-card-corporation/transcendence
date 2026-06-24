@@ -80,6 +80,9 @@ export function gameReducer( state: GameState, action: GameAction): GameState {
 		case "SET_NEXT":
 			return {...state, next: action.payload};
 
+		case "SET_HOST":
+			return {...state, host: action.payload};
+
 		case "TEST_ANNONCES":
 			return {...state, show_annonces: !state.show_annonces};
 

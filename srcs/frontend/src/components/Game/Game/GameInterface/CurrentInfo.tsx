@@ -24,7 +24,7 @@ export default function CurrentInfo() {
       <p className="flex items-center gap-1">
         Atout: <DisplayTrumpLogo trump={trump} />{" "}
       </p>
-      <p><em>{nameCurrentPlayer?.user.username}</em>  is playing</p>
+      {nameCurrentPlayer ? <p><em>{nameCurrentPlayer?.user.username}</em>   is playing</p> : <p>Trick over</p>}
     </div>
   );
 }

@@ -26,6 +26,7 @@ export type GameState = {
 	show_annonces: boolean;
 	new_code:string | null;
 	next: boolean | null;
+	host: string | null;
 
 }
 
@@ -49,6 +50,7 @@ export type GameAction =
 	| { type: "SET_CODE"; payload:string | null}
 	| { type: "SET_NEXT"; payload:boolean | null}
 	| { type: "TEST_ANNONCES"}
+	| { type: "SET_HOST"; payload: string | null}
 
 
 
@@ -76,4 +78,5 @@ export const initialState: GameState = {
 	show_annonces: false,
 	new_code: null,
 	next: null,
+	host: null
 }

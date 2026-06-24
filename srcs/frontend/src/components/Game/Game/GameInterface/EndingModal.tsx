@@ -27,21 +27,20 @@ export default function EndingModal() {
 	leaveRoom();
   }
 
-  console.debug(state.settings.listPlayer.filter((player) => player.username === state.user && player.is_host))
   
   return (
     <div>
       <dialog id="endingGame" className="modal text-center" ref={endRef}>
         <div className="modal-box bg-(--bg-color)">
           <h2>Finished!</h2>
-          { state.settings.listPlayer.filter((player) => player.username === state.user)[0].is_host ? <p>Press continue to create a new lobby, press exit to leave the lobby.</p> : state.next === null ? <p>
+          { state.host === state.user ? <p>Press continue to create a new lobby, press exit to leave the lobby.</p> : state.next === null ? <p>
             Waiting for the host to create a new room ...
           </p> : state.next ? <p>The host has created a new room. Press continue to join it!</p> : <p>The host has left. Press exit to leave the game.</p>}
           <LittleLeaderboard />
           <DetailledLeaderboard />
           <div className="modal-action">
             <form method="dialog" className="flex justify-between w-full">
-              {state.settings.listPlayer.filter((player) => player.username === state.user)[0].is_host ? <button className="btn" onClick={handle_continue_host}>
+              { state.host === state.user ? <button className="btn" onClick={handle_continue_host}>
                 Continue
               </button> : state.next === true ? <button className="btn" onClick={handle_continue_user}>
                 Continue

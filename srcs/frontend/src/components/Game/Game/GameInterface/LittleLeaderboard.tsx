@@ -23,6 +23,7 @@ export default function LittleLeaderboard() {
         </thead>
         <tbody className="bg-base-100">
           {sortedPlayer.map((player) => {
+
             return (
               <tr
                 className={
