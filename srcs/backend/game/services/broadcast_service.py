@@ -331,10 +331,13 @@ class BroadcastService:
                 room_id=room.id,
                 position=int(player_id)
             )
-            
+            if (not (message == "finish_round" or message == "reveal_announces")):
+                room.wait_schedule = False
+                await sync_to_async(room.save)()
+                      
             board_data = await BroadcastService._board_data(room, player_id, is_r0_finish=(message == "reveal_announces" and game_state["round"] == 0), is_game_finish=(message == "finish_round" or message == "reveal_announces"))
             init_cards = await BroadcastService._get_cards(room, player_data, player_id)
-            
+
             if p.channel_name:
                 await channel_layer.send(
                     p.channel_name,

@@ -418,13 +418,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
             user=self.user
         )
         if result:
+            room = await sync_to_async(Room.objects.select_related("host").get)(code=result)
             await self.channel_layer.group_send(
-            f"player_{self.user.id}",
+            f"room_{self.code}",
             {
                 "type": "game_event",
                 "event": "new_room",
                 "payload": {
-                    "code": result
+                    "code": result,
+                    "host": room.host.username,
                 }
             }
         )
