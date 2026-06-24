@@ -129,7 +129,7 @@ class BroadcastService:
         
     
     @staticmethod
-    async def _board_data(room, player_position, is_r0_finish=False):
+    async def _board_data(room, player_position, is_r0_finish=False, is_game_finish=False):
         room = await get_room_with_host(room.code)
         game_state = room.game_state
 
@@ -220,7 +220,7 @@ class BroadcastService:
             "asked": asked,
             "points": player_puntos,
             "detailed_points": detailed_points,
-            "playing": game_state["playing"],
+            "playing": game_state["playing"] if not is_game_finish else -1,
             "player_list": player_list,
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
             "round_time": (room.round_time + timedelta(seconds=5)).strftime("%Y-%m-%d %H:%M:%S"),
@@ -336,7 +336,7 @@ class BroadcastService:
                 position=int(player_id)
             )
             
-            board_data = await BroadcastService._board_data(room, player_id, (message == "reveal_announces" and game_state["round"] == 0))
+            board_data = await BroadcastService._board_data(room, player_id, is_r0_finish=(message == "reveal_announces" and game_state["round"] == 0), is_game_finish=(message == "finish_round" or message == "reveal_announces"))
             init_cards = await BroadcastService._get_cards(room, player_data, player_id)
             
             if p.channel_name:
