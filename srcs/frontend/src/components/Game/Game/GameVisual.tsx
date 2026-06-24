@@ -4,8 +4,9 @@ import Board from "./GameVisual/Board";
 import generateDeck from "../../../utils/createDeck";
 import { loadTexture } from "../../../utils/imports/textures";
 import { TextureLoader } from "three";
-import bgimg from "../../../../public/assets/bg_game.png"
+
 // import { OrbitControls } from "@react-three/drei";
+const bgimg = "/assets/bg_game.png"
 
 export default function GameVisual() {
   const deck = generateDeck();

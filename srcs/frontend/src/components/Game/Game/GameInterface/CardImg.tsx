@@ -1,8 +1,5 @@
-import useImage from "../../../../utils/imports/useImage";
-
+import { loadTexture } from "../../../../utils/imports/textures";
 
 export default function CardImg({ name }: { name: string }) {
-  const { image } = useImage(name);
-  return <img className="w-24 h-full rounded-md" src={image} alt={name} />;
-
+  return <img className="w-24 h-full rounded-md" src={loadTexture(name)} alt={name} />;
 }
