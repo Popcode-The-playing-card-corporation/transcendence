@@ -21,13 +21,13 @@ export default function LittleLeaderboard() {
           <th className="w-1/3">Username</th>
           <th className="w-1/3">Score</th>
         </thead>
-        <tbody className="bg-(--hover-color)">
+        <tbody className="bg-base-100">
           {sortedPlayer.map((player) => {
             return (
               <tr
                 className={
-                  "h-10 border-y border-(--bg-color)" +
-                  (state.game.boardData.self_id === player.room_id ? " bg-(--nav-color) font-bold " : "")
+                  "h-10 border-y border-base-200" +
+                  (state.game.boardData.self_id === player.room_id ? " bg-primary font-bold " : "")
                 }
               >
                 <td className="text-center">

@@ -28,7 +28,7 @@ export default function AddingBot({roomCode, updateSettings}:Props) {
         min="0"
         max="2"
         value={botDif}
-        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+        className="range [--range-progress:var(--color-base-200)] glass"
         step="1" 
 		onChange={(e) => setDif(Number(e.target.value))}/>
       <div className="flex justify-between px-2.5 mt-2 text-xs">

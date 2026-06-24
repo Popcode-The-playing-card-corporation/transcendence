@@ -155,7 +155,7 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
   return (
     <div className=" page-content mt-17">
       <h1>Profile</h1>
-      <div className="bordered collapse collapse-arrow">
+      <div className="bordered collapse collapse-arrow ">
         <input type="checkbox" name="profile-radio" />
         <div className="collapse-title flex items-center gap-6 justify-center">
           <h2 className="text-center">Your profile</h2>
@@ -164,7 +164,7 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
           <ProfilePart realAccount={profile} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
         </div>
       </div>
-      <div className="bordered collapse collapse-arrow">
+      <div className="bordered collapse collapse-arrow ">
         <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
           <h2 className="text-center">Friends</h2>

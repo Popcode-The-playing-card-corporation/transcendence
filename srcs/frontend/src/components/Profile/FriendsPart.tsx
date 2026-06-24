@@ -76,7 +76,7 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
             <div className="indicator">
               <span
                 className={
-                  "indicator-item badge bg-(--nav-color)" +
+                  "indicator-item badge" +
                   (requests.length === 0 ? " hidden" : "")
                 }
               >
@@ -89,7 +89,7 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
             <ul
               tabIndex={-1}
               className={
-                "dropdown-content bg-(--hover-color) rounded-box z-1 p-2 shadow-sm h-fit overflow-scroll" +
+                "dropdown-content rounded-box z-1 p-2 shadow-sm h-fit overflow-scroll" +
                 (requests.length === 0 ? " hidden" : "")
               }
             >

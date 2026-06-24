@@ -57,7 +57,7 @@ export function AvatarSelection({
 
   return (
     <div
-      className="rounded-4xl w-24 bg-(--hover-color) flex items-center justify-center cursor-pointer"
+      className="rounded-4xl w-24  flex items-center justify-center cursor-pointer"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => dialogRef.current?.showModal()}
@@ -68,7 +68,7 @@ export function AvatarSelection({
       />
       <FaPen className={hovered ? "pen-hovered" : "hidden"} />
       <dialog id="my_modal_2" className="modal" ref={dialogRef}>
-        <div className="modal-box rounded-xl bg-(--hover-color) w-full">
+        <div className="modal-box rounded-xl w-full">
 		  {isError.code !== 200 ? "Unexpected error: " + isError.code + " - Please try again or reload" : ""}
           <ul className="flex w-fit">
             <li

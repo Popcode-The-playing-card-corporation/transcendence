@@ -60,10 +60,10 @@ export function LoginForm({
 
 
   return (
-    <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
+    <fieldset className="fieldset bg-base-100 rounded-box w-xs p-4 mx-auto">
       <legend className="fieldset-legend">Login</legend>
       {failure ? (
-        <label className="label">{reason.response}</label>
+        <label className="label text-error font-black mx-auto">{reason.response}</label>
       ) : (
         <div></div>
       )}
@@ -73,7 +73,7 @@ export function LoginForm({
         value={name}
         onChange={nameChange}
         className="input"
-        placeholder="Username"
+        placeholder="..."
       />
 
       <label className="label">Password</label>
@@ -82,7 +82,7 @@ export function LoginForm({
         value={password}
         onChange={passChange}
         className="input"
-        placeholder="Password"
+        placeholder="..."
       />
       <a onClick={() => setCreated(true)} className="link-hover">
         No Account? Create one here!
@@ -90,7 +90,7 @@ export function LoginForm({
 
       <button
         onClick={loginClick}
-        className="btn btn-neutral mt-4 bg-(--nav-color)"
+        className="btn btn-neutral mt-4"
       >
         Login
       </button>

@@ -20,7 +20,7 @@ export default function CurrentInfo() {
   const nameCurrentPlayer = state.game.boardData.player_list.find((player) => player.room_id === currentPlayer)
 
   return (
-    <div className="border-y border-(--hover-color) mt-2 py-2 w-full flex flex-col items-center">
+    <div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
       <p className="flex items-center gap-1">
         Atout: <DisplayTrumpLogo trump={trump} />{" "}
       </p>

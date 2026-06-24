@@ -5,6 +5,7 @@ import type { recommendationT } from "../../utils/type/recommendationType";
 import type { requestT } from "../../utils/type/friendType";
 import { changeHandler } from "../../api/http/friend";
 import { useNotif } from "../hooks/useNotif";
+import FriendsSuggestion from "./FriendsSuggestion";
 
 type Props = {
   users:requestT[];
@@ -21,9 +22,13 @@ export function AddFriends({recs, users, updatedFriends, setUpdate, ref}:Props) 
   const [search, setSearch] = useState("");
   return (
     <>
-       <div className="modal-box bg-(--nav-color) w-fit">
+       <div className="modal-box bg-(--nav-color) w-fit flex">
+	   <div>
+	   <div>
           <h3 className="font-bold text-lg text-center">Add new friends</h3>
           <p className="py-4 text-center">Press ESC key to close</p>
+		  </div>
+		  <div>
             <label className="input my-5">
               <IoSearch className="text-2xl" />
               <input
@@ -34,7 +39,7 @@ export function AddFriends({recs, users, updatedFriends, setUpdate, ref}:Props) 
                 onChange={(e) => setSearch(e.target.value)}
               />
             </label>
-          <div className="result">
+          <div className="result flex">
           {
             <table className=" mx-auto">
               <tr>
@@ -54,7 +59,10 @@ export function AddFriends({recs, users, updatedFriends, setUpdate, ref}:Props) 
               }
             </table>
           }
+		  </div>
+		  </div>
         </div>
+		 <FriendsSuggestion suggestions={recs} ref={ref} notif={notif} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
       </div>
       <form method="dialog" className="modal-backdrop">
         <button ></button>

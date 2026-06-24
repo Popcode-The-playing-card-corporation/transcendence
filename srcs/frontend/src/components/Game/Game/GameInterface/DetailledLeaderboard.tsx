@@ -19,19 +19,19 @@ export default function DetailledLeaderboard() {
         more details
       </button>
       <dialog id="score_details_modal" className="modal" ref={scoreDetailsRef}>
-        <div className="modal-box bg-(--bg-color)">
+        <div className="modal-box ">
           <h3 className="font-bold text-lg text-center mb-2">
             Game's leaderboard
           </h3>
-          <table className="table text-center">
+          <table className="table text-center bg-base-200">
             <thead>
-              <tr className="bg-(--nav-color) sticky -top-6 ">
+              <tr className=" sticky -top-6 ">
                 {listPlayer.map((player: playerScoreT) => {
                   return <th>{player.username}</th>;
                 })}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-base-200">
               {detailedGame.map((game: DetailedPointsT) => {
                 return (
                   <>
@@ -53,7 +53,7 @@ export default function DetailledLeaderboard() {
                       }
                     })}
                     {game.is_finished ? (
-                      <tr className="bg-(--hover-color)">
+                      <tr className="bg-secondary">
                         {game.total.map((player: playerScoreT) => {
                           return <td>{player.score}</td>;
                         })}
@@ -64,7 +64,7 @@ export default function DetailledLeaderboard() {
                   </>
                 );
               })}
-              <tr className="bg-(--nav-color) font-bold sticky -bottom-6">
+              <tr className="bg-primary font-bold sticky -bottom-6">
                 {listPlayer.map((player: playerScoreT) => {
                   return <td>{player.score}</td>;
                 })}

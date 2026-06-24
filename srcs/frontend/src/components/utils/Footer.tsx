@@ -3,7 +3,7 @@ import { SiOnlyfans } from "react-icons/si";
 
 export function Footer() {
   return (
-    <footer className="footer sm:footer-horizontal bg-(--nav-color) p-5 mt-6 relative bottom-0">
+    <footer className="footer sm:footer-horizontal bg-primary p-5 mt-6 relative bottom-0">
       <aside>
         <p>
           PopCode industries

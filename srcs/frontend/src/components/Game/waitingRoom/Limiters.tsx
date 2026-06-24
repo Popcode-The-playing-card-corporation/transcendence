@@ -24,7 +24,7 @@ export default function Limiters() {
         <input
           type="checkbox"
           checked={state.settings.goal !== "games"}
-          className="toggle border-(--hover-color) bg-(--hover-color) text-(--font-color) checked:border-(--nav-color) checked:bg-(--nav-color) checked:text-(--font-color)"
+          className="toggle border-primary bg-primary text-base-content checked:border-secondary checked:bg-secondary checked:text-base-content"
           onClick={handle_click}
 		  disabled={!is_host}
         />

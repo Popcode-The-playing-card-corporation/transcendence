@@ -18,7 +18,7 @@ export default function ParameterRoom({ roomCode, updateSettings }: Props) {
       state.settings.listPlayer.filter((user) => user.is_host)[0].username;
   }
   return (
-    <div className="bordered grid grid-cols-3 gap-4">
+    <div className="bordered grid grid-cols-3 gap-4 bg-base-100">
       <div className="col-span-3 grid grid-cols-3  pt-6">
         <div>
           <p>Choose the limiter : </p>
