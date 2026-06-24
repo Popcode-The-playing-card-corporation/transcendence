@@ -56,14 +56,6 @@
 .input-lighter {
 	@apply bg-base-100
 }
-/**/
-/* @utility btn { */
-/*   @apply bg-primary; */
-/* } */
-/**/
-/* @utility btn-primary { */
-/* 	@apply shadow-primary border-primary */
-/* } */
 
 .del {
   @apply bg-warning;
@@ -137,7 +129,7 @@ fieldset {
 }
 
 .dropdown-scroll{
-  @apply bg-primary rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-accent;
+  @apply bg-secondary rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-accent;
 }
 
 .table tr {
@@ -158,5 +150,5 @@ fieldset {
 
 .chat-bubble {
   word-wrap: break-word;
-   @apply max-w-3xs;
+   @apply max-w-3xs bg-primary;
 }

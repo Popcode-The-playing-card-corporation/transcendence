@@ -15,7 +15,7 @@ export default function RoomSize() {
         min="2"
         max="7"
         value={state.settings.maxSize}
-        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+        className="range [--range-progress:var(--color-base-200)] glass"
         step="1"
 		onChange={(e) => setSize(Number(e.target.value))} 
 		disabled={!is_host}

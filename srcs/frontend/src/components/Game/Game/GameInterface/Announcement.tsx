@@ -37,7 +37,7 @@ export default function Announcement() {
   return (
     <>
       <button
-        className={"btn btn-lg btn-circle " + (isFirstFold ? "" : "btn-disabled")}
+        className={"btn btn-lg btn-circle bg-base-100" + (isFirstFold ? "" : "btn-disabled")}
         onClick={() => showAnnonceRef.current?.showModal()}
         >
         <GrAnnounce />

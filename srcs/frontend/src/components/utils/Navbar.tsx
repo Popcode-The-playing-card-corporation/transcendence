@@ -15,12 +15,19 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { IoIosMoon } from "react-icons/io";
 
+function getPreferedTheme() {
+	if (window.matchMedia('(prefers-color-sheme: dark)'))
+		return ("popcode_dark");
+	else
+		return ("popcode_light");
+}
+
 export function Navbar() {
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
   const auth = useAuth();
-  const [theme, setTheme] = useState("Light");
+  const [theme, setTheme] = useState(localStorage.getItem('theme') ?? getPreferedTheme());
 
   const toggleTheme = () => {
     setTheme(theme === "popcode_dark" ? "popcode_light" : "popcode_dark");
@@ -49,7 +56,9 @@ export function Navbar() {
   }
 
   useEffect(() => {
-    document.querySelector("html")?.setAttribute("data-theme", theme);
+	  localStorage.setItem('theme', theme);
+	  const localTheme = localStorage.getItem('theme')
+    document.querySelector("html")?.setAttribute("data-theme", localTheme!);
   }, [theme]);
 
   return (

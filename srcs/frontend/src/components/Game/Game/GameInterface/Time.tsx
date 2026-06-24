@@ -47,7 +47,7 @@ export default function Time() {
           {
             "--value": (timeLeft / 15) * 100,
             "--size": "50px",
-            color: "var(--nav-color)",
+            color: "var(--color-primary)",
           } as React.CSSProperties
         }
         aria-valuenow={timeLeft}
