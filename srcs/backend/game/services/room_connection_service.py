@@ -130,6 +130,7 @@ class RoomConnectionService:
                 "close": True,
                 "code": 4008,
                 "message": {
+                    "type": "settings_event",
                     "event": "blocked_users_present",
                     "message": "You cannot join this room",
                 }
@@ -179,6 +180,7 @@ class RoomConnectionService:
             "close": True,
             "code": 4008,
             "message": {
+                "type": "settings_event",
                 "event": "blocked_users_present",
                 "payload": {
                     "blocked_users": blocked_users,
