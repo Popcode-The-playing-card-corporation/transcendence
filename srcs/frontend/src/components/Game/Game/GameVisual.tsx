@@ -4,7 +4,9 @@ import Board from "./GameVisual/Board";
 import generateDeck from "../../../utils/createDeck";
 import { loadTexture } from "../../../utils/imports/textures";
 import { TextureLoader } from "three";
-import bgimg from "../../../assets/bg_game.png"
+
+// import { OrbitControls } from "@react-three/drei";
+const bgimg = "/assets/bg_game.png"
 
 export default function GameVisual() {
   const deck = generateDeck();
@@ -22,6 +24,7 @@ export default function GameVisual() {
       <ambientLight />
       <Board front={cardsTex} back={back}/>
       <Hand cardsTex={cardsTex} back={back}/>
+      {/* <OrbitControls /> */}
     </Canvas>
   );
 }

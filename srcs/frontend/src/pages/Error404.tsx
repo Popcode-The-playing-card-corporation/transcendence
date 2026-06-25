@@ -1,4 +1,4 @@
-import image from "../assets/404Image.jpg";
+const image = "/assets/404Image.jpg";
 
 export default function Error404() {
 	return (

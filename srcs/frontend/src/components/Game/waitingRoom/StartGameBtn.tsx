@@ -9,13 +9,13 @@ export default function StartGameBtn() {
     <div className="flex z-1">
       <button
         onClick={() => confirmStartRef.current?.showModal()}
-        className="btn"
+        className="btn bg-base-100"
       >
         {" "}
         start game
       </button>
       <dialog id="modal_confirm_del" className="modal " ref={confirmStartRef}>
-        <div className="modal-box bg-(--bg-color)">
+        <div className="modal-box ">
           <h3 className="font-bold text-lg">Are you ready to have fun?</h3>
           <p className="py-4">
             Warning: a massive dose of fun is coming your way

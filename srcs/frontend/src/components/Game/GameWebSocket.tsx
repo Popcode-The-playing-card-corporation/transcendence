@@ -30,6 +30,7 @@ export default function GameWebSocket({
   }, [code]);
 
   function leaveRoom() {
+	auth.setGame(false);
     localStorage.removeItem("code");
     setCode("");
   }
@@ -50,6 +51,10 @@ export default function GameWebSocket({
           leaveRoom();
           navigate("/");
           return false;
+        } else if (event.code === 4008) {
+          leaveRoom();
+		  notif?.showNotif("Room Inaccessible", "Fix your relationship with a user in this room to join it", 5000)
+          return false;
         }
         return auth.logged_in ? true : false;
       },
@@ -66,8 +71,14 @@ export default function GameWebSocket({
         dispatch({ type: "CONNECTED" });
       },
 
-      onClose: () => {
+      onClose: (event) => {
         dispatch({ type: "DISCONNECTED" });
+		auth.setGame(false)
+		if (event.code === 4001) {
+			leaveRoom();
+			navigate("/");
+			notif?.showNotif("Forced Disconnection", "You have been disconnected from your game, to rejoin click on the game tab", 5000);
+		}
       },
 
       onMessage: (event) => {
@@ -83,7 +94,8 @@ export default function GameWebSocket({
 				}
 			} else if (data.type === "settings") {
 				dispatch({type:"SET_EVENT", payload: data.event});
-				
+				dispatch({type:"SET_CODE", payload:null})
+				dispatch({type:"SET_NEXT", payload:null})
 				if (data.event === "player_kicked") { // Error case????
 					if (payload.message) {
 						if (payload.message === "You have been kicked from the room") {
@@ -94,6 +106,9 @@ export default function GameWebSocket({
 						notif?.showNotif("Player left", "A player has been kicked from the room", 5000);
 						setSettings(payload.players, payload.params);
 					}
+				} else if (data.event === "room_closed") {
+					leaveRoom();
+					notif?.showNotif("Room Closed", "The lobby has timed out, create or join a new one", 5000);
 				} else {
 					setSettings(payload.players, payload.params);
 				}
@@ -112,22 +127,38 @@ export default function GameWebSocket({
 					} else {
 						setGame(payload.self_card, payload.board_data)
 					}
-				} else if (data.event === "game_ended") {
+				} else if (data.event === "game_ended" || data.event === "force_disconnect") {
 					auth.setGame(false);
 					leaveRoom();
+				} else if (data.event === "new_room") {
+					if (payload.host === state.user) {
+						dispatch({type:"SET_HOST", payload:payload.host})
+						setCode(payload.code)
+					}
+					dispatch({type:"SET_CODE", payload: payload.code})
+					dispatch({type: "SET_NEXT", payload:true})
 				} else {
 					if (data.event === "player_disconnect" || data.event === "player_reconnect") {
+						if (data.event === "player_disconnect") {
+							if (state.settings.listPlayer.filter((player) => player.username === data.playername)[0].is_host) {
+								dispatch({type: "SET_NEXT", payload:false})
+							}
+						}
 						dispatch({type:"SET_MESSAGE", payload: data.player_name});
 					}
 					setGame(payload.self_card, payload.board_data)
 				}
-			} else if (data.event === "error") {
-				notif?.showNotif("Game Error", data.message);
+			} else if (data.event === "error" || data.type === "error") {
+				if (data.message === "Need 2 players") {
+					notif?.showNotif("Game Error", "At least 2 players needed to start game", 5000);
+				} else {
+					console.debug("Error:", data.message);
+					notif?.showNotif("Game Error", data.message, 5000);
+				}
 			} else {
 				console.debug("Unknown event: ", data)
 			}
 
-			notif?.showNotif(data.event, state.message === "" ? "No message" : state.message, 5000);
 		},
 	
 	});
@@ -182,6 +213,10 @@ export default function GameWebSocket({
 			sendJson("kick", {playerId : playerId});
 		}
 
+		function sendParams(params:object) {
+			sendJson("patch_param", params);
+		}
+
 
 	function setSize(size: number) {
 		dispatch({ type: "SET_SIZE", payload: size})
@@ -205,6 +240,10 @@ export default function GameWebSocket({
 	
 	function show_annonces() {
 		dispatch({type: "TEST_ANNONCES"});
+	}
+
+	function nextGame(new_code:string) {
+			setCode(new_code);
 	}
 	
 	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
@@ -236,10 +275,8 @@ export default function GameWebSocket({
 
 			if (data.type === "chat_message") {
 				dispatch({type: "ADD_MESSAGE", payload: payload})
-				console.debug("chat_message: ", payload)
 			} else if (data.type === "history") {
 				dispatch({type: "SET_HISTORY", payload: payload})
-				console.debug("history", payload)
 			} else if (data.event === "error") {
 				console.debug("Error: ", data)
 			} else {
@@ -261,7 +298,7 @@ export default function GameWebSocket({
 
 	
 	return (
-		<GameContext.Provider value={{state, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
+		<GameContext.Provider value={{state, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);

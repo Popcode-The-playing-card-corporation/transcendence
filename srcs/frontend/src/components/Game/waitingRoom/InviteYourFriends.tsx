@@ -24,7 +24,7 @@ function getRequests(friend_list: friendT[]): {
 
 export default function InviteYourFriends() {
   const showFriendsList = useRef<HTMLDialogElement>(null);
-	const [friends, setFriends] = useState<friendT[]>([]);
+	const [friends, setFriends] = useState<friendT[] | null>(null);
 	const [valid, setValid] = useState<boolean | null>(null);
 	const notif = useNotif();
 	const auth = useAuth();
@@ -94,7 +94,7 @@ export default function InviteYourFriends() {
   return (
     <div className="flex justify-center">
       <button
-        className="btn "
+        className="btn bg-base-100"
         onClick={handleJoin}
       >
         Invite your friends
@@ -106,21 +106,25 @@ export default function InviteYourFriends() {
               <th>Invite your friends</th>
             </thead>
             <tbody>
-              {friends.map((friend) => (
-                <tr>
-                  <td>
-                    {friend.user.username}
-                  </td>
-                  <td>
-					<button
-						className="swap btn"
-						onClick={() => sendInvite(friend.id)}
-					>
-						{!(invites.includes(friend.id)) ? "Invite" : "Sent"}
-					</button>
-                  </td>
-                </tr>
-              ))}
+              {friends?.length !== 0 ? (
+                friends!.map((friend) => {
+                  return (
+                    <tr>
+                      <td>
+                        {friend.user.username}
+                      </td>
+                      <td>
+                        <button
+                          className="swap btn"
+                          onClick={() => sendInvite(friend.id)}
+                          >
+                          {!(invites.includes(friend.id)) ? "Invite" : "Sent"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                }))
+              : <td>You don't have any friends, go make some !</td>}
             </tbody>
           </table>
         </div>

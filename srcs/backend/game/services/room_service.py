@@ -158,13 +158,14 @@ class RoomService:
 
     @staticmethod
     async def handle_patch_room(room, payload):
-        serializer = RoomSerializer(room, data=payload["data"], partial=True)
+        serializer = RoomSerializer(room, data=payload, partial=True)
         channel_layer = get_channel_layer()
+        if ("max_player" in payload and payload["max_player"] < room.nb_player):
+            await BroadcastService.broadcast_settings(room, channel_layer, "settings_error", f"room_{room.code}")
+            return
         if serializer.is_valid():
             await sync_to_async(serializer.save)()
-            
             await BroadcastService.broadcast_settings(room, channel_layer, "settings_changed", f"room_{room.code}")
-        
         else:
             await BroadcastService.broadcast_settings(room, channel_layer, "settings_error", f"room_{room.code}")
    

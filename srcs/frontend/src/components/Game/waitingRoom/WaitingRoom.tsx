@@ -2,24 +2,23 @@ import InfoAndActionPart from "./InfoAndActionPart";
 import InviteYourFriends from "./InviteYourFriends";
 import ParameterRoom from "./ParameterRoom";
 import PlayerList from "./PlayerList";
-import { updateParams } from "../../../api/http/game";
-import { useNotif } from "../../hooks/useNotif";
 import { useGame } from "../context/GameContext";
+import type { SettingsT } from "../../../utils/type/boardDataType";
 
 export default function WaitingRoom({roomCode}:{roomCode:string}) {
-	
-	const notif = useNotif();
-	const { state } = useGame();
 
-	async function updateSettings() {
-		const mode = state.settings.mode === 0 ? "private" : state.settings.mode === 2 ? "public" : "friends_only"
-		const res = await updateParams(roomCode, {type:mode, max_player: state.settings.maxSize, goal: state.settings.goal, nb_games:state.settings.nb_games, nb_points:state.settings.nb_points})
-		if ("code" in res) {
-			notif?.showNotif("Settings Error", res.response, 5000);
-		} else {
-			notif?.showNotif("Success!", "Game settings succesfully changed!", 5000);
+	const { sendParams } = useGame();
+
+	function handleChange(changes: Partial<SettingsT>) {
+		let mode = "";
+		if ("mode" in changes) {
+			mode = changes.mode === 0 ? "private" : changes.mode === 2 ? "public" : "friends_only"
+			sendParams({type:mode});
+		} else if ("maxSize" in changes) {
+			sendParams({max_player:changes.maxSize});
+		} else  {
+			sendParams(changes);
 		}
-		
 	}
 
     return (
@@ -32,7 +31,7 @@ export default function WaitingRoom({roomCode}:{roomCode:string}) {
 			<InviteYourFriends />
           </div>
           <div className="col-span-2">
-            <ParameterRoom roomCode={roomCode} updateSettings={updateSettings}/>
+            <ParameterRoom roomCode={roomCode} updateSettings={handleChange}/>
           </div>
         </div>
       </div>

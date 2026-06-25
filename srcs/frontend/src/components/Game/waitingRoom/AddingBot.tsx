@@ -4,17 +4,15 @@ import { useNotif } from "../../hooks/useNotif";
 
 type Props = {
 	roomCode: string;
-	updateSettings: () => void;
 }
 
-export default function AddingBot({roomCode, updateSettings}:Props) {
+export default function AddingBot({roomCode}:Props) {
 
 	const [botDif, setDif] = useState(0);
 	const [numBot, setNum] = useState(1);
 	const notif = useNotif();
 	
 	async function addClick() {
-		updateSettings();
 		const res = await addBot(roomCode, numBot, botDif === 0 ? "easy" : botDif === 1 ? "medium" : "hard")
 		if ("code" in res) {
 			notif?.showNotif("Bot Error", res.response, 5000);
@@ -28,7 +26,7 @@ export default function AddingBot({roomCode, updateSettings}:Props) {
         min="0"
         max="2"
         value={botDif}
-        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+        className="range [--range-progress:var(--color-base-200)] glass"
         step="1" 
 		onChange={(e) => setDif(Number(e.target.value))}/>
       <div className="flex justify-between px-2.5 mt-2 text-xs">

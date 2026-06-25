@@ -16,7 +16,7 @@ export default function Appareance({
           </div>
           <ul
             tabIndex={-1}
-            className=" dropdown-content menu bg-(--hover-color) rounded-box z-1 w-52 p-2 shadow-sm "
+            className=" dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm "
           >
             <li>
               <a

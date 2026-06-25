@@ -2,10 +2,11 @@ import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { registerRequest } from "../../api/http/register";
 import { useLocation, useNavigate } from "react-router-dom";
-import avatar from "../../../public/avatars/avatar1.png";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 import { useAuth } from "../hooks/useAuth";
+
+const avatar = "/avatars/avatar1.png";
 
 export function RegisterForm({
   setCreated,
@@ -88,10 +89,10 @@ export function RegisterForm({
   }
 
   return (
-    <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
+    <fieldset className="fieldset rounded-box w-xs p-4 mx-auto bg-base-100">
       <legend className="fieldset-legend">Register</legend>
       {failure ? (
-        <label className="label">{reason.response}</label>
+        <label className="label text-error font-black mx-auto">{reason.response}</label>
       ) : (
         <div></div>
       )}
@@ -101,7 +102,7 @@ export function RegisterForm({
         value={name}
         onChange={nameChange}
         className="input"
-        placeholder="Username"
+        placeholder="..."
       />
 
       <label className="label">Email</label>
@@ -110,7 +111,7 @@ export function RegisterForm({
         value={email}
         onChange={emailChange}
         className="input"
-        placeholder="Email"
+        placeholder="..."
       />
 
       <label className="label">Password</label>
@@ -119,7 +120,7 @@ export function RegisterForm({
         value={password}
         onChange={passChange}
         className="input"
-        placeholder="Password"
+        placeholder="..."
       />
 
       <label className="label">Confirm password</label>
@@ -128,7 +129,7 @@ export function RegisterForm({
         value={repassword}
         onChange={repassChange}
         className="input"
-        placeholder="Password, again"
+        placeholder="..."
       />
 
       <a onClick={() => setCreated(false)} className="link-hover">
@@ -137,7 +138,7 @@ export function RegisterForm({
 
       <button
         onClick={registerClick}
-        className="btn btn-neutral mt-4 bg-(--nav-color)"
+        className="btn btn-neutral mt-4"
       >
         Register
       </button>

@@ -1,6 +1,7 @@
+import type { SettingsT } from "../../../utils/type/boardDataType";
 import { useGame } from "../context/GameContext";
 
-export default function PrivateFriendPublicSlider()
+export default function PrivateFriendPublicSlider({updateSettings}:{updateSettings:(changes: Partial<SettingsT>) => void})
 {
 	const { state, setMode } = useGame(); 
 	let is_host = false;
@@ -8,6 +9,10 @@ export default function PrivateFriendPublicSlider()
 		is_host = state.user === state.settings.listPlayer.filter(user => user.is_host)[0].username;
 	}
 	
+	function handle_change(e:number) {
+		setMode(e);
+		updateSettings({mode:e});
+	}
   return (
      <div className="w-full max-w-xs px-2">
       <input
@@ -15,9 +20,9 @@ export default function PrivateFriendPublicSlider()
         min="0"
         max="2"
 		value={state.settings.mode}
-        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+        className="range [--range-progress:var(--color-base-200)] glass"
         step="1"
-		onChange={(e) => setMode(Number(e.target.value))}
+		onChange={(e) => handle_change(Number(e.target.value))}
 		disabled={!is_host}
 		 />
 		

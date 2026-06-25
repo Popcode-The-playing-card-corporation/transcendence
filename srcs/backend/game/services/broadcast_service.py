@@ -102,7 +102,7 @@ class BroadcastService:
             )
 
             
-            player_puntos.append({"room_id":player_id, "user_id":p.player.id, "username": await BroadcastService._get_username(p), "score":player_data["puntos"]})
+            player_puntos.append({"room_id":int(player_id), "user_id":p.player.id, "username": await BroadcastService._get_username(p), "score":player_data["puntos"]})
             
             if is_r0_finish:
                 melds = []
@@ -210,13 +210,9 @@ class BroadcastService:
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(room=room, position=last_fold_id)
             last_fold_username = await BroadcastService._get_username(p)
         return {
-            "self_id": player_position,
+            "self_id": int(player_position),
             "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
-            **(
-                {"annonces": player_annonces}
-                if is_r0_finish
-                else {}
-            ),
+            "annonces": player_annonces,
             "board": board,
             "asked": asked,
             "points": player_puntos,
@@ -336,10 +332,13 @@ class BroadcastService:
                 room_id=room.id,
                 position=int(player_id)
             )
-            
+            if (not (message == "finish_round" or message == "reveal_announces")):
+                room.wait_schedule = False
+                await sync_to_async(room.save)()
+                      
             board_data = await BroadcastService._board_data(room, player_id, is_r0_finish=(message == "reveal_announces" and game_state["round"] == 0), is_game_finish=(message == "finish_round" or message == "reveal_announces"))
             init_cards = await BroadcastService._get_cards(room, player_data, player_id)
-            
+
             if p.channel_name:
                 await channel_layer.send(
                     p.channel_name,

@@ -28,7 +28,7 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
 
   const cardRef = useRef<Mesh>(null!);
 
-  const factor = 0.23 * (7 - totalPlayer);
+  const factor = 0.15 * ((7 - totalPlayer));
   const pf = [0, posPlayedCard, 0];
   
   
@@ -41,25 +41,27 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
         resetState();
 		setShow(true);
       }
-    const factor = 1 / 10;
+    const factorDelta = 1 / 10;
     cardRef.current.rotation.x = 0;
     cardRef.current.rotation.z = 0;
-    cardRef.current.position.x += delta[0] * factor;
-    cardRef.current.position.y += delta[1] * factor;
-    cardRef.current.position.z += delta[2] * factor;
+    cardRef.current.position.x += delta[0] * factorDelta;
+    cardRef.current.position.y += delta[1] * factorDelta;
+    cardRef.current.position.z += delta[2] * factorDelta;
   }
 });
 
   return (
+    <>
     <mesh
       rotation={[Math.PI / 2, 0, angle]}
-      position={[-Math.sin(angle) * littleRadius,- (littleRadius - factor) + 0.01 * positionCard, Math.cos(angle) * (littleRadius - factor)]}
-      scale={0.5}
+      position={[-Math.sin(angle) * littleRadius,- (littleRadius + factor) + 0.01 * positionCard, Math.cos(angle) * (littleRadius  / 3)]}
+      scale={0.4}
       material={materials}
       ref={cardRef}
-    >
+      >
       <boxGeometry args={[1, 1.4, 0.001]}/>
     </mesh>
+    </>
   );
 }
 //  + 0.02 * positionCard

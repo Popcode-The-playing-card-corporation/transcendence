@@ -1,24 +1,35 @@
-import { useEffect, useRef } from "react";
-import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
+import { useEffect, useRef, useState } from "react";
+// import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 import { useGame } from "../../context/GameContext";
 import CardImg from "../GameInterface/CardImg";
+import { type annonceT } from "../../../../utils/type/boardDataType";
 
 export default function GlobalAnnonce() {
-  const annonces = generateFakeAnnonce();
-  const showAnnonceRef = useRef<HTMLDialogElement>(null);
   const {state} = useGame();
+  const annonces = state.game.boardData.annonces;
+  const [local_annonces, setAnnonces] = useState<annonceT[]>([]);
+  const showAnnonceRef = useRef<HTMLDialogElement>(null);
   const { show_annonces } = useGame();
+
 
   useEffect(() =>
   {
-    if (state.show_annonces)
-      showAnnonceRef.current?.showModal();
-      
-  }, [state.show_annonces])
+	async function handle_annonces() {
+		if (state.event === "reveal_announces") {
+			setAnnonces(annonces);
+			showAnnonceRef.current?.showModal();
+		}
+	}
+	handle_annonces();
+  }, [state.event, annonces])
+
+  if (!annonces && (!local_annonces || local_annonces.length === 0)) {
+	return null;
+  }
 
   return (
     <>
-      <button className="btn" onClick={show_annonces}>annonce</button>
+      {/* <button className="btn" onClick={show_annonces}>annonce</button> */}
         <dialog 
           id="showGlobalAnnonce"
           className="modal"
@@ -26,7 +37,7 @@ export default function GlobalAnnonce() {
         >
           <div className="modal-box bg-(--nav-color) max-h-3/4">
             <h3 className="flex justify-center pb-2 overflow-scroll scrollbar-thumb-(--accent-color)">Annonces</h3>
-            {annonces.map((annonce) => {
+            {local_annonces.map((annonce) => {
               return(
                 <>
                   <div className="flex justify-center text-lg">

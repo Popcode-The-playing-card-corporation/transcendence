@@ -54,7 +54,11 @@ class GameService:
             room=room,
             position=int(game_state["playing"])
         )
+        
+		
         if p.is_human and p.is_online:
+            room = await get_room_with_host(room.code)
+            game_state = room.game_state
             await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state
@@ -285,6 +289,8 @@ class GameService:
             position=int(game_state["playing"])
         )
         if p.is_human and p.is_online:
+            room = await get_room_with_host(room.code)
+            game_state = room.game_state
             await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state

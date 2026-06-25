@@ -54,7 +54,7 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, ha
 
 
   return (
-    <div className="modal-box bg-(--bg-color)">
+    <div className="modal-box">
       <h3 className="text-lg font-bold text-center">Change username</h3>
       <p className="py-4 text-center">
         Enter your password and choose your new username
@@ -77,8 +77,8 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, ha
             placeholder="Your new username"
           />
           <form className="flex justify-around">
-            <button type="button" onClick={() => updateUser(name, password, old_user)} className="btn bg-(--nav-color) mt-4">Change</button>
-            <button type="button" onClick={() => clean_close()} className="btn bg-(--nav-color) mt-4">Cancel</button>
+            <button type="button" onClick={() => updateUser(name, password, old_user)} className="btn mt-4">Change</button>
+            <button type="button" onClick={() => clean_close()} className="btn mt-4">Cancel</button>
           </form>
         </fieldset>
       </div>

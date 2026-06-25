@@ -21,7 +21,7 @@ export default function PlayerList() {
 	const orderedPlayers = host_user ? [host_user, ...listPlayer.filter(player => player.id !== host_user.id)] : listPlayer;
 
   return (
-    <div className="bordered h-">
+    <div className="bordered bg-base-100">
       <table className="table">
         <thead className="text-xl w-full">
           <th></th>

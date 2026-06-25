@@ -48,20 +48,20 @@ const codeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       <h1 className="">Create or join a game!</h1>
       <div className="w-full flex h-screen">
         <div className="createOrJoinBtn-container w-1/3 flex flex-col justify-center items-center h-8/12">
-          <button className="btn m-3 " onClick={createGame}>Create</button>
+          <button className="btn bg-base-100 m-3 " onClick={createGame}>Create</button>
           <p>or</p>
           <div className="joinCode-container m-3">
             <input
-              className="input w-2/3 m-3"
+              className="input input-lighter w-2/3 m-3"
               type="text"
               placeholder="enter game code here"
 			  value={code}
               onChange={codeChange}
             />
-            <button className="btn" onClick={() => joinRoom(code)}>Join</button>
+            <button className="btn bg-base-100" onClick={() => joinRoom(code)}>Join</button>
           </div>
         </div>
-        <div className="listAvailableGame w-2/3 flex justify-center bordered overflow-scroll max-h-8/12">
+        <div className="listAvailableGame w-2/3 flex justify-center bordered overflow-scroll max-h-8/12 bg-base-100">
 		<div className="w-full">
 		<FilterGame refreshLobby={refreshLobby} rawList={availableGames} setFilteredGames={setFilteredGames}/>
           <table className="table ml-10 ">
@@ -79,21 +79,21 @@ const codeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     <td>{game.host.username}'s room</td>
                     <td>{game.type}</td>
                     <td>
-                      <div className="dropdown">
+                      <div className="dropdown dropdown-center">
                         <div
                           tabIndex={0}
                           role="button"
-                          className="link hover:scale-110 hover:text-(--hover-color) transition-all"
+                          className="link hover:scale-110 transition-all"
                         >
                           {game.nb_player}/{game.max_player}
                         </div>
                         <ul
                           tabIndex={-1}
-                          className="dropdown-content menu bg-(--hover-color) rounded-box z-1 w-52 p-2 shadow-sm"
+                          className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
                         >
                           {game.list_player.map((player) => (
                             <li>
-                              <a className="text-(--font-color)">
+                              <a className="">
                                 <UsernameMiniProfileBtn
                                   id={player.id}
                                   name={player.username}

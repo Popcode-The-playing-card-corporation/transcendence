@@ -337,6 +337,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             room = await get_room_with_host(room.code)
             is_end, gs = await GameService.check_game_end(room, game)
             if (not is_end):
+                room = await get_room_with_host(room.code)
                 game_state = room.game_state
                 room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
                 await sync_to_async(room.save)()
@@ -417,13 +418,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
             user=self.user
         )
         if result:
+            room = await sync_to_async(Room.objects.select_related("host").get)(code=result)
             await self.channel_layer.group_send(
-            f"player_{self.user.id}",
+            f"room_{self.code}",
             {
                 "type": "game_event",
                 "event": "new_room",
                 "payload": {
-                    "code": result
+                    "code": result,
+                    "host": room.host.username,
                 }
             }
         )
@@ -500,41 +503,33 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.error("Only host can do this")
             return 
 
-        if "max_player" in payload["data"]:
-            if payload["data"]["max_player"] > 7 or payload["data"]["max_player"] < 1:
-                await self.error("Invalid number of player max")
+        if "max_player" in payload:
+            if payload["max_player"] > 7 or payload["max_player"] < 1:
+                await self.error("Invalid player max")
                 return
 
-        if "nb_games" in payload["data"]:
-            if payload["data"]["nb_games"] < 0:
-                await self.error("Invalid number of points's number")
+        if "nb_games" in payload:
+            if payload["nb_games"] < 0:
+                await self.error("Invalid max games")
                 return 
                 
-        if "nb_points" in payload["data"]:
-            if payload["data"]["nb_points"] < 0:
-                await self.error("Invalid number of games's number")
+        if "nb_points" in payload:
+            if payload["nb_points"] < 0:
+                await self.error("Invalid max points")
                 return 
 
-        if "goal" in payload["data"]:
-            if payload["data"]["goal"] != "games" and \
-            payload["data"]["goal"] != "points":
+        if "goal" in payload:
+            if payload["goal"] != "games" and \
+            payload["goal"] != "points":
                 await self.error("Invalid type of goal")
                 return 
 
-        if "type" in payload["data"]:
-            if payload["data"]["type"] != "public" and \
-            payload["data"]["type"] != "private" and \
-            payload["data"]["type"] != "friends_only":
+        if "type" in payload:
+            if payload["type"] not in ["public", "private", "friends_only"]:
                 await self.error("Invalid type of game")
                 return 
 
-        if "status" in payload["data"]:
-            if payload["data"]["status"] != "created" and \
-            payload["data"]["status"] != "open" and \
-            payload["data"]["status"] != "start" and \
-            payload["data"]["status"] != "close":
-                await self.error("Invalid status of game")
-                return 
+
 
         await RoomService.handle_patch_room(room, payload)
 

@@ -8,6 +8,8 @@ export default function LoginWithService() {
   const [servicName, setServiceName] = useState("");
   const location = useLocation();
 
+  const redirect = typeof location.state === "string" ? location.state : "/";
+
   return (
     <>
       <div className="text-center">Or continue with {servicName}</div>
@@ -18,7 +20,7 @@ export default function LoginWithService() {
           onMouseLeave={() => setServiceName("")}
         >
           {" "}
-          <GoogleLogin location={location.state}/>{" "}
+          <GoogleLogin location={redirect}/>{" "}
         </div>
         <div
           className="text-center"
@@ -26,7 +28,7 @@ export default function LoginWithService() {
           onMouseLeave={() => setServiceName("")}
         >
           {" "}
-          <FortyTwoLogin location={location.state}/>{" "}
+          <FortyTwoLogin location={redirect}/>{" "}
         </div>
         <div
           className="text-center"
@@ -34,7 +36,7 @@ export default function LoginWithService() {
           onMouseLeave={() => setServiceName("")}
         >
           {" "}
-          <GitLogin location={location.state}/>{" "}
+          <GitLogin location={redirect}/>{" "}
         </div>
       </div>
     </>
