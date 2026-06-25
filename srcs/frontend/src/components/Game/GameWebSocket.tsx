@@ -51,6 +51,10 @@ export default function GameWebSocket({
           leaveRoom();
           navigate("/");
           return false;
+        } else if (event.code === 4008) {
+          leaveRoom();
+		  notif?.showNotif("Room Inaccessible", "Fix your relationship with a user in this room to join it", 5000)
+          return false;
         }
         return auth.logged_in ? true : false;
       },
