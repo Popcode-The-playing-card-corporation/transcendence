@@ -1,8 +1,17 @@
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: [serv]
+    restart: unless-stopped
+    depends_on:
+      - nginx_serv
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TOKEN}
+    networks:
+      - transcendence
 
   redis:
     image: redis:7-alpine
-    profiles: [dev, prod]
+    profiles: [dev, prod, serv]
     container_name: redis
     restart: unless-stopped
     command: ["redis-server"]
@@ -18,7 +27,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    profiles: [dev, prod]
+    profiles: [dev, prod, serv]
     container_name: celery
     command: celery -A backend worker -l info
     depends_on:
@@ -52,7 +61,7 @@ services:
 
   mariadb:
     image: mariadb:11
-    profiles: [dev, prod]
+    profiles: [dev, prod, serv]
     container_name: mariadb
     restart: unless-stopped
     ports:
@@ -113,11 +122,31 @@ services:
     networks:
       - transcendence
 
+  nginx_serv:
+    build:
+      context: .
+      dockerfile: Docker/nginx/serv_nginx/Dockerfile
+      args:
+        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+        VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+        VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+        VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+        VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+        VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    profiles: [serv]
+    container_name: nginx_serv
+    depends_on:
+      django:
+        condition: service_healthy
+    networks:
+      - transcendence
+
   django:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    profiles: [dev, prod]
+    profiles: [dev, prod, serv]
     container_name: django
     depends_on:
       mariadb:

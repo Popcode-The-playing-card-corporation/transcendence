@@ -1,6 +1,7 @@
 COMPOSE = docker compose -f ./srcs/docker-compose.yml --env-file "./srcs/secrets/.env"
 DEV_COMPOSE = $(COMPOSE) --profile dev
 PROD_COMPOSE = $(COMPOSE) --profile prod
+SERV_COMPOSE = $(COMPOSE) --profile serv
 
 REQUIRED_FILES_PROD := \
 	./srcs/secrets/.env \
@@ -46,6 +47,8 @@ dev: header dev-up
 
 prod: header prod-up
 
+serv: header serv-up
+
 header:
 	@echo "$(GREEN)"
 	@echo ".------..------..------..------..------..------..------..------..------..------..------..------..------."
@@ -56,6 +59,19 @@ header:
 	@echo "'------''------''------''------''------''------''------''------''------''------''------''------''------'"
 	@echo "BY DVAUTHEY, ATOMASI, KTINTIM-, AKABBAJ, CGOLDENS"
 	@echo "$(RESET)"
+
+serv-up:
+	@if [ -n "$(MISSING_FILES_PROD)" ]; then \
+		echo "❌ Missing files:"; \
+		printf '%s\n' $(MISSING_FILES_PROD); \
+		exit 1; \
+	else \
+		$(COMPOSE) --profile "*" down; \
+		sed -i 's/DEBUG=True/DEBUG=False/g' ./srcs/secrets/.env; \
+		echo "$(YELLOW)Launching docker container...$(RESET)"; \
+		$(SERV_COMPOSE) up -d; \
+		echo "$(CYAN)Launching completed!$(RESET)"; \
+	fi
 
 prod-up:
 	@if [ -n "$(MISSING_FILES_PROD)" ]; then \
@@ -97,6 +113,11 @@ fclean:
 	@echo "Clearing volumes.."
 	@$(COMPOSE) --profile "*" down -v --rmi local --remove-orphans
 
+serv-build-cache: down
+	@$(COMPOSE) build --no-cache django
+	@$(SERV_COMPOSE) build --no-cache nginx_serv
+	@$(MAKE) serv-up
+
 prod-build-cache: down
 	@$(COMPOSE) build --no-cache django
 	@$(PROD_COMPOSE) build --no-cache nginx_prod
@@ -106,6 +127,11 @@ dev-build-cache: down
 	@$(COMPOSE) build --no-cache django
 	@$(COMPOSE) build --no-cache frontend
 	@$(MAKE) dev-up
+
+serv-build: down
+	@$(COMPOSE) build django
+	@$(SERV_COMPOSE) build nginx_serv
+	@$(MAKE) serv-up
 
 prod-build: down
 	@$(COMPOSE) build django
@@ -117,8 +143,10 @@ dev-build: down
 	@$(COMPOSE) build frontend
 	@$(MAKE) dev-up
 
+serv-re: fclean serv-up
+
 prod-re: fclean prod-up
 
 dev-re: fclean dev-up 
 
-.PHONY: all prod-up dev-up down clean fclean prod-re dev-re header prod-build dev-build
+.PHONY: all serv-up prod-up dev-up down clean fclean serv-re prod-re dev-re header serv-build prod-build dev-build
