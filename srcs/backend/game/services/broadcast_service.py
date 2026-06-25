@@ -118,6 +118,7 @@ class BroadcastService:
             player_list.append( {
                 "room_id": int(player_id),
                 "hand": len(player_data["cards"]),
+                "taken": len(player_data["taken"]),
                 "user": {
                     "id": p.player.id,
                     "username": await BroadcastService._get_username(p),
