@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 import { useAuth } from "../hooks/useAuth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export function LoginForm({
   setCreated,
@@ -19,6 +20,7 @@ export function LoginForm({
   const navigate = useNavigate();
   const auth = useAuth();
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -82,14 +84,17 @@ export function LoginForm({
       />
 
       <label className="label">Password</label>
-      <input
-        type="password"
-        value={password}
-        onChange={passChange}
-        className="input"
-        placeholder="..."
-        onKeyDown={handleKey}
-      />
+      <div className="input">
+        <input
+          type={showPassword ? "text" : "password"}
+          value={password} // show the password in inspector, is it okay ??
+          onChange={passChange}
+          placeholder="..."
+          onKeyDown={handleKey}
+        />
+        <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+      </div>
+      
       <a onClick={() => setCreated(true)} className="link-hover">
         No Account? Create one here!
       </a>

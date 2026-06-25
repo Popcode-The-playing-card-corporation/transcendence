@@ -6,6 +6,7 @@ import avatar from "../../../public/avatars/avatar1.png";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 import { useAuth } from "../hooks/useAuth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export function RegisterForm({
   setCreated,
@@ -19,6 +20,8 @@ export function RegisterForm({
   const [failure, setFailure] = useState(false);
   const [reason, setReason] = useState<errorT>({code:200, response:""});
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState<boolean>(false);
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -122,24 +125,28 @@ export function RegisterForm({
       />
 
       <label className="label">Password</label>
-      <input
-        type="password"
-        value={password}
-        onChange={passChange}
-        className="input"
-        placeholder="..."
-        onKeyDown={handleKey}
-      />
+      <div className="input">
+        <input
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={passChange}
+          placeholder="..."
+          onKeyDown={handleKey}
+        />
+        <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+      </div>
 
       <label className="label">Confirm password</label>
-      <input
-        type="password"
-        value={repassword}
-        onChange={repassChange}
-        className="input"
-        placeholder="..."
-        onKeyDown={handleKey}
-      />
+      <div className="input">
+        <input
+          type={showPasswordConfirm ? "text" : "password"}
+          value={repassword}
+          onChange={repassChange}
+          placeholder="..."
+          onKeyDown={handleKey}
+        />
+        <button className="cursor-pointer " onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>{showPasswordConfirm ? <FaEyeSlash /> : <FaEye />}</button>
+      </div>
 
       <a onClick={() => setCreated(false)} className="link-hover">
         Already an account? Go login here!
