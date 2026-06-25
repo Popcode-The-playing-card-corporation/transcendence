@@ -12,7 +12,7 @@ import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../api/http/login";
 import { useAuth } from "../hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoIosMoon } from "react-icons/io";
 
 function getPreferedTheme() {
@@ -28,6 +28,7 @@ export function Navbar() {
   const isActive = (path: string) => path === current_location.pathname;
   const auth = useAuth();
   const [theme, setTheme] = useState(localStorage.getItem('theme') ?? getPreferedTheme());
+  const showConfirmRef = useRef<HTMLDialogElement>(null);
 
   const toggleTheme = () => {
     setTheme(theme === "popcode_dark" ? "popcode_light" : "popcode_dark");
@@ -131,7 +132,7 @@ export function Navbar() {
           </li>
           <li>
             <button
-              onClick={handleLogout}
+              onClick={() => auth.logged_in ? showConfirmRef.current?.showModal() : null}
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
               {auth.logged_in ? (
@@ -141,6 +142,22 @@ export function Navbar() {
               )}
             </button>
           </li>
+		  <dialog 
+		  	id="showConfirm"
+			className="modal"
+			ref={showConfirmRef}
+		  >
+			<div className="modal-box">
+        <h3>Are you sure?</h3>
+        <p>
+          You are going to be logged out.
+        </p>
+      <div className="flex justify-end gap-2">
+        <button className="btn del" onClick={handleLogout}>Confirm</button>
+        <button className="btn" onClick={() => showConfirmRef.current?.close()}>Cancel</button>
+      </div>
+			</div>
+		  </dialog>
           {/* {auth.logged_in ? ( */}
           {/*   <li> */}
           {/*     <Notif_Inbox></Notif_Inbox> */}
