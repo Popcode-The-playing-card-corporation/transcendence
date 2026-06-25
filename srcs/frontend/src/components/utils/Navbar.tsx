@@ -35,11 +35,6 @@ export function Navbar() {
   };
 
   async function handleLogout() {
-    if (!auth.logged_in) {
-      navigate("/login", { state: current_location.pathname });
-      return;
-    }
-
     auth.setLogging(true);
     const res = await logout();
 
@@ -132,7 +127,7 @@ export function Navbar() {
           </li>
           <li>
             <button
-              onClick={() => auth.logged_in ? showConfirmRef.current?.showModal() : null}
+              onClick={() => auth.logged_in ? showConfirmRef.current?.showModal() : navigate("/login", { state: current_location.pathname })}
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
               {auth.logged_in ? (
