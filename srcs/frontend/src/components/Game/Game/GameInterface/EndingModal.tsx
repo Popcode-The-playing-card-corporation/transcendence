@@ -30,7 +30,7 @@ export default function EndingModal() {
   
   return (
     <div>
-      <dialog id="endingGame" className="modal text-center" ref={endRef}>
+      <dialog id="endingGame" className="modal text-center" ref={endRef} onCancel={(e) => e.preventDefault()}>
         <div className="modal-box bg-(--bg-color)">
           <h2>Finished!</h2>
           { state.host === state.user ? <p>Press continue to create a new lobby, press exit to leave the lobby.</p> : state.next === null ? <p>
