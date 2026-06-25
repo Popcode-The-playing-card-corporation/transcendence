@@ -1,11 +1,12 @@
-import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
+import type { Dispatch, KeyboardEvent, SetStateAction } from "react";
+import { useRef, useState } from "react";
 import { registerRequest } from "../../api/http/register";
 import { useLocation, useNavigate } from "react-router-dom";
 import avatar from "../../../public/avatars/avatar1.png";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 import { useAuth } from "../hooks/useAuth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export function RegisterForm({
   setCreated,
@@ -18,6 +19,9 @@ export function RegisterForm({
   const [repassword, setrePassword] = useState("");
   const [failure, setFailure] = useState(false);
   const [reason, setReason] = useState<errorT>({code:200, response:""});
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState<boolean>(false);
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -87,6 +91,11 @@ export function RegisterForm({
     return;
   }
 
+	const handleKey = (event: KeyboardEvent) => {
+		if (event.key === "Enter")
+      buttonRef.current?.click();
+	};
+
   return (
     <fieldset className="fieldset rounded-box w-xs p-4 mx-auto bg-base-100">
       <legend className="fieldset-legend">Register</legend>
@@ -102,6 +111,7 @@ export function RegisterForm({
         onChange={nameChange}
         className="input"
         placeholder="..."
+        onKeyDown={handleKey}
       />
 
       <label className="label">Email</label>
@@ -111,31 +121,39 @@ export function RegisterForm({
         onChange={emailChange}
         className="input"
         placeholder="..."
+        onKeyDown={handleKey}
       />
 
       <label className="label">Password</label>
-      <input
-        type="password"
-        value={password}
-        onChange={passChange}
-        className="input"
-        placeholder="..."
-      />
+      <div className="input">
+        <input
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={passChange}
+          placeholder="..."
+          onKeyDown={handleKey}
+        />
+        <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+      </div>
 
       <label className="label">Confirm password</label>
-      <input
-        type="password"
-        value={repassword}
-        onChange={repassChange}
-        className="input"
-        placeholder="..."
-      />
+      <div className="input">
+        <input
+          type={showPasswordConfirm ? "text" : "password"}
+          value={repassword}
+          onChange={repassChange}
+          placeholder="..."
+          onKeyDown={handleKey}
+        />
+        <button className="cursor-pointer " onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>{showPasswordConfirm ? <FaEyeSlash /> : <FaEye />}</button>
+      </div>
 
       <a onClick={() => setCreated(false)} className="link-hover">
         Already an account? Go login here!
       </a>
 
       <button
+	  	ref={buttonRef}
         onClick={registerClick}
         className="btn btn-neutral mt-4"
       >
