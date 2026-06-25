@@ -74,6 +74,7 @@ export function LoginForm({
         onChange={nameChange}
         className="input"
         placeholder="..."
+		// onKeyDown={}
       />
 
       <label className="label">Password</label>
