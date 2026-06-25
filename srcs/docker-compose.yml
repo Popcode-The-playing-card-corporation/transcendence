@@ -136,6 +136,8 @@ services:
         DOMAIN_NAME: ${DOMAIN_NAME}
     profiles: [serv]
     container_name: nginx_serv
+    expose:
+      - "443"
     depends_on:
       django:
         condition: service_healthy
