@@ -109,7 +109,7 @@ export function RegisterForm({
         type="text"
         value={name}
         onChange={nameChange}
-        className="input"
+        className="input w-full"
         placeholder="..."
         onKeyDown={handleKey}
       />
@@ -119,13 +119,13 @@ export function RegisterForm({
         type="email"
         value={email}
         onChange={emailChange}
-        className="input"
+        className="input w-full"
         placeholder="..."
         onKeyDown={handleKey}
       />
 
       <label className="label">Password</label>
-      <div className="input">
+      <div className="input w-full">
         <input
           type={showPassword ? "text" : "password"}
           value={password}
@@ -137,7 +137,7 @@ export function RegisterForm({
       </div>
 
       <label className="label">Confirm password</label>
-      <div className="input">
+      <div className="input w-full">
         <input
           type={showPasswordConfirm ? "text" : "password"}
           value={repassword}
