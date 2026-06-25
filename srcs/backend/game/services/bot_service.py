@@ -27,7 +27,7 @@ class BotService:
             room=room,
             position=int(game_state["playing"])
         )
-        #TODO merge this and under while
+        #TODO split this function to have play afk human and play as bot
         if p.is_human and (p.is_afk or not p.is_online):
             await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
             game_state = await BotService.play_bot(game, room.code, check_end=check_end, ask_continue=ask_continue)
@@ -45,6 +45,8 @@ class BotService:
                         
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
+            p.is_afk = False
+            await sync_to_async(p.save)()
             is_end, gs = await check_end(room, game)
             if is_end:
                 await ask_continue(room.code)
