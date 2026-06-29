@@ -278,9 +278,14 @@ def end_room(uuid, data):
         })
 
     scores.sort(key=lambda x: x["score"], reverse=False)
-    elo = room.nb_player
-    if room.nb_player % 2 == 1:
-        elo = room.nb_player + 1
+    
+    bots = PlayerPresence.objects.filter(
+            room=room,
+            is_human=False
+        ).count()
+    elo = room.nb_player - bots
+    if (room.nb_player - bots) % 2 == 1:
+        elo -= 1
     for rank, entry in enumerate(scores, start=1):
         PlayerScore.objects.filter(
             room=room,
@@ -289,7 +294,9 @@ def end_room(uuid, data):
         user = User.objects.get(id=entry["player"].player_id)
         stat = Stat.objects.get(user_id=user.id)
         
-        user.elo += elo
+        if not user.is_bot:
+            user.elo += elo
+        
         if elo > 0:
             stat.win += 1
         else:
@@ -297,8 +304,7 @@ def end_room(uuid, data):
             
         stat.played += 1
         
-        elo -= 2
-        if elo == 0:
+        if not user.is_bot:
             elo -= 2
             
         if room.host_id == user.id:
