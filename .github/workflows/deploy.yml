@@ -44,7 +44,7 @@ jobs:
             git stash pop
 
             make fclean
-            make serv-build
+            make serv-build-cache
 
       - name: Normal deploy
         if: steps.migrations.outputs.changed == 'false'
@@ -66,4 +66,4 @@ jobs:
             git reset --hard origin/backend
             git stash pop
 
-            make serv-build
+            make serv-build-cache
