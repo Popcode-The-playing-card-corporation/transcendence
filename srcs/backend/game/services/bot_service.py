@@ -27,7 +27,7 @@ class BotService:
             room=room,
             position=int(game_state["playing"])
         )
-        #TODO merge this and under while
+        #TODO split this function to have play afk human and play as bot
         if p.is_human and (p.is_afk or not p.is_online):
             await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
             game_state = await BotService.play_bot(game, room.code, check_end=check_end, ask_continue=ask_continue)
@@ -35,9 +35,18 @@ class BotService:
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
-                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+                    room = await get_room_with_host(room.code)
+                    is_end, gs = await check_end(room, game)
+                    if (not is_end):
+                        game_state = room.game_state
+                        room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+                        await sync_to_async(room.save)()
+                        await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+                        
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
+            p.is_afk = False
+            await sync_to_async(p.save)()
             is_end, gs = await check_end(room, game)
             if is_end:
                 await ask_continue(room.code)
@@ -47,6 +56,10 @@ class BotService:
                 position=int(game_state["playing"])
             )
             
+            if p.is_human and p.is_online:
+                room = await get_room_with_host(room.code)
+                game_state = room.game_state
+                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
 
         while (not is_end and (not p.is_human or not p.is_online)):
             
@@ -70,7 +83,13 @@ class BotService:
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
-                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+                    room = await get_room_with_host(room.code)
+                    is_end, gs = await check_end(room, game)
+                    if (not is_end):
+                        game_state = room.game_state
+                        room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+                        await sync_to_async(room.save)()
+                        await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
@@ -83,7 +102,9 @@ class BotService:
             )
             
             if p.is_human and p.is_online:
-                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, 30 if game_state["round"] == 0 else 15)
+                room = await get_room_with_host(room.code)
+                game_state = room.game_state
+                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state
                 

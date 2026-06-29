@@ -95,7 +95,6 @@ export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, 
               posPlayedCard={posPlayedCard}
               animate={index === playedCard}
               resetState={resetState}
-              boardRadius={boardRadius}
               />
           </>
         );

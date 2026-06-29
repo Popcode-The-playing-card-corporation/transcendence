@@ -15,12 +15,13 @@ class RoomConnectionService:
         old_presence = await sync_to_async(
             lambda: User.objects.get(id=user.id).presence_game)()
         
+        if (old_presence != 0):
+            return {"close": True, "code": 42}
+        
         await sync_to_async(
             User.objects.filter(id=user.id).update
 		)(presence_game=F("presence_game") + 1)
         
-        if (old_presence != 0):
-            return {"close": True, "code": 42}
  
         room = await sync_to_async(Room.objects.filter(code=code).first)()
 
@@ -53,6 +54,10 @@ class RoomConnectionService:
                     "code": 4003,
                     "message": {"event": "game_event", "message": "room already started"}
                 }
+
+        if room.status == "open":
+            if is_member:
+                return {"close": False}
 
         if room.nb_player == room.max_player:
             return {
@@ -126,6 +131,7 @@ class RoomConnectionService:
                 "close": True,
                 "code": 4008,
                 "message": {
+                    "type": "settings_event",
                     "event": "blocked_users_present",
                     "message": "You cannot join this room",
                 }
@@ -175,6 +181,7 @@ class RoomConnectionService:
             "close": True,
             "code": 4008,
             "message": {
+                "type": "settings_event",
                 "event": "blocked_users_present",
                 "payload": {
                     "blocked_users": blocked_users,
@@ -199,6 +206,8 @@ class RoomConnectionService:
                 room=room
             ).update
         )(channel_name=channel_name)
+        
+        await RoomTaskService.cancel_play_for_player(room.code, user.id)
 
         
         

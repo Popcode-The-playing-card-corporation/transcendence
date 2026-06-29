@@ -1,0 +1,36 @@
+
+
+@plugin "daisyui/theme" {
+  name: "popcode_dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(36.9% 0.093 280.054);
+  --color-base-200: oklch(26.9% 0.093 280.054);
+  --color-base-300: oklch(16.9% 0.093 280.054);
+  --color-base-content: #CCDBDC;
+  --color-primary: #A370BF;
+  --color-primary-content: #CCDBDC;
+  --color-secondary: #6F7DDA;
+  --color-secondary-content: #CCDBDC;
+  --color-accent: #E06B73;
+  --color-accent-content: #CCDBDC;
+  --color-neutral: #6F7DDA;
+  --color-neutral-content: #CCDBDC;
+  --color-info: #A370BF;
+  --color-info-content: #CCDBDC;
+  --color-success: oklch(56.4% 0.105 174.100);
+  --color-success-content: #CCDBDC;
+  --color-warning: oklch(56.1% 0.210 16.800);
+  --color-warning-content: #CCDBDC;
+  --color-error: oklch(60.3% 0.303 30.100);
+  --color-error-content: #CCDBDC;
+  --radius-selector: 2rem;
+  --radius-field: 2rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 1;
+  --noise: 0;
+}

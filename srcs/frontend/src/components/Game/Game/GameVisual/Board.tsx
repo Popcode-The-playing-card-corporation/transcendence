@@ -16,7 +16,6 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
   const totalPlayer = adversaries.length;
 
   const boardRadius = 2.3;
-  console.debug(cards);
 
 
   return (

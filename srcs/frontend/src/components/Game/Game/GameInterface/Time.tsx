@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Chrono from "../GameInterface/Chrono";
 import { useGame } from "../../context/GameContext";
 import ExitBtn from "./ExitBtn";
-import CurrentInfo from "./CurrentInfo";
 
 export default function Time() {
   const { state } = useGame();
@@ -47,7 +46,7 @@ export default function Time() {
           {
             "--value": (timeLeft / 15) * 100,
             "--size": "50px",
-            color: "var(--nav-color)",
+            color: "var(--color-primary)",
           } as React.CSSProperties
         }
         aria-valuenow={timeLeft}

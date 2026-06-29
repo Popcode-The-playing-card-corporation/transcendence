@@ -1,6 +1,7 @@
+import type { SettingsT } from "../../../utils/type/boardDataType";
 import { useGame } from "../context/GameContext";
 
-export default function SliderLimiters() {
+export default function SliderLimiters({updateSettings}:{updateSettings:(changes: Partial<SettingsT>) => void}) {
 
 	const { state, setNBGames, setNBPoints} = useGame();
 	let is_host = false;
@@ -17,9 +18,19 @@ export default function SliderLimiters() {
 	}
 
 	function get_games(val: string) {
-		if (val === "0") return 3;
-		if (val === "1") return 6;
+		if (val === "0") return 1;
+		if (val === "1") return 3;
+		if (val === "2") return 6;
 		return 10;
+	}
+
+	function handle_change(e:number,send_val : (e:number) => void, type:string ) {
+		send_val(e);
+		if (type === "points") {
+			updateSettings({nb_points: e});
+		} else {
+			updateSettings({nb_games: e})
+		}
 	}
 
   if (state.settings.goal === "points") {
@@ -30,9 +41,9 @@ export default function SliderLimiters() {
           min="0"
           max="2"
           value={nb_points === 333 ? "0" : nb_points === 666 ? "1" : "2"}
-          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--nav-color)] glass"
+          className="range [--range-progress:var(--color-secondary)] glass"
           step="1"
-          onChange={(e) => setNBPoints(get_points(e.target.value))}
+          onChange={(e) => handle_change(get_points(e.target.value), setNBPoints, "points")}
 		  disabled={!is_host}
         />
         <div className="flex justify-between px-2.5 mt-2 text-xs">
@@ -53,19 +64,21 @@ export default function SliderLimiters() {
         <input
           type="range"
           min="0"
-          max="2"
-          value={nb_games === 3 ? "0" : nb_games === 6 ? "1" : "2"}
-          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+          max="3"
+          value={nb_games === 1 ? "0" : nb_games === 3 ? "1" : nb_games === 6 ? "2" : "3"}
+          className="range [--range-progress:var(--color-primary)] glass"
           step="1"
-          onChange={(e) => setNBGames(get_games(e.target.value))}
+          onChange={(e) => handle_change(get_games(e.target.value), setNBGames, "games")}
 		  disabled={!is_host}
         />
         <div className="flex justify-between px-2.5 mt-2 text-xs">
           <span>|</span>
           <span>|</span>
           <span>|</span>
+		  <span>|</span>
         </div>
         <div className="flex justify-between px-2.5 mt-2 text-xs">
+		  <span>Tiny (1)</span>
           <span>Short (3)</span>
           <span>Medium (6)</span>
           <span>Long (10)</span>

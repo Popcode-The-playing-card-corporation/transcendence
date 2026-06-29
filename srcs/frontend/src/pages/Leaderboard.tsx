@@ -49,7 +49,6 @@ export function Leaderboard({updateLeaderboard}:Props) {
 	if (!valid) {
 		navigate('/', {state: location.pathname});
 		// notif bar
-		console.debug("");
 		setValid(false);
 		return ;
 	}

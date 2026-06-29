@@ -63,32 +63,32 @@ export function PswdChange({dialogRef}:{dialogRef:React.RefObject<HTMLDialogElem
 	  }
 
   return (
-    <div className="modal-box bg-(--bg-color)">
+    <div className="modal-box">
       <h3 className="text-lg font-bold text-center">Change password</h3>
       <p className="py-4 text-center">Enter your password and choose your new one</p>
 	  {reason.code === -1 ? <p className="py-4 text-center">{String(reason.response)}</p> : ""}
 	  {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
-        <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border-1 p-4 mx-auto">
+        <fieldset className="fieldset border-accent rounded-box w-xs border p-4 mx-auto">
           <legend className="fieldset-legend">Change password</legend>
 
           <label className="label">Old password</label>
-          <input type="password" value={oldpass} onChange={oldChange} className="input" placeholder="old password" />
+          <input type="password" value={oldpass} onChange={oldChange} className="input" placeholder="..." />
 
           <label className="label">New password</label>
-          <input type="password" value={password1} onChange={pass1Change} className="input" placeholder="new password" />
+          <input type="password" value={password1} onChange={pass1Change} className="input" placeholder="..." />
           <label className="label">Confirm new password</label>
           <input
             type="password"
 			value={password2}
 			onChange={pass2Change}
             className="input"
-            placeholder="confirm new password"
+            placeholder="..."
           />
 
           <form method="dialog" className="flex justify-around">
-            <button type="button" onClick={() => updatePass(oldpass, password1, password2)} className="btn bg-(--nav-color) mt-4">Change</button>
-            <button type="button" onClick={() => clean_close()} className="btn bg-(--nav-color) mt-4">Cancel</button>
+            <button type="button" onClick={() => updatePass(oldpass, password1, password2)} className="btn mt-4">Change</button>
+            <button type="button" onClick={() => clean_close()} className="btn  mt-4">Cancel</button>
           </form>
         </fieldset>
       </div>

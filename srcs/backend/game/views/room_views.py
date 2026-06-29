@@ -115,7 +115,7 @@ def add_bot(request, code, nb_bot):
             
             channel_layer = get_channel_layer()
             async_to_sync(BroadcastService.broadcast_settings)(room, channel_layer, "bot_added", f"room_{room.code}")
-            return Response(status=200)
+            return Response({"success": True}, status=200)
         
         return Response(
             {"error": "You are not the host. BAD"},

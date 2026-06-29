@@ -1,7 +1,8 @@
 import SliderLimiters from "./SliderLimiters";
 import { useGame } from "../context/GameContext";
+import type { SettingsT } from "../../../utils/type/boardDataType";
 
-export default function Limiters() {
+export default function Limiters({updateSettings}:{updateSettings:(changes: Partial<SettingsT>) => void}) {
 
 	const { state, setGoal } = useGame(); 
 	let is_host = false;
@@ -12,8 +13,10 @@ export default function Limiters() {
   function handle_click() {
 		if (state.settings.goal === "games") {
 			setGoal("points");
+			updateSettings({goal:"points"});
 		} else {
 			setGoal("games");
+			updateSettings({goal:"games"});
 		}
   }
 
@@ -24,13 +27,13 @@ export default function Limiters() {
         <input
           type="checkbox"
           checked={state.settings.goal !== "games"}
-          className="toggle border-(--hover-color) bg-(--hover-color) text-(--font-color) checked:border-(--nav-color) checked:bg-(--nav-color) checked:text-(--font-color)"
+          className="toggle border-primary bg-primary text-base-content checked:border-secondary checked:bg-secondary checked:text-base-content"
           onClick={handle_click}
 		  disabled={!is_host}
         />
         <p>Points</p>
       </div>
-      <SliderLimiters  />
+      <SliderLimiters updateSettings={updateSettings} />
     </div>
   );
 }

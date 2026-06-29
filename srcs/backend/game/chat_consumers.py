@@ -82,6 +82,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({"type": "history", "payload": content}))
 
 	async def disconnect(self, close_code):
+		room = await sync_to_async(Room.objects.get)(code=self.code)
+
+		if (room.status == "end"):
+			file = self.getFile()
+			if (file.exists()):
+				os.remove(file)
+
 		await self.channel_layer.group_discard(
 			self.group_name,
 			self.channel_name
@@ -100,6 +107,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				file = self.getFile()
 
 				message = data.get("message")
+
+				if (not message):
+					await self.send(text_data=json.dumps({
+						"type": "error",
+						"message": "Message's empty"
+					}))
+					return
+
+				if (type(message) != str):
+					await self.send(text_data=json.dumps({
+						"type": "error",
+						"message": "Message's not a string"
+					}))
+					return
 
 				user = await sync_to_async(User.objects.get)(id= self.user.id)
 
@@ -123,6 +144,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				data = str(event)
 				with file.open("a") as f:
 					f.write(json.dumps(event) + os.linesep)
+
+			else:
+				await self.send(text_data=json.dumps({
+					"type": "error",
+					"message": "Unknown action"
+				}))
 
 		except json.JSONDecodeError:
 			await self.send(text_data=json.dumps({

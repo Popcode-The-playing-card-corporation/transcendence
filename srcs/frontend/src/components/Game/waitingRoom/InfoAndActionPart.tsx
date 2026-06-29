@@ -21,13 +21,12 @@ export default function InfoAndActionPart({ roomCode }: { roomCode: string }) {
         </button>
         <div className="flex gap-3 flex-col justify-center items-center text-center w-fit">
           <p className="flex text-center">Room Code</p>
-          <p className="w-full flex rounded-md bg-(--hover-color) text-lg p-2">
+          <p className="w-full flex rounded-md bg-secondary text-lg p-2">
             {roomCode} <CopyBtn code={roomCode} />{" "}
           </p>
         </div>
       </div>
       <Chrono />
-        <button className="btn mr-5" onClick={leaveRoom}>Leave Game</button>
       { is_host ?  <StartGameBtn /> : null}
     </div>
   );

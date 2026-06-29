@@ -133,28 +133,32 @@ class GameEngine:
 		return strongest
 
 	def take_fold(self, data: dict):
-		asked = data["board"].pop("asked")
+		asked = data["board"]["asked"].copy()
+		board = data["board"].copy()
+		board.pop("asked")
 		fold = []
-		for c in data["board"].values():
-			fold.append(c)
-
+		for c in board.values():
+			if c not in fold:
+				fold.append(c)
+    
 		strongest = self.strongestCard(asked, fold, data["tricks"])
 		index = 0
-		for i in data["board"].keys():
-			if (data["board"][i] == strongest):
+		for i in board.keys():
+			#if i != "asked":
+			if (board[i] == strongest):
 				index = i
 				break
-		
+		#TODO grosse merde qui pue du cul
 		melds = Player.countMelds(Player(), fold, data["tricks"])
+  
 		data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
 
 		last_fold = []
-		for c in data["board"].values():
-			data["players"][index]["taken"].append(c)
-			last_fold.append(c)
+		for c in board.values():
+			if c not in last_fold:
+				data["players"][index]["taken"].append(c)
+				last_fold.append(c)
 
-
-		data["board"].clear()
 		s = int(index)
 
 		data["playing"] = s
@@ -163,6 +167,11 @@ class GameEngine:
 		data["round"] = data["round"] + 1
   
 		return data, melds
+
+	def clear_board(self, data: dict):
+		del data["board"]
+		data["board"] = {}
+		return data
 
 	def play(self, data: dict, idPlayer: int , idCard: int):
 		card = data["players"][idPlayer]["cards"][idCard].copy()
@@ -310,6 +319,9 @@ class GameEngine:
 		
 		if (action == "take_fold"):
 			return self.take_fold(data)
+
+		if (action == "clear_board"):
+			return self.clear_board(data)
 
 		if (action == "legal"):
 			return self.legal(data, idPlayer)

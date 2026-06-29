@@ -17,13 +17,13 @@ export default function Chrono() {
 	const sec = timeLeft % 60;
 	const min = Math.floor(timeLeft / 60) ;
 	return (
-		<div className="grid grid-flow-col gap-5 text-center auto-cols-max">
-		<div className="flex flex-col p-2 rounded-box text-neutral-content bg-(--nav-color)">
+		<div className="grid grid-flow-col gap-2 text-center auto-cols-max">
+		<div className="flex flex-col p-2 rounded-box text-neutral-content bg-primary">
 			<span className="countdown font-mono text-2xl">
 			<span style={{"--value":min}  as React.CSSProperties  } className="">{min}</span>
 			</span>
 		</div>
-		<div className="flex flex-col p-2 rounded-box text-neutral-content bg-(--nav-color)">
+		<div className="flex flex-col p-2 rounded-box text-neutral-content bg-primary">
 			<span className="countdown font-mono text-2xl">
 			<span style={{"--value":sec}  as React.CSSProperties } >{sec}</span>
 			</span>

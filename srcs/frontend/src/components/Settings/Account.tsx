@@ -55,7 +55,7 @@ export default function Account() {
 		  <h3 className="font-bold text-lg">Are you sure you want to delete your account?</h3>
 		  <div className="modal-action">
 			<form method="dialog">
-			  <button className="btn mr-5" onClick={handleDelete}>Yes</button>
+			  <button className="btn mr-5 del" onClick={handleDelete}>Yes</button>
 			  <button className="btn">No</button>
 			</form>
 		  </div>

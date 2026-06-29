@@ -68,6 +68,7 @@ export type boardDataNT = {
 	self_id: number,
 	board: boardT[],
 	asked: cardT,
+	trick: string | null,
 	points: playerScoreT[],
 	annonces: annonceT[]
 	detailed_points: DetailedPointsT[];
@@ -83,6 +84,7 @@ export const default_board : boardDataNT = {
 	self_id: -1,
 	board: [],
 	asked: {color: "", value:"", id:0},
+	trick: null,
 	points: [],
 	annonces: [],
 	detailed_points: [],
@@ -98,6 +100,7 @@ export type boardDataT = {
 	self_id: number,
 	board: boardT[],
 	asked: cardT,
+	trick: string | null,
 	points: playerScoreT[],
 	annonces: annonceT[]
 	detailed_points: DetailedPointsT[];
@@ -113,6 +116,7 @@ export const default_Nboard : boardDataT = {
 	self_id: -1,
 	board: [],
 	asked: {color: "", value:"", id:0},
+	trick: null,
 	points: [],
 	annonces: [],
 	detailed_points: [],

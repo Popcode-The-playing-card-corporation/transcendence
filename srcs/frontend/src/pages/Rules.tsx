@@ -31,8 +31,8 @@ export function Rules() {
           <h2 className="mt-4">The "annonces"</h2>
         </div>
 		<p>There are many different "annonces" that will give a corresponding amount of points: </p>
-        <table className="border-2 border-(--accent-color) table mt-3">
-          <thead className="text-lg text-(--font-color)">
+        <table className="border-2 border-accent table mt-3 bg-base-100">
+          <thead className="text-lg ">
             <tr>
               <th>Annonce</th>
               <th>Point</th>
@@ -70,8 +70,8 @@ export function Rules() {
           </tbody>
         </table>
         <h2 className="mt-7">Point Calculation</h2>
-        <table className="border-2 border-(--accent-color) table mt-3">
-          <thead className="text-lg text-(--font-color)">
+        <table className="border-2 border-accent table mt-3 bg-base-100">
+          <thead className="text-lg">
             <tr >
               <th>Card</th>
               <th>Point</th>

@@ -2,8 +2,8 @@ import type { accountT } from '../../utils/type/accountType'
 import axios, { AxiosError } from 'axios'
 import { getError, type backendErrorT, type errorT } from '../../utils/type/errorType';
 import host from './host'
-import avatar1 from "../../../public/avatars/avatar1.png";
 
+const avatar1 = "/avatars/avatar1.png";
 export async function profileRequest(): Promise<accountT | errorT> {
 	try {
 		const res = await axios.get(host.http + 'user/', { timeout: 2000, withCredentials: true});

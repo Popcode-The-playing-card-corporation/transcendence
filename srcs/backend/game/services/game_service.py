@@ -54,8 +54,12 @@ class GameService:
             room=room,
             position=int(game_state["playing"])
         )
+        
+		
         if p.is_human and p.is_online:
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, 30 if game_state["round"] == 0 else 15)
+            room = await get_room_with_host(room.code)
+            game_state = room.game_state
+            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state
     
@@ -170,7 +174,9 @@ class GameService:
                     room = await get_room_with_host(room.code)
                     game_state = room.game_state
                     await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
-                    await asyncio.sleep(7)
+                    await RoomTaskService.schedule_wait_time(room.code, game_state["round"], game_state["game"], 8)
+                    await asyncio.sleep(3)
+            
             
             await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
             game_state, melds = game.handleAction("take_fold", game_state)
@@ -179,7 +185,13 @@ class GameService:
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
             
-            await asyncio.sleep(12)
+            
+            game_state = game.handleAction("clear_board", game_state)
+            await save_room_state(room.uuid, game_state)
+            
+            if not (room.game_state["round"] == 0 and await GameService._count_hand_melds(room.code) > 0):
+                await RoomTaskService.schedule_wait_time(room.code, game_state["round"], game_state["game"], 5)
+            await asyncio.sleep(5)
             
             return True, game_state
         
@@ -277,6 +289,8 @@ class GameService:
             position=int(game_state["playing"])
         )
         if p.is_human and p.is_online:
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, 30 if game_state["round"] == 0 else 15)
+            room = await get_room_with_host(room.code)
+            game_state = room.game_state
+            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state

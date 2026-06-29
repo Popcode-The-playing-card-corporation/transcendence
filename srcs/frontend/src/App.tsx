@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NotifProvider from "./components/contexts/NotifContext";
 import AuthProvider from "./components/contexts/AuthContext";
 import AppContent from "./AppContent";
+import { preloadCards } from "./utils/imports/textures";
 
 function App() {
   const [fontChoice, setFontChoice] = useState("font-Cause");
+
+  useEffect(() => {
+	preloadCards();
+  }, [])
 
   return (
 	<AuthProvider>

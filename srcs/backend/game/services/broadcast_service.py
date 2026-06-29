@@ -11,7 +11,21 @@ import copy
 import asyncio
 
 class BroadcastService:
-
+    
+    @staticmethod
+    async def _get_username(presence):
+        username = presence.player.username
+        
+        if not presence.is_human:
+            if presence.difficulty == "easy":
+                username += " [kILIAN]"
+            elif presence.difficulty == "medium":
+                username += " [Alex]"
+            elif presence.difficulty == "hard":
+                username += " [Dana]"
+            
+        return username
+    
     @staticmethod
     async def _get_players(room):
         if room == None:
@@ -28,7 +42,7 @@ class BroadcastService:
         for p in presences:
             players.append({
                 "id": p.player.id,
-                "username": p.player.username,
+                "username": await BroadcastService._get_username(p),
                 "is_host": p.player == room.host,
                 "position": p.position
             })
@@ -88,7 +102,7 @@ class BroadcastService:
             )
 
             
-            player_puntos.append({"room_id":player_id, "user_id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
+            player_puntos.append({"room_id":int(player_id), "user_id":p.player.id, "username": await BroadcastService._get_username(p), "score":player_data["puntos"]})
             
             if is_r0_finish:
                 melds = []
@@ -96,26 +110,18 @@ class BroadcastService:
                     melds.append(meld["cards"])
                 
                 player_annonces.append({
-                    "username": p.player.username,
+                    "username": await BroadcastService._get_username(p),
                     "room_id": int(player_id),
                     "cards": melds
                 })
-                
-            p_name = p.player.username
-            if not p.is_human:
-                if p.difficulty == "easy":
-                    p_name += " [kILIAN]"
-                elif p.difficulty == "medium":
-                    p_name += " [Alex]"
-                elif p.difficulty == "hard":
-                    p_name += " [Dana]"
-                    
+    
             player_list.append( {
                 "room_id": int(player_id),
                 "hand": len(player_data["cards"]),
+                "taken": len(player_data["taken"]),
                 "user": {
                     "id": p.player.id,
-                    "username": p_name,
+                    "username": await BroadcastService._get_username(p),
                     "avatar": p.player.avatar,
                 }
             } )
@@ -124,7 +130,7 @@ class BroadcastService:
         
     
     @staticmethod
-    async def _board_data(room, player_position, is_r0_finish=False):
+    async def _board_data(room, player_position, is_r0_finish=False, is_game_finish=False):
         room = await get_room_with_host(room.code)
         game_state = room.game_state
 
@@ -164,7 +170,7 @@ class BroadcastService:
 				}
                 detailed_points.append(game)
                 
-            player_score = {"id":p.player.id, "username":p.player.username, "score":log.score}
+            player_score = {"id":p.player.id, "username": await BroadcastService._get_username(p), "score":log.score}
             
             if round_num == nb_round:
                 game['is_finished'] = True
@@ -179,7 +185,7 @@ class BroadcastService:
                 if round is None:
                     round = {"round":round_num, "players":[]}
                     game["rounds"].append(round)
-                    round["players"].append(player_score)
+                round["players"].append(player_score)
             
         for game in detailed_points:
             del game ["game"]
@@ -202,24 +208,21 @@ class BroadcastService:
         last_fold_username = ""
         if last_fold_id is not None:
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(room=room, position=last_fold_id)
-            last_fold_username = p.player.username
+            last_fold_username = await BroadcastService._get_username(p)
         return {
-            "self_id": player_position,
+            "self_id": int(player_position),
             "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
-            **(
-                {"annonces": player_annonces}
-                if is_r0_finish
-                else {}
-            ),
+            "annonces": player_annonces,
             "board": board,
             "asked": asked,
             "points": player_puntos,
             "detailed_points": detailed_points,
-            "playing": game_state["playing"],
+            "playing": game_state["playing"] if not is_game_finish else -1,
             "player_list": player_list,
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
             "round_time": (room.round_time + timedelta(seconds=5)).strftime("%Y-%m-%d %H:%M:%S"),
             "round": game_state["round"],
+            "game": game_state["game"],
             "last_fold": {
 					"username": last_fold_username,
                     "room_id": last_fold_id,
@@ -329,10 +332,13 @@ class BroadcastService:
                 room_id=room.id,
                 position=int(player_id)
             )
-            
-            board_data = await BroadcastService._board_data(room, player_id, (message == "reveal_announces" and game_state["round"] == 0))
+            if (not (message == "finish_round" or message == "reveal_announces")):
+                room.wait_schedule = False
+                await sync_to_async(room.save)()
+                      
+            board_data = await BroadcastService._board_data(room, player_id, is_r0_finish=(message == "reveal_announces" and game_state["round"] == 0), is_game_finish=(message == "finish_round" or message == "reveal_announces"))
             init_cards = await BroadcastService._get_cards(room, player_data, player_id)
-            
+
             if p.channel_name:
                 await channel_layer.send(
                     p.channel_name,

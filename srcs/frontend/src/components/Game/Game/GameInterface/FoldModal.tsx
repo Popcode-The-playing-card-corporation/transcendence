@@ -14,7 +14,7 @@ export default function FoldModal() {
   return (
     <div>
       <button
-        className={"btn btn-lg btn-circle"}
+        className={"btn btn-lg btn-circle bg-base-100"}
         onClick={() => lastFoldRef.current?.showModal()}
       >
         <GiCardPlay />
@@ -35,10 +35,10 @@ export default function FoldModal() {
           <div className="modal-action">
             <form method="dialog" className="flex justify-between w-full">
               <button
-                className="btn btn-sm btn-circle absolute right-2 top-2"
+                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                 onClick={() => lastFoldRef.current?.close()}
               >
-                <IoIosClose />
+                <IoIosClose className="text-2xl"/>
               </button>
             </form>
           </div>

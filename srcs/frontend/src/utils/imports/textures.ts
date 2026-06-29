@@ -1,40 +1,64 @@
-import C6 from "../../assets/cards/6Clubs.png";
-import C7 from "../../assets/cards/7Club.png";
-import C8 from "../../assets/cards/8Clubs.png";
-import C9 from "../../assets/cards/9Clubs.png";
-import C10 from "../../assets/cards/10Clubs.png";
-import CJ from "../../assets/cards/JClubs.png";
-import CQ from "../../assets/cards/QClubs.png";
-import CK from "../../assets/cards/KClubs.png";
-import CA from "../../assets/cards/AClubs.png";
-import D6 from "../../assets/cards/6Diamonds.png";
-import D7 from "../../assets/cards/7Diamonds.png";
-import D8 from "../../assets/cards/8Diamonds.png";
-import D9 from "../../assets/cards/9Diamonds.png";
-import D10 from "../../assets/cards/10Diamonds.png";
-import DJ from "../../assets/cards/JDiamonds.png";
-import DQ from "../../assets/cards/QDiamonds.png";
-import DK from "../../assets/cards/KDiamonds.png";
-import DA from "../../assets/cards/ADiamonds.png";
-import H6 from "../../assets/cards/6Hearts.png";
-import H7 from "../../assets/cards/7Hearts.png";
-import H8 from "../../assets/cards/8Hearts.png";
-import H9 from "../../assets/cards/9Hearts.png";
-import H10 from "../../assets/cards/10Hearts.png";
-import HJ from "../../assets/cards/JHearts.png";
-import HQ from "../../assets/cards/QHearts.png";
-import HK from "../../assets/cards/KHearts.png";
-import HA from "../../assets/cards/AHearts.png";
-import S6 from "../../assets/cards/6Spades.png";
-import S7 from "../../assets/cards/7Spades.png";
-import S8 from "../../assets/cards/8Spades.png";
-import S9 from "../../assets/cards/9Spades.png";
-import S10 from "../../assets/cards/10Spades.png";
-import SJ from "../../assets/cards/JSpades.png";
-import SQ from "../../assets/cards/QSpades.png";
-import SK from "../../assets/cards/KSpades.png";
-import SA from "../../assets/cards/ASpades.png";
-import Back from "../../assets/cards/back.png";
+import { useLoader } from "@react-three/fiber";
+import { TextureLoader } from "three";
+import generateDeck from "../createDeck";
+
+const C6 = "/assets/cards/6club.png";
+const C7 = "/assets/cards/7club.png";
+const C8 = "/assets/cards/8club.png";
+const C9 = "/assets/cards/9club.png";
+const C10 = "/assets/cards/10club.png";
+const CJ = "/assets/cards/Jclub.png";
+const CQ = "/assets/cards/Qclub.png";
+const CK = "/assets/cards/Kclub.png";
+const CA = "/assets/cards/Aclub.png";
+const D6 = "/assets/cards/6diamond.png";
+const D7 = "/assets/cards/7diamond.png";
+const D8 = "/assets/cards/8diamond.png";
+const D9 = "/assets/cards/9diamond.png";
+const D10 = "/assets/cards/10diamond.png";
+const DJ = "/assets/cards/Jdiamond.png";
+const DQ = "/assets/cards/Qdiamond.png";
+const DK = "/assets/cards/Kdiamond.png";
+const DA = "/assets/cards/Adiamond.png";
+const H6 = "/assets/cards/6heart.png";
+const H7 = "/assets/cards/7heart.png";
+const H8 = "/assets/cards/8heart.png";
+const H9 = "/assets/cards/9heart.png";
+const H10 = "/assets/cards/10heart.png";
+const HJ = "/assets/cards/Jheart.png";
+const HQ = "/assets/cards/Qheart.png";
+const HK = "/assets/cards/Kheart.png";
+const HA = "/assets/cards/Aheart.png";
+const S6 = "/assets/cards/6spade.png";
+const S7 = "/assets/cards/7spade.png";
+const S8 = "/assets/cards/8spade.png";
+const S9 = "/assets/cards/9spade.png";
+const S10 = "/assets/cards/10spade.png";
+const SJ = "/assets/cards/Jspade.png";
+const SQ = "/assets/cards/Qspade.png";
+const SK = "/assets/cards/Kspade.png";
+const SA = "/assets/cards/Aspade.png";
+const Back = "/assets/cards/back.png";
+
+export function preloadCards() {
+	const deck = generateDeck();
+	useLoader.preload(TextureLoader, loadTexture("back"));
+	deck.forEach((card) => {
+		useLoader.preload(TextureLoader, loadTexture(card.value + card.color));
+	})
+
+
+    deck.forEach((card) => {
+        const img = new Image();
+        img.src = `/assets/${card.value}${card.color}.png`;
+    });
+
+	const bgimg = new Image();
+	bgimg.src = "/assets/bg_game.png"
+
+    const back = new Image();
+    back.src = "/assets/back.png";
+}
 
 export function loadTexture(name: string) : string {
   const textures = new Map([
@@ -76,6 +100,7 @@ export function loadTexture(name: string) : string {
     ["Aspade", SA],
     ["back", Back],
   ]);
-  if (textures.get(name)) return textures.get(name);
-  else return textures.get("back");
+  const text = textures.get(name)
+  if (text) return text;
+  else return Back;
 }

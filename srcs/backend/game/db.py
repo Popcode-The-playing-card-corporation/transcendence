@@ -237,8 +237,9 @@ def get_room_with_host(code):
 def start_room(uuid, data):
     room = Room.objects.get(uuid=uuid)
     room.game_state = data
-    room.status = "start"
-    room.started_at = timezone.now()
+    if room.status == "open":
+        room.status = "start"
+        room.started_at = timezone.now()
     room.save()
     
 @sync_to_async
