@@ -8,7 +8,7 @@ import { IoIosClose } from "react-icons/io";
 export default function FoldModal() {
   const { state } = useGame();
   const lastFold = state.game.boardData.last_fold;
-  const takenBy = lastFold.username;
+  const takenBy = lastFold.username === state.user ? "you" : lastFold.username;
   const lastFoldRef = useRef<HTMLDialogElement>(null);
 
   return (
