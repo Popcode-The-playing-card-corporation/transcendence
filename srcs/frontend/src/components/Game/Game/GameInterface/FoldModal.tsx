@@ -8,7 +8,7 @@ import { IoIosClose } from "react-icons/io";
 export default function FoldModal() {
   const { state } = useGame();
   const lastFold = state.game.boardData.last_fold;
-  const takenBy = lastFold.username;
+  const takenBy = lastFold.username === state.user ? "you" : lastFold.username;
   const lastFoldRef = useRef<HTMLDialogElement>(null);
 
   return (
@@ -23,7 +23,7 @@ export default function FoldModal() {
         <div className="modal-box bg-(--bg-color)">
           <h2 className="mb-4">Last fold</h2>
           <p>{lastFold.cards ? `Taken by ${takenBy}` : ""}</p>
-          <div className=" flex gap-2 my-6 flex-wrap justify-center">
+          <div className=" flex gap-2 my-6 flex-wrap justify-center bg-secondary rounded-2xl p-2">
             {lastFold.cards ? (
               lastFold.cards.map((card) => {
                 return <CardImg name={card.value + card.color} />;

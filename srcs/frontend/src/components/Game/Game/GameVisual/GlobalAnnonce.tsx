@@ -35,7 +35,7 @@ export default function GlobalAnnonce() {
           className="modal"
           ref={showAnnonceRef}
         >
-          <div className="modal-box bg-(--nav-color) max-h-3/4">
+          <div className="modal-box max-h-3/4">
             <h3 className="flex justify-center pb-2 overflow-scroll scrollbar-thumb-(--accent-color)">Annonces</h3>
             {local_annonces.map((annonce) => {
               return(
@@ -46,7 +46,7 @@ export default function GlobalAnnonce() {
                   <>
                     {annonce.cards.map((cards) => {
                       return(
-                        <div className="flex gap-1 flex-wrap justify-center pb-8">
+                        <div className="flex gap-1 flex-wrap justify-center pb-8 bg-secondary rounded-2xl p-2">
                           {
                             cards.map((card) => {
                               return(
