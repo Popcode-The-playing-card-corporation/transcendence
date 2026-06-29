@@ -205,6 +205,7 @@ class GameService:
         game_state = room.game_state
         game = GameEngine(room.uuid)
 
+        game_state = game.handleAction("points", game_state)
         points = game.handleAction("get_final_score", game_state)
         
         await ScoreService.save_final_score(room.code, room.game_state["game"], room.game_state["round"], points)
