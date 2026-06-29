@@ -1,0 +1,56 @@
+name: Deploy to VM
+
+on:
+  push:
+    branches:
+      - create_autodeploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check migrations changes
+        id: migrations
+        run: |
+          if git diff --name-only HEAD~1 HEAD | grep -E ".*/migrations/.*\.py$"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy with reset
+        if: steps.migrations.outputs.changed == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /home/cgoldens/Projects/transcendence
+
+            git fetch origin
+            git reset --hard origin/create_autodeploy
+
+            make fclean
+            make serv-build
+
+      - name: Normal deploy
+        if: steps.migrations.outputs.changed == 'false'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /home/cgoldens/Projects/transcendence
+
+            git fetch origin
+            git reset --hard origin/create_autodeploy
+
+            make serv-build
