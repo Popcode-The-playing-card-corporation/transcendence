@@ -17,7 +17,7 @@ class Board:
 	def onlyBourg(self, hands: Hand, tricks: str):
 		bourg = False
 		for card in hands.cards:
-			if (card.colors == tricks and card.value == "J"):
+			if (card.colors == tricks and card.values == "J"):
 				bourg = True
 			elif (card.colors == tricks):
 				return False
