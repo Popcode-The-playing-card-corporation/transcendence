@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
-import React, { useState, useEffect, type SetStateAction } from "react";
+import React, { useState, useEffect, type SetStateAction, type Dispatch } from "react";
 import { Friends } from "../components/Profile/FriendsPart";
 import { History } from "../components/Profile/HistoryPart";
 import { ProfilePart } from "../components/Profile/ProfilePart";
@@ -35,7 +35,14 @@ function getRequests(friend_list: friendT[]): {
     return { friends: friends, requests: requests };
   }
 
-export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, setUpdate:React.Dispatch<SetStateAction<boolean>>}) {
+type Props = {
+  updatedProfile:boolean,
+  setUpdate:React.Dispatch<SetStateAction<boolean>>,
+  seenRequest: boolean,
+  setSeenRequest: Dispatch<SetStateAction<boolean>>
+}
+
+export function Profile({updatedProfile, setUpdate, seenRequest, setSeenRequest}: Props) {
 
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [stats, setStats] = useState<statisticsT>(defaultStat);
@@ -167,12 +174,13 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
       </div>
       <div className="bordered collapse collapse-arrow ">
         <input type="checkbox" name="profile-radio" />
-        <div className="collapse-title">
+        <div className={"flex collapse-title justify-center" + (seenRequest ? "" : " indicator "}>
+          {seenRequest ? null : <div className="indicator-item badge badge-sm"/>}
           <h2 className="text-center">Friends</h2>
         </div>
-        <div className="collapse-content overflow-auto">
-          <Friends friends={friends} requests={requests} users={users} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
-        </div>
+			<div className="collapse-content overflow-auto">
+				<Friends friends={friends} requests={requests} users={users} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
+		</div>
       </div>
       <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />

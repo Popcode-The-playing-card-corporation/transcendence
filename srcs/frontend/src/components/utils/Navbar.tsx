@@ -22,7 +22,11 @@ function getPreferedTheme() {
 		return ("popcode_light");
 }
 
-export function Navbar() {
+type Props = {
+	seenRequest: boolean
+}
+
+export function Navbar({seenRequest} : Props) { 
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
@@ -90,9 +94,10 @@ export function Navbar() {
             <NavLink
               to="/profile"
               className={({ isActive }) =>
-                (isActive ? "active " : "") + "item-menu"
+                (isActive ? "active " : "") + "item-menu" + (seenRequest ? "" : " indicator")
               }
             >
+              <div className="indicator-item badge badge-sm bg-warning"/>
               <CgProfile /> Profile
             </NavLink>
           </li>
