@@ -27,7 +27,7 @@ def strongestCard(asked, fold, tricks):
 	return strongest
 
 def takeFold(fold, asked, tricks, card):
-	if (not asked):
+	if (len(fold) == 0):
 		return True
 
 	fold_copy = fold.copy()
@@ -87,8 +87,17 @@ def medium(data: dict, idPlayer, legal):
 		card = convert(dontTake[i])
 		index = data["players"][idPlayer]["cards"].index(card)
 	else:
-		take = sorted(take)
-		card = convert(take[0])
-		index = data["players"][idPlayer]["cards"].index(card)
+		tricks = []
+		for c in take:
+			if (c.colors == tricks):
+				tricks.append(take.pop(take.index(c)))
+		if (len(take) > 0):
+			take = sorted(take)
+			card = convert(take[0])
+			index = data["players"][idPlayer]["cards"].index(card)
+		else:
+			tricks.sort(key=lambda c: (trickValue[c.values]))
+			card = convert(tricks[0])
+			index = data["players"][idPlayer]["cards"].index(card)
 
 	return index
