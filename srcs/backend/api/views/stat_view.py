@@ -46,7 +46,7 @@ def leaderboard(request):
 
         rank = (
             User.objects
-            .filter(elo__gt=user.elo)
+            .filter(is_bot=False, elo__gt=user.elo)
             .count() + 1
         )
 
