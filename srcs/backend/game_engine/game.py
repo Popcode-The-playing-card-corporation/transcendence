@@ -227,22 +227,27 @@ class GameEngine:
 		return meld
 
 	def points(self, data: dict):
-		for p in data["players"].values():
-			points = int(p["puntos"])
-			if (data["tricks"] in p["shtokr"]):
-				points -= 20
-			for c in p["taken"]:
-				if (c["color"] == data["tricks"]):
-					if (c["value"] == "J"):
-						points += 20
-						continue
-					elif (c["value"] == "9"):
-						points += 14
-						continue
-				points += self.cardPoint[c["value"]]
-			p["puntos"] = points
 
-		return data
+		try:	
+			for id, p in data["players"].items():
+				points = int(p["puntos"])
+				if (id == str(data["playing"])):
+					points += 5
+				for c in p["taken"]:
+					if (c["color"] == data["tricks"]):
+						if (c["value"] == "J"):
+							points += 20
+							continue
+						elif (c["value"] == "9"):
+							points += 14
+							continue
+					points += self.cardPoint[c["value"]]
+				p["puntos"] = points
+
+			return data
+	
+		except KeyError:
+			return data
 
 	def get_final_score(self, data: dict):
 		players = []
