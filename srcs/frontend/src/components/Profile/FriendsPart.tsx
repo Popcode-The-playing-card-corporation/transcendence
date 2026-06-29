@@ -73,7 +73,7 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
           <dialog id="add_new_friends" className="modal" ref={addFriendsRef}>
             <AddFriends recs={recs} users={users} updatedFriends={updatedFriends} setUpdate={setUpdate} ref={addFriendsRef}/>
           </dialog>
-          <div className="dropdown dropdown-end">
+          <div className={"dropdown dropdown-end " + (closeFriendRequest ? "" : "dropdown-open")}>
             <div className="indicator">
               <span
                 className={
