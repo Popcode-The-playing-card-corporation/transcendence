@@ -21,47 +21,46 @@ import { Notifications } from "./api/websockets/notifcations";
 import { useAuth } from "./components/hooks/useAuth";
 import PrivateRoute from "./utils/routing/PrivateRoutes";
 
-function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetStateAction<string>>}) {
+function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.SetStateAction<string>> }) {
   const [updatedProfile, setProfile] = useState(false);
   const [updateLeaderboard, setLeaderboard] = useState(false);
-  const [seenRequest, setSeenRequest] = useState<boolean>(true);
 
   const auth = useAuth();
 
   if (auth.logging || auth.logged_in === null) {
-	return (
-	<div className="page-content flex items-center justify-center min-h-screen">
-		<span className="loading loading-spinner loading-xl"></span>
-	</div>
-	);
+    return (
+      <div className="page-content flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-xl"></span>
+      </div>
+    );
   }
 
   return (
-        <BrowserRouter>
-		  <Presence />
-		  <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
-		  {auth.in_game ? null : <Navbar seenRequest={seenRequest}/>}
-          <NotifPopUp />
-          <Routes>	
-			<Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
-			<Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} seenRequest={seenRequest} setSeenRequest={setSeenRequest}/> </PrivateRoute>} />
-            <Route path="/" element={<Home />} />
-            <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
-            <Route
-              path="/settings"
-              element={<Settings setFontChoice={setFontChoice} />}
-            />
-            <Route path="/rules" element={<Rules />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-            <Route path="/termsOfService" element={<TermsOfService />} />
-            <Route path="/login/google/callback" element={<GoogleCallback />} />
-            <Route path="/login/42/callback" element={<FortyTwoCallback />} />
-            <Route path="/login/github/callback" element={<GitCallback />} />
-            <Route path="*" element={<Error404 />} />
-          </Routes>
-		  {auth.in_game ? null : <Footer />}
-        </BrowserRouter>
+    <BrowserRouter>
+      <Presence />
+      <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard} />
+      {auth.in_game ? null : <Navbar />}
+      <NotifPopUp />
+      <Routes>
+        <Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
+        <Route
+          path="/settings"
+          element={<Settings setFontChoice={setFontChoice} />}
+        />
+        <Route path="/rules" element={<Rules />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+        <Route path="/termsOfService" element={<TermsOfService />} />
+        <Route path="/login/google/callback" element={<GoogleCallback />} />
+        <Route path="/login/42/callback" element={<FortyTwoCallback />} />
+        <Route path="/login/github/callback" element={<GitCallback />} />
+        <Route path="*" element={<Error404 />} />
+      </Routes>
+      {auth.in_game ? null : <Footer />}
+    </BrowserRouter>
   );
 }
 

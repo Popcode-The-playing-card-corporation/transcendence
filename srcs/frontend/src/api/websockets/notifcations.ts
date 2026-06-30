@@ -12,19 +12,19 @@ type Props = {
 	setLeaderboard: React.Dispatch<SetStateAction<boolean>>;
 }
 
-export function Notifications({ setProfile, updatedProfile, updateLeaderboard, setLeaderboard}:Props) {
+export function Notifications({ setProfile, updatedProfile, updateLeaderboard, setLeaderboard }: Props) {
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 		default: typeof useWebSocketModule;
 	};
 	const auth = useAuth();
 	const notif = useNotif();
-	
+
 	useWebSocket(auth.logged_in ? (host.ws + "notification/") : null, {
 		shouldReconnect: () => auth.logged_in ? true : false,
 		reconnectAttempts: 30,
 		reconnectInterval: 1000,
-		
+
 		heartbeat: {
 			message: JSON.stringify({ type: "heartbeat" }),
 			returnMessage: JSON.stringify({ type: "acknowledge" }),
@@ -47,10 +47,11 @@ export function Notifications({ setProfile, updatedProfile, updateLeaderboard, s
 			if (data.event === "notification") {
 				if (data.type === "friend_request") {
 					notif?.showNotif("New Friend Request", payload.from_user + " has sent you a friend request!", 5000);
+					auth.setHasFriendRequest(true);
 					setProfile(!updatedProfile);
 				} else if (data.type === "friend_accepted") {
 					notif?.showNotif("Friend Request Accepted", payload.from_user + " has accepted your friend request!", 5000);
-					setProfile(!updatedProfile); 
+					setProfile(!updatedProfile);
 				} else if (data.type === "friend_invite") {
 					notif?.showNotif("Game Invite", payload.from_user + " has invited you to a game: " + payload.code, 10000);
 					setProfile(!updatedProfile);
@@ -71,7 +72,7 @@ export function Notifications({ setProfile, updatedProfile, updateLeaderboard, s
 				}
 			} else {
 				console.debug("event not implemented. Format: ", data)
-			}	
+			}
 		},
 	});
 	return null;

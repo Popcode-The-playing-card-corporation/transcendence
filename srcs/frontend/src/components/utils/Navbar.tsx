@@ -16,17 +16,13 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosMoon } from "react-icons/io";
 
 function getPreferedTheme() {
-	if (window.matchMedia('(prefers-color-sheme: dark)'))
-		return ("popcode_dark");
-	else
-		return ("popcode_light");
+  if (window.matchMedia('(prefers-color-sheme: dark)'))
+    return ("popcode_dark");
+  else
+    return ("popcode_light");
 }
 
-type Props = {
-	seenRequest: boolean
-}
-
-export function Navbar({seenRequest} : Props) { 
+export function Navbar() {
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
@@ -56,8 +52,8 @@ export function Navbar({seenRequest} : Props) {
   }
 
   useEffect(() => {
-	  localStorage.setItem('theme', theme);
-	  const localTheme = localStorage.getItem('theme')
+    localStorage.setItem('theme', theme);
+    const localTheme = localStorage.getItem('theme')
     document.querySelector("html")?.setAttribute("data-theme", localTheme!);
   }, [theme]);
 
@@ -94,10 +90,13 @@ export function Navbar({seenRequest} : Props) {
             <NavLink
               to="/profile"
               className={({ isActive }) =>
-                (isActive ? "active " : "") + "item-menu" + (seenRequest ? "" : " indicator")
+                (isActive ? "active " : "") + "item-menu" + (auth.hasFriendRequest ? " indicator" : "")
               }
             >
-              <div className="indicator-item badge badge-sm bg-warning"/>
+              {auth.hasFriendRequest ?
+                <div className="indicator-item badge badge-xs" />
+                : null
+              }
               <CgProfile /> Profile
             </NavLink>
           </li>
@@ -142,22 +141,22 @@ export function Navbar({seenRequest} : Props) {
               )}
             </button>
           </li>
-		  <dialog 
-		  	id="showConfirm"
-			className="modal"
-			ref={showConfirmRef}
-		  >
-			<div className="modal-box">
-        <h3>Are you sure?</h3>
-        <p>
-          You are going to be logged out.
-        </p>
-      <div className="flex justify-end gap-2">
-        <button className="btn del" onClick={handleLogout}>Confirm</button>
-        <button className="btn" onClick={() => showConfirmRef.current?.close()}>Cancel</button>
-      </div>
-			</div>
-		  </dialog>
+          <dialog
+            id="showConfirm"
+            className="modal"
+            ref={showConfirmRef}
+          >
+            <div className="modal-box">
+              <h3>Are you sure?</h3>
+              <p>
+                You are going to be logged out.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button className="btn del" onClick={handleLogout}>Confirm</button>
+                <button className="btn" onClick={() => showConfirmRef.current?.close()}>Cancel</button>
+              </div>
+            </div>
+          </dialog>
           {/* {auth.logged_in ? ( */}
           {/*   <li> */}
           {/*     <Notif_Inbox></Notif_Inbox> */}
