@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 import { useGame } from "../../context/GameContext";
 import generateDeck from "../../../../utils/createDeck";
@@ -38,6 +38,15 @@ export default function Announcement() {
     annonces(res);
     setIsConfirmed(true);
   };
+
+  useEffect(() => {
+
+    if (state.game.boardData.round === 0)
+      setIsConfirmed(false);
+    else
+      setIsConfirmed(true);
+
+  }, [state.game.boardData.round])
 
   return (
     <>
