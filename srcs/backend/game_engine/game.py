@@ -251,8 +251,10 @@ class GameEngine:
 
 	def get_final_score(self, data: dict):
 		players = []
-		for p in data["players"].values():
+		for id, p in data["players"].items():
 			points = 0
+			if (id == str(data["playing"])):
+				points += 5
 			if (data["tricks"] in p["shtokr"]):
 				points -= 20
 			for c in p["taken"]:
