@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import tempfile
 from asgiref.sync import sync_to_async
-from .models import PlayerPresence, Room, PlayerScore, Stat
+from .models import PlayerPresence, Room, PlayerScore, Stat, GameLog
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
@@ -247,6 +247,15 @@ def save_room_state(uuid, data):
     room = Room.objects.get(uuid=uuid)
     room.game_state = data
     room.save()
+
+@sync_to_async
+def delete_room(room_code):
+    try:
+        room = Room.objects.get(code=room_code)
+        room.delete()
+        return True
+    except Room.DoesNotExist:
+        return False
 
 @sync_to_async
 def end_room(uuid, data):
