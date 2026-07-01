@@ -27,7 +27,7 @@ export default function InfoAndActionPart({ roomCode }: { roomCode: string }) {
         </div>
       </div>
       <Chrono />
-      { is_host ?  <StartGameBtn /> : null}
+      { is_host ?  <StartGameBtn /> : <div className="w-26"></div>}
     </div>
   );
 }
