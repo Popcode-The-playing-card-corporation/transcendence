@@ -3,7 +3,7 @@ name: Deploy to VM
 on:
   push:
     branches:
-      - backend
+      - dev
 
 jobs:
   deploy:
@@ -25,8 +25,6 @@ jobs:
           fi
 
       - name: Deploy with reset
-        env:
-          APP_DIR: ${{ secrets.VM_APP_DIR }}
         if: steps.migrations.outputs.changed == 'true'
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -39,18 +37,16 @@ jobs:
             #TODO change git checkout to main
             git stash
             git fetch origin
-            git checkout backend
-            git reset --hard origin/backend
+            git checkout dev
+            git reset --hard origin/dev
             git stash pop
 
             make fclean
-            make serv-build-cache
+            make serv-build
 
       - name: Normal deploy
         if: steps.migrations.outputs.changed == 'false'
         uses: appleboy/ssh-action@v1.2.0
-        env:
-          APP_DIR: ${{ secrets.VM_APP_DIR }}
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
@@ -62,8 +58,8 @@ jobs:
 
             git stash
             git fetch origin
-            git checkout backend
-            git reset --hard origin/backend
+            git checkout dev
+            git reset --hard origin/dev
             git stash pop
 
-            make serv-build-cache
+            make serv-build
