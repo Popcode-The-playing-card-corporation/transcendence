@@ -5,7 +5,10 @@ import BlockBtn from "../utils/BlockBtn";
 import type { profileT } from "../../utils/type/profileType";
 import type { historyT } from "../../utils/type/historyType";
 import type { errorT } from "../../utils/type/errorType";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { friendT, requestT } from "../../utils/type/friendType";
+import { friendArray, getFriends } from "../../api/http/friend";
+import { useAuth } from "../hooks/useAuth";
 
 type Props = {
   account: profileT | errorT;
@@ -15,19 +18,63 @@ type Props = {
   profileRef: React.RefObject<HTMLDialogElement | null>
 };
 
+function getRequests(friend_list: friendT[]): {
+	friends: friendT[];
+	requests: requestT[];
+	} {
+	const friends: friendT[] = [];
+	const requests: requestT[] = [];
+
+	for (const friend of friend_list) {
+		if (friend.can_accept) {
+		requests.push({ id: friend.id, username: friend.user.username });
+		} else {
+		friends.push(friend);
+		}
+	}
+	return { friends: friends, requests: requests };
+}
+
 export default function MiniProfile({account, updatedFriends, setUpdate, history, profileRef}: Props) {
   
   const [dummy, setDummy] = useState(false);
+  const [can_accept, setAccept] = useState(false);
+  const auth = useAuth();
 
   if (!updatedFriends) updatedFriends = dummy;
   if (!setUpdate) setUpdate = setDummy;
 
+  useEffect(() => {
+	async function getRequested(checkName : string) {
+		const friendlist = await getFriends();
+		if ("code" in friendlist) {
+			auth.setHasFriendRequest(false);
+			return ;
+		}
+		const arr = friendArray(friendlist);
+		const filter = getRequests(arr);
+		const check = filter.requests.filter(user => user.username === checkName);
+		if (check.length > 0) {
+			setAccept(true);
+		} else {
+			setAccept(false);
+		}
+	}
+	
+	if (!('code' in account)) {
+		getRequested(account.username);
+	}
+  }, [account, auth])
+
   if ('code' in account)
 	return ;
+
+
+
   return (
     <>
     <div className="modal-box">
-      <p className="text-center ">click ESC for close this window</p>
+      <p className="text-center ">click ESC to close this window</p>
       <div className="flex">
         <div className="avatar flex-col">
           <div className="avatar mt-8 rounded-4xl w-24">

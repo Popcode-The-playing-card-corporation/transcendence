@@ -1,6 +1,25 @@
 import { useEffect, useState, type SetStateAction } from "react";
 import { authContext } from "./CreateAuthContext"
 import { checkAuth } from "../../api/http/checkAuth";
+import { friendArray, getFriends } from "../../api/http/friend";
+import type { friendT, requestT } from "../../utils/type/friendType";
+
+function getRequests(friend_list: friendT[]): {
+	friends: friendT[];
+	requests: requestT[];
+	} {
+	const friends: friendT[] = [];
+	const requests: requestT[] = [];
+
+	for (const friend of friend_list) {
+		if (friend.can_accept) {
+		requests.push({ id: friend.id, username: friend.user.username });
+		} else {
+		friends.push(friend);
+		}
+	}
+	return { friends: friends, requests: requests };
+}
 
 export interface AuthContextType {
 	logged_in: boolean;
@@ -35,7 +54,20 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 			setLoggedIn(auth);
 			setChecking(false);
 			setLogging(false);
-			setHasFriendRequest(false);
+			if (auth) {
+				const friendlist = await getFriends();
+				if ("code" in friendlist) {
+					setHasFriendRequest(false);
+					return ;
+				}
+				const arr = friendArray(friendlist);
+				const filter = getRequests(arr);
+				if (filter.requests.length > 0) {
+					setHasFriendRequest(true);
+				} else {
+					setHasFriendRequest(false);
+				}
+			}
 		}
 		getAuth();
 
