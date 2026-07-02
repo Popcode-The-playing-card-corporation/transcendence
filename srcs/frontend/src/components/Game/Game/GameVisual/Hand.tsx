@@ -9,9 +9,11 @@ import { useGame } from "../../context/GameContext";
 export default function Hand({
   cardsTex,
   back,
+  distanceBoard
 }: {
   cardsTex: Texture<HTMLImageElement, TextureEventMap>[];
   back: Texture<HTMLImageElement, TextureEventMap>;
+  distanceBoard: number;
 }) {
   const { state } = useGame();
 //   const [hand, setHand] = useState<cardT[]>(state.game.self_cards);
@@ -20,6 +22,7 @@ export default function Hand({
   const startPos = (0.4 * hand.length) / 2 - 0.2;
   const oldStartPos = (0.4 * (hand.length + 1)) / 2 - 0.2;
   const [lastCardPlayed, setLastCardPlayed] = useState<number>(19);
+  
 
   useEffect(() => {
 	async function handle_continue() {
@@ -49,6 +52,7 @@ export default function Hand({
 			  lastCardPlayed={lastCardPlayed}
 			  setHand={setHand}
 			  setLastCardPlayed={setLastCardPlayed}
+			  distanceBoard={distanceBoard}
             />
           );
         })}

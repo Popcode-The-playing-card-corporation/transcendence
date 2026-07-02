@@ -232,7 +232,8 @@ class BroadcastService:
 					"username": last_fold_username,
                     "room_id": last_fold_id,
                     "cards": game_state.get("last_fold"),
-                }
+                },
+            "host": room.host.username
         }       
     
     @staticmethod

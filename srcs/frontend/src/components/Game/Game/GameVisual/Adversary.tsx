@@ -13,15 +13,15 @@ type Props = {
   front: Texture<HTMLImageElement, TextureEventMap>[],
   back: Texture<HTMLImageElement, TextureEventMap>,
   totalPlayer: number,
-  boardRadius: number
+  boardRadius: number,
+  distanceBoard: number
 }
 
-export default function Adversary({room_id, isSelf, cardHand, playedCard, front, back, totalPlayer, boardRadius} : Props) {
+export default function Adversary({room_id, isSelf, cardHand, playedCard, front, back, totalPlayer, boardRadius, distanceBoard} : Props) {
   const angleCenter = 360 / totalPlayer * Math.PI / 180;
   const [show, setShow] = useState(true)
   if (!playedCard)
     playedCard = defaultBoard;
-  const distanceBoard = boardRadius * 3 / 5;
   const centerHand = Math.cos(angleCenter / 2) * boardRadius;
   const posPlayedCard = centerHand - distanceBoard;
 	
@@ -34,9 +34,9 @@ export default function Adversary({room_id, isSelf, cardHand, playedCard, front,
       >
         {playedCard.card.id !== -1 ?
           <PlayedCard
-		        show={show}
+		    show={show}
             front={front[playedCard.card.id]}
-		        back={back}
+		    back={back}
             posPlayedCard={posPlayedCard}
             idPlayer={room_id}
           /> : null}
