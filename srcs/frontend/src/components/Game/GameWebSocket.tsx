@@ -115,6 +115,8 @@ export default function GameWebSocket({
 				
 			} else if (data.type === "game") {
 				dispatch({type:"SET_EVENT", payload: data.event});
+				dispatch({type:"SET_HOST", payload: payload.board_data.host})
+				dispatch({type:"SET_USER", payload: payload.board_data.user})
 				auth.setGame(true);
 				if (data.event === "annonces_valid") {
 					if (data.valid === false) {

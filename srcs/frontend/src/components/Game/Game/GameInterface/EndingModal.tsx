@@ -26,7 +26,6 @@ export default function EndingModal() {
 	endRef.current?.close();
 	leaveRoom();
   }
-
   
   return (
     <div>
