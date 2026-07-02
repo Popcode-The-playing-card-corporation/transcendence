@@ -115,8 +115,6 @@ export default function GameWebSocket({
 				
 			} else if (data.type === "game") {
 				dispatch({type:"SET_EVENT", payload: data.event});
-				dispatch({type:"SET_HOST", payload: payload.board_data.host})
-				dispatch({type:"SET_USER", payload: payload.board_data.user})
 				auth.setGame(true);
 				if (data.event === "annonces_valid") {
 					if (data.valid === false) {
@@ -148,7 +146,11 @@ export default function GameWebSocket({
 						}
 						dispatch({type:"SET_MESSAGE", payload: data.player_name});
 					}
-					setGame(payload.self_card, payload.board_data)
+					if (payload.board_data) {
+						setGame(payload.self_card, payload.board_data)
+						dispatch({type:"SET_HOST", payload: payload.board_data.host})
+						dispatch({type:"SET_USER", payload: payload.board_data.user})
+					}
 				}
 			} else if (data.event === "error" || data.type === "error") {
 				if (data.message === "Need 2 players") {
