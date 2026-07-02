@@ -9,6 +9,9 @@ import { useEffect, useState } from "react";
 import type { friendT, requestT } from "../../utils/type/friendType";
 import { friendArray, getFriends } from "../../api/http/friend";
 import { useAuth } from "../hooks/useAuth";
+import { changeHandler } from "../../api/http/friend";
+import { RxCheck, RxCross2 } from "react-icons/rx";
+import { useNotif } from "../hooks/useNotif";
 
 type Props = {
   account: profileT | errorT;
@@ -40,6 +43,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
   const [dummy, setDummy] = useState<boolean>(false);
   const [can_accept, setAccept] = useState<boolean>(false);
   const auth = useAuth();
+  const notif = useNotif();
 
   if (!updatedFriends) updatedFriends = dummy;
   if (!setUpdate) setUpdate = setDummy;
@@ -88,8 +92,32 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
                 <DeleteBtn req_id={account.friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef} />
                 : (
                   account.friend?.status === "pending" ? (
-                    sent ? <p className="pt-2 pr-2">Friend request sent.</p>
-                      : <p className="pt-2 pr-2">Friend request received.</p>
+                    can_accept ? (
+                      <div className="btn-accept-or-reject flex ">
+                        <p className="flex items-center pr-2">Friend request received : </p>
+                        <button
+                          className="btn validate"
+                          onClick={() => changeHandler(account.friend.id, "accept", updatedFriends, setUpdate, null, notif)}
+                        >
+                          <RxCheck />
+                        </button>
+                        <button
+                          className="btn del"
+                          onClick={() => changeHandler(account.friend.id, "delete", updatedFriends, setUpdate, null, notif)}
+                        >
+                          <RxCross2 />
+                        </button>
+                      </div>
+                    )
+                      : (<div className="flex gap-3">
+                        <p className="flex items-center">Friend request sent : </p>
+                        <button
+                          className="btn del"
+                          onClick={() => changeHandler(account.friend.id, "delete", updatedFriends, setUpdate, null, notif)}
+                        >
+                          <RxCross2 />
+                        </button>
+                      </div>)
                   )
                     : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef} />
                 )
@@ -117,7 +145,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
         <div className="mt-10">
           <MiniHistory history={history} updatedProfile={updatedFriends} setUpdate={setUpdate} />
         </div>
-      </div>
+      </div >
       <form method="dialog" className="modal-backdrop">
         <button ></button>
       </form>
