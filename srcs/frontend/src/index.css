@@ -1,13 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Cause:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Yarndings+12&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Yarndings+12&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Yuyu&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik+80s+Fade&family=Yarndings+12&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Yuyu&display=swap');
 @import "tailwindcss";
 @import "./popcode_light.css";
 @import "./popcode_dark.css";
 @plugin "daisyui" {
-	themes: popcode_light --default, popcode_dark --prefersdark
+  themes:
+    popcode_light --default,
+    popcode_dark --prefersdark;
 }
-
 
 /* :root { */
 /*   --nav-color: #a370bf; */
@@ -27,9 +31,23 @@
     font-family: "JetBrains Mono";
   }
 
-.font-Yarndings {
-		font-family: "Yarndings 12"
+  .font-Yarndings {
+    font-family: "Yarndings 12";
+  }
+
+  .font-Yuyu {
+		font-family: "Yuyu";
+		font-size: 1.4rem;
 	}
+
+  .font-Rubik {
+		font-family: "Rubik 80s Fade";
+	}
+
+.font-Henny {
+		font-family: "Henny Penny"
+	}
+
   body {
     background: var(--color-base-200);
     font-family: "JetBrains Mono";
@@ -53,9 +71,8 @@
 }
 
 .input-lighter {
-	@apply bg-base-100
+  @apply bg-base-100;
 }
-
 
 @utility link-hover {
   @apply cursor-pointer;
@@ -68,52 +85,52 @@
 }
 
 @utility collapse {
-	@apply bg-base-100
+  @apply bg-base-100;
 }
 
 @utility dropdown-content {
-	@apply bg-base-300 mt-2
+  @apply bg-base-300 mt-2;
 }
 
 @utility label {
-	@apply text-base-content
+  @apply text-base-content;
 }
 
 @utility search {
-	@apply bg-base-200
+  @apply bg-base-200;
 }
 
 @utility indicator-item {
-	@apply bg-warning
+  @apply bg-warning;
 }
 
 fieldset {
-	@apply border border-accent
+  @apply border border-accent;
 }
 
 .del {
-	@apply bg-warning;
+  @apply bg-warning;
 }
 
 .avatar-hovered {
-	@apply opacity-30;
+  @apply opacity-30;
 }
 
 .pen-hovered {
-	@apply absolute text-3xl z-10;
+  @apply absolute text-3xl z-10;
 }
 
 .li-avatars {
-	@apply w-24 m-3 h-24 hover:scale-110 transition-all;
+  @apply w-24 m-3 h-24 hover:scale-110 transition-all;
 }
 
 .item-menu {
-	@apply rounded-2xl;
+  @apply rounded-2xl;
 }
 
 .modal-box {
   scrollbar-color: var(--color-accent);
-	@apply scrollbar-thumb-accent bg-base-100
+  @apply scrollbar-thumb-accent bg-base-100;
 }
 
 .item-menu:hover {
@@ -128,7 +145,7 @@ fieldset {
   @apply border-2 border-accent mt-10 rounded-xl p-10;
 }
 
-.dropdown-scroll{
+.dropdown-scroll {
   @apply bg-base-100 border border-secondary rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-accent;
 }
 
@@ -150,5 +167,5 @@ fieldset {
 
 .chat-bubble {
   word-wrap: break-word;
-   @apply max-w-3xs ;
+  @apply max-w-3xs;
 }
