@@ -10,6 +10,7 @@ import { Login } from "./pages/Login";
 import { Footer } from "./components/utils/Footer";
 import { NotifPopUp } from "./components/utils/NotifPopUp";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import PrivacyPolicyClean from "./pages/privacyPolicyVclean";
 import { TermsOfService } from "./pages/TermsOfService";
 import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./OAuth/GoogleCallback";
@@ -52,7 +53,7 @@ function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetState
             />
             <Route path="/rules" element={<Rules />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+            <Route path="/privacyPolicy" element={< PrivacyPolicyClean />} />
             <Route path="/termsOfService" element={<TermsOfService />} />
             <Route path="/login/google/callback" element={<GoogleCallback />} />
             <Route path="/login/42/callback" element={<FortyTwoCallback />} />
