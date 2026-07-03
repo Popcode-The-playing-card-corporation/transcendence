@@ -171,9 +171,8 @@ Frontend technologies and frameworks used.
 
 
 ## Database Schema
-Visual representation or description of the database structure.
-◦ Tables/collections and their relationships.
-◦ Key fields and data types
+
+![Database Schema](./database_schema.png)
 
 
 ## Features List
