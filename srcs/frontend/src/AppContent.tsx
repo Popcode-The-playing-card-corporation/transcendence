@@ -21,18 +21,18 @@ import { Notifications } from "./api/websockets/notifcations";
 import { useAuth } from "./components/hooks/useAuth";
 import PrivateRoute from "./utils/routing/PrivateRoutes";
 
-function AppContent({setFontChoice}:{setFontChoice:React.Dispatch<React.SetStateAction<string>>}) {
+function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.SetStateAction<string>> }) {
   const [updatedProfile, setProfile] = useState(false);
   const [updateLeaderboard, setLeaderboard] = useState(false);
 
   const auth = useAuth();
 
   if (auth.logging || auth.logged_in === null) {
-	return (
-	<div className="page-content flex items-center justify-center min-h-screen">
-		<span className="loading loading-spinner loading-xl"></span>
-	</div>
-	);
+    return (
+      <div className="page-content flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-xl"></span>
+      </div>
+    );
   }
 
   return (

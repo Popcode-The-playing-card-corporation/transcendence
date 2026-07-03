@@ -16,10 +16,10 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosMoon } from "react-icons/io";
 
 function getPreferedTheme() {
-	if (window.matchMedia('(prefers-color-sheme: dark)'))
-		return ("popcode_dark");
-	else
-		return ("popcode_light");
+  if (window.matchMedia('(prefers-color-sheme: dark)'))
+    return ("popcode_dark");
+  else
+    return ("popcode_light");
 }
 
 export function Navbar() {
@@ -52,8 +52,8 @@ export function Navbar() {
   }
 
   useEffect(() => {
-	  localStorage.setItem('theme', theme);
-	  const localTheme = localStorage.getItem('theme')
+    localStorage.setItem('theme', theme);
+    const localTheme = localStorage.getItem('theme')
     document.querySelector("html")?.setAttribute("data-theme", localTheme!);
   }, [theme]);
 
@@ -90,9 +90,13 @@ export function Navbar() {
             <NavLink
               to="/profile"
               className={({ isActive }) =>
-                (isActive ? "active " : "") + "item-menu"
+                (isActive ? "active " : "") + "item-menu" + (auth.hasFriendRequest ? " indicator" : "")
               }
             >
+              {auth.hasFriendRequest ?
+                <div className="indicator-item badge badge-xs" />
+                : null
+              }
               <CgProfile /> Profile
             </NavLink>
           </li>
@@ -137,22 +141,22 @@ export function Navbar() {
               )}
             </button>
           </li>
-		  <dialog 
-		  	id="showConfirm"
-			className="modal"
-			ref={showConfirmRef}
-		  >
-			<div className="modal-box">
-        <h3>Are you sure?</h3>
-        <p>
-          You are going to be logged out.
-        </p>
-      <div className="flex justify-end gap-2">
-        <button className="btn del" onClick={handleLogout}>Confirm</button>
-        <button className="btn" onClick={() => showConfirmRef.current?.close()}>Cancel</button>
-      </div>
-			</div>
-		  </dialog>
+          <dialog
+            id="showConfirm"
+            className="modal"
+            ref={showConfirmRef}
+          >
+            <div className="modal-box">
+              <h3>Are you sure?</h3>
+              <p>
+                You are going to be logged out.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button className="btn del" onClick={handleLogout}>Confirm</button>
+                <button className="btn" onClick={() => showConfirmRef.current?.close()}>Cancel</button>
+              </div>
+            </div>
+          </dialog>
           {/* {auth.logged_in ? ( */}
           {/*   <li> */}
           {/*     <Notif_Inbox></Notif_Inbox> */}

@@ -21,7 +21,7 @@ def countCard(card, data, fold):
 
 	cards = sorted(cards)
 	index = cards.index(card)
-	return abs(index - cardValue[card.values])
+	return abs(index - len(cards))
 
 def splithand(data, idPlayer, legal):
 	playable = []
@@ -43,7 +43,9 @@ def splithand(data, idPlayer, legal):
 	take = []
 	dontTake = []
 	for c in playable:
-		if (takeFold(fold, asked, tricks, c)):
+		if (len(fold) == 0):
+			take.append(c)
+		elif (takeFold(fold, asked, tricks, c)):
 			if (c.colors == tricks):
 				take.append(c)
 			left = countCard(c, data, fold)
@@ -111,7 +113,7 @@ def hard(data: dict, idPlayer, legal):
 				if (c.values == first and points <= 20 - (10 * len(data["players"]))):
 					return data["players"][idPlayer]["cards"].index(convert(c))
 
-				if (c.values == second and points <= 10- (5 * len(data["players"]))):
+				if (c.values == second and points <= 10 - (5 * len(data["players"]))):
 					return data["players"][idPlayer]["cards"].index(convert(c))
 
 	card = None

@@ -9,6 +9,7 @@ import {
 } from "three";
 import type { cardT } from "../../../../utils/type/handCardsType";
 import { useGame } from "../../context/GameContext";
+
 // import { RoundedBoxGeometry } from "@react-three/drei";
 
 // function sendCard(card: cardT) {
@@ -25,8 +26,9 @@ type Props = {
 //   setHand: Dispatch<SetStateAction<cardT[]>>;
 //   hand: cardT[];
   lastCardPlayed: number;
-  setHand: Dispatch<any>;
+  setHand: Dispatch<SetStateAction<cardT[]>>;
   setLastCardPlayed: Dispatch<SetStateAction<number>>;
+  distanceBoard: number;
 };
 
 export default function PCard({
@@ -41,12 +43,12 @@ export default function PCard({
   lastCardPlayed,
   setHand,
   setLastCardPlayed,
+  distanceBoard
 }: Props) {
   const [active, setActive] = useState<boolean>(false);
   const [overed, setOvered] = useState<boolean>(false);
   const [played, setPlayed] = useState<boolean>(false);
   const [hidden, setHidden] = useState<boolean>(false);
-  const distance = 1.8;
   const cardRef = useRef<Mesh>(null!);
   const materials = [
     new MeshPhongMaterial({ color: 0xffffff }),
@@ -67,8 +69,6 @@ export default function PCard({
 	}
 	handle_play();
   }, [game.state.game.self_cards.hand, card.id, hidden, played])
-
-  
 
 	useEffect(() => {
 
@@ -137,28 +137,30 @@ export default function PCard({
 
     // Playing card
     if (played) {
-      const deltaY = cardRef.current.position.y - (1 * distance + 0.5);
+	  game.setWait(true);
+	  const deltaY = (1 * distanceBoard + 2) - cardRef.current.position.y - 1;
       const deltaX = cardRef.current.position.x;
-      const deltaZ = cardRef.current.position.z - -1.15;
+      const deltaZ = cardRef.current.position.z - 0;
       const deltaRotX = cardRef.current.rotation.x - -0.4;
 
       if (cardRef.current.position.x < 0)
         cardRef.current.position.x += 0.1 * deltaX * -1;
       if (cardRef.current.position.x > 0)
         cardRef.current.position.x -= 0.1 * deltaX;
-      if (cardRef.current.position.y < -Math.cos(0) * distance + 0.5)
+      if (cardRef.current.position.y < -Math.cos(0) * distanceBoard + 0.5)
         cardRef.current.position.y += 0.01 * (deltaY * 10);
-      if (cardRef.current.position.z > -1.15)
+      if (cardRef.current.position.z > 0.6)
         cardRef.current.position.z -= 0.15 * (deltaZ * 0.5);
       if (cardRef.current.rotation.x > -0.4)
         cardRef.current.rotation.x -= 0.1 * deltaRotX;
 
       // when is finished remove card from hand
       if (
-        cardRef.current.position.z < -1.1 &&
+        cardRef.current.position.z < 0.6 &&
         cardRef.current.position.x < 0.1 &&
         cardRef.current.position.x > -0.1
       ) {
+		game.setWait(false);
         setHidden(true);
         // setHand(
         //   hand.filter((currCard) => {
@@ -166,7 +168,7 @@ export default function PCard({
         //   }),
         // );
         setLastCardPlayed(cardIndex);
-		setHand(game.state.game.self_cards.hand);
+		setHand((prev: cardT[]) => prev.filter((c) => c.id !== card.id));
         return;
       }
     }

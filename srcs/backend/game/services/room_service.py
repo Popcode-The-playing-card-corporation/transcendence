@@ -1,5 +1,5 @@
 from asgiref.sync import sync_to_async
-from ..db import  remove_player_from_room, get_room_with_host
+from ..db import  remove_player_from_room, get_room_with_host, delete_room
 from ..serializers import RoomSerializer
 from . broadcast_service import BroadcastService
 import uuid
@@ -130,7 +130,15 @@ class RoomService:
         for bot in bots:
             if (bot not in remove_bots):
                 valid_bots.append(bot)
-        
+                
+                
+        nb_bots = await sync_to_async(PlayerPresence.objects.filter(
+            room=room,
+            is_human=False
+        ).count)()
+        if room.nb_player - nb_bots == 1:
+            await delete_room(code)
+            return True
         p.player = valid_bots[0]
         p.channel_name = None
         p.is_human = False

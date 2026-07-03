@@ -63,15 +63,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		)
 
 		await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "room_event",
-                "event": "user_joined",
-                "payload": {
-                    "user": self.user.get_username(),
-                }
-            }
-        )
+			self.group_name,
+			{
+				"type": "room_event",
+				"event": "user_joined",
+				"payload": {
+					"user": self.user.get_username(),
+				}
+			}
+		)
 
 		content = []
 		file = self.getFile()
@@ -82,13 +82,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({"type": "history", "payload": content}))
 
 	async def disconnect(self, close_code):
-		room = await sync_to_async(Room.objects.get)(code=self.code)
-
-		if (room.status == "end"):
+		if await sync_to_async(Room.objects.filter(code=self.code).exists)():
+			
+			room = await sync_to_async(Room.objects.get)(code=self.code)
+	
+			if (room.status == "end"):
+				file = self.getFile()
+				if (file.exists()):
+					os.remove(file)
+		else:
 			file = self.getFile()
 			if (file.exists()):
 				os.remove(file)
-
+		
 		await self.channel_layer.group_discard(
 			self.group_name,
 			self.channel_name

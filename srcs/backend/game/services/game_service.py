@@ -199,11 +199,15 @@ class GameService:
     
     @staticmethod
     async def ask_host_continue(room, game_state):
-        
+        room = await get_room_with_host(room.code)
         await save_room_state(room.uuid, game_state)
-   
+        
+        game_state = room.game_state
         game = GameEngine(room.uuid)
 
+        game_state = game.handleAction("points", game_state)
+        await save_room_state(room.uuid, game_state)
+        
         points = game.handleAction("get_final_score", game_state)
         
         await ScoreService.save_final_score(room.code, room.game_state["game"], room.game_state["round"], points)
@@ -247,6 +251,7 @@ class GameService:
             await end_room(room.uuid, game_state)
             await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
         else:
+            await GameService.ask_host_continue(room, game_state)
             await GameService.continue_game(room)
             
         

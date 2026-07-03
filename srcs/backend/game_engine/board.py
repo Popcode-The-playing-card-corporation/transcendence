@@ -14,8 +14,24 @@ class Board:
 				ret = self.trickValue[c.values]
 		return ret
 
+	def onlyBourg(self, hands: Hand, tricks: str):
+		bourg = False
+		for card in hands.cards:
+			if (card.colors == tricks and card.values == "J"):
+				bourg = True
+			elif (card.colors == tricks):
+				return False
+			
+		return bourg
+
 	def legalCard(self, hands: Hand, tricks: str):
 		legal = []
+
+		if (self.asked.colors == tricks and self.onlyBourg(hands, tricks)):
+			for card in hands.cards:
+				legal.append(True)
+			return legal
+
 		for card in hands.cards:
 			if (len(self.fold) == 0):
 				legal.append(True)

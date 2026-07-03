@@ -1,7 +1,7 @@
 import { TbPointFilled } from "react-icons/tb";
 import type { friendT, requestT } from "../../utils/type/friendType";
 import { changeHandler } from "../../api/http/friend";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
@@ -11,6 +11,7 @@ import { FaPlus } from "react-icons/fa";
 import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 import { useNotif } from "../hooks/useNotif";
 import type { recommendationT } from "../../utils/type/recommendationType";
+import { useAuth } from "../hooks/useAuth";
 
 type Props = {
   friends:friendT[];
@@ -28,6 +29,7 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
   const [nbSlice, setNbSlice] = useState<number>(10);
   const notif = useNotif();
   const [closeFriendRequest, setCloseFriendRequest] = useState<boolean>(true);
+  const auth = useAuth();
 
   function handleMoreLessBtn() {
     if (isMore) {
@@ -48,6 +50,12 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
   const sortedFriends = [...searchedFriends].sort((a, b) =>
     a.status.localeCompare(b.status),
   );
+
+  if (requests.length > 0) {
+	auth.setHasFriendRequest(true);
+  } else {
+	auth.setHasFriendRequest(false);
+  }
 
   return (
     <div className="friend-part min-h-70">
