@@ -53,14 +53,19 @@ class GameEngine:
 		return ret
 
 	def shtokr(self, cards: list):
-		colors = ["club", "diamond", "spade", "heart"]
+		colors = ["club", "spade", "diamond", "heart"]
 		ret = []
+		Q = 6
+		K = 7
 
+		print(cards)
 		for c in colors:
-			if ({"value": "Q", "color": c} in cards and 
-				{"value": "K", "color": c} in cards):
+			if ({"value": "Q", "color": c, "id": Q} in cards and 
+				{"value": "K", "color": c, "id": K} in cards):
 				ret.append(c)
-
+			Q += 9
+			K += 9
+		
 		return ret
 
 	def startGame(self, data: dict, nbrPlayer: int):

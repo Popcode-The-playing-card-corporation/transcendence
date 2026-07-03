@@ -126,6 +126,8 @@ class GameService:
         room.round_time = (timezone.now() + timedelta(seconds=(25 if state["round"] == 0 else 10)))
         await sync_to_async(room.save)()
             
+        state = await MeldService.check_shtokr(room, state)
+
         await save_room_state(room.uuid, state)
 
         await StatsService.update_after_play(

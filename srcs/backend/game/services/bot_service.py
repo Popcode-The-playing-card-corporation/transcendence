@@ -32,6 +32,7 @@ class BotService:
             await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
             game_state = await BotService.play_bot(game, room.code, check_end=check_end, ask_continue=ask_continue)
             await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
+            game_state = await MeldService.check_shtokr(room, game_state)
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):
@@ -42,7 +43,7 @@ class BotService:
                         room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
                         await sync_to_async(room.save)()
                         await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
-                        
+
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
             p.is_afk = False
