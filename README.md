@@ -1,13 +1,3 @@
-
-## test data
-enter in django container
-```
-docker exec -it django sh
-```
-next use 
-```
-python manage.py seed
-```
 _This project has been created as a part of the 42 curriculum by cgoldens, atomasi, ktintim-, dvauthey, and akabbaj_
 
 # Transcendence
