@@ -67,7 +67,7 @@ export default function Announcement() {
         ref={showAnnonceRef}
       >
         <div className="modal-box bg-(--nav-color)">
-          {annonces_list.length === 0 
+          {annonces_list.length === 0 ?
             (
               <div className="text-center">
                 <h3>Annonce</h3>
