@@ -15,9 +15,8 @@ from .room_task_service import RoomTaskService
 from .meld_service import MeldService
 from channels.layers import get_channel_layer
 
+import json
 import asyncio
-
-
 
 class GameService:
 
@@ -205,13 +204,13 @@ class GameService:
         game_state = room.game_state
         game = GameEngine(room.uuid)
 
-        game_state = game.handleAction("points", game_state)
-        await save_room_state(room.uuid, game_state)
-        
         points = game.handleAction("get_final_score", game_state)
         
+        game_state = game.handleAction("point", game_state)
+        await save_room_state(room.uuid, game_state)
+        
         await ScoreService.save_final_score(room.code, room.game_state["game"], room.game_state["round"], points)
-            
+
     @staticmethod
     async def check_game_end(room, game):
         game_state = room.game_state
@@ -223,9 +222,6 @@ class GameService:
     
         if not finished:
             return False, None
-    
-        game_state = game.handleAction("point", game_state)
-        await save_room_state(room.uuid, game_state)
     
         return True, game_state
     
@@ -245,13 +241,17 @@ class GameService:
         if is_finished:
             await GameService.ask_host_continue(room, game_state)
             channel_layer = get_channel_layer()
+
+            room = await get_room_with_host(room_code)
             room.status = "end"
             await sync_to_async(room.save)()
         
+            game_state = room.game_state
             await end_room(room.uuid, game_state)
             await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
         else:
             await GameService.ask_host_continue(room, game_state)
+            room = await get_room_with_host(room_code)
             await GameService.continue_game(room)
             
         

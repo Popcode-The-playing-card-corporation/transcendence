@@ -166,7 +166,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_reconnect", self.user.username)
     
     async def disconnect(self, close_code):
-    
         if not self.user.is_authenticated:
             return
     
@@ -349,11 +348,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                                                        check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
                                                        )
-
-        is_end, gs = await GameService.check_game_end(room, game)
-        
-        if (is_end):
-            await GameService.check_goal_reached(room.code)
 
     async def handle_melds(self, payload):
         if (await RoomService.check_room_status("start", self.code) == False):
