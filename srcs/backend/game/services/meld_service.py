@@ -334,3 +334,20 @@ class MeldService:
             return "Tu ne peux plus faire d'annonce"
     
         return None
+    
+    async def check_shtokr(room_code, game_state):
+        players = game_state["players"]
+        tricks = game_state["tricks"]
+        colors = {"club": 0, "spade": 9, "diamond": 18, "heart": 27}
+
+        for id, p in players.items():
+            if tricks in p["shtokr"]:
+                if ({"value": "K", "color": tricks, "id": 7 + colors[tricks]} not in p["cards"] and
+                    {"value": "Q", "color": tricks, "id": 6 + colors[tricks]} not in p["cards"]):
+                    await  ScoreService.save_meld(room_code, id, game_state["game"], game_state["round"] - 1, -20)
+                    p["shtokr"] = []
+                    p["puntos"] -= 20
+                    return game_state
+                return game_state
+
+        return game_state
