@@ -84,7 +84,7 @@ export default function Announcement() {
               <tbody>
                 {
                   annonces_list.map((annonce, index) => {
-                    if (!annonce.cards[0]) {
+                    if (annonce.cards === null) {
                       return null;
                     }
                     let type = "";

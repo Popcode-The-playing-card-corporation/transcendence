@@ -21,10 +21,19 @@ function getRequests(friend_list: friendT[]): {
 	return { friends: friends, requests: requests };
 }
 
+
+function getPreferedTheme() {
+  if (window.matchMedia('(prefers-color-sheme: dark)'))
+    return ("popcode_dark");
+  else
+    return ("popcode_light");
+}
+
 export interface AuthContextType {
 	logged_in: boolean;
 	logging: boolean;
 	checking: boolean;
+	theme: string;
 	in_game: boolean;
 	userID: number | null;
 	has_pass: boolean;
@@ -35,6 +44,7 @@ export interface AuthContextType {
 	setLogging: React.Dispatch<SetStateAction<boolean>>;
 	setLoggedIn: React.Dispatch<SetStateAction<boolean>>;
 	setHasFriendRequest: React.Dispatch<SetStateAction<boolean>>;
+	setTheme: React.Dispatch<SetStateAction<string>>;
 }
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -46,6 +56,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 	const [userID, setUserID] = useState<number | null>(null);
 	const [has_pass, setPass] = useState(true);
 	const [hasFriendRequest, setHasFriendRequest] = useState<boolean>(false);
+	const [theme, setTheme] = useState(localStorage.getItem('theme') ?? getPreferedTheme());
 
 
 	useEffect(() => {
@@ -74,6 +85,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 	}, [])
 
 	return (
-		<authContext.Provider value={{ logged_in, logging, checking, in_game, userID, hasFriendRequest, has_pass, setPass, setGame, setLogging, setLoggedIn, setUserID, setHasFriendRequest }}>{children}</authContext.Provider>
+		<authContext.Provider value={{ logged_in, logging, checking, in_game, userID, hasFriendRequest, has_pass, theme, setTheme, setPass, setGame, setLogging, setLoggedIn, setUserID, setHasFriendRequest }}>{children}</authContext.Provider>
 	)
 }

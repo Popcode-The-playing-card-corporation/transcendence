@@ -5,12 +5,15 @@ import AppContent from "./AppContent";
 import { preloadCards } from "./utils/imports/textures";
 
 function App() {
-  const [fontChoice, setFontChoice] = useState("font-Cause");
+  const [fontChoice, setFontChoice] = useState(localStorage.getItem("font") ?? "font-Cause");
 
   useEffect(() => {
 	preloadCards();
   }, [])
 
+  useEffect(() => {
+    localStorage.setItem('font', fontChoice);
+  }, [fontChoice]);
   return (
 	<AuthProvider>
     <NotifProvider>

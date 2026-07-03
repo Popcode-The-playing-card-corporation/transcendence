@@ -206,6 +206,8 @@ class BroadcastService:
             else:
                 board = []
                 
+        user = await sync_to_async(PlayerPresence.objects.select_related("player").get)(position=player_position, room=room)
+        username = await BroadcastService._get_username(user)
         last_fold_id = game_state.get("last_fold_player")
         last_fold_username = ""
         if last_fold_id is not None:
@@ -215,6 +217,7 @@ class BroadcastService:
         return {
             "self_id": int(player_position),
             "host": room.host.username,
+            "user": username,
             "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
             "lastCard": None if game_state["lastCard"]["id"] == -1 or finished < room.nb_player else game_state["lastCard"],
             "annonces": player_annonces,
@@ -233,7 +236,6 @@ class BroadcastService:
                     "room_id": last_fold_id,
                     "cards": game_state.get("last_fold"),
                 },
-            "host": room.host.username
         }       
     
     @staticmethod

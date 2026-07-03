@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.room_views import create_room, update_params, invite_friend, get_game_scorelog, list_room, add_bot, list_my_started_room, is_presence, validate_room
-
+from .views.game_views import exit_game
 
 urlpatterns = [
     path('rooms/list/', list_room),
@@ -13,4 +13,5 @@ urlpatterns = [
     path('room/<str:code>/score/', get_game_scorelog),
     path('room/params/<str:code>/', update_params),
     path('room/<int:friend_id>/invite/', invite_friend),
+    path('exit/<str:code>/', exit_game),
 ]

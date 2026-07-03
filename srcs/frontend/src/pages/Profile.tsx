@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
-import React, { useState, useEffect, type SetStateAction, type Dispatch } from "react";
+import React, { useState, useEffect, type SetStateAction } from "react";
 import { Friends } from "../components/Profile/FriendsPart";
 import { History } from "../components/Profile/HistoryPart";
 import { ProfilePart } from "../components/Profile/ProfilePart";

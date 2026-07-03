@@ -45,6 +45,8 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
   const auth = useAuth();
   const notif = useNotif();
 
+  console.debug(can_accept);
+
   if (!updatedFriends) updatedFriends = dummy;
   if (!setUpdate) setUpdate = setDummy;
 

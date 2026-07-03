@@ -132,7 +132,7 @@ export default function GameWebSocket({
 					auth.setGame(false);
 					leaveRoom();
 				} else if (data.event === "new_room") {
-					if (payload.host === state.user) {
+					if (state.host === state.user) {
 						dispatch({type:"SET_HOST", payload:payload.host})
 						setCode(payload.code)
 					}
@@ -147,7 +147,11 @@ export default function GameWebSocket({
 						}
 						dispatch({type:"SET_MESSAGE", payload: data.player_name});
 					}
-					setGame(payload.self_card, payload.board_data)
+					if (payload.board_data) {
+						setGame(payload.self_card, payload.board_data)
+						dispatch({type:"SET_HOST", payload: payload.board_data.host})
+						dispatch({type:"SET_USER", payload: payload.board_data.user})
+					}
 				}
 			} else if (data.event === "error" || data.type === "error") {
 				if (data.message === "Need 2 players") {
@@ -251,9 +255,9 @@ export default function GameWebSocket({
 		dispatch({type:"SET_WAIT", payload:bool})
 	}
 	
-	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
+	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
 		shouldReconnect: () => {
-			return auth.logged_in ? true : false
+			return auth.logged_in && auth.in_game ? true : false
 		},
 		reconnectAttempts: 30,
 		reconnectInterval: 1000,

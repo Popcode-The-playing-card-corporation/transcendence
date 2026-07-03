@@ -12,26 +12,21 @@ import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../api/http/login";
 import { useAuth } from "../hooks/useAuth";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef} from "react";
 import { IoIosMoon } from "react-icons/io";
-
-function getPreferedTheme() {
-  if (window.matchMedia("(prefers-color-sheme: dark)")) return "popcode_dark";
-  else return "popcode_light";
-}
 
 export function Navbar() {
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
   const auth = useAuth();
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") ?? getPreferedTheme(),
-  );
   const showConfirmRef = useRef<HTMLDialogElement>(null);
+  const checkboxTheme = useRef<HTMLInputElement>(null);
 
   const toggleTheme = () => {
-    setTheme(theme === "popcode_dark" ? "popcode_light" : "popcode_dark");
+    auth.setTheme(
+      auth.theme === "popcode_dark" ? "popcode_light" : "popcode_dark",
+    );
   };
 
   async function handleLogout() {
@@ -52,10 +47,12 @@ export function Navbar() {
   }
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
+    localStorage.setItem("theme", auth.theme);
     const localTheme = localStorage.getItem("theme");
     document.querySelector("html")?.setAttribute("data-theme", localTheme!);
-  }, [theme]);
+    if (localTheme === "popcode_dark") checkboxTheme.current!.checked = false;
+    else checkboxTheme.current!.checked = true
+  }, [auth.theme]);
 
   return (
     <div className="navbar min-h-16 h-16 bg-primary fixed top-0 z-100">
@@ -124,7 +121,11 @@ export function Navbar() {
           <li>
             <label className="swap swap-rotate">
               {/* this hidden checkbox controls the state */}
-              <input type="checkbox" onClick={toggleTheme} />
+              <input
+                type="checkbox"
+                onClick={toggleTheme}
+                ref={checkboxTheme}
+              />
 
               <MdOutlineWbSunny className="swap-on text-xl" />
               <IoIosMoon className="swap-off text-xl" />
