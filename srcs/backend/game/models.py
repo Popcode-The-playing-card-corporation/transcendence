@@ -55,6 +55,7 @@ class Room(models.Model):
     cleanup_scheduled = models.BooleanField(default=False)
     round_time = models.DateTimeField(null=True, blank=True)
     wait_schedule = models.BooleanField(default=False)
+    is_paused = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.code}"

@@ -249,6 +249,16 @@ def save_room_state(uuid, data):
     room.save()
 
 @sync_to_async
+def get_nb_human(uuid):
+    room = Room.objects.get(uuid=uuid)
+    bots = PlayerPresence.objects.filter(
+            room=room,
+            is_human=False
+        ).count()
+    
+    return room.nb_player - bots
+
+@sync_to_async
 def delete_room(room_code):
     try:
         room = Room.objects.get(code=room_code)
