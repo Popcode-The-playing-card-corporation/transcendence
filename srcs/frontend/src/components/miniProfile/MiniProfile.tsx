@@ -44,11 +44,13 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
   const [can_accept, setAccept] = useState<boolean>(false);
   const auth = useAuth();
   const notif = useNotif();
+  let localUpdatedFriends = updatedFriends;
+  let localSet = setUpdate;
 
   console.debug(can_accept);
 
-  if (!updatedFriends) updatedFriends = dummy;
-  if (!setUpdate) setUpdate = setDummy;
+  if (!localUpdatedFriends) localUpdatedFriends = dummy;
+  if (!localSet) localSet = setDummy;
 
   useEffect(() => {
     async function getRequested(checkName: string) {
@@ -91,7 +93,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
           <div className="w-full flex justify-end">
             <div >
               {account.friend?.status === "accepted" ?
-                <DeleteBtn req_id={account.friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef} />
+                <DeleteBtn req_id={account.friend.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
                 : (
                   account.friend?.status === "pending" ? (
                     can_accept ? (
@@ -99,13 +101,13 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
                         <p className="flex items-center pr-2">Friend request received : </p>
                         <button
                           className="btn validate"
-                          onClick={() => changeHandler(account.friend.id, "accept", updatedFriends, setUpdate, null, notif)}
+                          onClick={() => changeHandler(account.friend.id, "accept", localUpdatedFriends, localSet, null, notif)}
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn del"
-                          onClick={() => changeHandler(account.friend.id, "delete", updatedFriends, setUpdate, null, notif)}
+                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, null, notif)}
                         >
                           <RxCross2 />
                         </button>
@@ -115,17 +117,17 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
                         <p className="flex items-center">Friend request sent : </p>
                         <button
                           className="btn del"
-                          onClick={() => changeHandler(account.friend.id, "delete", updatedFriends, setUpdate, null, notif)}
+                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, null, notif)}
                         >
                           <RxCross2 />
                         </button>
                       </div>)
                   )
-                    : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef} />
+                    : <AddFriendsBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
                 )
               }
             </div>
-            <BlockBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef} />
+            <BlockBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
           </div>
         </div>
         <table className="mt-5">
@@ -145,7 +147,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
         {/* {* if friend *} 
         need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}
         <div className="mt-10">
-          <MiniHistory history={history} updatedProfile={updatedFriends} setUpdate={setUpdate} />
+          <MiniHistory history={history} updatedProfile={localUpdatedFriends} setUpdate={localSet} />
         </div>
       </div >
       <form method="dialog" className="modal-backdrop">
