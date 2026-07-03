@@ -1,4 +1,4 @@
-export default function PrivacyPolicy() {
+export default function PrivacyPolicyClean() {
   return (
     <div className="page-content mt-17 text-justify">
       <h1>Privacy Policy</h1>
@@ -48,7 +48,6 @@ export default function PrivacyPolicy() {
           <br />
         </p>
       </div>
-      <br />
       <div className="pp-summary">
         <h2 className="text-center">SUMMARY OF KEY POINTS</h2>
         <br />
@@ -147,7 +146,6 @@ export default function PrivacyPolicy() {
         </p>
       </div>
       <div>
-        <br />
         <h2 className="text-center">
           TABLE OF CONTENTS
           <br />
@@ -221,7 +219,7 @@ export default function PrivacyPolicy() {
           1. WHAT INFORMATION DO WE COLLECT?
           <br />
         </h2>
-        <h3 className="text-center">
+        <h3>
           <br />
           Personnal information you disclose us
           <br />
@@ -244,7 +242,7 @@ export default function PrivacyPolicy() {
           <br />
           <br />
         </p>
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>email addresses</li>
           <li>usernames</li>
           <li>passwords</li>
@@ -279,7 +277,7 @@ export default function PrivacyPolicy() {
           <br />
           <br />
         </p>
-        <h3 className="text-center">
+        <h3>
           Google API
           <br />
           <br />
@@ -305,7 +303,6 @@ export default function PrivacyPolicy() {
           <br />
         </p>
       </div>
-      <br />
       <div className="informationProcess" id="informationProcess">
         <h2 className="text-center">
           2. HOW DO WE PROCESS YOUR INFORMATION
@@ -330,7 +327,7 @@ export default function PrivacyPolicy() {
           <br />
           <br />
         </p>
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>
             <strong>
               To facilitate account creation and authentication and otherwise
@@ -367,9 +364,7 @@ export default function PrivacyPolicy() {
       <div id="legalBases">
         <br />
         <br />
-        <h2 className="text-center">
-          3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR INFORMATION?
-        </h2>
+        <h2>3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR INFORMATION?</h2>
         <br />
         <br />
         <p>
@@ -395,7 +390,7 @@ export default function PrivacyPolicy() {
           <br />
           <br />
         </p>
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>
             <strong>Consent.</strong> We may process your information if you
             have given us permission (i.e. consent) to use your personal
@@ -444,7 +439,7 @@ export default function PrivacyPolicy() {
           <br />
           <br />
         </p>
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>
             If collection is clearly in the interests of an individual and
             consent cannot be obtained in a timely way
@@ -496,7 +491,7 @@ export default function PrivacyPolicy() {
         </ul>
       </div>
       <div id="sharePersonal" className="sharingPersonnalData">
-        <h2 className="text-center">
+        <h2>
           <br />
           <br />
           4. WHEN AND WITH WHOM DO WE SHARE YOUR PERSONNAL INFORMATION
@@ -514,8 +509,7 @@ export default function PrivacyPolicy() {
           We may need to share your personal information in the following
           situations:
         </p>
-        <br />
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>
             <strong>Business Transfers.</strong> We may share or transfer your
             information in connection with, or during negotiations of, any
@@ -527,9 +521,7 @@ export default function PrivacyPolicy() {
       <div className="cookiesTracker" id="cookiesTracker">
         <br />
         <br />
-        <h2 className="text-center">
-          5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?
-        </h2>
+        <h2>5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?</h2>
         <br />
         <br />
         <p>
@@ -727,14 +719,14 @@ export default function PrivacyPolicy() {
           <br />
           <br />{" "}
         </p>
-        <h3 className="text-center">Account information</h3>
+        <h3>Account information</h3>
         <br />
         <p>
           If you would at any time like to review or change the information in
           your account or terminate your account, you can:
         </p>
         <br />
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>Log in to your account settings and update your user account.</li>
         </ul>
         <br />
@@ -788,11 +780,8 @@ export default function PrivacyPolicy() {
         <br />
         <br />
       </div>
-      <br />
       <div id="usResidents">
-        <h2 className="text-center">
-          11. DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?
-        </h2>
+        <h2>11. DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?</h2>
         <br />
         <p>
           <em>
@@ -810,9 +799,7 @@ export default function PrivacyPolicy() {
           </em>
         </p>
         <br />
-        <h3 className="text-center">
-          Categories of Personal Information We Collect
-        </h3>
+        <h3>Categories of Personal Information We Collect</h3>
         <br />
         <p>
           The table below shows the categories of personal information we have
@@ -941,7 +928,7 @@ export default function PrivacyPolicy() {
           <br />
         </p>
         <br />
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>Receiving help through our customer support channels;</li>
           <li> Participation in customer surveys or contests; and</li>
           <li>
@@ -956,7 +943,7 @@ export default function PrivacyPolicy() {
           <br />
         </p>
         <br />
-        <ul className="list-disc ms-8">
+        <ul className="list-disc list-inside">
           <li>Category A - As long as the user has an account with us</li>
         </ul>
         <br />
@@ -1006,13 +993,13 @@ export default function PrivacyPolicy() {
           <br />
         </p>
         <h3 className="text-center">Your Rights</h3>
-        <br />
+		<br/>
         <p>
           You have rights under certain US state data protection laws. However,
           these rights are not absolute, and in certain cases, we may decline
           your request as permitted by law. These rights include:
         </p>
-        <br />
+		  <br/>
         <ul className="list-disc ms-8">
           <li>
             <strong>Right to know </strong>whether or not we are processing your
@@ -1049,7 +1036,7 @@ export default function PrivacyPolicy() {
           following rights:
           <br />
         </p>
-        <br />
+		<br/>
         <ul className="list-disc ms-8">
           <li>
             Right to access the categories of personal data being processed (as
@@ -1095,13 +1082,9 @@ export default function PrivacyPolicy() {
         <br />
         <p>
           To exercise these rights, you can contact us by visiting{" "}
-          <a href="mailto:popcorn.coders@gmail.com" className="link">
-            popcorn.coders@gmail.com
-          </a>
+          <a href="mailto:popcorn.coders@gmail.com" className="link">popcorn.coders@gmail.com</a>
           , by emailing us at{" "}
-          <a href="mailto:popcorn.coders@gmail.com" className="link">
-            popcorn.coders@gmail.com
-          </a>
+          <a href="mailto:popcorn.coders@gmail.com" className="link">popcorn.coders@gmail.com</a>
           , or by referring to the contact details at the bottom of this
           document.
           <br />
@@ -1118,7 +1101,7 @@ export default function PrivacyPolicy() {
           Request Verification
           <br />
         </h3>
-        <br />
+		<br/>
         <p>
           Upon receiving your request, we will need to verify your identity to
           determine you are the same person about whom we have the information
@@ -1142,27 +1125,23 @@ export default function PrivacyPolicy() {
         Appeals
         <br />
       </h3>
-      <br />
+	  <br/>
       <p>
         Under certain US state data protection laws, if we decline to take
         action regarding your request, you may appeal our decision by emailing
         us at{" "}
-        <a href="mailto:popcorn.coders@gmail.com" className="link">
-          popcorn.coders@gmail.com
-        </a>
-        . We will inform you in writing of any action taken or not taken in
+        <a href="mailto:popcorn.coders@gmail.com">popcorn.coders@gmail.com</a>.
+        We will inform you in writing of any action taken or not taken in
         response to the appeal, including a written explanation of the reasons
         for the decisions. If your appeal is denied, you may submit a complaint
         to your state attorney general.
       </p>
       <div className="updatesNotice" id="makeUpdates">
-        <h2 className="text-center">
-          <br />
+        <h2>
           <br />
           12. DO WE MAKE UPDATES TO THIS NOTICE?
           <br />
         </h2>
-        <br />
         <p>
           <em>
             <strong>In Short:</strong> Yes, we will update this notice as
@@ -1181,19 +1160,11 @@ export default function PrivacyPolicy() {
           <br />
         </p>
       </div>
-      <br />
       <div id="contact">
-        <h2 className="text-center">
-          13. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
-        </h2>
-        <br />
+        <h2>13. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</h2>
         <p>
           If you have questions or comments about this notice, you may email us
-          at{" "}
-          <a href="mailto:popcorn.coders@gmail.com" className="link">
-            popcorn.coders@gmail.com
-          </a>{" "}
-          or contact us by post at: <br />
+          at popcorn.coders@gmail.com or contact us by post at: <br />
           <br />
           Popcode Inc
           <br />
@@ -1204,14 +1175,11 @@ export default function PrivacyPolicy() {
           <br />
         </p>
       </div>
-      <br />
-      <br />
       <div id="handleData">
-        <h2 className="text-center">
+        <h2>
           14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM
           YOU?
         </h2>
-        <br />
         <p>
           You have the right to request access to the personal information we
           collect from you, details about how we have processed it, correct
@@ -1220,21 +1188,14 @@ export default function PrivacyPolicy() {
           information. These rights may be limited in some circumstances by
           applicable law. To request to review, update, or delete your personal
           information, please visit:{" "}
-          <a href="mailto:popcorn.coders@gmail.com" className="link">
-            popcorn.coders@gmail.com
-          </a>
-          .
+          <a href="mailto:popcorn.coders@gmail.com"></a>
+          popcorn.coders@gmail.com.
           <br />
           <br />
         </p>
         <p>
-          This Privacy Policy was created using{" "}
-          <a
-            className="link"
-            href="https://termly.io/products/privacy-policy-generator/"
-          >
-            Termly's Privacy Policy Generator
-          </a>
+          This Privacy Policy was created using Termly's Privacy Policy
+          Generator
         </p>
       </div>
     </div>

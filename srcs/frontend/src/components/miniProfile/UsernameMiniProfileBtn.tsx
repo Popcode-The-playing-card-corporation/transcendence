@@ -17,54 +17,56 @@ type Props = {
 };
 
 
-export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpdate}: Props) {
+export default function UsernameMiniProfileBtn({ id, name, updatedFriends, setUpdate }: Props) {
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
-  	
-  const [account, setAccount] = useState<profileT | errorT>({code:200, response:""})
-  const [history, setHistory] = useState<historyT[] | errorT>({code:200, response:""});
+
+  const [account, setAccount] = useState<profileT | errorT>({ code: 200, response: "" })
+  const [history, setHistory] = useState<historyT[] | errorT>({ code: 200, response: "" });
   const notif = useNotif();
   const auth = useAuth();
 
-	async function Sendnotif(title:string, message:string) {
-		notif?.showNotif(title, message, 5000);
-	}
+  async function Sendnotif(title: string, message: string) {
+    notif?.showNotif(title, message, 5000);
+  }
 
-	async function load_mini() {
-		if (!auth.logged_in || auth.userID === id || (id >= 1 && id <= 6)) {
-			return ;
-		}
-		const tmp_account = await getProfile(id);
-		if ('code' in tmp_account) {
-			Sendnotif("Profile Display Error:", "There was an error display " + name + "'s account!");
-			return ;
-		}
-		setAccount(tmp_account);
-		const gameHistory = await getPlayerHistory(id);
-		if ("code" in gameHistory) {
-			setHistory(gameHistory);
-		} else {
-			setHistory(await historyArray(gameHistory));
-		}
-		showMiniProfileRef.current?.showModal()
-		return ;
-	}
+  async function load_mini() {
+    if (!auth.logged_in || auth.userID === id || (id >= 1 && id <= 6)) {
+      return;
+    }
+    const tmp_account = await getProfile(id);
+    if ('code' in tmp_account) {
+      Sendnotif("Profile Display Error:", "There was an error display " + name + "'s account!");
+      return;
+    }
+    setAccount(tmp_account);
+    const gameHistory = await getPlayerHistory(id);
+    if ("code" in gameHistory) {
+      setHistory(gameHistory);
+    } else {
+      setHistory(await historyArray(gameHistory));
+    }
+    showMiniProfileRef.current?.showModal()
+    return;
+  }
 
-	
-	return (
+
+  return (
     <>
-    <button
-      className="link-hover"
-      onClick={load_mini}
-    >
-    {name}
-    </button>
-    <dialog
-      id="showMiniProfile"
-      className="modal"
-      ref={showMiniProfileRef}
-    >
-      <MiniProfile account={account} updatedFriends={updatedFriends} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef}/>
-    </dialog>
-      </>
-	);
+      <button
+        className="link-hover w-38 max-w-38"
+        onClick={load_mini}
+      >
+        <span className="truncate">
+          {name}
+        </span>
+      </button>
+      <dialog
+        id="showMiniProfile"
+        className="modal"
+        ref={showMiniProfileRef}
+      >
+        <MiniProfile account={account} updatedFriends={updatedFriends} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef} />
+      </dialog>
+    </>
+  );
 }

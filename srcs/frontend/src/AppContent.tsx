@@ -9,7 +9,7 @@ import { Rules } from "./pages/Rules";
 import { Login } from "./pages/Login";
 import { Footer } from "./components/utils/Footer";
 import { NotifPopUp } from "./components/utils/NotifPopUp";
-import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import  PrivacyPolicy  from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./OAuth/GoogleCallback";
@@ -36,31 +36,31 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
   }
 
   return (
-    <BrowserRouter>
-      <Presence />
-      <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard} />
-      {auth.in_game ? null : <Navbar />}
-      <NotifPopUp />
-      <Routes>
-        <Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
-        <Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
-        <Route path="/" element={<Home />} />
-        <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
-        <Route
-          path="/settings"
-          element={<Settings setFontChoice={setFontChoice} />}
-        />
-        <Route path="/rules" element={<Rules />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-        <Route path="/termsOfService" element={<TermsOfService />} />
-        <Route path="/login/google/callback" element={<GoogleCallback />} />
-        <Route path="/login/42/callback" element={<FortyTwoCallback />} />
-        <Route path="/login/github/callback" element={<GitCallback />} />
-        <Route path="*" element={<Error404 />} />
-      </Routes>
-      {auth.in_game ? null : <Footer />}
-    </BrowserRouter>
+        <BrowserRouter>
+		  <Presence />
+		  <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
+		  {auth.in_game ? null : <Navbar />}
+          <NotifPopUp />
+          <Routes>	
+			<Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
+			<Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
+            <Route path="/" element={<Home />} />
+            <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
+            <Route
+              path="/settings"
+              element={<Settings setFontChoice={setFontChoice} />}
+            />
+            <Route path="/rules" element={<Rules />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/privacyPolicy" element={< PrivacyPolicy/>} />
+            <Route path="/termsOfService" element={<TermsOfService />} />
+            <Route path="/login/google/callback" element={<GoogleCallback />} />
+            <Route path="/login/42/callback" element={<FortyTwoCallback />} />
+            <Route path="/login/github/callback" element={<GitCallback />} />
+            <Route path="*" element={<Error404 />} />
+          </Routes>
+		  {auth.in_game ? null : <Footer />}
+        </BrowserRouter>
   );
 }
 

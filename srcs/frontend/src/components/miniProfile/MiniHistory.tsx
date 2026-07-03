@@ -6,74 +6,74 @@ import type { errorT } from "../../utils/type/errorType";
 
 
 type Props = {
-  history:historyT[] | errorT;
-  updatedProfile:boolean;
-  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+  history: historyT[] | errorT;
+  updatedProfile: boolean;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function MiniHistory({history, updatedProfile, setUpdate}:Props) {
+export function MiniHistory({ history, updatedProfile, setUpdate }: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10);
-  // const fakeHisotry = [
+  // const fakeHistory = [
   //   {
-  // 	  game_id: 0,
-  // 	  start: "dnflds",
-  // 	  points: 4,
-  // 	  rank: 3,
-  // 	  won: true,
-  // 	  duration: 122,
-  // 	  nb_player: 2,
-  // 		players: [
-  // 			{
-  // 				id: 0,
-  // 				username: "philipe",
-  // 				is_host: true,
-  // 				position: 1,
-  // 			},
-  // 			{
-  // 				id: 1,
-  // 				username: "philip2",
-  // 				is_host: false,
-  // 				position: 1,
-  // 			},
-  // 		]
+  //     game_id: 0,
+  //     start: "dnflds",
+  //     points: 4,
+  //     rank: 3,
+  //     won: true,
+  //     duration: 122,
+  //     nb_player: 2,
+  //     players: [
+  //       {
+  //         id: 11,
+  //         username: "philipdjasdhdkjahdkjsakjhasjkas",
+  //         is_host: true,
+  //         position: 1,
+  //       },
+  //       {
+  //         id: 1,
+  //         username: "philip2",
+  //         is_host: false,
+  //         position: 1,
+  //       },
+  //     ]
   //   },
   //
   //   {
-  // 	  game_id: 1,
-  // 	  start: "dnflds",
-  // 	  points: 4,
-  // 	  rank: 3,
-  // 	  won: false,
-  // 	  duration: 122,
-  // 	  nb_player: 2,
-  // 		players: [
-  // 			{
-  // 				id: 0,
-  // 				username: "philipe",
-  // 				is_host: true,
-  // 				position: 1,
-  // 			},
-  // 			{
-  // 				id: 1,
-  // 				username: "philip2",
-  // 				is_host: false,
-  // 				position: 1,
-  // 			},
-  // 			{
-  // 				id: 2,
-  // 				username: "philip3",
-  // 				is_host: false,
-  // 				position: 2,
-  // 			},
-  // 		]
+  //     game_id: 1,
+  //     start: "dnflds",
+  //     points: 4,
+  //     rank: 3,
+  //     won: false,
+  //     duration: 122,
+  //     nb_player: 2,
+  //     players: [
+  //       {
+  //         id: 0,
+  //         username: "philipe",
+  //         is_host: true,
+  //         position: 1,
+  //       },
+  //       {
+  //         id: 1,
+  //         username: "philip2",
+  //         is_host: false,
+  //         position: 1,
+  //       },
+  //       {
+  //         id: 2,
+  //         username: "philip3",
+  //         is_host: false,
+  //         position: 2,
+  //       },
+  //     ]
   //   }
-  //  ]
+  // ]
 
 
   if ('code' in history) {
-	if (history.response === "Forbidden: not friends")
-		return <p>Send a friend request to see this person's history!</p>;
+    if (history.response === "Forbidden: not friends")
+      return <p>Send a friend request to see this person's history!</p>;
     return <p>Error displaying history</p>;
   }
 
@@ -102,55 +102,61 @@ export function MiniHistory({history, updatedProfile, setUpdate}:Props) {
         Show history of Eude
       </div>
       <div className="collapse-content text-sm z-1">
-        <table className="mt-5 text-center w-full">
-          <tr>
-            <th className="">Date</th>
-            <th className="th-history">Points</th>
-            <th className="th-history">Result</th>
-            <th className="th-history">Time played</th>
-            <th className="th-history">Nb players</th>
-            <th className=" overflow-hidden">Opponents</th>
-          </tr>
-          {history.slice(0, nbSlice).map((game: historyT) => (
+        {history.length === 0 ?
+          <div className="text-center">
+            <p>Once you have played a game, you'll be able to see it here !</p>
+          </div>
+          :
+          <table className="mt-5 text-center w-full">
+            <tr>
+              <th className="">Date</th>
+              <th className="th-history">Points</th>
+              <th className="th-history">Result</th>
+              <th className="th-history">Time played</th>
+              <th className="th-history">Nb players</th>
+              <th className=" overflow-hidden">Opponents</th>
+            </tr>
+            {history.slice(0, nbSlice).map((game: historyT) => (
 
-        <tr
-          className={
-            (game.won ? "bg-success" : "bg-warning") +
-            " h-16 border-b-2 border-base-100"
-          }
-        >
-          <td>{game.start}</td>
-          <td>{game.points}</td>
-          <td>{game.won ? "winner" : "loooser"}</td>
-          <td>{game.duration}</td>
-          <td>{game.nb_player}</td>
-          <td>
-            <div className="dropdown dropdown-center">
-              <div
-                tabIndex={0}
-                role="button"
-                className="link hover:scale-110 transition-all"
+              <tr
+                className={
+                  (game.won ? "bg-success" : "bg-warning") +
+                  " h-16 border-b-2 border-base-100"
+                }
               >
-                Click to see
-              </div>
-              <ul
-                tabIndex={-1}
-                className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
-              >
-                {game.players.map((player: playerT) => (
-                  <li>
-			  			<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate}/>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </td>
-        </tr>
-          ))}
-          <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
-            {history.length > 10? (isMore ? "Show less" : "Show more") : ""}
-          </a>
-        </table>
+                <td>{game.start}</td>
+                <td>{game.points}</td>
+                <td>{game.won ? "winner" : "loooser"}</td>
+                <td>{game.duration}</td>
+                <td>{game.nb_player}</td>
+                <td>
+                  <div className="dropdown dropdown-center">
+                    <div
+                      tabIndex={0}
+                      role="button"
+                      className="link hover:scale-110 transition-all"
+                    >
+                      Click to see
+                    </div>
+                    <ul
+                      tabIndex={-1}
+                      className="dropdown-content menu rounded-box z-1 max-w-42 p-2 shadow-sm"
+                    >
+                      {game.players.map((player: playerT) => (
+                        <li>
+                          <UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
+              {history.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
+            </a>
+          </table>
+        }
       </div>
     </div>
   );
