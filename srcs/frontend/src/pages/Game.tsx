@@ -89,15 +89,6 @@ export function Game() {
     get_info();
   }, [auth.logging, navigate, location.state, notif, refresh]);
 
-			setRooms(tmp_rooms);
-			setValid(true);
-		}
-		if (!auth.in_game) {
-			get_info();
-		}
-
-	}, [auth.logging, navigate, location.state, notif, refresh, auth.in_game])
-
 	if (valid === null) {
 		return (
 			<div className="page-content flex items-center justify-center min-h-screen">
