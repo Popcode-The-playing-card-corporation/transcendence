@@ -1,7 +1,7 @@
 import type { playerT } from "./playerType";
 
 export type historyT = {
-  game_id: number;
+  game_id: string;
   start: string;
   points: number;
   rank: number;
@@ -13,7 +13,7 @@ export type historyT = {
 
 
 export const defaultHistory:historyT = {
-  game_id: 0,
+  game_id: "",
   start: "",
   points: 0,
   rank: 0,

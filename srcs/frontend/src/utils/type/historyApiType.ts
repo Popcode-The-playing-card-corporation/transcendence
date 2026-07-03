@@ -1,5 +1,5 @@
 export type historyApiT = {
-	game_id: number;
+	game_id: string;
 	uuid: string;
 	start: string;
 	points: number;

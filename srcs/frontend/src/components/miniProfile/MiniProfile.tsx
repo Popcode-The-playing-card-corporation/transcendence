@@ -47,8 +47,6 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
   let localUpdatedFriends = updatedFriends;
   let localSet = setUpdate;
 
-  console.debug(can_accept);
-
   if (!localUpdatedFriends) localUpdatedFriends = dummy;
   if (!localSet) localSet = setDummy;
 

@@ -67,6 +67,7 @@ export type lastFoldT = {
 export type boardDataNT = {
 	self_id: number,
 	board: boardT[],
+	lastCard: cardT | null,
 	asked: cardT,
 	trick: string | null,
 	points: playerScoreT[],
@@ -83,6 +84,7 @@ export type boardDataNT = {
 export const default_board : boardDataNT = {
 	self_id: -1,
 	board: [],
+	lastCard: null,
 	asked: {color: "", value:"", id:0},
 	trick: null,
 	points: [],
@@ -99,6 +101,7 @@ export const default_board : boardDataNT = {
 export type boardDataT = {
 	self_id: number,
 	board: boardT[],
+	lastCard: cardT | null,
 	asked: cardT,
 	trick: string | null,
 	points: playerScoreT[],
@@ -115,6 +118,7 @@ export type boardDataT = {
 export const default_Nboard : boardDataT = {
 	self_id: -1,
 	board: [],
+	lastCard: null,
 	asked: {color: "", value:"", id:0},
 	trick: null,
 	points: [],

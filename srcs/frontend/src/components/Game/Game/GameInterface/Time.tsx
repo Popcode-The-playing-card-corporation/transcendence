@@ -9,7 +9,7 @@ export default function Time() {
   const timeout = state.game.boardData.round_time;
   const [timeLeft, setTimeLeft] = useState<number>(
     Math.floor((timeout.getTime() - new Date().getTime()) / 1000),
-  ); // new to calculate with backend
+  );
 
   useEffect(() => {
     async function setTime() {
@@ -29,7 +29,7 @@ export default function Time() {
     return () => clearInterval(intervalId);
   }, [state.game.boardData.round_time]);
 
-  if (!selfTurn) {
+  if (!selfTurn || state.event === "finish_round") {
     return (
       <div className="flex justify-around items-center w-full">
         <Chrono />
