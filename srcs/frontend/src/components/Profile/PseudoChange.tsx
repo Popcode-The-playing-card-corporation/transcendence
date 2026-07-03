@@ -57,7 +57,7 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, ha
     <div className="modal-box">
       <h3 className="text-lg font-bold text-center">Change username</h3>
       <p className="py-4 text-center">
-        Enter your password and choose your new username
+        {has_pass ? "Enter your password and choose your new username" : "Choose your new username"}
       </p>
 	    {reason.code === -1 ? <p className="py-4 text-center">{String(reason.response)}</p> : ""}
 		{reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
