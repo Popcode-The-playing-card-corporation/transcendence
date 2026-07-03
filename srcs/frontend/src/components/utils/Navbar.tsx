@@ -16,10 +16,8 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosMoon } from "react-icons/io";
 
 function getPreferedTheme() {
-  if (window.matchMedia('(prefers-color-sheme: dark)'))
-    return ("popcode_dark");
-  else
-    return ("popcode_light");
+  if (window.matchMedia("(prefers-color-sheme: dark)")) return "popcode_dark";
+  else return "popcode_light";
 }
 
 export function Navbar() {
@@ -27,7 +25,9 @@ export function Navbar() {
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
   const auth = useAuth();
-  const [theme, setTheme] = useState(localStorage.getItem('theme') ?? getPreferedTheme());
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") ?? getPreferedTheme(),
+  );
   const showConfirmRef = useRef<HTMLDialogElement>(null);
 
   const toggleTheme = () => {
@@ -52,8 +52,8 @@ export function Navbar() {
   }
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
-    const localTheme = localStorage.getItem('theme')
+    localStorage.setItem("theme", theme);
+    const localTheme = localStorage.getItem("theme");
     document.querySelector("html")?.setAttribute("data-theme", localTheme!);
   }, [theme]);
 
@@ -90,13 +90,14 @@ export function Navbar() {
             <NavLink
               to="/profile"
               className={({ isActive }) =>
-                (isActive ? "active " : "") + "item-menu" + (auth.hasFriendRequest ? " indicator" : "")
+                (isActive ? "active " : "") +
+                "item-menu" +
+                (auth.hasFriendRequest ? " indicator" : "")
               }
             >
-              {auth.hasFriendRequest ?
+              {auth.hasFriendRequest ? (
                 <div className="indicator-item badge badge-xs" />
-                : null
-              }
+              ) : null}
               <CgProfile /> Profile
             </NavLink>
           </li>
@@ -131,7 +132,11 @@ export function Navbar() {
           </li>
           <li>
             <button
-              onClick={() => auth.logged_in ? showConfirmRef.current?.showModal() : navigate("/login", { state: current_location.pathname })}
+              onClick={() =>
+                auth.logged_in
+                  ? showConfirmRef.current?.showModal()
+                  : navigate("/login", { state: current_location.pathname })
+              }
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
               {auth.logged_in ? (
@@ -141,19 +146,20 @@ export function Navbar() {
               )}
             </button>
           </li>
-          <dialog
-            id="showConfirm"
-            className="modal"
-            ref={showConfirmRef}
-          >
+          <dialog id="showConfirm" className="modal" ref={showConfirmRef}>
             <div className="modal-box">
               <h3>Are you sure?</h3>
-              <p>
-                You are going to be logged out.
-              </p>
+              <p>You are going to be logged out.</p>
               <div className="flex justify-end gap-2">
-                <button className="btn del" onClick={handleLogout}>Confirm</button>
-                <button className="btn" onClick={() => showConfirmRef.current?.close()}>Cancel</button>
+                <button className="btn del" onClick={handleLogout}>
+                  Confirm
+                </button>
+                <button
+                  className="btn"
+                  onClick={() => showConfirmRef.current?.close()}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </dialog>

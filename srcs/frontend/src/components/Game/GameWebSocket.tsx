@@ -12,6 +12,7 @@ import { GameContext } from "./context/GameContext";
 import type { playerT } from "../../utils/type/playerType";
 import type { cardT } from "../../utils/type/handCardsType";
 import type { boardDataNT, selfAnnonceT } from "../../utils/type/boardDataType";
+import ModalRejoinGame from "./createOrJoin/ModalRejoinGame";
 
 export default function GameWebSocket({
   code,
@@ -303,6 +304,7 @@ export default function GameWebSocket({
 	
 	return (
 		<GameContext.Provider value={{state, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
+		<ModalRejoinGame />
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);
