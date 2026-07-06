@@ -145,19 +145,7 @@ def player_afk(room_code, user_id, round, game):
     p.save()
     
     channel_layer = get_channel_layer()
-    
-    if p.is_afk_count >= 3:
-        async_to_sync(channel_layer.group_send)(
-            f"player_{p.player_id}",
-            {
-                "type": "game_event",
-                "event": "force_disconnect",
-                "payload": {
-                    "message": "Player AFK 3 time"
-                }
-            }
-        )
-    
+        
     async_to_sync(channel_layer.group_send)(
         f"player_{p.player_id}",
         {

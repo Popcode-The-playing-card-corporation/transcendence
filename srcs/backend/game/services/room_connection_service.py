@@ -20,7 +20,7 @@ class RoomConnectionService:
         
         await sync_to_async(
             User.objects.filter(id=user.id).update
-		)(presence_game=F("presence_game") + 1)
+        )(presence_game=F("presence_game") + 1)
         
  
         room = await sync_to_async(Room.objects.filter(code=code).first)()
@@ -47,6 +47,9 @@ class RoomConnectionService:
         
         if room.status == "start":
             if is_member:
+                await sync_to_async(
+                    PlayerPresence.objects.filter(player_id=user.id).update
+                )(is_online=True)
                 return {"close": False}
             else:
                 return {

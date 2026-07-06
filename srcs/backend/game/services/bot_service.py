@@ -1,5 +1,5 @@
 from asgiref.sync import sync_to_async
-from ..models import PlayerPresence, User
+from ..models import PlayerPresence, User, Room
 from .room_task_service import RoomTaskService
 from .broadcast_service import BroadcastService
 from django.utils import timezone
@@ -16,18 +16,19 @@ import random
 class BotService:
 
     @staticmethod
-    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
+    async def play_afk(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
         channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
             await ask_continue(room.code)
             return game_state
         
+        room = await get_room_with_host(room.code)
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
             room=room,
             position=int(game_state["playing"])
         )
-        #TODO split this function to have play afk human and play as bot
+        
         if p.is_human and (p.is_afk or not p.is_online):
             await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
             game_state = await BotService.play_bot(game, room.code, check_end=check_end, ask_continue=ask_continue)
@@ -61,9 +62,24 @@ class BotService:
                 room = await get_room_with_host(room.code)
                 game_state = room.game_state
                 await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
-
-        while (not is_end and (not p.is_human or not p.is_online)):
             
+        return game_state
+
+    @staticmethod
+    async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
+        channel_layer = get_channel_layer()
+        is_end, gs = await check_end(room, game)
+        if is_end:
+            await ask_continue(room.code)
+            return game_state
+        
+        room = await get_room_with_host(room.code)
+        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+            room=room,
+            position=int(game_state["playing"])
+        )
+        
+        while (not is_end and (not p.is_human or not p.is_online) and not room.is_paused):
             await asyncio.sleep(random.randint(1, 3))
 
             if (game_state["round"] == 0):
@@ -111,6 +127,8 @@ class BotService:
                 
     @staticmethod
     async def play_bot(game, room_code, check_end=None, ask_continue=None):
+        if not await sync_to_async(Room.objects.filter(code=room_code).exists)():
+            return game_state
         room = await get_room_with_host(room_code)
         game_state = room.game_state
         is_end, gs = await check_end(room, game)
