@@ -31,8 +31,6 @@ urlpatterns = [
     path("propal/", list_propal),
     path("list_not_friend/", list_user_not_friend),
     
-    #TODO add report
-    
     #stat part
     path("leaderboard/", leaderboard),
     path("history/", game_history),

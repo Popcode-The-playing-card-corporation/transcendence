@@ -107,7 +107,6 @@ def lobby_kick_all(room_code):
         }
     )
 
-#TODO check bug when no player in websocket room task for player (took too long to shut down and was killed)
 @shared_task
 def player_afk(room_code, user_id, round, game):
     room = Room.objects.select_related("host").filter(code=room_code).first()

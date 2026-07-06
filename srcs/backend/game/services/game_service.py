@@ -134,7 +134,6 @@ class GameService:
             taker=taker,
             melds=melds
         )
-        #TODO delete this double id player finished ?
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished:

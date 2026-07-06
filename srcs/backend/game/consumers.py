@@ -28,7 +28,7 @@ CARD_VALUES = {
     "K": 13,
     "A": 14
 }
-#TODO bug on open room to reconnect if server down
+
 ACTION_HANDLERS = {
     "start_game": "handle_start_game",
     "play_card": "handle_play_card",

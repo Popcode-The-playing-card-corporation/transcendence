@@ -148,11 +148,10 @@ class GameEngine:
 		strongest = self.strongestCard(asked, fold, data["tricks"])
 		index = 0
 		for i in board.keys():
-			#if i != "asked":
 			if (board[i] == strongest):
 				index = i
 				break
-		#TODO grosse merde qui pue du cul
+		
 		melds = Player.countMelds(Player(), fold, data["tricks"])
   
 		data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
