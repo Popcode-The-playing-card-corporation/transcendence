@@ -7,11 +7,12 @@ type Props = {
   gameHistory: historyT[];
   updatedProfile: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  isHome: boolean
 };
 
-export function History({ gameHistory, updatedProfile, setUpdate }: Props) {
+export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Props) {
   const [isMore, setIsMore] = useState(false);
-  const [nbSlice, setNbSlice] = useState(10)
+  const [nbSlice, setNbSlice] = useState(isHome ? 3 : 10)
   // const fakeHistory =
   //   [
   //     {
@@ -73,7 +74,7 @@ export function History({ gameHistory, updatedProfile, setUpdate }: Props) {
   function handleMoreLessBtn() {
     if (isMore) {
       setIsMore(false);
-      setNbSlice(10);
+      setNbSlice(isHome ? 3 : 10);
     }
     else {
       setIsMore(true);
@@ -88,58 +89,69 @@ export function History({ gameHistory, updatedProfile, setUpdate }: Props) {
         </div>
         :
         <table className="mt-5 table-auto text-center w-full" >
-          <tr className="h-14">
-            <th className="th-history">Game ID</th>
-            <th className="w-40">Date</th>
-            <th className="th-history">Your points</th>
-            <th className="th-history">Your result</th>
-            <th className="th-history">Time played</th>
-            <th className="th-history">Nb players</th>
-            <th className=" overflow-hidden">Opponents</th>
-          </tr>
-          {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-            <tr
-              className={
-                (game.won ? "bg-success" : "bg-warning") +
-                " h-16 border-b-2 border-base-100"
-              }
-            >
-              <td>
-                <p className="ml-2">{game.game_id} </p>
-              </td>
-              <td>{game.start}</td>
-              <td>{game.points}</td>
-              <td>{game.won ? "winner" : "loooser"}</td>
-              <td>{game.duration}</td>
-              <td>{game.nb_player}</td>
-              <td>
-                <div className="dropdown dropdown-center">
-                  <div
-                    tabIndex={0}
-                    role="button"
-                    className="link hover:scale-110 transition-all"
-                  >
-                    Click to see
-                  </div>
-                  <ul
-                    tabIndex={-1}
-                    className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
-                  >
-                    {game.players.map((player: playerT) => (
-                      <li>
-                        <UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </td>
+          <thead>
+            <tr className="h-14">
+              <th className="th-history">Game ID</th>
+              <th className="w-40">Date</th>
+              <th className="th-history">Your points</th>
+              <th className="th-history">Time played</th>
+              <th className="th-history">Nb players</th>
+              <th className=" overflow-hidden">Opponents</th>
+              <th className="th-history">Your result</th>
             </tr>
+          </thead>
+          {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+            <tbody>
+              <tr className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}>
+                <td>
+                  <p className="ml-2">{game.game_id} </p>
+                </td>
+                <td>{game.start}</td>
+                <td>{game.points}</td>
+                <td>{game.duration}</td>
+                <td>{game.nb_player}</td>
+                <td>
+                  <div className="dropdown dropdown-center">
+                    <div
+                      tabIndex={0}
+                      role="button"
+                      className="link hover:scale-110 transition-all"
+                    >
+                      Click to see
+                    </div>
+                    <ul
+                      tabIndex={-1}
+                      className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
+                    >
+                      {game.players.length === 0 ?
+                        <p>
+                          No opponents.
+                        </p>
+                        :
+                        (
+                          game.players.map((player: playerT) => (
+                            <li>
+                              <UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate} />
+                            </li>
+                          ))
+                        )
+                      }
+                    </ul>
+                  </div>
+                </td>
+                <td className={
+                  (game.won ? "bg-success" : "bg-warning") +
+                  " h-16 border-y border-base-200"}>{game.won ? "winner" : "loooser"}</td>
+              </tr>
+            </tbody>
           ))
           }
-          <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
-            {gameHistory.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
+          {isHome ? null : (
+            <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
+              {gameHistory.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
 
-          </a>
+            </a>
+          )}
         </table >
       }
     </>
