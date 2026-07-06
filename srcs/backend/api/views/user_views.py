@@ -80,9 +80,16 @@ def user_data(request, user_id):
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([AllowAny])
 def register(request):
+    username = request.data.get("username")
     re_pass = request.data.get("re_password")
     password = request.data.get("password")
     
+    if (User.objects.filter(username=username).exists()):
+        return Response(
+            {"error": "This username is already used"},
+            status=403
+        )
+
     if (re_pass != password):
         return Response(
 			{"error": (f"Passwords must match!")},
