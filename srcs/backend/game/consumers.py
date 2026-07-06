@@ -198,9 +198,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     Room.objects.filter(code=self.code).update
                 )(is_paused=False)
                 
-                
-                
-                
             room = await get_room_with_host(room.code)
             asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
