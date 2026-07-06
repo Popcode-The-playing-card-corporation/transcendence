@@ -117,8 +117,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         if finished and room.status == "start":
             await GameService.check_goal_reached(room.code)
-    #TODO avoid does not exist error on room connection
     
+
     async def connect(self):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
@@ -128,7 +128,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.close(code=4003)
             return
 
-        if not await sync_to_async(Room.objects.get)(code=self.code):
+        if not await sync_to_async(Room.objects.filter(code=self.code).exists)():
                 await self.send_json({"error": "The room does not exist"})
                 await self.close(code=4004)
                 return
