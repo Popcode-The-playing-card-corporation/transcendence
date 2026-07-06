@@ -55,9 +55,7 @@ class RoomService:
         await sync_to_async(
             User.objects.filter(id=user.id).update)(presence_game=F("presence_game") - 1)
         
-        await sync_to_async(
-			PlayerPresence.objects.filter(player_id=user.id).update
-		)(is_online=False)
+        await sync_to_async(PlayerPresence.objects.filter(player_id=user.id).update)(is_online=False)
         
         if (old_presence == 1): 
             room = await get_room_with_host(code)
