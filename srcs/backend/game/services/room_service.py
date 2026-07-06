@@ -53,10 +53,7 @@ class RoomService:
             lambda: User.objects.get(id=user.id).presence_game)()
 
         await sync_to_async(
-            User.objects.filter(id=user.id).update
-		)(
-            presence_game=F("presence_game") - 1
-        )
+            User.objects.filter(id=user.id).update)(presence_game=F("presence_game") - 1)
         
         await sync_to_async(
 			PlayerPresence.objects.filter(player_id=user.id).update
