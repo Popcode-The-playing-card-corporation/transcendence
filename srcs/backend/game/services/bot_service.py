@@ -77,7 +77,6 @@ class BotService:
             room=room,
             position=int(game_state["playing"])
         )
-        #TODO split this function to have play afk human and play as bot
         
         while (not is_end and (not p.is_human or not p.is_online) and not room.is_paused):
             await asyncio.sleep(random.randint(1, 3))
