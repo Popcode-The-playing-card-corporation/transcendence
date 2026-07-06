@@ -78,6 +78,7 @@ class PlayerPresence(models.Model):
     difficulty = models.CharField(max_length=6, choices=DIFFICULTY_CHOICES, default="medium")
     is_afk = models.BooleanField(default=False)
     is_afk_count = models.IntegerField(default=0)
+    disconnected_scheduled = models.BooleanField(default=False)
     
     class Meta:
         unique_together = ['player', 'room']

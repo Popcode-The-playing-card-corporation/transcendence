@@ -175,7 +175,27 @@ def wait_time(room_code, round, game):
     room.wait_schedule = False
     room.save()
     
+@shared_task
+def disconnected_player(room_code, player_id):
+    room = Room.objects.select_related("host").filter(code=room_code).first()
+    presence = PlayerPresence.objects.filter(room=room, player_id=player_id).first()
+    channel_layer = get_channel_layer()
     
+    if not presence.disconnected_scheduled:
+        return
+    
+    presence.is_online = False
+    presence.save()
+    
+    
+    async_to_sync(channel_layer.group_send)(
+        f"player_{presence.player_id}",
+        {
+            "type": "player_afk",
+            "reason": "Player AFK",
+            "code": room.code
+        }
+    )
 
 
 
