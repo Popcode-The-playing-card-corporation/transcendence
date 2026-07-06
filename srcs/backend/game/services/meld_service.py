@@ -322,9 +322,6 @@ class MeldService:
     @staticmethod
     async def validate_player_can_announce(room, position):
     
-        if int(position) != int(room.game_state["playing"]):
-            return "Ce n'est pas à toi de jouer"
-    
         already_started = any(
             len(player["taken"]) > 0
             for player in room.game_state["players"].values()
