@@ -53,13 +53,13 @@ export default function UsernameMiniProfileBtn({ id, name, updatedFriends, setUp
   return (
     <>
       <button
-        className="link-hover w-38 max-w-38"
+        className="link-hover "
         onClick={load_mini}
       >
         <span className="truncate">
           {name}
         </span>
-      </button>
+      </button >
       <dialog
         id="showMiniProfile"
         className="modal"

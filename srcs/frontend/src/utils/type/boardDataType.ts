@@ -79,6 +79,7 @@ export type boardDataNT = {
 	round_time: string,
 	round: number,
 	last_fold: lastFoldT,
+	game: number;
 }
 
 export const default_board : boardDataNT = {
@@ -96,6 +97,7 @@ export const default_board : boardDataNT = {
 	round_time: "",
 	round: 0,
 	last_fold: {username:"", room_id: -1, cards: []},
+	game: 0,
 }
 
 export type boardDataT = {
@@ -113,6 +115,7 @@ export type boardDataT = {
 	round_time: Date,
 	round: number,
 	last_fold: lastFoldT,
+	game: number;
 }
 
 export const default_Nboard : boardDataT = {
@@ -130,4 +133,5 @@ export const default_Nboard : boardDataT = {
 	round_time: new Date(0,0,0),
 	round: 0,
 	last_fold: {username:"", room_id: -1, cards: []},
+	game: 0,
 }

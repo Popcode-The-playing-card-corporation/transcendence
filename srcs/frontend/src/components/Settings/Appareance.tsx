@@ -64,10 +64,10 @@ export default function Appareance({
             </li>
             <li>
               <a
-                className="font-Yuyu"
-                onClick={() => setFontChoice("font-Yuyu")}
+                className="font-Dancing"
+                onClick={() => setFontChoice("font-Dancing")}
               >
-                Yuyu
+                Dancing Script
               </a>
             </li>
             <li>

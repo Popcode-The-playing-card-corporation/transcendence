@@ -21,10 +21,11 @@ export function RegisterForm({
   const [password, setPassword] = useState("");
   const [repassword, setrePassword] = useState("");
   const [failure, setFailure] = useState(false);
-  const [reason, setReason] = useState<errorT>({code:200, response:""});
+  const [reason, setReason] = useState<errorT>({ code: 200, response: "" });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState<boolean>(false);
+  const [acceptConditions, setAcceptConditions] = useState<boolean>(false);
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -43,26 +44,26 @@ export function RegisterForm({
     setrePassword(e.target.value);
   };
 
-  function validate_inputs(in_email:string, in_name:string, in_pass:string, re_pass:string) {
-	const emailPattern = /\w+@\w+\.\w+/;
-	if (in_email.trim().length === 0 || in_name.trim().length === 0 || in_pass.length === 0 || re_pass.length === 0) {
-		setReason({code: -1, response: "All fields must be filled!"});
-		return false;
-	} else if (!emailPattern.test(in_email)) {
-		setReason({code: -1, response: "Please enter a valid email!"});
-		return false;
-	} else if (in_pass !== re_pass){
-		setReason({code: -1, response: "Passwords do not match!"});
-		return false;
-	} else if (in_pass.length < 8) {
-		setReason({code: -1, response: "Password must be at least 8 characters!"})
-		return false;
-	} else if (!(/[A-Z]/.test(in_pass)) || !(/[a-z]/.test(in_pass)) || !/[^a-zA-Z0-9]/.test(in_pass)) {
-		setReason({code: -1, response: "Password must contain at least: 1 uppercase, 1 lowercase and 1 special character"})
-		return false;
-	}
+  function validate_inputs(in_email: string, in_name: string, in_pass: string, re_pass: string) {
+    const emailPattern = /\w+@\w+\.\w+/;
+    if (in_email.trim().length === 0 || in_name.trim().length === 0 || in_pass.length === 0 || re_pass.length === 0) {
+      setReason({ code: -1, response: "All fields must be filled!" });
+      return false;
+    } else if (!emailPattern.test(in_email)) {
+      setReason({ code: -1, response: "Please enter a valid email!" });
+      return false;
+    } else if (in_pass !== re_pass) {
+      setReason({ code: -1, response: "Passwords do not match!" });
+      return false;
+    } else if (in_pass.length < 8) {
+      setReason({ code: -1, response: "Password must be at least 8 characters!" })
+      return false;
+    } else if (!(/[A-Z]/.test(in_pass)) || !(/[a-z]/.test(in_pass)) || !/[^a-zA-Z0-9]/.test(in_pass)) {
+      setReason({ code: -1, response: "Password must contain at least: 1 uppercase, 1 lowercase and 1 special character" })
+      return false;
+    }
 
-	return true;
+    return true;
   }
 
     function getRequests(friend_list: friendT[]): {
@@ -106,29 +107,29 @@ export function RegisterForm({
 
   async function registerClick() {
     setFailure(false);
-	setReason({code:200, response:""});
-	const trimmedName = name.trim();
-	const trimmedEmail = email.trim();
+    setReason({ code: 200, response: "" });
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
     if (!validate_inputs(trimmedEmail, trimmedName, password, repassword)) {
-		setFailure(true);
-   		return;
-	}
+      setFailure(true);
+      return;
+    }
 
     const result = await registerRequest(trimmedEmail, trimmedName, password, repassword, avatar, auth.setUserID, auth.setPass);
     if (result.code === 200) {
-        (auth.setLoggedIn(true));
-		registerSuccess();
-        return;
+      (auth.setLoggedIn(true));
+      registerSuccess();
+      return;
     }
-	setReason(result);
+    setReason(result);
     setFailure(true);
     return;
   }
 
-	const handleKey = (event: KeyboardEvent) => {
-		if (event.key === "Enter")
+  const handleKey = (event: KeyboardEvent) => {
+    if (event.key === "Enter")
       buttonRef.current?.click();
-	};
+  };
 
   return (
     <fieldset className="fieldset rounded-box w-xs p-4 mx-auto bg-base-100">
@@ -186,8 +187,16 @@ export function RegisterForm({
         Already an account? Go login here!
       </a>
 
+      <div>
+        <label className="label">
+          <input type="checkbox" checked={acceptConditions} className="checkbox" onChange={() => setAcceptConditions(!acceptConditions)} />
+          I agree to the <a className="link" href="/PrivacyPolicy">Privacy Policy</a> and <a className="link" href="/TermsOfService">Terms of service</a>
+        </label>
+      </div>
+
       <button
-	  	ref={buttonRef}
+        ref={buttonRef}
+        disabled={!acceptConditions}
         onClick={registerClick}
         className="btn btn-neutral mt-4"
       >

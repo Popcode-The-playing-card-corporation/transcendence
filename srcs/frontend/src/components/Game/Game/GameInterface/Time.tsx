@@ -31,7 +31,7 @@ export default function Time() {
 
   if (!selfTurn || state.event === "finish_round") {
     return (
-      <div className="flex justify-around items-center w-full">
+      <div className="flex justify-around items-center w-full min-h-12.5">
         <Chrono />
         <ExitBtn />
       </div>
