@@ -161,7 +161,7 @@ The team collaborated by having initial meetings to decide on the general direct
 - **NGINX**: NGINX provides a simple and easy to use webserver which integrated well with our docker containers, and allowed for simple integration with cloudflare tunnels to host our project in the future.
 
 ### Other
-Procreate
+- **Procreate**:
 
 
 Frontend technologies and frameworks used.
@@ -260,15 +260,21 @@ Features Implemented
 
 - Game WebSocket
 - Presence Websocket
-- Notification Websocket
-- Connection to game engine from game Websocket
-- Many route api to get stats, friends, users and room informations
+- Notification WebSocket
+- Connection to game engine from game WebSocket
+- API routes for:
+	- Friend requests
+	- Statistics
+	- User information
+	- Game information
+- Managed the database
+- Authentication
 
 Challenges
 
 - Understanding the specificities of Django
-- Understansing the specificites of Websocket
-- Connection game engine to game Websocket
+- Understansing the specificites of WebSockets
+- Connection game engine to game WebSockets
 
 ### Alexandre Tomasi
 
