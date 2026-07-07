@@ -5,7 +5,6 @@ from api.auth.authentication import OptionalJWTAuthentication
 from rest_framework.response import Response
 from game.models import Stat
 from django.utils import timezone
-from django.contrib.auth import get_user_model
 from ..models import User
 from django.conf import settings
 import requests

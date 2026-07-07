@@ -4,8 +4,8 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
 
     email = models.EmailField(unique=True)
+    username = models.CharField(unique=True, max_length=20)
 
-    #avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     avatar = models.CharField(max_length=255, default="")  ## changed to blank, it's easier for front to handle this
     is_online = models.BooleanField(default=False)
     presence = models.IntegerField(default=0)

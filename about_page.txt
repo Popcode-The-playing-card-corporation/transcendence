@@ -1,0 +1,73 @@
+About Popcards
+
+Popcards is our team's implementation of the Ecole 42 common core final project ft_transcendence. It is a way for us to show off not only what we have learnt over the past two years, but also demonstrate our creativity, ability to learn, and teamwork. The subject of ft_transcendence gives us the freedom to create an original project while meeting specific requirements as stated by the subject.
+
+
+What is Popcards
+
+Being avid fans of card games, our team decided to create an online multiplayer platform to play the Swiss card game "La Misère". To accompany this card game, we have included social networking features, such as friend requests, leaderboards, friend profiles and more. To improve the game experience users can create custom game lobbies with customizable settings to provide a tailored experience. Users can authenticate securely either with a username and password or with OAuth via Google, Github, or the 42 Network.
+
+Feature highlights:
+- Realtime Online multiplayer
+- Secure Login with OAuth
+- Personalized profiles
+- Friend Management
+- Realtime Notifications
+- Match History, Statistics and Elo.
+
+
+Technical Stack
+
+Frontend
+- React
+- Typescript
+- Tailwind CSS
+- ThreeJS
+- DaisyUI
+
+Backend
+- Django
+- RESTapi
+- Daphne
+- Celery
+- MariaDB
+
+Infrastructure
+- NGINX
+- Docker & Docker Compose
+- Make
+
+Meet the team
+
+The Popcode team has been together since the beginning of their 42 journey. Enjoying lunch together nearly every day, the formation into a project team occurred naturally. Having a tradition of sharing popcorn around the work space, the identity of our team was esaily decided. Our first project as a team is Popcards, inspired by our daily card games we decided to bring one of our favourite card games to the online world.
+
+Individual Profiles
+
+Cyril aka cgoldens
+Photo
+Tech Lead
+https://www.linkedin.com/in/cyril-goldenschue/
+https://github.com/Cyraullie
+
+Alex aka atomasi
+Photo
+Product Owner
+https://www.linkedin.com/in/alexandre-tomasi-69b26616b/
+https://github.com/Crealex
+
+Kilian aka ktintim-
+Photo
+Happiness Manager
+https://github.com/Kenviro
+
+Dana aka dvauthey
+Photo
+Art Director
+https://github.com/neoo-n
+
+Anouar aka akabbaj
+Photo
+Project Manager
+Fun fact: I grew up sailing in Hong Kong and have been teaching the sport ever since.
+https://www.linkedin.com/in/anouar-kabbaj/
+https://github.com/Wildnachos

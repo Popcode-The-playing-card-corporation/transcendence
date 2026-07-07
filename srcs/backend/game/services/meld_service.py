@@ -4,8 +4,6 @@ from game_engine.game import GameEngine
 from .score_service import ScoreService
 from game.models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
-from game_engine.card import Card
-import copy
 
 CARD_VALUES = {
     "6": 6,
@@ -322,9 +320,6 @@ class MeldService:
     @staticmethod
     async def validate_player_can_announce(room, position):
     
-        if int(position) != int(room.game_state["playing"]):
-            return "Ce n'est pas à toi de jouer"
-    
         already_started = any(
             len(player["taken"]) > 0
             for player in room.game_state["players"].values()
@@ -334,3 +329,20 @@ class MeldService:
             return "Tu ne peux plus faire d'annonce"
     
         return None
+    
+    async def check_shtokr(room_code, game_state):
+        players = game_state["players"]
+        tricks = game_state["tricks"]
+        colors = {"club": 0, "spade": 9, "diamond": 18, "heart": 27}
+
+        for id, p in players.items():
+            if tricks in p["shtokr"]:
+                if ({"value": "K", "color": tricks, "id": 7 + colors[tricks]} not in p["cards"] and
+                    {"value": "Q", "color": tricks, "id": 6 + colors[tricks]} not in p["cards"]):
+                    await  ScoreService.save_meld(room_code, id, game_state["game"], game_state["round"] - 1, -20)
+                    p["shtokr"] = []
+                    p["puntos"] -= 20
+                    return game_state
+                return game_state
+
+        return game_state

@@ -4,7 +4,6 @@ import { BsFillSuitDiamondFill, BsFillSuitSpadeFill } from "react-icons/bs";
 import { FaQuestion } from "react-icons/fa";
 import { useGame } from "../../context/GameContext";
 import { useEffect, useState } from "react";
-import type { playerT } from "../../../../utils/type/playerType";
 import type { playerScoreT } from "../../../../utils/type/boardDataType";
 
 function DisplayTrumpLogo({ trump }: { trump: string | null }) {

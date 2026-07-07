@@ -143,7 +143,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
           </tr> : null}
         </table>
         <div className="mt-10">
-          <MiniHistory history={history} updatedProfile={localUpdatedFriends} setUpdate={localSet} />
+          <MiniHistory history={history}/>
         </div>
       </div >
       <form method="dialog" className="modal-backdrop">

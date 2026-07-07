@@ -12,9 +12,9 @@ As such, the subject for Transcendence gives students the freedom to create an o
 ### Popcards
 The Popcode team has been together since the beginning of their 42 journey. What started as just a daily lunch between students has since become a tight-nit team. 
 
-Throughout our journey at 42 we've gone from sharing lunch, to playing cards, to working together. As we worked together, a tradition of sharing popcorn emergedm hence, our team name and the essence of our website.
+Throughout our journey at 42 we've gone from sharing lunch, to playing cards, to working together. As we worked together, a tradition of sharing popcorn emerged hence, our team name and the essence of our website.
 
-Popcards is the product of the Popcode team. It is an online platform to play a card game known as "La Misere", as Swiss card game which became a favourite for our team's lunchtime entertainment.
+Popcards is the product of the Popcode team. It is an online platform to play a card game known as "La Misère", as Swiss card game which became a favourite for our team's lunchtime entertainment.
 
 The following features are implemented on Popcards:
 - Account creation (necessary to access many of the website's features)
@@ -178,7 +178,7 @@ Frontend technologies and frameworks used.
 | Leaderboard, Statistics & Game History | Various information regarding previously played games is stored on the backend. Users can see this information, with some of it being restricted to friends only. | Everyone |
 | Realtime Updates & Notifications | Via WebSockets users can receive notifications of incoming friend requests in real-time. Certain fields are also updated in real-time with requiring interaction from the user. | Cyril, Alex, Anouar |
 | Handmade custom cards | All the game assets have been created by hand. | Dana |
-| Custom Game Engine | The game engine is able to run games  of “La Misere” | Kilian |
+| Custom Game Engine | The game engine is able to run games  of “La Misère” | Kilian |
 | AI Opponents | AI opponents can be added as players to a match as well as replace players who are AFK. The opponents can have varying difficulty levels. | Kilian |
 | Customizable Matches | Matches can be customized for duration (amount of points or games), player limit, privacy and amount of bots. | Cyril, Kilian |
 | Real-time Multiplayer | Using WebSockets players are able to see each others actions in real-time, as well as chat with each other in an in game chat. | Cyril, Kilian, Anouar |
@@ -229,7 +229,7 @@ Frontend technologies and frameworks used.
 
 | Module | Type | Points | Implementation/Justification | Implemented by |
 | --- | --- | --- | --- | --- |
-| Implement a complete web-based game | Major | 2 | “La Misere” has been implemented, allowing users to play cards with other users and bots. | Everyone |
+| Implement a complete web-based game | Major | 2 | “La Misère” has been implemented, allowing users to play cards with other users and bots. | Everyone |
 | Remote players | Major | 2 | Players from different machines can all connect to the same lobbies. Additionally if the server is hosted players can join from different networks. | Cyril, Kilian |
 | Multiplayer game | Major | 2 | The game is fully multiplayer between both real players and bots. | Cyril, Kilian |
 | Implement advanced 3D graphics | Major | 2 | ThreeJS was used to implement real-time 3D graphics which accurately reflect the game state. | Alex, Dana |

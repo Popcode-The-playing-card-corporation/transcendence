@@ -1,10 +1,8 @@
 from asgiref.sync import sync_to_async
-from ..db import  remove_player_from_room, get_room_with_host, get_params
+from ..db import get_room_with_host
 from datetime import timedelta
 from ..models import PlayerPresence, GameLog
-import json
 from game_engine.game import GameEngine
-from channels.layers import get_channel_layer
 from game_engine.card import Card
 import copy
 
@@ -217,6 +215,8 @@ class BroadcastService:
         return {
             "self_id": int(player_position),
             "host": room.host.username,
+            "limit": room.goal if room.goal == "points" else "round",
+            "limit_val": room.nb_games if room.goal == "games" else room.nb_points,
             "user": username,
             "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
             "lastCard": None if game_state["lastCard"]["id"] == -1 or finished < room.nb_player else game_state["lastCard"],
