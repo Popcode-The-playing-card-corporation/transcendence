@@ -3,8 +3,6 @@ from ..models import User, Friendship
 import json
 from asgiref.sync import sync_to_async
 from django.db.models import Q, F
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 
 from django.contrib.auth import get_user_model
 

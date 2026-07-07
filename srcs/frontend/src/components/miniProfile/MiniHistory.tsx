@@ -1,17 +1,13 @@
 import { useState } from "react";
 import type { historyT } from "../../utils/type/historyType";
 import type { playerT } from "../../utils/type/playerType";
-import UsernameMiniProfileBtn from "./UsernameMiniProfileBtn";
 import type { errorT } from "../../utils/type/errorType";
-
 
 type Props = {
   history: historyT[] | errorT;
-  updatedProfile: boolean;
-  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function MiniHistory({ history, updatedProfile, setUpdate }: Props) {
+export function MiniHistory({ history }: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10);
 
@@ -74,21 +70,22 @@ export function MiniHistory({ history, updatedProfile, setUpdate }: Props) {
                 <td>{game.duration}</td>
                 <td>{game.nb_player}</td>
                 <td>
-                  <div className="dropdown dropdown-center">
+                  <div className="dropdown dropdown-center ">
                     <div
                       tabIndex={0}
-                      role="button"
                       className="link hover:scale-110 transition-all"
                     >
                       Click to see
                     </div>
                     <ul
                       tabIndex={-1}
-                      className="dropdown-content menu rounded-box z-1 max-w-42 p-2 shadow-sm"
+                      className="dropdown-content rounded-box z-1 p-3 shadow-sm max-w-42 space-y-2"
                     >
                       {game.players.map((player: playerT) => (
-                        <li>
-                          <UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate} />
+                        <li className="w-38 max-w-38">
+                          <p className="truncate">
+                            {player.username}
+                          </p>
                         </li>
                       ))}
                     </ul>

@@ -1,6 +1,5 @@
 from ..models import User, Friendship
 from game.models import Stat, PlayerScore, Room, Stat, PlayerPresence
-from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from game.serializers import StatSerializer

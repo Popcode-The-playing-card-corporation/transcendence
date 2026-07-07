@@ -4,7 +4,6 @@ from .board import Board
 from .deck import Deck
 import copy
 
-import traceback
 class GameEngine:
 	def __init__(self, roomID: str):
 		self.indexPlayer = -1
@@ -53,14 +52,18 @@ class GameEngine:
 		return ret
 
 	def shtokr(self, cards: list):
-		colors = ["club", "diamond", "spade", "heart"]
+		colors = ["club", "spade", "diamond", "heart"]
 		ret = []
+		Q = 6
+		K = 7
 
 		for c in colors:
-			if ({"value": "Q", "color": c} in cards and 
-				{"value": "K", "color": c} in cards):
+			if ({"value": "Q", "color": c, "id": Q} in cards and 
+				{"value": "K", "color": c, "id": K} in cards):
 				ret.append(c)
-
+			Q += 9
+			K += 9
+		
 		return ret
 
 	def startGame(self, data: dict, nbrPlayer: int):
@@ -145,11 +148,10 @@ class GameEngine:
 		strongest = self.strongestCard(asked, fold, data["tricks"])
 		index = 0
 		for i in board.keys():
-			#if i != "asked":
 			if (board[i] == strongest):
 				index = i
 				break
-		#TODO grosse merde qui pue du cul
+		
 		melds = Player.countMelds(Player(), fold, data["tricks"])
   
 		data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds

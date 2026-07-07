@@ -1,11 +1,6 @@
 from asgiref.sync import sync_to_async
 from ..models import GameLog, PlayerPresence
-from .room_service import RoomService
-from django.utils import timezone
-from datetime import timedelta
-from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from game_engine.game import GameEngine
-from game_engine.bot.bot import bot
+from ..db import get_room_with_host
 from django.db.models import F
 
 class ScoreService:

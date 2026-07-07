@@ -1,11 +1,9 @@
-
 from ..db import save_room_state, get_room_with_host, start_room, count_player, end_room
 from ..models import PlayerPresence,  PlayerScore
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from django.utils import timezone
 from datetime import timedelta
-import copy
 from .board_service import BoardService
 from .stats_service import StatsService
 from .score_service import ScoreService
@@ -14,9 +12,8 @@ from .broadcast_service import BroadcastService
 from .room_task_service import RoomTaskService
 from .meld_service import MeldService
 from channels.layers import get_channel_layer
-
-import json
 import asyncio
+import copy
 
 class GameService:
 
@@ -126,6 +123,8 @@ class GameService:
         room.round_time = (timezone.now() + timedelta(seconds=(25 if state["round"] == 0 else 10)))
         await sync_to_async(room.save)()
             
+        state = await MeldService.check_shtokr(room, state)
+
         await save_room_state(room.uuid, state)
 
         await StatsService.update_after_play(
@@ -135,7 +134,6 @@ class GameService:
             taker=taker,
             melds=melds
         )
-        #TODO delete this double id player finished ?
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished:

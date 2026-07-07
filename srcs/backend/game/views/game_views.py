@@ -1,16 +1,9 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from api.auth.authentication import OptionalJWTAuthentication
-from ..models import Room, PlayerPresence, GameLog
-from api.models import User, Friendship
-from ..serializers import RoomSerializer
-from django.db.models import Q
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from ..db import  get_room_with_host, delete_room
-import uuid
+from ..models import Room, PlayerPresence
+from api.models import User
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])

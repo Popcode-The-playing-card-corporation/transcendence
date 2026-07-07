@@ -2,7 +2,6 @@
 import re
 from django.core.exceptions import ValidationError
 
-
 class CustomPasswordValidator:
     def validate(self, password, user=None):
 

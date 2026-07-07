@@ -1,7 +1,6 @@
 from asgiref.sync import sync_to_async
 from ..models import Stat
 
-
 class StatsService:
     @staticmethod
     async def update_after_play(user, state, prev_tricks, taker, melds):

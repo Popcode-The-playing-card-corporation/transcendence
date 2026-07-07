@@ -1,7 +1,6 @@
 from ..db import get_room_with_host
 from ..models import PlayerPresence
 from asgiref.sync import sync_to_async
-
 from .room_task_service import RoomTaskService
 from ..utils import reload_game_state
 
