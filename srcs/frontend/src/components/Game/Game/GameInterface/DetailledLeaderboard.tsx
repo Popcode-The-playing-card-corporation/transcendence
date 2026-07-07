@@ -1,6 +1,4 @@
 import { useRef } from "react";
-// import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
-// import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
 import { useGame } from "../../context/GameContext";
 import type { DetailedPointsT, playerScoreT } from "../../../../utils/type/boardDataType";
 
@@ -18,8 +16,8 @@ export default function DetailledLeaderboard() {
       >
         more details
       </button>
-      <dialog id="score_details_modal" className="modal" ref={scoreDetailsRef}>
-        <div className="modal-box ">
+      <dialog id="score_details_modal" className="modal" onKeyDown={(e) => e.stopPropagation()} ref={scoreDetailsRef}>
+        <div className="modal-box max-w-fit">
           <h3 className="font-bold text-lg text-center mb-2">
             Game's leaderboard
           </h3>

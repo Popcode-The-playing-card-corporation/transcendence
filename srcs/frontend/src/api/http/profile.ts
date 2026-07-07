@@ -91,18 +91,3 @@ export async function changeAvatar(in_avatar:string) {
 		return result;
 	}
 }
-
-// export async function changeEmail(in_email:string) {
-// 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
-// 	const formData = new FormData();
-// 	formData.set('email', in_email);
-
-// 	try {
-// 		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
-// 		return true;
-// 	} catch (err) {
-// 		console.error('update error:', err);
-// 		return false;
-// 	}
-// }
-

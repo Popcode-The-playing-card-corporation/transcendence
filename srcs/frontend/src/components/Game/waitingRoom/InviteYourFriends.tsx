@@ -13,7 +13,7 @@ function getRequests(friend_list: friendT[]): {
     const requests: requestT[] = [];
 
     for (const friend of friend_list) {
-      if (friend.can_accept) {
+      if (friend.can_accept || friend.status === "pending") {
         requests.push({ id: friend.id, username: friend.user.username });
       } else {
         friends.push(friend);

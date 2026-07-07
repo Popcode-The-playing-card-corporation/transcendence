@@ -12,6 +12,7 @@ import { GameContext } from "./context/GameContext";
 import type { playerT } from "../../utils/type/playerType";
 import type { cardT } from "../../utils/type/handCardsType";
 import type { boardDataNT, selfAnnonceT } from "../../utils/type/boardDataType";
+import ModalRejoinGame from "./createOrJoin/ModalRejoinGame";
 
 export default function GameWebSocket({
   code,
@@ -30,9 +31,9 @@ export default function GameWebSocket({
   }, [code]);
 
   function leaveRoom() {
-	auth.setGame(false);
     localStorage.removeItem("code");
     setCode("");
+	auth.setGame(false);
   }
 
   const { default: useWebSocket = useWebSocketModule } =
@@ -131,7 +132,7 @@ export default function GameWebSocket({
 					auth.setGame(false);
 					leaveRoom();
 				} else if (data.event === "new_room") {
-					if (payload.host === state.user) {
+					if (state.host === state.user) {
 						dispatch({type:"SET_HOST", payload:payload.host})
 						setCode(payload.code)
 					}
@@ -146,7 +147,11 @@ export default function GameWebSocket({
 						}
 						dispatch({type:"SET_MESSAGE", payload: data.player_name});
 					}
-					setGame(payload.self_card, payload.board_data)
+					if (payload.board_data) {
+						setGame(payload.self_card, payload.board_data)
+						dispatch({type:"SET_HOST", payload: payload.board_data.host})
+						dispatch({type:"SET_USER", payload: payload.board_data.user})
+					}
 				}
 			} else if (data.event === "error" || data.type === "error") {
 				if (data.message === "Need 2 players") {
@@ -245,10 +250,14 @@ export default function GameWebSocket({
 	function nextGame(new_code:string) {
 			setCode(new_code);
 	}
+
+	function setWait(bool:boolean) {
+		dispatch({type:"SET_WAIT", payload:bool})
+	}
 	
-	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
+	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
 		shouldReconnect: () => {
-			return auth.logged_in ? true : false
+			return auth.logged_in && auth.in_game ? true : false
 		},
 		reconnectAttempts: 30,
 		reconnectInterval: 1000,
@@ -298,7 +307,8 @@ export default function GameWebSocket({
 
 	
 	return (
-		<GameContext.Provider value={{state, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
+		<GameContext.Provider value={{state, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
+		<ModalRejoinGame />
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);

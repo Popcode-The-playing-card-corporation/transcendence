@@ -6,7 +6,14 @@ import Adversary from "./Adversary";
 import { Texture, type TextureEventMap } from "three";
 import { useGame } from "../../context/GameContext";
 
-export default function Board({front, back} : {front: Texture<HTMLImageElement, TextureEventMap>[], back: Texture<HTMLImageElement, TextureEventMap>}) {
+type Props = {
+	front: Texture<HTMLImageElement, TextureEventMap>[],
+	back: Texture<HTMLImageElement, TextureEventMap>,
+	boardRadius: number,
+	distanceBoard: number
+}
+
+export default function Board({front, back, boardRadius, distanceBoard} : Props) {
   
 //   const cards = generateFakeBoard();
   const { state } = useGame();
@@ -14,8 +21,6 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
   const adversaries = state.game.boardData.player_list;
   const idPlayer = Number(state.game.boardData.self_id);
   const totalPlayer = adversaries.length;
-
-  const boardRadius = 2.3;
 
 
   return (
@@ -45,6 +50,7 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
                 front={front}
                 back={back}
                 totalPlayer={totalPlayer}
+				distanceBoard={distanceBoard}
               />
             </>
           );

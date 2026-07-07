@@ -1,4 +1,6 @@
 import { MeshPhongMaterial, Texture, type TextureEventMap } from "three";
+import { useGame } from "../../context/GameContext";
+import { useEffect, useState } from "react";
 
 type Props = {
   show: boolean;
@@ -19,10 +21,24 @@ export default function PlayedCard({show, front, back, posPlayedCard, idPlayer} 
     new MeshPhongMaterial({map: back})
   ];
 
-  if (!show) {
+  const { state } = useGame();
+  const [wait, setWait] = useState(true);
+
+    useEffect(() => {
+	async function handle_wait() {
+		if (idPlayer === 0) {
+			setWait(false);
+			setTimeout(() => setWait(true), 100);
+		}
+	}
+	handle_wait();
+	}, [idPlayer])
+
+  if (!show || (idPlayer === 0 && state.wait) || !wait) {
 	return
   }
 
+  
   return (
   <>
     <mesh

@@ -1,12 +1,10 @@
 import { FaPlay } from "react-icons/fa";
-// import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable";
 import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
 import React, { useState, type SetStateAction } from "react";
 import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
 import { createRoom, validateRoom } from "../../../api/http/game";
 import { useNotif } from "../../hooks/useNotif";
-// import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable.tsx";
 
 type Props = {
 	availableGames:availableGameT[],

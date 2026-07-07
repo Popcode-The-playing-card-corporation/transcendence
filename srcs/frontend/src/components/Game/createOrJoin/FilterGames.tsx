@@ -74,7 +74,6 @@ export default function FilterGame({
               min="2"
               max="7"
               defaultValue="2"
-              // value={maxPlayers}
               onChange={(e) => setMaxPlayers(+e.target.value / 10)}
               className={
                 "range text-base-200 glass transition-all duration-500 "

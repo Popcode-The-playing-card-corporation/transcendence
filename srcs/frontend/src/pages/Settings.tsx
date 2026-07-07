@@ -14,7 +14,7 @@ export function Settings({
   return (
     <div className="page-content mt-17">
       <h1 className="text-4xl text-center">Settings</h1>
-	  <p>Customize your interface {auth.logged_in ? ", manage your blocklist, and your profile" : null}</p>
+	  <p>Customize your interface{auth.logged_in ? ", manage your blocklist, and update your profile!" : null}</p>
       {auth.logged_in ? <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">

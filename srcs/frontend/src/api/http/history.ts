@@ -61,7 +61,7 @@ export async function historyArray(friends:AxiosResponse<historyApiT[]>) {
 	const data = friends.data;
 	const history_arr: historyT[] = [];
 	for (const history_data of data) {
-		const res = await getPlayers(history_data.uuid);
+		const res = await getPlayers(history_data.game_id);
 		let playerArr:playerT[] = [];
 		if (!('code' in res)) {
 			playerArr = await playerArray(res);

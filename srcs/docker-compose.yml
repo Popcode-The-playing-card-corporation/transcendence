@@ -66,7 +66,7 @@ services:
     container_name: mariadb
     restart: unless-stopped
     ports:
-      - "${MARIADB_PORT}:3306" # TODO: Remove before the end
+      - "${MARIADB_PORT}:3306"
 
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
@@ -76,7 +76,7 @@ services:
       retries: 3
 
     environment:
-      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD} #should we replace these with docker secrets?
+      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -106,7 +106,7 @@ services:
       context: .
       dockerfile: Docker/nginx/prod_nginx/Dockerfile
       args:
-        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL}
         VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
         VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
         VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
@@ -116,7 +116,7 @@ services:
     profiles: [prod]
     container_name: nginx_prod
     ports:
-      - "${NGINX_PORT}:443" # may need to change for eval so maybe best to put in env
+      - "${NGINX_PORT}:443"
     depends_on:
       django:
         condition: service_healthy
@@ -128,7 +128,7 @@ services:
       context: .
       dockerfile: Docker/nginx/serv_nginx/Dockerfile
       args:
-        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL}
         VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
         VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
         VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
@@ -196,7 +196,7 @@ services:
       - "5173:5173"
     environment:
       NODE_ENV: development
-      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL}
       VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
       VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
       VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}

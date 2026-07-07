@@ -1,4 +1,3 @@
-// import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
 import type { playerScoreT } from "../../../../utils/type/boardDataType";
 import UsernameMiniProfileBtn from "../../../miniProfile/UsernameMiniProfileBtn";
 import { useGame } from "../../context/GameContext";

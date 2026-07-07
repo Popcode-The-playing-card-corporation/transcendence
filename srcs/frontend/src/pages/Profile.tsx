@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
-import React, { useState, useEffect, type SetStateAction, type Dispatch } from "react";
+import React, { useState, useEffect, type SetStateAction } from "react";
 import { Friends } from "../components/Profile/FriendsPart";
 import { History } from "../components/Profile/HistoryPart";
 import { ProfilePart } from "../components/Profile/ProfilePart";
@@ -186,7 +186,7 @@ export function Profile({ updatedProfile, setUpdate }: Props) {
           <h2 className="text-center">History</h2>
         </div>
         <div className="collapse-content">
-          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} />
+          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} isHome={false} />
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">
@@ -198,17 +198,6 @@ export function Profile({ updatedProfile, setUpdate }: Props) {
           <StatisticsPart stats={stats} />
         </div>
       </div>
-      { /* <div className="bordered collapse collapse-arrow">
-        <input type="checkbox" name="profile-radio" />
-        <div className="collapse-title">
-          <h2 className="text-center">Achievements:</h2>
-        </div>
-        <div className="collapse-content">
-          <p>
-            Pas encore fait, faut pas pousser mémé dans les orties nan mais ho
-          </p>
-        </div>
-      </div> */}
     </div>
   );
 }
