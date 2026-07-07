@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 import {
   MdLogout,
   MdLogin,
@@ -62,9 +62,9 @@ export function Navbar() {
   return (
     <div className="navbar min-h-16 h-16 bg-primary fixed top-0 z-100">
       <div className="flex-1">
-        <a className="text-xl item-menu p-2" href="/">
-          PopCards
-        </a>
+		<Link to="/" className="text-xl item-menu p-2">
+		PopCards
+		</Link>
       </div>
       <div className="flex-none">
         <ul className="menu menu-horizontal gap-1">
