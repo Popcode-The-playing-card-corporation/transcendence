@@ -18,8 +18,7 @@ export default function FilterGame({
   const [dispFilter, setDispFilter] = useState<boolean>(false);
   const [maxPlayers, setMaxPlayers] = useState<number>(0);
   const [typeFilter, setTypeFilter] = useState<string>("All");
-  const [clickReset, setClickReset] = useState<boolean>(false);
-  // const [rotation, setRotation] = useState<string>("rotate-0")
+  const [rotation, setRotation] = useState<number>(0);
 
   useEffect(() => {
     const searchedGames = rawList.filter((game: availableGameT) => {
@@ -44,10 +43,6 @@ export default function FilterGame({
     setFilteredGames(finalFilteredGames);
   }, [maxPlayers, search, typeFilter, rawList, setFilteredGames]);
 
-  // useEffect(() => {
-  //  setRotation("rotate-" + clickReset);
-  // }, [clickReset])
-
   return (
     <div className="filterGame flex justify-between my-2 items-center sticky -top-10 bg-(--bg-color) z-10 p-3 rounded-4xl shadow-2xl -mt-12">
       <div className="gap-2 flex">
@@ -65,14 +60,18 @@ export default function FilterGame({
         <button
           onClick={() => {
             refreshLobby();
-            setClickReset(!clickReset);
+            setRotation(rotation + 360);
           }}
-          className={
-            "btn btn-circle  "
-          }
+          className={"btn btn-circle  "}
         >
           {" "}
-          <IoMdRefresh className={"text-xl " +  (clickReset ? " animate-spin" : "")} />{" "}
+          <IoMdRefresh
+            style={{
+              transition: "0.5s ease-in-out",
+              transform: `rotate(${rotation}deg)`,
+            }}
+            className={"text-xl "}
+          />{" "}
         </button>
       </div>
       <div className="flex gap-1 justify-end items-center">
