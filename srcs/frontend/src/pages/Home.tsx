@@ -10,6 +10,7 @@ import { friendArray, getFriends } from "../api/http/friend";
 import type { friendT, requestT } from "../utils/type/friendType";
 import HomeProfile from "../components/Home/HomeProfile";
 import HomeFriends from "../components/Home/HomeFriends";
+import AboutPage from "../components/Home/AboutPage";
 
 function getRequests(friend_list: friendT[]): {
   friends: friendT[];
@@ -90,14 +91,6 @@ export function Home({ updatedProfile, setUpdate }: Props) {
     <>
       < div className="page-content mt-17">
         <h1>Home</h1>
-        <div>
-          <p>
-            Welcome to our beautiful game! Go check the{" "}
-            <a className="underline" href="/rules">
-              rules
-            </a>.
-          </p>
-        </div>
         {auth.logged_in ? (
           <div className="grid grid-cols-3 gap-6">
             <div className="bordered border-accent col-span-2">
@@ -108,7 +101,7 @@ export function Home({ updatedProfile, setUpdate }: Props) {
             </div>
           </div>
         ) : (
-          <p>You are not logged in.</p>
+          <AboutPage />
         )}
       </div >
     </>
