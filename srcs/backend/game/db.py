@@ -312,11 +312,11 @@ def end_room(uuid, data):
         ).update(rank=rank)
         user = User.objects.get(id=entry["player"].player_id)
         stat = Stat.objects.get(user_id=user.id)
-        
+
         if not user.is_bot:
             user.elo += elo
         
-        if elo > 0:
+        if rank == 1:
             stat.win += 1
         else:
             stat.lose += 1
