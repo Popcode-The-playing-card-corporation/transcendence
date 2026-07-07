@@ -64,7 +64,7 @@ function DisplayGoal({
   } else if (limit === "round") {
     return (
       <p>
-        {currentGame}/{valueLimit} rounds
+        {currentGame + 1}/{valueLimit} rounds
       </p>
     );
   }
