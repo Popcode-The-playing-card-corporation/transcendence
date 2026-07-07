@@ -208,6 +208,11 @@ class BroadcastService:
         username = await BroadcastService._get_username(user)
         last_fold_id = game_state.get("last_fold_player")
         last_fold_username = ""
+        win_username = ""
+        winner_id = game_state.get("winner")
+        if winner_id is not None:
+            winner = await sync_to_async(PlayerPresence.objects.select_related("player").get)(room=room, position=winner_id)
+            win_username = await BroadcastService._get_username(winner)
         if last_fold_id is not None:
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(room=room, position=last_fold_id)
             last_fold_username = await BroadcastService._get_username(p)
@@ -217,6 +222,7 @@ class BroadcastService:
             "host": room.host.username,
             "limit": room.goal if room.goal == "points" else "round",
             "limit_val": room.nb_games if room.goal == "games" else room.nb_points,
+            "winner": win_username if is_game_finish else None,
             "user": username,
             "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
             "lastCard": None if game_state["lastCard"]["id"] == -1 or finished < room.nb_player else game_state["lastCard"],
