@@ -64,7 +64,7 @@ function DisplayGoal({
   } else if (limit === "round") {
     return (
       <p>
-        {currentGame + 1}/{valueLimit} rounds
+        Round {currentGame + 1} of {valueLimit}
       </p>
     );
   }
@@ -135,7 +135,7 @@ export default function CurrentInfo() {
         <p className="flex items-center gap-1">
           Next fold in:{" "}
           <strong>
-            {timeLeft - (state.game.boardData.round === 0 ? 20 : 9)}s
+            {Math.max(0, timeLeft - (state.game.boardData.round === 0 ? 20 : 9))}s
           </strong>
         </p>
       ) : null}
