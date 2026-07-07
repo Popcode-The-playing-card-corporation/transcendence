@@ -18,8 +18,8 @@ export default function DetailledLeaderboard() {
       >
         more details
       </button>
-      <dialog id="score_details_modal" className="modal" ref={scoreDetailsRef}>
-        <div className="modal-box ">
+      <dialog id="score_details_modal" className="modal" onKeyDown={(e) => e.stopPropagation()} ref={scoreDetailsRef}>
+        <div className="modal-box max-w-fit">
           <h3 className="font-bold text-lg text-center mb-2">
             Game's leaderboard
           </h3>
