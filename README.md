@@ -137,20 +137,31 @@ The team collaborated by having initial meetings to decide on the general direct
 - **DaisyUI**: DaisyUI provided an easily accessible library of components that were readily customisable making it an obvious choice for our project especially as it provided a foundation that was already in line with our design principles.
 
 ### Backend
-- **Django**: Django is a
-- **REST**:
-- **Daphne?**:
-- **Celery**
+
+- **Django**: A high-level Python web framework that enables rapid development of secure, scalable, and maintainable web applications. It provides built-in features such as an ORM, authentication system, administration panel, URL routing, and more.
+
+- **Django REST Framework (DRF)**: An extension of Django used to build RESTful APIs. It provides tools for data serialization, authentication, permissions, pagination, and API view management.
+
+- **Daphne**: An ASGI server designed to run asynchronous Django applications. It supports WebSockets through Django Channels, enabling real-time communication between clients and the server.
+
+- **Celery**: A distributed task queue used to execute asynchronous and scheduled background tasks. It helps offload time-consuming operations such as sending emails, processing data, and running periodic jobs without blocking user requests.
 
 ### Database
-- **MariaDB**:
+
+- **MariaDB**: An open-source relational database management system (RDBMS) compatible with MySQL. It is used to store, manage, and query application data efficiently and reliably.
+
+### Real-Time Communication
+
+- **Django Channels**: An extension for Django that adds support for asynchronous protocols such as WebSockets. It enables real-time features like live notifications, chat systems, and multiplayer interactions.
+
+- **Redis**: An in-memory data store commonly used as a message broker for Celery and as the channel layer backend for Django Channels. It provides fast data access and efficient communication between services.
 
 ### Infrastructure
 - **Docker + Docker Compose**: Docker was already well known to our team, and allowed for us to easily deploy standardized containers from different environments and ensure efficient internal communication between them.
 - **NGINX**: NGINX provides a simple and easy to use webserver which integrated well with our docker containers, and allowed for simple integration with cloudflare tunnels to host our project in the future.
 
 ### Other
-Procreate
+- **Procreate**:
 
 
 Frontend technologies and frameworks used.
@@ -244,6 +255,26 @@ Frontend technologies and frameworks used.
 ## Individual Contributions
 
 ### Cyril Goldenschue
+
+Features Implemented
+
+- Game WebSocket
+- Presence Websocket
+- Notification WebSocket
+- Connection to game engine from game WebSocket
+- API routes for:
+	- Friend requests
+	- Statistics
+	- User information
+	- Game information
+- Managed the database
+- Authentication
+
+Challenges
+
+- Understanding the specificities of Django
+- Understansing the specificites of WebSockets
+- Connection game engine to game WebSockets
 
 ### Alexandre Tomasi
 

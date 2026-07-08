@@ -136,6 +136,28 @@ class GameEngine:
 				continue
 		return strongest
 
+	def check_winner(self, data:dict):
+		asked = data["board"]["asked"].copy()
+		board = data["board"].copy()
+		board.pop("asked")
+		fold = []
+		for c in board.values():
+			if c not in fold:
+				fold.append(c)
+	
+		strongest = self.strongestCard(asked, fold, data["tricks"])
+		index = 0
+		for i in board.keys():
+			if (board[i] == strongest):
+				index = i
+				break
+
+		s = int(index)
+
+		data["winner"] = s
+  
+		return data
+
 	def take_fold(self, data: dict):
 		asked = data["board"]["asked"].copy()
 		board = data["board"].copy()
@@ -144,7 +166,7 @@ class GameEngine:
 		for c in board.values():
 			if c not in fold:
 				fold.append(c)
-    
+	
 		strongest = self.strongestCard(asked, fold, data["tricks"])
 		index = 0
 		for i in board.keys():
@@ -329,6 +351,9 @@ class GameEngine:
 		if (action == "take_fold"):
 			return self.take_fold(data)
 
+		if (action == "check_winner"):
+			return self.check_winner(data)
+		
 		if (action == "clear_board"):
 			return self.clear_board(data)
 
@@ -346,7 +371,7 @@ class GameEngine:
 
 		if (action == "point_meld"):
 			return self.point_melds(data, idPlayer, meldIndex)
-        
+		
 		if (action == "board_meld"):
 			return self.board_melds(data, idPlayer, idCard)
 

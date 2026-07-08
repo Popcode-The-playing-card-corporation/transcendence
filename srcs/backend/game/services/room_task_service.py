@@ -56,7 +56,7 @@ class RoomTaskService:
     @staticmethod
     async def cancel_disconnected(room_code, player_id):
         room = await sync_to_async(Room.objects.get)(code=room_code)
-        presence = PlayerPresence.objects.filter(room=room, player_id=player_id).first()
+        presence = await sync_to_async(PlayerPresence.objects.filter(room=room, player_id=player_id).first)()
         
         presence.disconnected_scheduled = False
         await sync_to_async(presence.save)()
