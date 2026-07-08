@@ -74,7 +74,9 @@ export default function AboutPage() {
         <div className="flex justify-between gap-2">
           <div className="bordered border w-1/5">
             <h4 className="pb-4"><strong>Cyril aka cgoldens</strong></h4>
-            <img src={cyril} className="w-40 mb-3 rounded-2xl" />
+            <div className="flex justify-center mb-3 ">
+              <img src={cyril} className="w-40 rounded-2xl" />
+            </div>
             <p className="mb-3">Tech Lead</p>
             <p className="mb-3">
               Fun fact: I became a beekeeper because I wanted to make homemade mead.
@@ -91,7 +93,9 @@ export default function AboutPage() {
 
           <div className="bordered border w-1/5">
             <h4 className="pb-4"><strong>Alex aka atomasi</strong></h4>
-            <img src={alex} className="w-40 rounded-2xl mb-3" />
+            <div className="flex justify-center mb-3 ">
+              <img src={alex} className="w-40 rounded-2xl" />
+            </div>
             <p className="mb-3">Product Owner</p>
             <p className="mb-3">
               Fun fact: I wanted to try a button so I accidentally won an online auction.
@@ -108,7 +112,9 @@ export default function AboutPage() {
 
           <div className="bordered border w-1/5">
             <h4 className="pb-4"><strong>Kilian aka ktintim -</strong></h4>
-            <img src={kilian} className="w-40 mb-3 rounded-2xl" />
+            <div className="flex justify-center mb-3 ">
+              <img src={kilian} className="w-40 rounded-2xl" />
+            </div>
             <p className="mb-3">Happiness Manager</p>
             <p className="mb-3">
               Fun fact: I swear I wanted to use C++ for the backend but they didn't let me.
@@ -122,7 +128,9 @@ export default function AboutPage() {
 
           <div className="bordered border w-1/5">
             <h4 className="pb-4"><strong>Dana aka dvauthey</strong></h4>
-            <img src={dana} className="w-40 mb-3 rounded-2xl" />
+            <div className="flex justify-center mb-3 ">
+              <img src={dana} className="w-40 rounded-2xl" />
+            </div>
             <p className="mb-3">Art Director</p>
             <p className="mb-3">
               Fun fact: Sometimes I think I'm just a double quota, I don't know why.
@@ -136,7 +144,9 @@ export default function AboutPage() {
 
           <div className="bordered border w-1/5">
             <h4 className="pb-4"><strong>Anouar aka akabbaj</strong></h4>
-            <img src={anouar} className="w-40 mb-3 rounded-2xl" />
+            <div className="flex justify-center mb-3 ">
+              <img src={anouar} className="w-40 rounded-2xl" />
+            </div>
             <p className="mb-3">Project Manager</p>
             <p className="mb-3">
               Fun fact: I grew up sailing in Hong Kong and have been teaching the sport ever since.
