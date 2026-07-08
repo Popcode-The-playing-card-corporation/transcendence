@@ -98,7 +98,7 @@ export default function AboutPage() {
             </div>
             <p className="mb-3">Product Owner</p>
             <p className="mb-3">
-              Fun fact: I wanted to try a button so I accidentally won an online auction.
+              Fun fact: I wanted to try out a cool button on an app and I accidentally won an online auction.
             </p>
             <div className="flex gap-2 justify-center">
               <a className="text-xl hover:scale-110" href="https://www.linkedin.com/in/alexandre-tomasi-69b26616b/" target="_blank">
@@ -117,7 +117,7 @@ export default function AboutPage() {
             </div>
             <p className="mb-3">Happiness Manager</p>
             <p className="mb-3">
-              Fun fact: I swear I wanted to use C++ for the backend but they didn't let me.
+              Fun fact: I really wanted to use C++ for the backend but they didn't let me, I had to use Python instead :( .
             </p>
             <div className="flex gap-2 justify-center">
               <a className="text-xl hover:scale-110" href="https://github.com/Kenviro" target="_blank">
@@ -133,7 +133,7 @@ export default function AboutPage() {
             </div>
             <p className="mb-3">Art Director</p>
             <p className="mb-3">
-              Fun fact: Sometimes I think I'm just a double quota, I don't know why.
+              Fun fact: Sometimes I think I'm just a diversity hire, I don't know why...
             </p>
             <div className="flex gap-2 justify-center">
               <a className="text-xl hover:scale-110" href="https://github.com/neoo-n" target="_blank">
