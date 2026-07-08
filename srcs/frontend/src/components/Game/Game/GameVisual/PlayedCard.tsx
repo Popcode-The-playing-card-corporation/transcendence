@@ -7,10 +7,11 @@ type Props = {
   front: Texture<HTMLImageElement, TextureEventMap>,
   back: Texture<HTMLImageElement, TextureEventMap>,
   posPlayedCard: number, 
-  idPlayer: number 
+  idPlayer: number ,
+  position: number 
 }
 
-export default function PlayedCard({show, front, back, posPlayedCard, idPlayer} : Props) {
+export default function PlayedCard({show, front, back, posPlayedCard, idPlayer, position} : Props) {
 
   const materials = [
     new MeshPhongMaterial({color: 0xffffff}),
@@ -42,7 +43,7 @@ export default function PlayedCard({show, front, back, posPlayedCard, idPlayer} 
   return (
   <>
     <mesh
-      position={[0, posPlayedCard, 0.01 * idPlayer]}
+      position={[0, posPlayedCard, 0.01 * position]}
       material={materials}
     >
 	{ <boxGeometry args={[1, 1.4, 0.01]}/>}
