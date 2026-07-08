@@ -214,6 +214,9 @@ class GameService:
 
     @staticmethod
     async def check_game_end(room, game):
+        if room == None:
+            return False, None
+            
         game_state = room.game_state
     
         finished = all(
