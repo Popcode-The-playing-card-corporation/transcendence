@@ -35,7 +35,7 @@ function DisplayWhoPlaying({
       );
     }
   } else if (winner) {
-    return <p><em>{winner}</em> has won the fold!</p>;
+    return <p><em>{winner}</em> has taken the fold!</p>;
   } else {
 	return <p>trick over!</p>
   }
