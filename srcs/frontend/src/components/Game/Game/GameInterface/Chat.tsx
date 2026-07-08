@@ -1,5 +1,4 @@
 import { IoSend } from "react-icons/io5";
-// import generateFakeChat from "../../../../utils/test_funcs/generateFakeChat";
 import ChatText from "./ChatText"
 import { useEffect, useRef, useState, type SetStateAction, type KeyboardEvent} from "react";
 import { useGame } from "../../context/GameContext";

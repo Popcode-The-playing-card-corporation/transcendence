@@ -8,91 +8,86 @@ import { type availableGameT } from "../utils/type/availableGameType";
 import { getJoinedRoom, listRooms, validateRoom } from "../api/http/game";
 
 export function Game() {
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const notif = useRef(useNotif());
+  const [valid, setValid] = useState<boolean | null>(null);
+  const [rooms, setRooms] = useState<availableGameT[]>([]);
+  const [joined, setJoined] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
-	const auth = useAuth();
-	const navigate = useNavigate();
-	const location = useLocation();
-	const notif = useRef(useNotif());
-	const [valid, setValid] = useState<boolean | null>(null);
-	const [rooms, setRooms] = useState<availableGameT[]>([]);
-	const [joined, setJoined] = useState("");
-	const [refresh, setRefresh] = useState(false);
+  useEffect(() => {
+    function login_error(title: string, message: string) {
+      if (!auth.logging) {
+        navigate("/login", { state: "/game" });
+        notif.current?.showNotif(title, message, 5000);
+      }
+      setValid(false);
+      return;
+    }
 
-  	useEffect(() => {
-  
-		function login_error(title:string, message:string) {
-			if (!auth.logging) {
-				navigate('/login', {state: "/game"});
-				notif.current?.showNotif(title, message, 5000);
-			}
-			setValid(false);
-			return ;
-		}
+    function other_error(title: string, message: string) {
+      if (location.state) {
+        navigate(location.state, { state: "/game" });
+      } else {
+        navigate("/", { state: "/game" });
+      }
+      notif.current?.showNotif(title, message, 5000);
+      setValid(false);
+      return;
+    }
 
-		function other_error(title:string, message:string) {
-			if (location.state) {
-				navigate(location.state, {state: "/game"});
-			} else {
-				navigate('/', {state: "/game"})
-			}
-			notif.current?.showNotif(title, message, 5000);
-			setValid(false);
-			return ;
-		}
+    async function get_info() {
+      let tmp_joined = await getJoinedRoom();
 
-		async function get_info() {
-			let tmp_joined = await getJoinedRoom();
+      if ("code" in tmp_joined) {
+        if (tmp_joined.code === 401) {
+          return login_error("Authentication error:", "Please log in again.");
+        } else if (tmp_joined.code === 404) {
+          tmp_joined = { room: "" };
+        } else {
+          return other_error(
+            "Error " + tmp_joined.code + ":",
+            tmp_joined.response,
+          );
+        }
+      }
 
-			if ("code" in tmp_joined) {
-				if (tmp_joined.code === 401) {
-					return login_error("Authentication error:", "Please log in again.");
-				}
-				else if (tmp_joined.code === 404) {
-					tmp_joined = { room: "" };
-				}
-				else {
-					return other_error("Error " + tmp_joined.code + ":", tmp_joined.response);
-				}
-			}
+      if (tmp_joined.room !== "") {
+        setJoined(tmp_joined.room);
+        setValid(true);
+        return;
+      }
 
-			if (tmp_joined.room !== "") {
-				setJoined(tmp_joined.room);
-				setValid(true);
-				return;
-			}
+      const storedCode = localStorage.getItem("code");
 
-			const storedCode = localStorage.getItem("code");
+      if (storedCode) {
+        const validate = await validateRoom(storedCode);
 
-			if (storedCode) {
-				const validate = await validateRoom(storedCode);
+        if (validate.code === 200) {
+          setJoined(storedCode);
+          setValid(true);
+          return;
+        }
 
-				if (validate.code === 200) {
-					setJoined(storedCode);
-					setValid(true);
-					return;
-				}
+        localStorage.removeItem("code");
+      }
 
-				localStorage.removeItem("code");
-			}
+      const tmp_rooms = await listRooms();
 
-			const tmp_rooms = await listRooms();
+      if ("code" in tmp_rooms) {
+        if (tmp_rooms.code === 401) {
+          return login_error("Authentication error:", "Please log in again.");
+        }
+        return other_error("Error " + tmp_rooms.code + ":", tmp_rooms.response);
+      }
 
-			if ("code" in tmp_rooms) {
-				if (tmp_rooms.code === 401) {
-					return login_error("Authentication error:", "Please log in again.");
-				}
-				return other_error(
-					"Error " + tmp_rooms.code + ":",
-					tmp_rooms.response
-				);
-			}
-
-			setRooms(tmp_rooms);
-			setValid(true);
-		}
-		get_info();
-
-	}, [auth.logging, navigate, location.state, notif, refresh])
+      setRooms(tmp_rooms);
+      setValid(true);
+    }
+    get_info();
+  }, [auth.logging, navigate, location.state, notif, refresh]);
 
 	if (valid === null) {
 		return (
@@ -103,23 +98,21 @@ export function Game() {
 	}
 
 
-	if (!valid) {
-		return ;
-	}
-
-	if (joined !== "") {
-		return (
-			<GameWebSocket key={joined} code={joined} setCode={setJoined}/>
-		)
-	}
-
-	function refreshLobby() {
-		setRefresh(!refresh)
-	}
+  function refreshLobby() {
+    setRefresh(!refresh);
+  }
 
   return (
     <>
-        <CreateOrJoin availableGames={rooms} refreshLobby={refreshLobby} setJoined={setJoined}/>
+      {joined !== "" ? (
+        <GameWebSocket key={joined} code={joined} setCode={setJoined} />
+      ) : (
+        <CreateOrJoin
+          availableGames={rooms}
+          refreshLobby={refreshLobby}
+          setJoined={setJoined}
+        />
+      )}
     </>
   );
 }

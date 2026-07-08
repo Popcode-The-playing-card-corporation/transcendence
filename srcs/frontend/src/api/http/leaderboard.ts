@@ -32,6 +32,7 @@ export function leaderboardArray(board:AxiosResponse<leaderboardRetT>) {
 			username: board_data.username,
 			score: board_data.elo,
 			id: board_data.id,
+			rank: board_data.rank,
 		}
 		leaderboardarr.push(user);
 	}

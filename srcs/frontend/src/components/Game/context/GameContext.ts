@@ -19,6 +19,7 @@ type GameContextT = {
 	setNBGames: (games: number) => void;
 	setNBPoints: (points: number) => void;
 	sendMessage: (action:string, message:string) => void;
+	setWait: (bool: boolean) => void;
 	show_annonces: () => void;
 }
 

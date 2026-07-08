@@ -67,6 +67,7 @@ export type lastFoldT = {
 export type boardDataNT = {
 	self_id: number,
 	board: boardT[],
+	lastCard: cardT | null,
 	asked: cardT,
 	trick: string | null,
 	points: playerScoreT[],
@@ -77,12 +78,15 @@ export type boardDataNT = {
 	started_at: string,
 	round_time: string,
 	round: number,
+	winner: string | null,
 	last_fold: lastFoldT,
+	game: number;
 }
 
 export const default_board : boardDataNT = {
 	self_id: -1,
 	board: [],
+	lastCard: null,
 	asked: {color: "", value:"", id:0},
 	trick: null,
 	points: [],
@@ -93,12 +97,15 @@ export const default_board : boardDataNT = {
 	started_at: "",
 	round_time: "",
 	round: 0,
+	winner: null,
 	last_fold: {username:"", room_id: -1, cards: []},
+	game: 0,
 }
 
 export type boardDataT = {
 	self_id: number,
 	board: boardT[],
+	lastCard: cardT | null,
 	asked: cardT,
 	trick: string | null,
 	points: playerScoreT[],
@@ -109,12 +116,15 @@ export type boardDataT = {
 	started_at: Date,
 	round_time: Date,
 	round: number,
+	winner: string | null,
 	last_fold: lastFoldT,
+	game: number;
 }
 
 export const default_Nboard : boardDataT = {
 	self_id: -1,
 	board: [],
+	lastCard: null,
 	asked: {color: "", value:"", id:0},
 	trick: null,
 	points: [],
@@ -125,5 +135,7 @@ export const default_Nboard : boardDataT = {
 	started_at: new Date(0,0,0),
 	round_time: new Date(0,0,0),
 	round: 0,
+	winner: null,
 	last_fold: {username:"", room_id: -1, cards: []},
+	game: 0,
 }

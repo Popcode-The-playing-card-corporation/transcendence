@@ -19,7 +19,11 @@ def countCard(card, data, fold):
 			if (c["color"] == card.colors):
 				cards.append(Card(c["value"], c["color"]))
 
-	cards = sorted(cards)
+	if (card.colors == data["tricks"]):
+		cards.sort(key=lambda c: tricksValue[c.values])
+	else:
+		cards.sort(key=lambda c: cardValue[c.values])
+		
 	index = cards.index(card)
 	return abs(index - len(cards))
 

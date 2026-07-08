@@ -6,6 +6,8 @@ import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 import { useAuth } from "../hooks/useAuth";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import type { friendT, requestT } from "../../utils/type/friendType";
+import { friendArray, getFriends } from "../../api/http/friend";
 
 export function LoginForm({
   setCreated,
@@ -29,7 +31,38 @@ export function LoginForm({
     setPassword(e.target.value);
   };
 
-  function loginSuccess() {
+  function getRequests(friend_list: friendT[]): {
+	friends: friendT[];
+	requests: requestT[];
+	} {
+	const friends: friendT[] = [];
+	const requests: requestT[] = [];
+  
+	for (const friend of friend_list) {
+		if (friend.can_accept) {
+		requests.push({ id: friend.id, username: friend.user.username });
+		} else {
+		friends.push(friend);
+		}
+	}
+	return { friends: friends, requests: requests };
+  }
+
+  async function loginSuccess() {
+
+	const friendlist = await getFriends();
+	if ("code" in friendlist) {
+		auth.setHasFriendRequest(false);
+		return ;
+	}
+	const arr = friendArray(friendlist);
+	const filter = getRequests(arr);
+	if (filter.requests.length > 0) {
+		auth.setHasFriendRequest(true);
+	} else {
+		auth.setHasFriendRequest(false);
+	}
+
 	if (location.state) {
 		navigate(location.state, { state: location.pathname});
 		return ;

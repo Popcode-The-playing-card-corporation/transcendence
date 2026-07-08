@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Room, PlayerScore, Stat
 from api.serializers import UserSerializer
 
-
 class RoomSerializer(serializers.ModelSerializer):
     host = UserSerializer(read_only=True)
 

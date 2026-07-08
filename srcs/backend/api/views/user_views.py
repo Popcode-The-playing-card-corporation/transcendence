@@ -1,5 +1,3 @@
-from django.shortcuts import get_object_or_404
-from django.core.exceptions import ObjectDoesNotExist
 from ..models import User, Friendship
 from django.conf import settings
 from game.models import Stat
@@ -15,7 +13,6 @@ from django.utils import timezone
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
-from datetime import datetime
 from django.db.models import Q
 
 @api_view(["GET", "PUT", "PATCH"])
@@ -83,9 +80,16 @@ def user_data(request, user_id):
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([AllowAny])
 def register(request):
+    username = request.data.get("username")
     re_pass = request.data.get("re_password")
     password = request.data.get("password")
     
+    if (User.objects.filter(username=username).exists()):
+        return Response(
+            {"error": "This username is already used"},
+            status=403
+        )
+
     if (re_pass != password):
         return Response(
 			{"error": (f"Passwords must match!")},

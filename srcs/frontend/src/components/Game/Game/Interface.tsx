@@ -7,9 +7,6 @@ export default function Interface() {
 
   return (
     <div className="w-1/4 h-full ">
-      {/* <button className="btn btn-cicrle" onClick={() => setIsEnd(true)}> INFO: For sim end modal*/} 
-      {/*   sim end */}
-      {/* </button> */}
       <LeaderboardInGame />
       <GameButtons />
       <EndingModal />

@@ -64,4 +64,3 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
     </>
   );
 }
-//  + 0.02 * positionCard

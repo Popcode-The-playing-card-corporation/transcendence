@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import generateFakeAnnonce from "../../../../utils/test_funcs/generateFakeAnnonce";
 import { useGame } from "../../context/GameContext";
 import CardImg from "../GameInterface/CardImg";
 import { type annonceT } from "../../../../utils/type/boardDataType";
@@ -29,7 +28,6 @@ export default function GlobalAnnonce() {
 
   return (
     <>
-      {/* <button className="btn" onClick={show_annonces}>annonce</button> */}
         <dialog 
           id="showGlobalAnnonce"
           className="modal"

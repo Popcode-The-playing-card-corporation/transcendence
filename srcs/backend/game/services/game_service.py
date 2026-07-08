@@ -1,11 +1,9 @@
-
 from ..db import save_room_state, get_room_with_host, start_room, count_player, end_room
 from ..models import PlayerPresence,  PlayerScore
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from django.utils import timezone
 from datetime import timedelta
-import copy
 from .board_service import BoardService
 from .stats_service import StatsService
 from .score_service import ScoreService
@@ -14,10 +12,8 @@ from .broadcast_service import BroadcastService
 from .room_task_service import RoomTaskService
 from .meld_service import MeldService
 from channels.layers import get_channel_layer
-
 import asyncio
-
-
+import copy
 
 class GameService:
 
@@ -127,6 +123,8 @@ class GameService:
         room.round_time = (timezone.now() + timedelta(seconds=(25 if state["round"] == 0 else 10)))
         await sync_to_async(room.save)()
             
+        state = await MeldService.check_shtokr(room, state)
+
         await save_room_state(room.uuid, state)
 
         await StatsService.update_after_play(
@@ -136,7 +134,6 @@ class GameService:
             taker=taker,
             melds=melds
         )
-        #TODO delete this double id player finished ?
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished:
@@ -178,6 +175,9 @@ class GameService:
                     await asyncio.sleep(3)
             
             
+            game_state = game.handleAction("check_winner", game_state)
+            await save_room_state(room.uuid, game_state)
+            
             await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
             game_state, melds = game.handleAction("take_fold", game_state)
             await save_room_state(room.uuid, game_state)
@@ -205,13 +205,13 @@ class GameService:
         game_state = room.game_state
         game = GameEngine(room.uuid)
 
-        game_state = game.handleAction("points", game_state)
-        await save_room_state(room.uuid, game_state)
-        
         points = game.handleAction("get_final_score", game_state)
         
+        game_state = game.handleAction("point", game_state)
+        await save_room_state(room.uuid, game_state)
+        
         await ScoreService.save_final_score(room.code, room.game_state["game"], room.game_state["round"], points)
-            
+
     @staticmethod
     async def check_game_end(room, game):
         game_state = room.game_state
@@ -223,9 +223,6 @@ class GameService:
     
         if not finished:
             return False, None
-    
-        game_state = game.handleAction("point", game_state)
-        await save_room_state(room.uuid, game_state)
     
         return True, game_state
     
@@ -245,13 +242,17 @@ class GameService:
         if is_finished:
             await GameService.ask_host_continue(room, game_state)
             channel_layer = get_channel_layer()
+
+            room = await get_room_with_host(room_code)
             room.status = "end"
             await sync_to_async(room.save)()
         
+            game_state = room.game_state
             await end_room(room.uuid, game_state)
             await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
         else:
             await GameService.ask_host_continue(room, game_state)
+            room = await get_room_with_host(room_code)
             await GameService.continue_game(room)
             
         

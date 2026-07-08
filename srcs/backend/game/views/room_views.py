@@ -1,4 +1,3 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -9,10 +8,9 @@ from ..serializers import RoomSerializer
 from django.db.models import Q
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from ..db import add_bot_to_room, get_room_with_host
-import uuid
-from datetime import timedelta
+from ..db import add_bot_to_room
 from ..services.broadcast_service import BroadcastService
+import uuid
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])

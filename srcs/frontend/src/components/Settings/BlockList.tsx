@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import generateFakeBlockList from "../../utils/test_funcs/generateFakeBlocklist";
 import { getBlocked } from "../../api/http/friend";
 import { useNotif } from "../hooks/useNotif";
 import type { friendT } from "../../utils/type/friendType";

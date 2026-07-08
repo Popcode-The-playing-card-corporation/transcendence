@@ -3,7 +3,7 @@ export function Rules() {
     <div className="page-content mt-17">
       <h1>Rules</h1>
       <div className="mt-10">
-		<p>"La misère" is a variant of the Swiss game known as Jass. It is a trick taking game played with 36 cards</p>
+		<p>"La Misère" is a variant of the Swiss game known as Jass. It is a trick taking game played with 36 cards</p>
         <h2 className="mt-4">Setup</h2>
 		<p>A player deals the cards in a counter-clockwise fashion until no more cards remain in the deck, or there they can no longer be evenly distributed. The remaining cards are kept hidden.</p>
         <div>
@@ -18,15 +18,15 @@ export function Rules() {
 			The dealer then becomes the person who started play during the first turn of the round, and the person on the right will then play first.
 			As many rounds as agreed upon may be played. The winner will be the player with the least points.
           </p>
-		  <h2 className="mt-4">The Trump Suit</h2>
+		  <h2 className="mt-4">The "Atout" (aka Trump Suit)</h2>
 		  <p>
-            The Trump suit also known as the "atout" is decided dynamically for each round.
-			The first player to "coup" also known as to trump in will decide what the trump suit is, based off of the suit of the card that they play.
-			While the trump suit is undecided, a player may only trump in if they do not have the suit that has been requested for the turn. Otherwise they have to play the requested suit.
-			Once the suit is decided a player may trump in at any time, provided that they play a more powerful trump than one that has been already played.
-			When a trump is the first card played it becomes the requested suit, here players may play less powerful trumps than what have been already played.
-			In any case, only when a player does not have a card of the requested suit may they play a non-trump card of a different suit.
-			The Buur (Jack of Trumps) is exempt from all of these rules, the player who holds this card cannot be forced to play it, unless of course it is their last card.
+            The "atout" is decided dynamically for each round.
+			The first player to "coup" also known as to trump in will decide what the "atout" is, based off of the suit of the card that they play.
+			While the "atout" is undecided, a player may only play an "atout" if they do not have the suit that has been requested for the turn. Otherwise they have to play the requested suit.
+			Once the suit is decided a player may trump in at any time, provided that they play a more powerful "atout" than one that has been already played.
+			When an "atout" is the first card played it becomes the requested suit, here players may play less powerful "atouts" than what have been already played.
+			In any case, only when a player does not have a card of the requested suit may they play a non-"atout" card of a different suit.
+			The Buur (Jack of "Atout") is exempt from all of these rules, the player who holds this card cannot be forced to play it, unless of course it is their last card.
           </p>
           <h2 className="mt-4">The "annonces"</h2>
         </div>
@@ -74,7 +74,7 @@ export function Rules() {
           <thead className="text-lg">
             <tr >
               <th>Card</th>
-              <th>Point</th>
+              <th>Points</th>
             </tr>
           </thead>
           <tbody>

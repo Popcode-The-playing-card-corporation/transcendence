@@ -13,7 +13,7 @@ export function GitCallback() {
   const auth = useAuth();
 
   useEffect(() => {
-	if (hasRun.current) return; // I think it's just a dev problem, but to be safe
+	if (hasRun.current) return;
     	hasRun.current = true;
 
     async function gitLogin() {

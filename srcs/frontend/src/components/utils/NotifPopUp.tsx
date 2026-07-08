@@ -2,13 +2,6 @@ import { useEffect, useState } from "react";
 import { useNotif } from "../hooks/useNotif";
 import { useAuth } from "../hooks/useAuth";
 
-// type Props = {
-//   isEnabled: boolean;
-//   title: string;
-//   body: string;
-// };
-//
-
 export function NotifPopUp() {
   const [progress, setProgress] = useState(100);
   const context = useNotif();

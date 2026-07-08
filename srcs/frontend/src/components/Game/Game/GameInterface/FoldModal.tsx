@@ -3,7 +3,6 @@ import { GiCardPlay } from "react-icons/gi";
 import CardImg from "./CardImg";
 import { useGame } from "../../context/GameContext";
 import { IoIosClose } from "react-icons/io";
-// import { useGame } from "../../context/GameContext";
 
 export default function FoldModal() {
   const { state } = useGame();

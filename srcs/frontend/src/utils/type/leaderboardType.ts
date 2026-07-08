@@ -2,6 +2,7 @@ export type userLB = {
   username: string;
   score: number;
   id: number
+  rank: number;
 };
 
 export type currentLB = {

@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 import {
   MdLogout,
   MdLogin,
@@ -12,27 +12,27 @@ import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../api/http/login";
 import { useAuth } from "../hooks/useAuth";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef} from "react";
 import { IoIosMoon } from "react-icons/io";
-
-function getPreferedTheme() {
-  if (window.matchMedia('(prefers-color-sheme: dark)'))
-    return ("popcode_dark");
-  else
-    return ("popcode_light");
-}
 
 export function Navbar() {
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
   const auth = useAuth();
-  const [theme, setTheme] = useState(localStorage.getItem('theme') ?? getPreferedTheme());
   const showConfirmRef = useRef<HTMLDialogElement>(null);
+  const checkboxTheme = useRef<HTMLInputElement>(null);
 
   const toggleTheme = () => {
-    setTheme(theme === "popcode_dark" ? "popcode_light" : "popcode_dark");
+    auth.setTheme(
+      auth.theme === "popcode_dark" ? "popcode_light" : "popcode_dark",
+    );
   };
+
+  function logout_handler() {
+	auth.setHasFriendRequest(false);
+	navigate("/login", { state: current_location.pathname });
+  }
 
   async function handleLogout() {
     auth.setLogging(true);
@@ -45,24 +45,26 @@ export function Navbar() {
     auth.setLoggedIn(false);
     localStorage.removeItem("code");
     auth.setUserID(null);
-    navigate("/login", { state: current_location.pathname });
+    logout_handler();
     setTimeout(() => {
       auth.setLogging(false);
     }, 500);
   }
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
-    const localTheme = localStorage.getItem('theme')
+    localStorage.setItem("theme", auth.theme);
+    const localTheme = localStorage.getItem("theme");
     document.querySelector("html")?.setAttribute("data-theme", localTheme!);
-  }, [theme]);
+    if (localTheme === "popcode_dark") checkboxTheme.current!.checked = false;
+    else checkboxTheme.current!.checked = true
+  }, [auth.theme]);
 
   return (
     <div className="navbar min-h-16 h-16 bg-primary fixed top-0 z-100">
       <div className="flex-1">
-        <a className="text-xl item-menu p-2" href="/">
-          PopCards
-        </a>
+		<Link to="/" className="text-xl item-menu p-2">
+		PopCards
+		</Link>
       </div>
       <div className="flex-none">
         <ul className="menu menu-horizontal gap-1">
@@ -90,13 +92,14 @@ export function Navbar() {
             <NavLink
               to="/profile"
               className={({ isActive }) =>
-                (isActive ? "active " : "") + "item-menu" + (auth.hasFriendRequest ? " indicator" : "")
+                (isActive ? "active " : "") +
+                "item-menu" +
+                (auth.hasFriendRequest ? " indicator" : "")
               }
             >
-              {auth.hasFriendRequest ?
+              {auth.hasFriendRequest ? (
                 <div className="indicator-item badge badge-xs" />
-                : null
-              }
+              ) : null}
               <CgProfile /> Profile
             </NavLink>
           </li>
@@ -123,7 +126,11 @@ export function Navbar() {
           <li>
             <label className="swap swap-rotate">
               {/* this hidden checkbox controls the state */}
-              <input type="checkbox" onClick={toggleTheme} />
+              <input
+                type="checkbox"
+                onClick={toggleTheme}
+                ref={checkboxTheme}
+              />
 
               <MdOutlineWbSunny className="swap-on text-xl" />
               <IoIosMoon className="swap-off text-xl" />
@@ -131,7 +138,11 @@ export function Navbar() {
           </li>
           <li>
             <button
-              onClick={() => auth.logged_in ? showConfirmRef.current?.showModal() : navigate("/login", { state: current_location.pathname })}
+              onClick={() =>
+                auth.logged_in
+                  ? showConfirmRef.current?.showModal()
+                  : logout_handler()
+              }
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
               {auth.logged_in ? (
@@ -141,27 +152,23 @@ export function Navbar() {
               )}
             </button>
           </li>
-          <dialog
-            id="showConfirm"
-            className="modal"
-            ref={showConfirmRef}
-          >
+          <dialog id="showConfirm" className="modal" ref={showConfirmRef}>
             <div className="modal-box">
               <h3>Are you sure?</h3>
-              <p>
-                You are going to be logged out.
-              </p>
+              <p>You are going to be logged out.</p>
               <div className="flex justify-end gap-2">
-                <button className="btn del" onClick={handleLogout}>Confirm</button>
-                <button className="btn" onClick={() => showConfirmRef.current?.close()}>Cancel</button>
+                <button className="btn del" onClick={handleLogout}>
+                  Confirm
+                </button>
+                <button
+                  className="btn"
+                  onClick={() => showConfirmRef.current?.close()}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </dialog>
-          {/* {auth.logged_in ? ( */}
-          {/*   <li> */}
-          {/*     <Notif_Inbox></Notif_Inbox> */}
-          {/*   </li> */}
-          {/* ) : null} */}
         </ul>
       </div>
     </div>

@@ -2,6 +2,7 @@ export type leaderboardArrT = {
 	id: number,
 	username: string,
 	elo: number,
+	rank: number,
 };
 
 export type leaderboardRetT = {

@@ -1,16 +1,12 @@
-# game/tasks.py
-
 from celery import shared_task
-from .db import  get_room_with_host, get_params
+from .db import get_params
 from .models import Room
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.utils import timezone
-from datetime import datetime
 
 from .models import PlayerPresence
 from api.models import User
-
 
 @shared_task
 def delete_room(room_code):
@@ -111,7 +107,6 @@ def lobby_kick_all(room_code):
         }
     )
 
-#TODO check bug when no player in websocket room task for player (took too long to shut down and was killed)
 @shared_task
 def player_afk(room_code, user_id, round, game):
     room = Room.objects.select_related("host").filter(code=room_code).first()
@@ -145,19 +140,7 @@ def player_afk(room_code, user_id, round, game):
     p.save()
     
     channel_layer = get_channel_layer()
-    
-    if p.is_afk_count >= 3:
-        async_to_sync(channel_layer.group_send)(
-            f"player_{p.player_id}",
-            {
-                "type": "game_event",
-                "event": "force_disconnect",
-                "payload": {
-                    "message": "Player AFK 3 time"
-                }
-            }
-        )
-    
+        
     async_to_sync(channel_layer.group_send)(
         f"player_{p.player_id}",
         {
@@ -187,7 +170,27 @@ def wait_time(room_code, round, game):
     room.wait_schedule = False
     room.save()
     
+@shared_task
+def disconnected_player(room_code, player_id):
+    room = Room.objects.select_related("host").filter(code=room_code).first()
+    presence = PlayerPresence.objects.filter(room=room, player_id=player_id).first()
+    channel_layer = get_channel_layer()
     
+    if not presence.disconnected_scheduled:
+        return
+    
+    presence.is_online = False
+    presence.save()
+    
+    
+    async_to_sync(channel_layer.group_send)(
+        f"player_{presence.player_id}",
+        {
+            "type": "player_afk",
+            "reason": "Player AFK",
+            "code": room.code
+        }
+    )
 
 
 

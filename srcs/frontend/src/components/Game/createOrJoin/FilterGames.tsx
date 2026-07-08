@@ -10,7 +10,7 @@ export default function FilterGame({
   rawList,
   setFilteredGames,
 }: {
-  refreshLobby:() => void;
+  refreshLobby: () => void;
   rawList: availableGameT[];
   setFilteredGames: React.Dispatch<React.SetStateAction<availableGameT[]>>;
 }) {
@@ -18,6 +18,7 @@ export default function FilterGame({
   const [dispFilter, setDispFilter] = useState<boolean>(false);
   const [maxPlayers, setMaxPlayers] = useState<number>(0);
   const [typeFilter, setTypeFilter] = useState<string>("All");
+  const [rotation, setRotation] = useState<number>(0);
 
   useEffect(() => {
     const searchedGames = rawList.filter((game: availableGameT) => {
@@ -44,20 +45,35 @@ export default function FilterGame({
 
   return (
     <div className="filterGame flex justify-between my-2 items-center sticky -top-10 bg-(--bg-color) z-10 p-3 rounded-4xl shadow-2xl -mt-12">
-	<div className="gap-2 flex">
-      <label className="input w-3/4">
-        <IoSearch className="text-2xl " />
-        <input
-          type="search"
-          placeholder="Search"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
+      <div className="gap-2 flex">
+        <label className="input w-3/4">
+          <IoSearch className="text-2xl " />
+          <input
+            type="search"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
+        </label>
+        <button
+          onClick={() => {
+            refreshLobby();
+            setRotation(rotation + 360);
           }}
-        />
-      </label>
-	<button onClick={refreshLobby} className="btn btn-circle"> <IoMdRefresh className="text-xl"/> </button>
-	</div>
+          className={"btn btn-circle  "}
+        >
+          {" "}
+          <IoMdRefresh
+            style={{
+              transition: "0.5s ease-in-out",
+              transform: `rotate(${rotation}deg)`,
+            }}
+            className={"text-xl "}
+          />{" "}
+        </button>
+      </div>
       <div className="flex gap-1 justify-end items-center">
         <div
           className={
@@ -74,7 +90,6 @@ export default function FilterGame({
               min="2"
               max="7"
               defaultValue="2"
-              // value={maxPlayers}
               onChange={(e) => setMaxPlayers(+e.target.value / 10)}
               className={
                 "range text-base-200 glass transition-all duration-500 "
@@ -96,8 +111,10 @@ export default function FilterGame({
           <input
             className={
               dispFilter
-                ? "btn opacity-100 transition-all duration-500"
-                : "btn opacity-0" + " transition-all duration-500 translate-x-9 "
+                ? "btn opacity-100 transition-all duration-500" +
+                  (typeFilter === "friends_only" ? " btn-secondary" : "")
+                : "btn opacity-0" +
+                  " transition-all duration-500 translate-x-9 "
             }
             type="radio"
             name="filter"
@@ -108,7 +125,8 @@ export default function FilterGame({
           <input
             className={
               dispFilter
-                ? "btn transition-all duration-500"
+                ? "btn transition-all duration-500" +
+                  (typeFilter === "public" ? " btn-secondary" : "")
                 : " btn opacity-0" +
                   " transition-all duration-500 translate-x-5"
             }

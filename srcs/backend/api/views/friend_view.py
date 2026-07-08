@@ -1,9 +1,7 @@
 from ..models import User, Friendship
-from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from ..serializers import FriendSerializer
-from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from django.db.models import Q

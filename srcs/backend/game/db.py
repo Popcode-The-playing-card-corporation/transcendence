@@ -2,12 +2,11 @@ import os
 from pathlib import Path
 import tempfile
 from asgiref.sync import sync_to_async
-from .models import PlayerPresence, Room, PlayerScore, Stat, GameLog
+from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
 from datetime import timedelta
-import asyncio
 
 @sync_to_async
 def get_params(code):
@@ -249,6 +248,17 @@ def save_room_state(uuid, data):
     room.save()
 
 @sync_to_async
+def get_nb_human(uuid):
+    room = Room.objects.get(uuid=uuid)
+    player = PlayerPresence.objects.filter(
+            room=room,
+            is_human=True,
+            is_online=True
+        ).count()
+    
+    return player
+
+@sync_to_async
 def delete_room(room_code):
     try:
         room = Room.objects.get(code=room_code)
@@ -302,11 +312,11 @@ def end_room(uuid, data):
         ).update(rank=rank)
         user = User.objects.get(id=entry["player"].player_id)
         stat = Stat.objects.get(user_id=user.id)
-        
+
         if not user.is_bot:
             user.elo += elo
         
-        if elo > 0:
+        if rank == 1:
             stat.win += 1
         else:
             stat.lose += 1
