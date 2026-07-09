@@ -41,12 +41,12 @@ export default function PCard({
   const [hidden, setHidden] = useState<boolean>(false);
   const cardRef = useRef<Mesh>(null!);
   const materials = [
-    new MeshPhongMaterial({ color: 0xffffff }),
-    new MeshPhongMaterial({ color: 0xffffff }),
-    new MeshPhongMaterial({ color: 0xffffff }),
-    new MeshPhongMaterial({ color: 0xffffff }),
-    new MeshPhongMaterial({ map: front, color: overed ? "pink" : "" }),
-    new MeshPhongMaterial({ map: back }),
+    new MeshPhongMaterial({ color: 0xffffff}),
+    new MeshPhongMaterial({ color: 0xffffff}),
+    new MeshPhongMaterial({ color: 0xffffff}),
+    new MeshPhongMaterial({ color: 0xffffff}),
+    new MeshPhongMaterial({ map: front, color: overed ? "pink" : ""}),
+    new MeshPhongMaterial({ map: back}),
   ];
   const game = useGame();
 
