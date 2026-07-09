@@ -149,7 +149,7 @@ fieldset {
 }
 
 .bordered {
-  @apply border-2 border-accent mt-10 rounded-xl p-10;
+  @apply border-2 border-accent mt-10 rounded-xl p-10 max-md:p-5;
 }
 
 .dropdown-scroll {

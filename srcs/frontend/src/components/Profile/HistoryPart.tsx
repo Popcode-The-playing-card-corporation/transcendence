@@ -103,7 +103,7 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
             </thead>
             {gameHistory.slice(0, nbSlice).map((game: historyT) => (
               <tbody>
-                <tr className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}>
+                <tr className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-y "}>
                   <td>
                     <p className="ml-2">{game.game_id} </p>
                   </td>
@@ -154,32 +154,42 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
               </a>
             )}
           </table >
-          <table className={"mt-5 table-auto text-center w-full" + (isHome ? "" : " max-md:hidden")} >
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+          <table className={"mt-5 table-auto text-center w-full" + (isHome ? "" : " hidden")} >
               <>
                 <tr className="h-14">
                   <th className="th-history">Game ID</th>
-                  <td className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}><p className="ml-2">{game.game_id} </p></td>
+            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}><p className="ml-2">{game.game_id} </p></td>
+			))}
                 </tr>
                 <tr className="h-14">
                   <th className="w-40">Date</th>
-                  <td className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}>{game.start}</td>
+            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.start}</td>
+			))}
                 </tr>
                 <tr className="h-14">
                   <th className="th-history">Your points</th>
-                  <td className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}>{game.points}</td>
+            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.points}</td>
+			))}
                 </tr>
                 <tr className="h-14">
                   <th className="th-history">Time played</th>
-                  <td className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}>{game.duration}</td>
+            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.duration}</td>
+			))}
                 </tr>
                 <tr className="h-14">
                   <th className="th-history">Nb players</th>
-                  <td className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}>{game.nb_player}</td>
+            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.nb_player}</td>
+			))}
                 </tr>
                 <tr className="h-14">
                   <th className="overflow-hidden">Opponents</th>
-                  <td className={isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100" + " border-y "}>
+            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>
                     <div className="dropdown dropdown-center">
                       <div
                         tabIndex={0}
@@ -208,16 +218,17 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
                       </ul>
                     </div>
                   </td>
+			))}
                 </tr>
                 <tr>
                   <th className="th-history">Your result</th>
+            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
                   <td className={
                     (game.won ? "bg-success" : "bg-warning") +
-                    " h-16 border-y border-base-200"}>{game.won ? "winner" : "loooser"}</td>
+                    " h-16 border-x-4 border-base-200"}>{game.won ? "winner" : "loooser"}</td>
+			))}
                 </tr>
               </>
-            ))
-            }
           </table >
         </>
       }
