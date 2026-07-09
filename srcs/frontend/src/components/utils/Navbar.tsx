@@ -12,8 +12,9 @@ import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../api/http/login";
 import { useAuth } from "../hooks/useAuth";
-import { useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import { IoIosMoon } from "react-icons/io";
+import BurgerMenu from "./BurgerMenu";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -30,8 +31,8 @@ export function Navbar() {
   };
 
   function logout_handler() {
-	auth.setHasFriendRequest(false);
-	navigate("/login", { state: current_location.pathname });
+    auth.setHasFriendRequest(false);
+    navigate("/login", { state: current_location.pathname });
   }
 
   async function handleLogout() {
@@ -56,7 +57,7 @@ export function Navbar() {
     const localTheme = localStorage.getItem("theme");
     document.querySelector("html")?.setAttribute("data-theme", localTheme!);
     if (localTheme === "popcode_dark") checkboxTheme.current!.checked = false;
-    else checkboxTheme.current!.checked = true
+    else checkboxTheme.current!.checked = true;
   }, [auth.theme]);
 
   return (
@@ -67,7 +68,7 @@ export function Navbar() {
         </a>
       </div>
       <div className="flex-none">
-        <ul className="menu menu-horizontal gap-1">
+        <ul className="menu menu-horizontal gap-1 max-md:hidden">
           <li>
             <NavLink
               to="/game"
@@ -170,6 +171,7 @@ export function Navbar() {
             </div>
           </dialog>
         </ul>
+		<BurgerMenu isActive={isActive} logout_handler={logout_handler} checkboxTheme={checkboxTheme} toggleTheme={toggleTheme} handleLogout={handleLogout}/>
       </div>
     </div>
   );
