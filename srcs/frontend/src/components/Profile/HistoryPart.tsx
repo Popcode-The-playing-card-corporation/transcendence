@@ -91,10 +91,10 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
         :
         <>
           <table className={"mt-5 table-auto text-center w-full" + (isHome ? " max-md:hidden" : (isMiniProfile ? " max-lg:hidden" : ""))} >
-            <thead>
+            <thead className="text-base-content">
               <tr className="h-14">
                 <th className="th-history"></th>
-                <th className="w-40">Date</th>
+                <th className="w-40 ">Date</th>
                 <th className="th-history">Your points</th>
                 <th className="th-history">Time played</th>
                 <th className="th-history">Nb players</th>
@@ -162,9 +162,9 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
               <thead>
                 <tr className={"h-14 border-y-hidden" + (isHome ? " bg-base-200" : " bg-base-100")}>
                   <th className={(isHome ? "bg-base-200" : "bg-base-100") + " border-hidden"}></th>
-                  <td className="w-40 border-hidden">Date</td>
-                  <td className="th-history border-hidden">Your points</td>
-                  <td className="th-history border-hidden">Nb players</td>
+                  <td className="w-40 border-hidden text-base-content">Date</td>
+                  <td className="th-history border-hidden text-base-content">Your points</td>
+                  <td className="th-history border-hidden text-base-content">Nb players</td>
                   <th className={(isHome ? "bg-base-200" : "bg-base-100") + " th-history border-hidden"}></th>
                 </tr>
               </thead>
