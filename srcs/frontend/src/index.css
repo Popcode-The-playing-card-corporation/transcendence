@@ -8,6 +8,7 @@
 @import "tailwindcss";
 @import "./popcode_light.css";
 @import "./popcode_dark.css";
+
 @plugin "daisyui" {
   themes:
     popcode_light --default,
@@ -28,6 +29,7 @@
   .font-Cause {
     font-family: "Cause";
   }
+
   .font-JetBrains {
     font-family: "JetBrains Mono";
   }
@@ -37,31 +39,35 @@
   }
 
   .font-Dancing {
-		font-family: "Dancing Script";
-		/* font-size: 1.4rem; */
-	}
+    font-family: "Dancing Script";
+    /* font-size: 1.4rem; */
+  }
 
   .font-Rubik {
-		font-family: "Rubik 80s Fade";
-	}
+    font-family: "Rubik 80s Fade";
+  }
 
-.font-Henny {
-		font-family: "Henny Penny"
-	}
+  .font-Henny {
+    font-family: "Henny Penny"
+  }
 
   body {
     background: var(--color-base-200);
     font-family: "JetBrains Mono";
   }
+
   .page-content {
-    @apply mx-24;
+    @apply mx-24 max-md:mx-12;
   }
+
   h1 {
     @apply text-4xl mt-10 text-center font-bold;
   }
+
   h2 {
     @apply text-3xl font-bold;
   }
+
   h3 {
     @apply text-2xl font-bold;
   }
@@ -143,7 +149,7 @@ fieldset {
 }
 
 .bordered {
-  @apply border-2 border-accent mt-10 rounded-xl p-10;
+  @apply border-2 border-accent mt-10 rounded-xl p-10 max-md:p-5;
 }
 
 .dropdown-scroll {

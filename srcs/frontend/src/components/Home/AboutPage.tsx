@@ -29,8 +29,8 @@ export default function AboutPage() {
       <div id="technicalStack">
         <h2 className="text-center">Technical Stack</h2>
         <br />
-        <div className="flex justify-between">
-          <div>
+        <div className="flex gap-6 justify-center flex-wrap">
+          <div className="mb-4">
             <h3>Frontend</h3>
             <ul className="list-disc ms-8">
               <li>React</li>
@@ -41,7 +41,7 @@ export default function AboutPage() {
             </ul>
           </div>
           <br />
-          <div>
+          <div className="mb-4">
             <h3>Backend</h3>
             <ul className="list-disc ms-8">
               <li>Django</li>
@@ -52,7 +52,7 @@ export default function AboutPage() {
             </ul>
           </div>
           <br />
-          <div>
+          <div className="mb-4">
             <h3>Infrastructure</h3>
             <ul className="list-disc ms-8">
               <li>NGINX</li>
@@ -71,8 +71,8 @@ export default function AboutPage() {
         </p>
         <br />
         <h3 className="text-center">Individual Profiles</h3>
-        <div className="flex justify-between gap-2">
-          <div className="bordered border w-1/5">
+        <div className="flex flex-wrap gap-3 justify-center">
+          <div className="bordered border w-60">
             <h4 className="pb-4"><strong>Cyril aka cgoldens</strong></h4>
             <div className="flex justify-center mb-3 ">
               <img src={cyril} className="w-40 rounded-2xl" />
@@ -91,7 +91,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bordered border w-1/5">
+          <div className="bordered border w-60">
             <h4 className="pb-4"><strong>Alex aka atomasi</strong></h4>
             <div className="flex justify-center mb-3 ">
               <img src={alex} className="w-40 rounded-2xl" />
@@ -110,7 +110,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bordered border w-1/5">
+          <div className="bordered border w-60">
             <h4 className="pb-4"><strong>Kilian aka ktintim -</strong></h4>
             <div className="flex justify-center mb-3 ">
               <img src={kilian} className="w-40 rounded-2xl" />
@@ -126,7 +126,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bordered border w-1/5">
+          <div className="bordered border w-60">
             <h4 className="pb-4"><strong>Dana aka dvauthey</strong></h4>
             <div className="flex justify-center mb-3 ">
               <img src={dana} className="w-40 rounded-2xl" />
@@ -142,7 +142,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bordered border w-1/5">
+          <div className="bordered border w-60">
             <h4 className="pb-4"><strong>Anouar aka akabbaj</strong></h4>
             <div className="flex justify-center mb-3 ">
               <img src={anouar} className="w-40 rounded-2xl" />

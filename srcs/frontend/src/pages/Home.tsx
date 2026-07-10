@@ -92,11 +92,11 @@ export function Home({ updatedProfile, setUpdate }: Props) {
       < div className="page-content mt-17">
         <h1>Home</h1>
         {auth.logged_in ? (
-          <div className="grid grid-cols-3 gap-6">
-            <div className="bordered border-accent col-span-2">
+          <div className="grid grid-cols-3 grid-flow-row-dense gap-6">
+            <div className="bordered border-accent col-span-2 max-lg:col-span-3">
               <HomeProfile gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} leaderboard={leaderboard} />
             </div>
-            <div className="bordered border-accent">
+            <div className="bordered border-accent max-lg:col-span-3">
               <HomeFriends friends={friends} requests={requests} />
             </div>
           </div>
