@@ -30,12 +30,22 @@ export default function BurgerMenu({
 }: Props) {
   const auth = useAuth();
   const showConfirmRef = useRef<HTMLDialogElement>(null);
+  const drawerRef = useRef<HTMLInputElement>(null);
+
   return (
     <div className="drawer drawer-end md:hidden">
-      <input id="my-drawer-5" type="checkbox" className="drawer-toggle" />
+      <input
+        id="my-drawer-5"
+        type="checkbox"
+        className="drawer-toggle"
+        ref={drawerRef}
+      />
       <div className="drawer-content">
         {/* Page content here */}
-        <label htmlFor="my-drawer-5" className="drawer-button btn btn-primary">
+        <label
+          htmlFor="my-drawer-5"
+          className="drawer-button btn btn-primary mr-4"
+        >
           <svg
             className="swap-off fill-current"
             xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +68,6 @@ export default function BurgerMenu({
           <div className="flex items-center justify-between w-full mb-4">
             <li>
               <label className="swap swap-rotate">
-                {/* this hidden checkbox controls the state */}
                 <input
                   type="checkbox"
                   onClick={toggleTheme}
@@ -88,6 +97,7 @@ export default function BurgerMenu({
           </div>
           <li>
             <NavLink
+              onClick={() => (drawerRef.current!.checked = false)}
               to="/game"
               className={({ isActive }) =>
                 (isActive ? "active " : "") + "item-menu"
@@ -98,6 +108,7 @@ export default function BurgerMenu({
           </li>
           <li>
             <NavLink
+			onClick={() => drawerRef.current!.checked = false} 
               to="/leaderboard"
               className={({ isActive }) =>
                 (isActive ? "active " : "") + "item-menu"
@@ -108,6 +119,7 @@ export default function BurgerMenu({
           </li>
           <li>
             <NavLink
+			onClick={() => drawerRef.current!.checked = false} 
               to="/profile"
               className={({ isActive }) =>
                 (isActive ? "active " : "") +
@@ -123,6 +135,7 @@ export default function BurgerMenu({
           </li>
           <li>
             <NavLink
+			onClick={() => drawerRef.current!.checked = false} 
               to="/settings"
               className={({ isActive }) =>
                 (isActive ? "active " : "") + "item-menu"
@@ -133,6 +146,7 @@ export default function BurgerMenu({
           </li>
           <li>
             <NavLink
+			onClick={() => drawerRef.current!.checked = false} 
               to="/rules"
               className={({ isActive }) =>
                 (isActive ? "active " : "") + "item-menu"
