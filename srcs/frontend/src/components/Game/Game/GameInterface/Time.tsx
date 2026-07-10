@@ -44,7 +44,7 @@ export default function Time() {
         className="radial-progress"
         style={
           {
-            "--value": (timeLeft / 15) * 100,
+            "--value": (timeLeft / state.game.boardData.round === 0 ? 25 : 15) * 100,
             "--size": "50px",
             color: "var(--color-primary)",
           } as React.CSSProperties
