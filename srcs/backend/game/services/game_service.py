@@ -137,9 +137,22 @@ class GameService:
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished:
-            await GameService.check_goal_reached(room.code)
+            again = await GameService.check_goal_reached(room.code)
             return
+            
         
+        room = await get_room_with_host(room.code)
+        game_state = room.game_state
+        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+            room=room,
+            position=int(game_state["playing"])
+        )
+        
+        if p.is_human and p.is_online:
+            room = await get_room_with_host(room.code)
+            game_state = room.game_state
+            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+            
         return {"state": state}
 
     @staticmethod
@@ -214,6 +227,9 @@ class GameService:
 
     @staticmethod
     async def check_game_end(room, game):
+        if room == None:
+            return False, None
+            
         game_state = room.game_state
     
         finished = all(
@@ -250,10 +266,12 @@ class GameService:
             game_state = room.game_state
             await end_room(room.uuid, game_state)
             await BroadcastService.broadcast_game(room.code, channel_layer, "game_finish")
+            return False
         else:
             await GameService.ask_host_continue(room, game_state)
             room = await get_room_with_host(room_code)
             await GameService.continue_game(room)
+            return True
             
         
 

@@ -32,42 +32,42 @@ export function LoginForm({
   };
 
   function getRequests(friend_list: friendT[]): {
-	friends: friendT[];
-	requests: requestT[];
-	} {
-	const friends: friendT[] = [];
-	const requests: requestT[] = [];
-  
-	for (const friend of friend_list) {
-		if (friend.can_accept) {
-		requests.push({ id: friend.id, username: friend.user.username });
-		} else {
-		friends.push(friend);
-		}
-	}
-	return { friends: friends, requests: requests };
+    friends: friendT[];
+    requests: requestT[];
+  } {
+    const friends: friendT[] = [];
+    const requests: requestT[] = [];
+
+    for (const friend of friend_list) {
+      if (friend.can_accept) {
+        requests.push({ id: friend.id, username: friend.user.username });
+      } else {
+        friends.push(friend);
+      }
+    }
+    return { friends: friends, requests: requests };
   }
 
   async function loginSuccess() {
 
-	const friendlist = await getFriends();
-	if ("code" in friendlist) {
-		auth.setHasFriendRequest(false);
-		return ;
-	}
-	const arr = friendArray(friendlist);
-	const filter = getRequests(arr);
-	if (filter.requests.length > 0) {
-		auth.setHasFriendRequest(true);
-	} else {
-		auth.setHasFriendRequest(false);
-	}
+    const friendlist = await getFriends();
+    if ("code" in friendlist) {
+      auth.setHasFriendRequest(false);
+      return;
+    }
+    const arr = friendArray(friendlist);
+    const filter = getRequests(arr);
+    if (filter.requests.length > 0) {
+      auth.setHasFriendRequest(true);
+    } else {
+      auth.setHasFriendRequest(false);
+    }
 
-	if (location.state) {
-		navigate(location.state, { state: location.pathname});
-		return ;
-	}
-	navigate("/", {state: location.pathname})
+    if (location.state) {
+      navigate(location.state, { state: location.pathname });
+      return;
+    }
+    navigate("/", { state: location.pathname })
   }
 
   async function loginClick() {
@@ -77,29 +77,29 @@ export function LoginForm({
     const trimmedName = name.trim();
 
     if (password === "" && trimmedName.length === 0) {
-		setReason({ code: -1, response: "Username and Password cannot be empty!" });
-    	setFailure(true);
-		return ;
-	}
-
-  const result = await loginRequest(name, password, auth.setUserID, auth.setPass);
-  if (result.code == 200) {
-  auth.setLoggedIn(true);
-  loginSuccess();
+      setReason({ code: -1, response: "Username and Password cannot be empty!" });
+      setFailure(true);
       return;
-  }
-  setReason(result);
-  setFailure(true);
-  return;
+    }
+
+    const result = await loginRequest(name, password, auth.setUserID, auth.setPass);
+    if (result.code == 200) {
+      auth.setLoggedIn(true);
+      loginSuccess();
+      return;
+    }
+    setReason(result);
+    setFailure(true);
+    return;
   }
 
-	const handleKey = (event: KeyboardEvent) => {
-		if (event.key === "Enter")
+  const handleKey = (event: KeyboardEvent) => {
+    if (event.key === "Enter")
       buttonRef.current?.click();
-	};
+  };
 
   return (
-    <fieldset className="fieldset bg-base-100 rounded-box w-xs p-4 mx-auto">
+    <fieldset className="fieldset bg-base-100 rounded-box p-5 mx-auto w-xs max-sm:w-full">
       <legend className="fieldset-legend">Login</legend>
       {failure ? (
         <label className="label text-error font-black mx-auto">{reason.response}</label>
@@ -111,13 +111,13 @@ export function LoginForm({
         type="text"
         value={name}
         onChange={nameChange}
-        className="input"
+        className="input w-full"
         placeholder="..."
         onKeyDown={handleKey}
       />
 
       <label className="label">Password</label>
-      <div className="input">
+      <div className="input w-full">
         <input
           type={showPassword ? "text" : "password"}
           value={password} // show the password in inspector, is it okay ??
@@ -127,7 +127,7 @@ export function LoginForm({
         />
         <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
       </div>
-      
+
       <a onClick={() => setCreated(true)} className="link-hover">
         No Account? Create one here!
       </a>
@@ -139,7 +139,7 @@ export function LoginForm({
       >
         Login
       </button>
-	  <LoginWithService />
+      <LoginWithService />
 
     </fieldset>
   );

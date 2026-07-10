@@ -131,9 +131,13 @@ The team collaborated by having initial meetings to decide on the general direct
 
 ### Frontend
 - **React + TypeScript**: Being a commonly used framework + language which some team members already had experience with, we felt it would benefit our project to use them. The layout and structure of code and design that is encouraged by these technologies suited our approach to the design of our project.
-- **Tailwind CSS**: The ease of integration between CSS and React allowed for both more writeable and readable code, allowing for more effective teamwork. 
+
+- **Tailwind CSS**: The ease of integration between CSS and React allowed for both more writeable and readable code, allowing for more effective teamwork.
+
 - **WebSockets**: As opposed to HTTP requests WebSockets allowed for continuous communication between the frontend and backend. This allowed for seamless real-time interactions between users, notably when in game.
-- **ThreeJS**:
+
+- **ThreeJS**: A 3D javascript library was required to implement our game. Being a commonly used library with good documentation that works well with React it made sense for our project where we used it to render 3D animations and elements such as the table and cards.
+
 - **DaisyUI**: DaisyUI provided an easily accessible library of components that were readily customisable making it an obvious choice for our project especially as it provided a foundation that was already in line with our design principles.
 
 ### Backend
@@ -158,17 +162,11 @@ The team collaborated by having initial meetings to decide on the general direct
 
 ### Infrastructure
 - **Docker + Docker Compose**: Docker was already well known to our team, and allowed for us to easily deploy standardized containers from different environments and ensure efficient internal communication between them.
+
 - **NGINX**: NGINX provides a simple and easy to use webserver which integrated well with our docker containers, and allowed for simple integration with cloudflare tunnels to host our project in the future.
 
 ### Other
-- **Procreate**:
-
-
-Frontend technologies and frameworks used.
-◦ Backend technologies and frameworks used.
-◦ Database system and why it was chosen.
-◦ Any other significant technologies or libraries.
-◦ Justification for major technical choices.
+- **Procreate**: A user friendly drawing application that was used to quickly and elegantly create assets for our deck of cards.
 
 
 ## Database Schema
@@ -282,8 +280,8 @@ Features Implemented
 
 - Creation of the UX architecture
 - Creation of the Profile Page
-- Creation of the Leaderboard page
-- Creation of the game lobby page
+- Creation of the Leaderboard Page
+- Creation of the Game Lobby Page
 - Creation of parts of the in game interface
 - Handled interactions with cards in hand and animations
 
@@ -314,6 +312,20 @@ Challenges
 - Remembering to use await before asynchronous functions
 
 ### Dana Vauthey
+
+Features Implemented
+
+- Created the card assets for the game
+- Created the Home Page
+- Created the waiting Room/Settings Page
+- Created the Terms & Condtions Page
+- Displayed and animated the opponents' cards
+
+Challenges
+
+- Planning and creating the assets took time, adding time to catch up with other features that had since been implemented
+- Learning React and how to use other frontend tools, which had unfamiliar syntax and logic
+- Learning to implement 3D graphics with ThreeJS
 
 ### Anouar Kabbaj
 

@@ -5,7 +5,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
   return (
     <table className="text-left md:w-screen mx-auto">
       <tr>
-        <th className="th-stats">Game played: </th>
+        <th className="th-stats">Games played: </th>
         <td>{stats.played}</td>
         <th className="th-stats max-md:hidden">Winrate: </th>
         <td className="max-md:hidden">
@@ -21,7 +21,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
         </td>
 	  </tr>
       <tr>
-        <th className="th-stats">Total points receive:</th>
+        <th className="th-stats">Total points received:</th>
         <td>{stats.total_points}</td>
         <th className="th-stats max-md:hidden">Times tricks choosen</th>
         <td className="max-md:hidden">{stats.nb_trick_choose}</td>
@@ -41,7 +41,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
         <td>{stats.nb_taken}</td>
 	  </tr>
       <tr>
-        <th className="th-stats">Times last fold taken</th>
+        <th className="th-stats">Times last fold taken:</th>
         <td>{stats.nb_last_take}</td>
         <th className="th-stats max-md:hidden">Total hand meld points: </th>
         <td className="max-md:hidden">{stats.hand_meld_points}</td>
@@ -61,7 +61,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
         <td>{stats.highest_hand_meld}</td>
 	  </tr>
       <tr>
-        <th className="th-stats">Highest board meld</th>
+        <th className="th-stats">Highest board meld:</th>
         <td>{stats.highest_board_meld}</td>
         <th className="th-stats max-md:hidden">Total hosting game</th>
         <td className="max-md:hidden">{stats.nb_host}</td>

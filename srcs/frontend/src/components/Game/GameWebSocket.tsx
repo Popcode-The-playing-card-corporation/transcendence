@@ -144,8 +144,8 @@ export default function GameWebSocket({
 							if (state.settings.listPlayer.filter((player) => player.username === data.playername)[0].is_host) {
 								dispatch({type: "SET_NEXT", payload:false})
 							}
-						}
-						dispatch({type:"SET_MESSAGE", payload: data.player_name});
+						} 
+						dispatch({type:"SET_MESSAGE", payload: payload.player_name});
 					}
 					if (payload.board_data) {
 						setGame(payload.self_card, payload.board_data)

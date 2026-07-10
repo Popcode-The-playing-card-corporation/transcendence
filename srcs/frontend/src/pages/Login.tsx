@@ -14,7 +14,7 @@ export function Login() {
       navigate("/");
     }
   }, [auth.logged_in, navigate]);
-  
+
   return (
     <div className="page-content mt-17">
       <h1>Login / Register</h1>
@@ -24,7 +24,7 @@ export function Login() {
         ) : (
           <LoginForm setCreated={setCreated} />
         )}
-		
+
       </div>
     </div>
   );

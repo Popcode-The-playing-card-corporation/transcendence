@@ -75,26 +75,19 @@ class RoomConsumer(AsyncWebsocketConsumer):
         })
     
         await self.close()
-        
-    async def player_afk(self, event):
-        #await self.send_json({
-        #    "event": "player_afk",
-        #    "reason": event["reason"]
-        #})
-        
-        room = await get_room_with_host(event["code"])
-        game = GameEngine(room.uuid)
+    
+    async def afk_flow(self, room, game):
         await BotService.play_afk(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
                                                         )
-        p = await sync_to_async(PlayerPresence.objects.select_related("room").filter(room__code=event["code"], player_id=self.user.id).first)()
+        
+        p = await sync_to_async(PlayerPresence.objects.select_related("room").filter(room__code=room.code, player_id=self.user.id).first)()
         
         if p.is_afk_count >= 3:
             p.is_online = False
             await sync_to_async(p.save)()
-            
             await self.channel_layer.group_send(
                 f"player_{p.player_id}",
                 {
@@ -106,18 +99,34 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
             return
-        room = await get_room_with_host(event["code"])
+        
+        room = await get_room_with_host(room.code)
         game = GameEngine(room.uuid)
-        asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
+        await BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
-                                                        ))
+                                                        )
+        room = await get_room_with_host(room.code)
+        game = GameEngine(room.uuid)
+        
 
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished and room.status == "start":
             await GameService.check_goal_reached(room.code)
+
+
+    
+    async def player_afk(self, event):
+        #await self.send_json({
+        #    "event": "player_afk",
+        #    "reason": event["reason"]
+        #})
+        room = await get_room_with_host(self.code)
+        game = GameEngine(room.uuid)
+        asyncio.create_task(self.afk_flow(room, game))
+        
     
 
     async def connect(self):

@@ -44,14 +44,14 @@ export default function Time() {
         className="radial-progress"
         style={
           {
-            "--value": (timeLeft / 15) * 100,
+            "--value": (timeLeft / (state.game.boardData.round === 0 ? 30 : 15)) * 100,
             "--size": "50px",
             color: "var(--color-primary)",
           } as React.CSSProperties
         }
         aria-valuenow={timeLeft}
         role="progressbar"
-        aria-valuemax={15}
+        aria-valuemax={state.game.boardData.round === 0 ? 30 : 15}
       >
         {timeLeft}s
       </div>
