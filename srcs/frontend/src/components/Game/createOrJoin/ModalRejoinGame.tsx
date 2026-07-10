@@ -6,7 +6,7 @@ export default function ModalRejoinGame() {
   const game = useGame();
 
   useEffect(() => {
-    if (game.state.event === "player_reconnect")
+    if (game.state.event === "player_reconnect" && game.state.message === game.state.user)
       rejoinModal.current?.showModal();
   }, [game.state.event]);
 
