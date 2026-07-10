@@ -330,7 +330,8 @@ def end_room(uuid, data):
             stat.nb_host += 1
         user.save()
         stat.save()
-        AchievementService.check_user_achievements(user)
+        if not user.is_bot:
+            AchievementService.check_user_achievements(user)
 
     room.status = "end"
     room.ended_at = timezone.now()
