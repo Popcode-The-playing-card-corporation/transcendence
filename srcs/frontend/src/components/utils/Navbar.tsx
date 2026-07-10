@@ -15,6 +15,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useRef } from "react";
 import { IoIosMoon } from "react-icons/io";
 import BurgerMenu from "./BurgerMenu";
+const logo = "/logo.png"
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -63,8 +64,8 @@ export function Navbar() {
   return (
     <div className="navbar min-h-16 h-16 bg-primary fixed top-0 z-100">
       <div className="flex-1">
-        <a className="text-xl item-menu p-2" href="/">
-          PopCards
+        <a className="text-xl item-menu p-2 flex items-center gap-2 w-fit" href="/">
+          <img src={logo} className="h-6"/>PopCards
         </a>
       </div>
       <div className="flex-none">
