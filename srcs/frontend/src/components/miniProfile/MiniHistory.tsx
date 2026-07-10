@@ -67,7 +67,7 @@ export function MiniHistory({ history }: Props) {
                 <td>{game.start}</td>
                 <td>{game.points}</td>
                 <td>{game.won ? "winner" : "loooser"}</td>
-                <td>{game.duration}</td>
+                <td>{game.duration + "s"}</td>
                 <td>{game.nb_player}</td>
                 <td>
                   <div className="dropdown dropdown-center ">
