@@ -92,7 +92,7 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
           <table className={"mt-5 table-auto text-center w-full" + (isHome ? " max-md:hidden" : "")} >
             <thead>
               <tr className="h-14">
-                <th className="th-history">Game ID</th>
+                <th className="th-history"></th>
                 <th className="w-40">Date</th>
                 <th className="th-history">Your points</th>
                 <th className="th-history">Time played</th>
@@ -103,15 +103,15 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
             </thead>
             {gameHistory.slice(0, nbSlice).map((game: historyT) => (
               <tbody>
-                <tr className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-y "}>
-                  <td>
-                    <p className="ml-2">{game.game_id} </p>
+                <tr className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-y"}>
+                  <td className={"px-2" + (isHome ? " bg-base-200" : " bg-base-100")}>
+                    <p className="ml-2">{gameHistory.indexOf(game)}</p>
                   </td>
-                  <td>{game.start}</td>
-                  <td>{game.points}</td>
-                  <td>{game.duration}</td>
-                  <td>{game.nb_player}</td>
-                  <td>
+                  <td className="px-2">{game.start}</td>
+                  <td className="px-2">{game.points}</td>
+                  <td className="px-2">{game.duration}</td>
+                  <td className="px-2">{game.nb_player}</td>
+                  <td className="px-2">
                     <div className="dropdown dropdown-center">
                       <div
                         tabIndex={0}
@@ -131,8 +131,10 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
                           :
                           (
                             game.players.map((player: playerT) => (
-                              <li>
-                                <UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate} />
+                              <li className="w-38 max-w-38">
+                                <p className="truncate">
+                                  {player.username}
+                                </p>
                               </li>
                             ))
                           )
@@ -142,7 +144,7 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
                   </td>
                   <td className={
                     (game.won ? "bg-success" : "bg-warning") +
-                    " h-16 border-y border-base-200"}>{game.won ? "winner" : "loooser"}</td>
+                    " h-16 border-y px-2" + (isHome ? " border-base-200" : " border-base-100")}>{game.won ? "winner" : "loooser"}</td>
                 </tr>
               </tbody>
             ))
@@ -154,63 +156,35 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
               </a>
             )}
           </table >
-          <table className={"table mt-5 text-center table-sm table-pin-rows table-pin-cols" + (isHome ? " md:hidden" : " hidden")} >
-            <thead>
-              <tr className="h-14 bg-base-200 border-y-hidden">
-                <th className="bg-base-200 border-hidden"></th>
-                <td className="w-40 border-hidden">Date</td>
-                <td className="th-history border-hidden">Your points</td>
-                <td className="th-history border-hidden">Nb players</td>
-                <td className=" overflow-hidden border-hidden">Opponents</td>
-                <th className="bg-base-200 th-history border-hidden"></th>
-              </tr>
-            </thead>
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-              <tbody>
-                <tr className="bg-base-100">
-                  <th className="bg-base-200 px-2">
-                    <p>{gameHistory.indexOf(game)}</p>
-                  </th>
-                  <td className="px-2 border-y g-base-100 border-base-200 ">{game.start}</td>
-                  <td className="px-2 border-base-200 border-y">{game.points}</td>
-                  <td className="px-2 border-base-200 border-y">{game.nb_player}</td>
-                  <td className="px-2 border-base-200 border-y">
-                    <div className="dropdown dropdown-center">
-                      <div
-                        tabIndex={0}
-                        role="button"
-                        className="link hover:scale-110 transition-all"
-                      >
-                        Click to see
-                      </div>
-                      <ul
-                        tabIndex={-1}
-                        className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
-                      >
-                        {game.players.length === 0 ?
-                          <p>
-                            No opponents.
-                          </p>
-                          :
-                          (
-                            game.players.map((player: playerT) => (
-                              <li>
-                                <UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate} />
-                              </li>
-                            ))
-                          )
-                        }
-                      </ul>
-                    </div>
-                  </td>
-                  <th className={
-                    (game.won ? "bg-success" : "bg-warning") +
-                    " h-16 border-y border-base-200 -px-2"}>{game.won ? "W" : "L"}</th>
+          <div className={"overflow-x-auto" + (isHome ? " md:hidden" : " hidden")}>
+            <table className="table mt-5 text-center table-md table-pin-rows table-pin-cols">
+              <thead>
+                <tr className="h-14 bg-base-200 border-y-hidden">
+                  <th className="bg-base-200 border-hidden"></th>
+                  <td className="w-40 border-hidden">Date</td>
+                  <td className="th-history border-hidden">Your points</td>
+                  <td className="th-history border-hidden">Nb players</td>
+                  <th className="bg-base-200 th-history border-hidden"></th>
                 </tr>
-              </tbody>
-            ))
-            }
-          </table >
+              </thead>
+              {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+                <tbody>
+                  <tr className="bg-base-100">
+                    <th className="bg-base-200 px-2">
+                      <p>{gameHistory.indexOf(game)}</p>
+                    </th>
+                    <td className="px-2 border-y g-base-100 border-base-200 ">{game.start}</td>
+                    <td className="px-2 border-base-200 border-y">{game.points}</td>
+                    <td className="px-2 border-base-200 border-y">{game.nb_player}</td>
+                    <th className={
+                      (game.won ? "bg-success" : "bg-warning") +
+                      " h-16 border-y border-base-200"}>{game.won ? "W" : "L"}</th>
+                  </tr>
+                </tbody>
+              ))
+              }
+            </table >
+          </div>
         </>
       }
     </>

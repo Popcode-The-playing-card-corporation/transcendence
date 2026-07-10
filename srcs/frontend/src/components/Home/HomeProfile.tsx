@@ -17,10 +17,10 @@ export default function HomeProfile({ gameHistory, setUpdate, updatedProfile, le
       <h2 className="text-center">Profile</h2>
       <div className="pt-4">
         <h3>Last games</h3>
-        <div className="overflow-x-auto">
-          {!("code" in gameHistory) ?
-            <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} isHome={true} /> : "Error about game history in HomeProfile"}
-        </div>
+        {/* <div className="overflow-x-auto"> */}
+        {!("code" in gameHistory) ?
+          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} isHome={true} /> : "Error about game history in HomeProfile"}
+        {/* </div> */}
       </div>
       <div className="pt-6">
         <h3>Leaderboard</h3>
