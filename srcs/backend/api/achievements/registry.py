@@ -12,6 +12,14 @@ USER_CONDITIONS = {
     ),
 }
 
+def get_condition_value(user, condition):
+    source = condition.get("source")
+    type_ = condition.get("type")
+
+    if source == "user":
+        return USER_CONDITIONS[type_](user)
+
+    return 0
 
 #def check_buur_and_neil(user, context):
 #    game_state = context["game_state"]
