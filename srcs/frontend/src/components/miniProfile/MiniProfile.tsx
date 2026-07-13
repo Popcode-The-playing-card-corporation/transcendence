@@ -77,52 +77,50 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
 
   return (
     <>
-      <div className="modal-box w-full max-w-4/7">
+      <div className="modal-box md:w-full md:max-w-4/7">
         <p className="text-center ">click ESC to close this window</p>
-        <div className="flex">
-          <div className="avatar flex-col">
-            <div className={"avatar mt-8 rounded-4xl w-24" + (account.is_online ? " border-4 border-green-400" : "")}>
-              <img src={account.avatar}></img>
-            </div>
-          </div>
-          <div className="w-full flex justify-end">
-            <div >
-              {account.friend?.status === "accepted" ?
-                <DeleteBtn req_id={account.friend.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
-                : (
-                  account.friend?.status === "pending" ? (
-                    can_accept ? (
-                      <div className="btn-accept-or-reject flex ">
-                        <p className="flex items-center pr-2">Friend request received : </p>
-                        <button
-                          className="btn validate"
-                          onClick={() => changeHandler(account.friend.id, "accept", localUpdatedFriends, localSet, profileRef, notif)}
-                        >
-                          <RxCheck />
-                        </button>
-                        <button
-                          className="btn del"
-                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, profileRef, notif)}
-                        >
-                          <RxCross2 />
-                        </button>
-                      </div>
-                    )
-                      : (<div className="flex gap-3">
-                        <p className="flex items-center">Friend request sent : </p>
-                        <button
-                          className="btn del"
-                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, profileRef, notif)}
-                        >
-                          <RxCross2 />
-                        </button>
-                      </div>)
+        <div className="w-full flex justify-end gap-1 mt-2">
+          <div >
+            {account.friend?.status === "accepted" ?
+              <DeleteBtn req_id={account.friend.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
+              : (
+                account.friend?.status === "pending" ? (
+                  can_accept ? (
+                    <div className="btn-accept-or-reject flex ">
+                      <p className="flex items-center pr-2">Friend request received : </p>
+                      <button
+                        className="btn validate"
+                        onClick={() => changeHandler(account.friend.id, "accept", localUpdatedFriends, localSet, profileRef, notif)}
+                      >
+                        <RxCheck />
+                      </button>
+                      <button
+                        className="btn del"
+                        onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, profileRef, notif)}
+                      >
+                        <RxCross2 />
+                      </button>
+                    </div>
                   )
-                    : <AddFriendsBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
+                    : (<div className="flex gap-3">
+                      <p className="flex items-center">Friend request sent : </p>
+                      <button
+                        className="btn del"
+                        onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, profileRef, notif)}
+                      >
+                        <RxCross2 />
+                      </button>
+                    </div>)
                 )
-              }
-            </div>
-            <BlockBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
+                  : <AddFriendsBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
+              )
+            }
+          </div>
+          <BlockBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
+        </div>
+        <div className="avatar w-full flex justify-start max-sm:justify-center mt-2">
+          <div className={"avatar rounded-4xl w-24" + (account.is_online ? " border-4 border-green-400" : "")}>
+            <img src={account.avatar}></img>
           </div>
         </div>
         <table className="mt-5">
@@ -140,7 +138,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
           </tr> : null}
         </table>
         <div className="mt-10">
-          <MiniHistory history={history}/>
+          <MiniHistory history={history} />
         </div>
       </div >
       <form method="dialog" className="modal-backdrop">

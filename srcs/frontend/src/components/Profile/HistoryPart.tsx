@@ -1,16 +1,17 @@
 import { useState } from "react";
 import type { historyT } from "../../utils/type/historyType";
 import type { playerT } from "../../utils/type/playerType";
-import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
+// import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 
 type Props = {
   gameHistory: historyT[];
-  updatedProfile: boolean;
-  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
-  isHome: boolean
+  // updatedProfile: boolean;
+  // setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+  isHome: boolean,
+  isMiniProfile: boolean
 };
 
-export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Props) {
+export function History({ gameHistory, isHome, isMiniProfile }: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(isHome ? 3 : 10)
   // const fakeHistory =
@@ -89,11 +90,11 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
         </div>
         :
         <>
-          <table className={"mt-5 table-auto text-center w-full" + (isHome ? " max-md:hidden" : "")} >
-            <thead>
+          <table className={"mt-5 table-auto text-center w-full" + (isHome ? " max-md:hidden" : (isMiniProfile ? " max-lg:hidden" : ""))} >
+            <thead className="text-base-content">
               <tr className="h-14">
                 <th className="th-history"></th>
-                <th className="w-40">Date</th>
+                <th className="w-40 ">Date</th>
                 <th className="th-history">Your points</th>
                 <th className="th-history">Time played</th>
                 <th className="th-history">Nb players</th>
@@ -149,36 +150,36 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
               </tbody>
             ))
             }
-            {isHome ? null : (
+            {isHome || isMiniProfile ? null : (
               <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
                 {gameHistory.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
 
               </a>
             )}
           </table >
-          <div className={"overflow-x-auto" + (isHome ? " md:hidden" : " hidden")}>
+          <div className={"overflow-x-auto" + (isHome ? " md:hidden" : (isMiniProfile ? " lg:hidden" : " hidden"))}>
             <table className="table mt-5 text-center table-md table-pin-rows table-pin-cols">
               <thead>
-                <tr className="h-14 bg-base-200 border-y-hidden">
-                  <th className="bg-base-200 border-hidden"></th>
-                  <td className="w-40 border-hidden">Date</td>
-                  <td className="th-history border-hidden">Your points</td>
-                  <td className="th-history border-hidden">Nb players</td>
-                  <th className="bg-base-200 th-history border-hidden"></th>
+                <tr className={"h-14 border-y-hidden" + (isHome ? " bg-base-200" : " bg-base-100")}>
+                  <th className={(isHome ? "bg-base-200" : "bg-base-100") + " border-hidden"}></th>
+                  <td className="w-40 border-hidden text-base-content">Date</td>
+                  <td className="th-history border-hidden text-base-content">Your points</td>
+                  <td className="th-history border-hidden text-base-content">Nb players</td>
+                  <th className={(isHome ? "bg-base-200" : "bg-base-100") + " th-history border-hidden"}></th>
                 </tr>
               </thead>
               {gameHistory.slice(0, nbSlice).map((game: historyT) => (
                 <tbody>
-                  <tr className="bg-base-100">
-                    <th className="bg-base-200 px-2">
+                  <tr className={isHome ? "bg-base-100" : "bg-base-200"}>
+                    <th className={(isHome ? "bg-base-200" : "bg-base-100") + " px-2"}>
                       <p>{gameHistory.indexOf(game)}</p>
                     </th>
-                    <td className="px-2 border-y g-base-100 border-base-200 ">{game.start}</td>
-                    <td className="px-2 border-base-200 border-y">{game.points}</td>
-                    <td className="px-2 border-base-200 border-y">{game.nb_player}</td>
+                    <td className={"px-2 border-y" + (isHome ? " border-base-200" : " border-base-100")}>{game.start}</td>
+                    <td className={"px-2 border-y" + (isHome ? " border-base-200" : " border-base-100")}>{game.points}</td>
+                    <td className={"px-2 border-y" + (isHome ? " border-base-200" : " border-base-100")}>{game.nb_player}</td>
                     <th className={
                       (game.won ? "bg-success" : "bg-warning") +
-                      " h-16 border-y border-base-200"}>{game.won ? "W" : "L"}</th>
+                      " h-16 border-y" + (isHome ? " border-base-200" : " border-base-100")}>{game.won ? "W" : "L"}</th>
                   </tr>
                 </tbody>
               ))
