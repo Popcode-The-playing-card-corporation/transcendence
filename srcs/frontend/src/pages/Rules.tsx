@@ -4,10 +4,14 @@ export function Rules() {
       <h1>Rules</h1>
       <div className="mt-10">
         <p>"La Misère" is a variant of the Swiss game known as Jass. It is a trick taking game played with 36 cards</p>
-        <h2 className="mt-4">Setup</h2>
+        <br /> <br />
+        <h2 className="text-center">Setup</h2>
+        <br />
         <p>A player deals the cards in a counter-clockwise fashion until no more cards remain in the deck, or there they can no longer be evenly distributed. The remaining cards are kept hidden.</p>
         <div>
-          <h2 className="mt-4">The Game</h2>
+          <br /> <br />
+          <h2 className="text-center">The Game</h2>
+          <br />
           <p>
             The player who's hand contains the 7 of diamonds, will play the first card. They may play any card they wish. Play continues in a counter-clockwise direction.
             Once a player plays their first card, they may announce outloud that they have an "annonce" within their hand (except for the "Stöck"). The points gained will be deducted from their score and at the end of the round they will show their announced cards.
@@ -18,7 +22,10 @@ export function Rules() {
             The dealer then becomes the person who started play during the first turn of the round, and the person on the right will then play first.
             As many rounds as agreed upon may be played. The winner will be the player with the least points.
           </p>
-          <h2 className="mt-4">The "Atout" (aka Trump Suit)</h2>
+          <br />
+          <br />
+          <h2 className="text-center">The "Atout" (aka Trump Suit)</h2>
+          <br />
           <p>
             The "atout" is decided dynamically for each round.
             The first player to "coup" also known as to trump in will decide what the "atout" is, based off of the suit of the card that they play.
@@ -28,7 +35,10 @@ export function Rules() {
             In any case, only when a player does not have a card of the requested suit may they play a non-"atout" card of a different suit.
             The Buur (Jack of "Atout") is exempt from all of these rules, the player who holds this card cannot be forced to play it, unless of course it is their last card.
           </p>
-          <h2 className="mt-4">The "annonces"</h2>
+          <br />
+          <br />
+          <h2 className="text-center">The "annonces"</h2>
+          <br />
         </div>
         <p>There are many different "annonces" that will give a corresponding amount of points: </p>
         <table className="border-2 border-accent table mt-3 bg-base-100">
@@ -69,7 +79,10 @@ export function Rules() {
             </tr>
           </tbody>
         </table>
-        <h2 className="mt-7">Point Calculation</h2>
+        <br />
+        <br />
+        <h2 className="text-center">Point Calculation</h2>
+        <br />
         <table className="border-2 border-accent table mt-3 bg-base-100">
           <thead className="text-lg">
             <tr >
