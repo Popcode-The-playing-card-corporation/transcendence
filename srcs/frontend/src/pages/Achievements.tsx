@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router";
-import { LeaderboardPart } from "../components/Leaderboard/LeaderboardPart";
-import { defaultLeaderboard, type leaderboardT } from "../utils/type/leaderboardType";
+import { achievementPart } from "../components/Achievement/AchievementPart";
+import { defaultachievement, type achievementT } from "../utils/type/achievementType";
 import { useEffect, useState } from "react";
-import { getLeaderboard, leaderboardArray } from "../api/http/leaderboard";
+import { getAchievement, achievementArray } from "../api/http/achievement";
 import { useNotif } from "../components/hooks/useNotif";
 import { useAuth } from "../components/hooks/useAuth";
 
 type Props = {
-	updateLeaderboard: boolean;
+	updateachievement: boolean;
 }
-export function Achievements({updateLeaderboard}:Props) {
+export function Achievements({updateachievement}:Props) {
 
 	const navigate = useNavigate();
 	const [valid, setValid] = useState<boolean | null>(null);
-	const [leaderboard, setLeaderboard] = useState<leaderboardT>(defaultLeaderboard)
+	const [achievement, setachievement] = useState<achievementT>(defaultachievement)
 	const notif = useNotif();
 	const auth = useAuth();
 
@@ -26,17 +26,17 @@ export function Achievements({updateLeaderboard}:Props) {
 			return ;
 		}
 
-		async function load_leaderboard() {
+		async function load_achievement() {
 			
-			const tmp_leaderboard = await getLeaderboard(auth.logged_in);
-			if ("code" in tmp_leaderboard) {
-				return other_error(tmp_leaderboard.response);
+			const tmp_achievement = await getAchievement(auth.logged_in);
+			if ("code" in tmp_achievement) {
+				return other_error(tmp_achievement.response);
 			}
-			setLeaderboard(leaderboardArray(tmp_leaderboard));
+			setachievement(achievementArray(tmp_achievement));
 			setValid(true);
 		}
-		load_leaderboard();
-	}, [navigate, auth.logged_in, notif, updateLeaderboard])
+		load_achievement();
+	}, [navigate, auth.logged_in, notif, updateachievement])
 
 	if (valid === null) {
 	  return (
@@ -55,8 +55,8 @@ export function Achievements({updateLeaderboard}:Props) {
 
   return (
     <div className="page-content my-17">
-      <h1>Leaderboard</h1>
-      <LeaderboardPart tmp_leaderboard={leaderboard}/>
+      <h1>achievement</h1>
+      <achievementPart tmp_achievement={achievement}/>
     </div>
   );
 }

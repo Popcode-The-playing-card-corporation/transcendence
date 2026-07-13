@@ -12,7 +12,6 @@ from ..achievements.registry import get_condition_value
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-@authentication_classes([OptionalJWTAuthentication])
 def achievements(request):
     total_users = User.objects.filter(is_bot=False).count()
 
@@ -24,11 +23,12 @@ def achievements(request):
             .annotate(count=Count("user"))
         )
     }
-    
-    my_achievement_ids = set(
-        UserAchievement.objects.filter(user=request.user)
-        .values_list("achievement_id", flat=True)
-    )
+    my_achievement_ids = set()
+    if request.user:
+        my_achievement_ids = set(
+            UserAchievement.objects.filter(user=request.user)
+            .values_list("achievement_id", flat=True)
+        )
 
     achievements = Achievement.objects.all()
     list_achievement = []
