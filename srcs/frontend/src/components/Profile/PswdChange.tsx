@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, type KeyboardEvent } from "react";
 import { changePassword } from "../../api/http/profile";
 import type { errorT } from "../../utils/type/errorType";
 import { useNotif } from "../hooks/useNotif";
@@ -18,6 +18,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showNewConfirmPassword, setShowNewConfirmPassword] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   function clean_close() {
     setOld("");
@@ -66,6 +67,11 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
     return;
   }
 
+  const handleKey = (event: KeyboardEvent) => {
+    if (event.key === "Enter")
+      buttonRef.current?.click();
+  };
+
   return (
     <div className="modal-box">
       <h3 className="text-lg font-bold text-center">Change password</h3>
@@ -83,6 +89,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
               value={oldpass}
               onChange={oldChange}
               placeholder="..."
+              onKeyDown={handleKey}
             />
             <button className="cursor-pointer " onClick={() => setShowOldPassword(!showOldPassword)}>{showOldPassword ? <FaEyeSlash /> : <FaEye />}</button>
           </div>
@@ -92,7 +99,9 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
             <input type={showNewPassword ? "text" : "password"}
               value={password1}
               onChange={pass1Change}
-              placeholder="..." />
+              placeholder="..."
+              onKeyDown={handleKey}
+            />
             <button className="cursor-pointer " onClick={() => setShowNewPassword(!showNewPassword)}>{showNewPassword ? <FaEyeSlash /> : <FaEye />}</button>
           </div>
 
@@ -103,12 +112,13 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
               value={password2}
               onChange={pass2Change}
               placeholder="..."
+              onKeyDown={handleKey}
             />
             <button className="cursor-pointer " onClick={() => setShowNewConfirmPassword(!showNewConfirmPassword)}>{showNewConfirmPassword ? <FaEyeSlash /> : <FaEye />}</button>
           </div>
 
           <form method="dialog" className="flex justify-around">
-            <button type="button" onClick={() => updatePass(oldpass, password1, password2)} className="btn mt-4">Change</button>
+            <button ref={buttonRef} type="button" onClick={() => updatePass(oldpass, password1, password2)} className="btn mt-4">Change</button>
             <button type="button" onClick={() => clean_close()} className="btn  mt-4">Cancel</button>
           </form>
         </fieldset>
