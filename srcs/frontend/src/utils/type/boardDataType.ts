@@ -80,6 +80,8 @@ export type boardDataNT = {
 	round: number,
 	winner: string | null,
 	last_fold: lastFoldT,
+	limit: string,
+	limit_val: number,
 	game: number;
 }
 
@@ -99,6 +101,8 @@ export const default_board : boardDataNT = {
 	round: 0,
 	winner: null,
 	last_fold: {username:"", room_id: -1, cards: []},
+	limit: "round",
+	limit_val: 3,
 	game: 0,
 }
 
@@ -118,6 +122,8 @@ export type boardDataT = {
 	round: number,
 	winner: string | null,
 	last_fold: lastFoldT,
+	limit: string,
+	limit_val: number,
 	game: number;
 }
 
@@ -137,5 +143,7 @@ export const default_Nboard : boardDataT = {
 	round: 0,
 	winner: null,
 	last_fold: {username:"", room_id: -1, cards: []},
+	limit: "round",
+	limit_val: 3,
 	game: 0,
 }

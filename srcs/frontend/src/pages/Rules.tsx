@@ -35,7 +35,7 @@ export function Rules() {
           <thead className="text-lg ">
             <tr>
               <th>Annonce</th>
-              <th>Point</th>
+              <th>Points</th>
             </tr>
           </thead>
           <tbody>

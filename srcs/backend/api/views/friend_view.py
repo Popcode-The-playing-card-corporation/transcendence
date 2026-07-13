@@ -238,10 +238,9 @@ def list_blocked(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_propal(request):
-
     friendships = Friendship.objects.filter(
         Q(from_user=request.user) | Q(to_user=request.user),
-        status="accepted"
+        Q(status="accepted") |  Q(status="pending") |  Q(status="blocked")
     )
 
     my_friend_ids = set()
@@ -265,7 +264,6 @@ def list_propal(request):
         )
 
         for friendship in propals:
-
             if friendship.from_user.id == friend_id:
                 suggested_user = friendship.to_user
             else:

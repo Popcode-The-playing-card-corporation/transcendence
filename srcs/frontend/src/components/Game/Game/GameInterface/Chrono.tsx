@@ -21,12 +21,12 @@ export default function Chrono() {
 <div className="grid grid-flow-col gap-2 text-center auto-cols-max">
   <div className="flex flex-col p-2 rounded-box text-neutral-content bg-primary">
     <span className="countdown font-mono text-2xl">
-      <span style={{"--value":min}  as React.CSSProperties  } className="">{min}</span>
+      <span style={{"--value":min, "--digits": 2}  as React.CSSProperties  } className="">{min}</span>
     </span>
   </div>
   <div className="flex flex-col p-2 rounded-box text-neutral-content bg-primary">
     <span className="countdown font-mono text-2xl">
-      <span style={{"--value":sec}  as React.CSSProperties } >{sec}</span>
+      <span style={{"--value":sec, "--digits": 2}  as React.CSSProperties } >{sec < 10 ? "0" + sec : sec}</span>
     </span>
   </div>
 </div>

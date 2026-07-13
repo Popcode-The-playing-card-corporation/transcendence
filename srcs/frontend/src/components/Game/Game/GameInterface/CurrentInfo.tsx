@@ -83,8 +83,6 @@ export default function CurrentInfo() {
     (player) => player.room_id === currentPlayer,
   );
   const self = nameCurrentPlayer?.user.username === state.user;
-  const limit = "round";
-  const limitValue = 3;
   const currentGame = state.game.boardData.game;
   const currentPoints = state.game.boardData.points;
   const [timeLeft, setTimeLeft] = useState<number>(5);
@@ -117,8 +115,8 @@ export default function CurrentInfo() {
       <DisplayGoal
         currentGame={currentGame}
         currentPoints={currentPoints}
-        limit={limit}
-        valueLimit={limitValue}
+        limit={state.game.boardData.limit}
+        valueLimit={state.game.boardData.limit_val}
       />
       <div className="flex gap-6">
         <p className="flex items-center gap-1">
