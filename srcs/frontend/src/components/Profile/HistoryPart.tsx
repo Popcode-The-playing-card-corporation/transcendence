@@ -90,7 +90,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
         </div>
         :
         <>
-          <table className={"mt-5 table-auto text-center w-full" + (isHome ? " max-md:hidden" : (isMiniProfile ? " max-lg:hidden" : ""))} >
+          <table className={"mt-5 table-auto text-center w-full" + (isHome ? " max-md:hidden" : (isMiniProfile ? " max-lg:hidden" : " max-md:hidden"))} >
             <thead className="text-base-content">
               <tr className="h-14">
                 <th className="th-history"></th>
@@ -157,7 +157,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
               </a>
             )}
           </table >
-          <div className={"overflow-x-auto" + (isHome ? " md:hidden" : (isMiniProfile ? " lg:hidden" : " hidden"))}>
+          <div className={"overflow-x-auto" + (isHome ? " md:hidden" : (isMiniProfile ? " lg:hidden" : " md:hidden"))}>
             <table className="table mt-5 text-center table-md table-pin-rows table-pin-cols">
               <thead>
                 <tr className={"h-14 border-y-hidden" + (isHome ? " bg-base-200" : " bg-base-100")}>

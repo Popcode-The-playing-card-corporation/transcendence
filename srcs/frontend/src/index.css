@@ -61,15 +61,15 @@
   }
 
   h1 {
-    @apply text-4xl mt-10 text-center font-bold;
+    @apply text-4xl mt-10 text-center font-bold max-md:text-3xl;
   }
 
   h2 {
-    @apply text-3xl font-bold;
+    @apply text-3xl font-bold max-md:text-2xl;
   }
 
   h3 {
-    @apply text-2xl font-bold;
+    @apply text-2xl font-bold max-md:text-xl;
   }
 }
 
@@ -119,12 +119,20 @@ fieldset {
   @apply bg-warning;
 }
 
-.avatar-hovered {
+.avatar-hovered{
   @apply opacity-30;
 }
 
-.pen-hovered {
+.pen-hovered{
   @apply absolute text-3xl z-10;
+}
+
+.avatar-hovered-md {
+  @apply max-md:opacity-30;
+}
+
+.pen-hovered-md {
+  @apply max-md:absolute text-3xl z-10;
 }
 
 .li-avatars {
