@@ -22,7 +22,7 @@ export function Footer() {
           </a>
         </div>
       </nav>
-      <nav className="w-full text-center ">
+      <nav className="w-full text-center md:justify-endx">
         <h6 className="footer-title w-full">Legal</h6>
         <div className="flex w-full justify-center gap-4">
           <a href="/PrivacyPolicy" className="link-hover">Privacy Policy</a>
