@@ -1,6 +1,6 @@
 export default function PrivacyPolicy() {
   return (
-    <div className="page-content mt-17 text-justify">
+    <div className="page-content mt-17 text-justify mx-50">
       <h1>Privacy Policy</h1>
       <div className="mx-auto text-center">
         <p className="text-sm mb-10">Last updated June 01 2026</p>

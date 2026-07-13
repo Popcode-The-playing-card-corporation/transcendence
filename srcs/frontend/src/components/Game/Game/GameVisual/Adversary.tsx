@@ -6,6 +6,7 @@ import PlayedCard from "./PlayedCard";
 import { useState } from "react";
 
 type Props = {
+  position:number,
   room_id:number,
   isSelf: boolean,
   cardHand: adversaryT, 
@@ -17,7 +18,7 @@ type Props = {
   distanceBoard: number
 }
 
-export default function Adversary({room_id, isSelf, cardHand, playedCard, front, back, totalPlayer, boardRadius, distanceBoard} : Props) {
+export default function Adversary({position, room_id, isSelf, cardHand, playedCard, front, back, totalPlayer, boardRadius, distanceBoard} : Props) {
   const angleCenter = 360 / totalPlayer * Math.PI / 180;
   const [show, setShow] = useState(true)
   if (!playedCard)
@@ -39,6 +40,7 @@ export default function Adversary({room_id, isSelf, cardHand, playedCard, front,
 		    back={back}
             posPlayedCard={posPlayedCard}
             idPlayer={room_id}
+            position={position}
           /> : null}
         { isSelf ? null :
           <AdversaryHand

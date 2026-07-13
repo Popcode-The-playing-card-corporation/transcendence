@@ -66,37 +66,37 @@ export function RegisterForm({
     return true;
   }
 
-    function getRequests(friend_list: friendT[]): {
-	friends: friendT[];
-	requests: requestT[];
-	} {
-	const friends: friendT[] = [];
-	const requests: requestT[] = [];
-	
-	for (const friend of friend_list) {
-		if (friend.can_accept) {
-		requests.push({ id: friend.id, username: friend.user.username });
-		} else {
-		friends.push(friend);
-		}
-	}
-	return { friends: friends, requests: requests };
-	}
+  function getRequests(friend_list: friendT[]): {
+    friends: friendT[];
+    requests: requestT[];
+  } {
+    const friends: friendT[] = [];
+    const requests: requestT[] = [];
+
+    for (const friend of friend_list) {
+      if (friend.can_accept) {
+        requests.push({ id: friend.id, username: friend.user.username });
+      } else {
+        friends.push(friend);
+      }
+    }
+    return { friends: friends, requests: requests };
+  }
 
   async function registerSuccess() {
 
-	const friendlist = await getFriends();
-	if ("code" in friendlist) {
-		auth.setHasFriendRequest(false);
-		return ;
-	}
-	const arr = friendArray(friendlist);
-	const filter = getRequests(arr);
-	if (filter.requests.length > 0) {
-		auth.setHasFriendRequest(true);
-	} else {
-		auth.setHasFriendRequest(false);
-	}
+    const friendlist = await getFriends();
+    if ("code" in friendlist) {
+      auth.setHasFriendRequest(false);
+      return;
+    }
+    const arr = friendArray(friendlist);
+    const filter = getRequests(arr);
+    if (filter.requests.length > 0) {
+      auth.setHasFriendRequest(true);
+    } else {
+      auth.setHasFriendRequest(false);
+    }
 
     if (location.state) {
       navigate(location.state, { state: location.pathname });
@@ -132,13 +132,15 @@ export function RegisterForm({
   };
 
   return (
-    <fieldset className="fieldset rounded-box w-xs p-4 mx-auto bg-base-100">
+    <fieldset className="fieldset bg-base-100 rounded-box p-5 mx-auto w-xs max-sm:w-full">
       <legend className="fieldset-legend">Register</legend>
-      {failure ? (
-        <label className="label text-error font-black mx-auto">{reason.response}</label>
-      ) : (
-        <div></div>
-      )}
+      {
+        failure ? (
+          <label className="label text-error max-md:text-wrap font-black mx-auto">{reason.response}</label>
+        ) : (
+          <div></div>
+        )
+      }
       <label className="label">Username</label>
       <input
         type="text"
@@ -187,10 +189,12 @@ export function RegisterForm({
         Already an account? Go login here!
       </a>
 
-      <div>
+      <div className="w-full">
         <label className="label">
           <input type="checkbox" checked={acceptConditions} className="checkbox" onChange={() => setAcceptConditions(!acceptConditions)} />
-          I agree to the <a className="link" href="/PrivacyPolicy">Privacy Policy</a> and <a className="link" href="/TermsOfService">Terms of service</a>
+          <p className="text-wrap">
+            I agree to the <a className="link" href="/PrivacyPolicy">Privacy Policy</a> and <a className="link" href="/TermsOfService">Terms of service</a>
+          </p>
         </label>
       </div>
 
@@ -203,6 +207,6 @@ export function RegisterForm({
         Register
       </button>
       <LoginWithService />
-    </fieldset>
+    </fieldset >
   );
 }

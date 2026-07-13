@@ -7,22 +7,30 @@ import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
 import DeleteBtn from "../utils/DeleteBtn";
 import BlockBtn from "../utils/BlockBtn";
-import { FaPlus } from "react-icons/fa";
+import { FaCheck, FaHourglassHalf, FaPlus } from "react-icons/fa";
 import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 import { useNotif } from "../hooks/useNotif";
 import type { recommendationT } from "../../utils/type/recommendationType";
 import { useAuth } from "../hooks/useAuth";
+import { IoMdMore } from "react-icons/io";
 
 type Props = {
-  friends:friendT[];
-  requests:requestT[];
-  users:requestT[];
-  recs:recommendationT[];
-  updatedFriends:boolean;
-  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+  friends: friendT[];
+  requests: requestT[];
+  users: requestT[];
+  recs: recommendationT[];
+  updatedFriends: boolean;
+  setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function Friends({friends, requests, users, recs, updatedFriends, setUpdate}: Props) {
+export function Friends({
+  friends,
+  requests,
+  users,
+  recs,
+  updatedFriends,
+  setUpdate,
+}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
@@ -52,9 +60,9 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
   );
 
   if (requests.length > 0) {
-	auth.setHasFriendRequest(true);
+    auth.setHasFriendRequest(true);
   } else {
-	auth.setHasFriendRequest(false);
+    auth.setHasFriendRequest(false);
   }
 
   return (
@@ -79,9 +87,20 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
             <FaPlus />{" "}
           </button>
           <dialog id="add_new_friends" className="modal" ref={addFriendsRef}>
-            <AddFriends recs={recs} users={users} updatedFriends={updatedFriends} setUpdate={setUpdate} ref={addFriendsRef}/>
+            <AddFriends
+              recs={recs}
+              users={users}
+              updatedFriends={updatedFriends}
+              setUpdate={setUpdate}
+              ref={addFriendsRef}
+            />
           </dialog>
-          <div className={"dropdown dropdown-end " + (closeFriendRequest ? "" : "dropdown-open")}>
+          <div
+            className={
+              "dropdown dropdown-end " +
+              (closeFriendRequest ? "" : "dropdown-open")
+            }
+          >
             <div className="indicator">
               <span
                 className={
@@ -91,7 +110,12 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
               >
                 {requests.length}
               </span>
-              <div tabIndex={0} className="btn" role="button" onClick={() => setCloseFriendRequest(!closeFriendRequest)}>
+              <div
+                tabIndex={0}
+                className="btn"
+                role="button"
+                onClick={() => setCloseFriendRequest(!closeFriendRequest)}
+              >
                 <IoNotificationsOutline />
               </div>
             </div>
@@ -105,20 +129,38 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
               {requests.map((request: { id: number; username: string }) => {
                 return (
                   <li className="flex w-full my-3" key={request.id}>
-                    <div className="flex gap-6 w-full">	
+                    <div className="flex gap-6 w-full">
                       <div className="username-request flex items-center w-2/3">
                         <p>{request.username}</p>
                       </div>
                       <div className="btn-accept-or-reject flex gap-3">
                         <button
                           className="btn btn-circle validate"
-                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate, null, notif)}
+                          onClick={() =>
+                            changeHandler(
+                              request.id,
+                              "accept",
+                              updatedFriends,
+                              setUpdate,
+                              null,
+                              notif,
+                            )
+                          }
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "delete", updatedFriends, setUpdate, null, notif)}
+                          onClick={() =>
+                            changeHandler(
+                              request.id,
+                              "delete",
+                              updatedFriends,
+                              setUpdate,
+                              null,
+                              notif,
+                            )
+                          }
                         >
                           <RxCross2 />
                         </button>
@@ -131,12 +173,12 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
           </div>
         </div>
       </div>
-      <table className="">
+      <table className="max-sm:mx-auto">
         <tr>
           <th className="w-10 text-left"></th>
-          <th className="w-50 text-left">Name</th>
-          <th className="w-30 text-left">Status</th>
-          <th className="w-30 text-left">From</th>
+          <th className="max-sm:-fit sm:w-50 text-left">Name</th>
+          <th className="max-sm:w-fit sm:w-30 text-left">Status</th>
+          <th className="w-30 text-left max-sm:hidden">From</th>
         </tr>
         {sortedFriends.slice(0, nbSlice).map((friend: friendT) => (
           <tr className="h-14">
@@ -149,19 +191,66 @@ export function Friends({friends, requests, users, recs, updatedFriends, setUpda
               <TbPointFilled />
             </td>
             <td>
-              <UsernameMiniProfileBtn id={friend.user.id} name={friend.user.username} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <UsernameMiniProfileBtn
+                id={friend.user.id}
+                name={friend.user.username}
+                updatedFriends={updatedFriends}
+                setUpdate={setUpdate}
+              />
             </td>
-            <td>{friend.status}</td>
-            <td>
+            <td className="max-sm:hidden">{friend.status}</td>
+            <td className="sm:hidden text-center ">
+              {friend.status === "pending" ? (
+                <FaHourglassHalf className="mx-auto" />
+              ) : (
+                <FaCheck className="mx-auto" />
+              )}
+            </td>
+            <td className="max-sm:hidden">
               {friend.status === "pending"
                 ? friend.created_at
                 : friend.accepted_at}
             </td>
-            <td className="w-16">
-              <DeleteBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={null}/>
+            <td className="w-16 max-sm:hidden">
+              <DeleteBtn
+                req_id={friend.id}
+                updatedFriends={updatedFriends}
+                setUpdate={setUpdate}
+                profileRef={null}
+              />
+            </td>
+            <td className="max-sm:hidden">
+              <BlockBtn
+                req_id={friend.user.id}
+                updatedFriends={updatedFriends}
+                setUpdate={setUpdate}
+                profileRef={null}
+              />
             </td>
             <td>
-              <BlockBtn req_id={friend.user.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={null}/>
+              <details className="dropdown dropdown-end  ">
+                <summary className="btn btn-circle sm:hidden">
+                  <IoMdMore />
+                </summary>
+                <ul className="menu dropdown-content bg-base-200 rounded-box z-1 p-1 shadow-sm w-fit">
+                  <li>
+                    <DeleteBtn
+                      req_id={friend.id}
+                      updatedFriends={updatedFriends}
+                      setUpdate={setUpdate}
+                      profileRef={null}
+                    />
+                  </li>
+                  <li>
+                    <BlockBtn
+                      req_id={friend.user.id}
+                      updatedFriends={updatedFriends}
+                      setUpdate={setUpdate}
+                      profileRef={null}
+                    />
+                  </li>
+                </ul>
+              </details>
             </td>
           </tr>
         ))}

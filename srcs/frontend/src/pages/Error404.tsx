@@ -1,4 +1,4 @@
-const image = "/assets/404Image.jpg";
+const image = "/404-stitch.png";
 
 export default function Error404() {
 	return (
