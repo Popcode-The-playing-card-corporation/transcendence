@@ -5,14 +5,14 @@ import { GoogleLogin } from "./GoogleLogin";
 import { useLocation } from "react-router";
 
 export default function LoginWithService() {
-  const [servicName, setServiceName] = useState("");
+  const [serviceName, setServiceName] = useState("");
   const location = useLocation();
 
   const redirect = typeof location.state === "string" ? location.state : "/";
 
   return (
     <>
-      <div className="text-center">Or continue with {servicName}</div>
+      <div className="text-center">Or continue with {serviceName}</div>
       <div className="logBtn flex justify-center gap-2">
         <div
           className="text-center"
@@ -20,7 +20,7 @@ export default function LoginWithService() {
           onMouseLeave={() => setServiceName("")}
         >
           {" "}
-          <GoogleLogin location={redirect}/>{" "}
+          <GoogleLogin location={redirect} />{" "}
         </div>
         <div
           className="text-center"
@@ -28,7 +28,7 @@ export default function LoginWithService() {
           onMouseLeave={() => setServiceName("")}
         >
           {" "}
-          <FortyTwoLogin location={redirect}/>{" "}
+          <FortyTwoLogin location={redirect} />{" "}
         </div>
         <div
           className="text-center"
@@ -36,7 +36,7 @@ export default function LoginWithService() {
           onMouseLeave={() => setServiceName("")}
         >
           {" "}
-          <GitLogin location={redirect}/>{" "}
+          <GitLogin location={redirect} />{" "}
         </div>
       </div>
     </>

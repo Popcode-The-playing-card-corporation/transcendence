@@ -2,54 +2,56 @@ import React, { useState } from "react";
 import { changeUsername } from "../../api/http/profile";
 import { type errorT } from "../../utils/type/errorType";
 import { useNotif } from "../hooks/useNotif";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, has_pass}:{dialogRef: React.RefObject<HTMLDialogElement| null>; updatedProfile:boolean | null; setUpdate:React.Dispatch<React.SetStateAction<boolean>> | null; old_user:string | null, has_pass:boolean}) {
+export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, has_pass }: { dialogRef: React.RefObject<HTMLDialogElement | null>; updatedProfile: boolean | null; setUpdate: React.Dispatch<React.SetStateAction<boolean>> | null; old_user: string | null, has_pass: boolean }) {
 
-	const [name, setName] = useState("");
-	const [password, setPassword] = useState("");
-	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
-	const passChange = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword(e.target.value);};
-	const [reason, setReason] = useState<errorT>({code:200,response:""});
-	const notif = useNotif();
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => { setName(e.target.value); };
+  const passChange = (e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value); };
+  const [reason, setReason] = useState<errorT>({ code: 200, response: "" });
+  const notif = useNotif();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  function validate_inputs (in_name:string, old_pass:string, old_user:string | null) {
-	if (in_name.trim().length === 0 && (old_pass.length === 0 && has_pass)) {
-		return {code:-1, response:"Current password and new username are required fields!"};
-	} else if (in_name.trim().length === 0) {
-		return {code: -1, response:"New username is a required field!"};
-	} else if (old_pass.length === 0 && has_pass) {
-		return {code: -1, response:"Current password is a required field!"};
- 	} else if (old_user === in_name) {
-		return {code: -1, response:"New username cannot be the same as the old username!"};
-	}
-	return {code:200, response:""};
+  function validate_inputs(in_name: string, old_pass: string, old_user: string | null) {
+    if (in_name.trim().length === 0 && (old_pass.length === 0 && has_pass)) {
+      return { code: -1, response: "Current password and new username are required fields!" };
+    } else if (in_name.trim().length === 0) {
+      return { code: -1, response: "New username is a required field!" };
+    } else if (old_pass.length === 0 && has_pass) {
+      return { code: -1, response: "Current password is a required field!" };
+    } else if (old_user === in_name) {
+      return { code: -1, response: "New username cannot be the same as the old username!" };
+    }
+    return { code: 200, response: "" };
   }
 
   function clean_close() {
-	setName("");
-	setPassword("");
-	setReason({code:200, response:""});
-	dialogRef.current?.close();
+    setName("");
+    setPassword("");
+    setReason({ code: 200, response: "" });
+    dialogRef.current?.close();
   }
 
-  async function updateUser(in_name:string, old_pass:string, old_user:string | null) {
-	const check = validate_inputs(in_name, old_pass, old_user);
-	if (check.code === -1) {
-		setReason(check);
-		return ;
-	}
-	const res = await changeUsername(in_name, old_pass, has_pass);
-	if (res.code !== 200) {
-		setReason(res);
-		notif?.showNotif("Username change error:", res.response, 5000);
-		clean_close();
-		return ;
-	}
-	if (setUpdate) {
-		setUpdate(!updatedProfile);
-	}
-	clean_close();
-	return ;
+  async function updateUser(in_name: string, old_pass: string, old_user: string | null) {
+    const check = validate_inputs(in_name, old_pass, old_user);
+    if (check.code === -1) {
+      setReason(check);
+      return;
+    }
+    const res = await changeUsername(in_name, old_pass, has_pass);
+    if (res.code !== 200) {
+      setReason(res);
+      notif?.showNotif("Username change error:", res.response, 5000);
+      clean_close();
+      return;
+    }
+    if (setUpdate) {
+      setUpdate(!updatedProfile);
+    }
+    clean_close();
+    return;
   }
 
 
@@ -59,20 +61,28 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, ha
       <p className="py-4 text-center">
         {has_pass ? "Enter your password and choose your new username" : "Choose your new username"}
       </p>
-	    {reason.code === -1 ? <p className="py-4 text-center">{String(reason.response)}</p> : ""}
-		{reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
+      {reason.code === -1 ? <p className="py-4 text-center">{String(reason.response)}</p> : ""}
+      {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
         <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
           <legend className="fieldset-legend">Change username</legend>
 
-          {has_pass ? <label className="label">Password</label> : null}
-          {has_pass ? <input type="password" value={password} onChange={passChange} className="input" placeholder="Your password"/>
-		  : null }
+          {has_pass ?
+            <>
+              <label className="label">Password</label>
+              <div className="input w-full">
+                <input type={showPassword ? "text" : "password"} value={password} onChange={passChange} placeholder="Your password" />
+                <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+              </div>
+            </>
+            : null
+          }
+
           <label className="label">New username</label>
           <input
             type="text"
-			value={name}
-			onChange={nameChange}
+            value={name}
+            onChange={nameChange}
             className="input"
             placeholder="Your new username"
           />

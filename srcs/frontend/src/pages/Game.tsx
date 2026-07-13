@@ -89,14 +89,13 @@ export function Game() {
     get_info();
   }, [auth.logging, navigate, location.state, notif, refresh]);
 
-	if (valid === null) {
-		return (
-			<div className="page-content flex items-center justify-center min-h-screen">
-				<span className="loading loading-spinner loading-xl"></span>
-			</div>
-		)
-	}
-
+  if (valid === null) {
+    return (
+      <div className="page-content flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-xl"></span>
+      </div>
+    );
+  }
 
   function refreshLobby() {
     setRefresh(!refresh);
@@ -104,15 +103,21 @@ export function Game() {
 
   return (
     <>
-      {joined !== "" ? (
-        <GameWebSocket key={joined} code={joined} setCode={setJoined} />
-      ) : (
-        <CreateOrJoin
-          availableGames={rooms}
-          refreshLobby={refreshLobby}
-          setJoined={setJoined}
-        />
-      )}
+      <div className="max-md:hidden">
+        {joined !== "" ? (
+          <GameWebSocket key={joined} code={joined} setCode={setJoined} />
+        ) : (
+          <CreateOrJoin
+            availableGames={rooms}
+            refreshLobby={refreshLobby}
+            setJoined={setJoined}
+          />
+        )}
+      </div>
+      <div className=" text-center md:hidden flex mt-20 justify-center flex-col gap-6 mx-10">
+        <p className="text-error font-bold">Sorry but this game is unavailabe on a little screen, go on a biggest one!</p>
+		<img className="h-50 max-w-50 mx-auto" src="/stitch-sorry.gif"/>
+      </div>
     </>
   );
 }
