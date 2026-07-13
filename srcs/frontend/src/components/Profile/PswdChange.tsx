@@ -70,7 +70,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
     <div className="modal-box">
       <h3 className="text-lg font-bold text-center">Change password</h3>
       <p className="py-4 text-center">Enter your password and choose your new one</p>
-      {reason.code === -1 ? <p className="py-4 text-center">{String(reason.response)}</p> : ""}
+      {reason.code === -1 ? <p className="py-4 text-center text-error font-black">{String(reason.response)}</p> : ""}
       {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
         <fieldset className="fieldset border-accent rounded-box w-xs border p-4 mx-auto">

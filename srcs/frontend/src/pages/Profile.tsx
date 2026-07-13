@@ -186,7 +186,7 @@ export function Profile({ updatedProfile, setUpdate }: Props) {
           <h2 className="text-center">History</h2>
         </div>
         <div className="collapse-content">
-          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} isHome={false} />
+          <History gameHistory={gameHistory} isHome={false} isMiniProfile={false} />
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

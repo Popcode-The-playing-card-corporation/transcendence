@@ -1,12 +1,9 @@
 import { useState } from "react";
 import type { historyT } from "../../utils/type/historyType";
 import type { playerT } from "../../utils/type/playerType";
-// import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 
 type Props = {
   gameHistory: historyT[];
-  // updatedProfile: boolean;
-  // setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
   isHome: boolean,
   isMiniProfile: boolean
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState, type SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { getHistory, historyArray } from "../api/http/history";
 import type { historyT } from "../utils/type/historyType";
 import { useNotif } from "../components/hooks/useNotif";
@@ -29,12 +29,7 @@ function getRequests(friend_list: friendT[]): {
   return { friends: friends, requests: requests };
 }
 
-type Props = {
-  updatedProfile: boolean,
-  setUpdate: React.Dispatch<SetStateAction<boolean>>,
-}
-
-export function Home({ updatedProfile, setUpdate }: Props) {
+export function Home() {
 
   const [leaderboard, setLeaderboard] = useState<leaderboardT | errorT>(defaultLeaderboard);
   const [gameHistory, setHistory] = useState<historyT[] | errorT>([]);
@@ -94,7 +89,7 @@ export function Home({ updatedProfile, setUpdate }: Props) {
         {auth.logged_in ? (
           <div className="grid grid-cols-3 grid-flow-row-dense gap-6">
             <div className="bordered border-accent col-span-2 max-lg:col-span-3">
-              <HomeProfile gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} leaderboard={leaderboard} />
+              <HomeProfile gameHistory={gameHistory} leaderboard={leaderboard} />
             </div>
             <div className="bordered border-accent max-lg:col-span-3">
               <HomeFriends friends={friends} requests={requests} />

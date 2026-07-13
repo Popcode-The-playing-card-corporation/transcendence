@@ -1,4 +1,4 @@
-import { MeshBasicMaterial, MeshPhongMaterial, Texture, type TextureEventMap } from "three";
+import { MeshPhongMaterial, Texture, type TextureEventMap } from "three";
 import { useGame } from "../../context/GameContext";
 import { useEffect, useState } from "react";
 

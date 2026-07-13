@@ -61,7 +61,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
       <p className="py-4 text-center">
         {has_pass ? "Enter your password and choose your new username" : "Choose your new username"}
       </p>
-      {reason.code === -1 ? <p className="py-4 text-center">{String(reason.response)}</p> : ""}
+      {reason.code === -1 ? <p className="py-4 text-center text-error font-black">{String(reason.response)}</p> : ""}
       {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
         <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">

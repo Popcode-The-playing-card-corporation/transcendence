@@ -44,7 +44,7 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
       <Routes>
         <Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
-        <Route path="/" element={<Home updatedProfile={updatedProfile} setUpdate={setProfile} />} />
+        <Route path="/" element={<Home />} />
         <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
         <Route
           path="/settings"
