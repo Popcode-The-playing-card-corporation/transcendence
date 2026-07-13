@@ -8,7 +8,6 @@ import { useAuth } from "../hooks/useAuth";
 import { useRef, type RefObject } from "react";
 import { IoIosMoon } from "react-icons/io";
 import { NavLink } from "react-router";
-import { TbCards } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
@@ -95,17 +94,6 @@ export default function BurgerMenu({
               </button>
             </li>
           </div>
-          <li>
-            <NavLink
-              onClick={() => (drawerRef.current!.checked = false)}
-              to="/game"
-              className={({ isActive }) =>
-                (isActive ? "active " : "") + "item-menu"
-              }
-            >
-              <TbCards /> Game
-            </NavLink>
-          </li>
           <li>
             <NavLink
 			onClick={() => drawerRef.current!.checked = false} 
