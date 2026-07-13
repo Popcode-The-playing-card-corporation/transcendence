@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { Home } from "./pages/Home";
 import { Game } from "./pages/Game";
 import { Leaderboard } from "./pages/Leaderboard";
+import { Achievements } from "./pages/Achievements";
 import { Profile } from "./pages/Profile";
 import { Navbar } from "./components/utils/Navbar";
 import { Settings } from "./pages/Settings";
@@ -46,6 +47,7 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
         <Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
         <Route path="/" element={<Home updatedProfile={updatedProfile} setUpdate={setProfile} />} />
         <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
+        <Route path="/achievements" element={<Achievements updateLeaderboard={updateLeaderboard} />} />
         <Route
           path="/settings"
           element={<Settings setFontChoice={setFontChoice} />}
