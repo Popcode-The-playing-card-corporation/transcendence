@@ -64,7 +64,7 @@ def create_bot(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0006_user_is_bot'),
+        ('api', '0015_alter_user_username'),
         ('game', '0007_playerpresence_difficulty_room_ended_at_and_more')
     ]
 

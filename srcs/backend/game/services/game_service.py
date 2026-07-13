@@ -288,7 +288,8 @@ class GameService:
         )
         
         room.game_state["game"] += 1
-        
+        room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+        await sync_to_async(room.save)()
         await save_room_state(room.uuid, room.game_state)
 
         await start_room(
