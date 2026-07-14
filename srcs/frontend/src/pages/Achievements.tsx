@@ -29,10 +29,12 @@ export function Achievements({updateachievement}:Props) {
 		async function load_achievement() {
 			
 			const tmp_achievement = await getAchievement(auth.logged_in);
+			console.log(tmp_achievement)
 			if ("code" in tmp_achievement) {
 				return other_error(tmp_achievement.response);
 			}
 			setachievement(achievementArray(tmp_achievement));
+			console.log(achievement)
 			setValid(true);
 		}
 		load_achievement();

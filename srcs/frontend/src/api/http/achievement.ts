@@ -2,7 +2,7 @@ import axios, { AxiosError, type AxiosResponse } from 'axios'
 import { getError, type backendErrorT, type errorT } from '../../utils/type/errorType';
 import host from './host'
 import type { achievementRetT } from '../../utils/type/achievementApiType';
-import type { userLB, achievementT, currentLB } from '../../utils/type/achievementType';
+import type { achievement, achievementT } from '../../utils/type/achievementType';
 
 export async function getAchievement(logged_in:boolean) { //: Promise<friendT | errorT>
 	
@@ -25,20 +25,21 @@ export async function getAchievement(logged_in:boolean) { //: Promise<friendT | 
 }
 
 export function achievementArray(board:AxiosResponse<achievementRetT>) {
-	const data = board.data.achievement;
-	const achievementarr:userLB[] = [];
+	const data = board.data;
+	const achievementarr:achievement[] = [];
+	console.log(data)
 	for (const board_data of data) {
-		const user:userLB = {
-			username: board_data.username,
-			score: board_data.elo,
-			id: board_data.id,
+		const achiev:achievement = {
+			img: board_data.img,
+            title: board_data.title,
+            description: board_data.description,
+            value: board_data.value,
+            max_value: board_data.max_value,
+            is_unlock: board_data.is_unlock,
+            rate: board_data.rate
 		}
-		achievementarr.push(user);
+		achievementarr.push(achiev);
 	}
-	let curr:currentLB = {username:"", score:0, rank:0};
-	if (board.data.user_rank) {
-		curr = {username:board.data.user_rank.username, score:board.data.user_rank.elo, rank:board.data.user_rank.rank};
-	}
-	const res:achievementT = {achievement: achievementarr, current: curr};
+	const res:achievementT = {achievement: achievementarr};
 	return res;
 }

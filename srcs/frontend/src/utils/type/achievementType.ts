@@ -8,15 +8,8 @@ export type achievement = {
   rate: number
 };
 
-export type currentAC = {
-	username: string,
-	score: number;
-	rank: number;
-}
-
 export type achievementT = {
-  achievement: userLB[];
-  current: currentLB;
+  achievement: achievement[];
 };
 
 export const defaultachievement:achievementT = {
