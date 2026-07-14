@@ -161,8 +161,12 @@ export default function GameWebSocket({
 						notif?.showNotif("Game Error", data.message, 5000);
 					}
 				} else {
-					console.debug("Unknown event: ", data)
+					// console.debug("Error:", data.message);
+					notif?.showNotif("Game Error", data.message, 5000);
 				}
+			} /*else {
+				console.debug("Unknown event: ", data)
+			}*/
 
 			},
 
@@ -289,12 +293,12 @@ export default function GameWebSocket({
 			if (data.type === "chat_message") {
 				dispatch({ type: "ADD_MESSAGE", payload: payload })
 			} else if (data.type === "history") {
-				dispatch({ type: "SET_HISTORY", payload: payload })
-			} else if (data.event === "error") {
+				dispatch({type: "SET_HISTORY", payload: payload})
+			}/* else if (data.event === "error") {
 				console.debug("Error: ", data)
 			} else {
 				console.debug("Unknown event: ", data)
-			}
+			}*/
 		},
 
 	});

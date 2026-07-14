@@ -7,6 +7,8 @@ from ..models import PlayerPresence, Room
 from api.models import User
 from django.db.models import F
 from channels.layers import get_channel_layer
+from django.db.models import F, Value
+from django.db.models.functions import Greatest
 
 from .room_task_service import RoomTaskService
 
@@ -51,9 +53,9 @@ class RoomService:
     async def handle_player_disconnect(user, code):
         old_presence = await sync_to_async(
             lambda: User.objects.get(id=user.id).presence_game)()
-
+        
         await sync_to_async(
-            User.objects.filter(id=user.id).update)(presence_game=F("presence_game") - 1)
+            User.objects.filter(id=user.id).update)(presence_game=Greatest(F("presence_game") - 1, Value(0)))
         
         await sync_to_async(PlayerPresence.objects.filter(player_id=user.id).update)(is_online=False)
         

@@ -45,14 +45,19 @@ export function Game() {
         if (tmp_joined.code === 401) {
           return login_error("Authentication error:", "Please log in again.");
         } else if (tmp_joined.code === 404) {
-          tmp_joined = { room: "" };
+          tmp_joined = { room: "", message: "" };
         } else {
           return other_error(
             "Error " + tmp_joined.code + ":",
             tmp_joined.response,
           );
         }
-      }
+      } else if (tmp_joined.message === "lobby_failed") {
+		    return other_error(
+				"Lobby Error",
+				"Do you have another lobby already open?",
+			);
+	  }
 
       if (tmp_joined.room !== "") {
         setJoined(tmp_joined.room);
