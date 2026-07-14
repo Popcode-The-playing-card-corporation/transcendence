@@ -95,6 +95,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			if (file.exists()):
 				os.remove(file)
 		
+		await self.channel_layer.group_send(
+			self.group_name,
+			{
+				"type": "room_event",
+				"event": "user_leaved",
+				"payload": {
+					"user": self.user.get_username(),
+				}
+			}
+		)
+
 		await self.channel_layer.group_discard(
 			self.group_name,
 			self.channel_name

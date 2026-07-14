@@ -56,6 +56,7 @@ class Room(models.Model):
     round_time = models.DateTimeField(null=True, blank=True)
     wait_schedule = models.BooleanField(default=False)
     is_paused = models.BooleanField(default=False)
+    ban = models.JSONField(default=default_state)
     
     def __str__(self):
         return f"{self.code}"

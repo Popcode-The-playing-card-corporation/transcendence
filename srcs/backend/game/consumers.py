@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .db import get_room_with_host, get_player_pos, get_nb_human
-from .models import PlayerPresence, Room
+from .models import PlayerPresence, Room, User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from .services.game_service import GameService
@@ -37,6 +37,7 @@ ACTION_HANDLERS = {
     "kick": "handle_kick",
     "exit_game": "handle_exit_game",
     "patch_param": "handle_patch_param",
+    "vote_ban": "handle_vote_ban",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -583,3 +584,69 @@ class RoomConsumer(AsyncWebsocketConsumer):
     def get_username(self):
         user = self.scope.get("user")
         return user.username if user and user.is_authenticated else "anonymous"
+
+    async def handle_vote_ban(self, payload: dict):
+        try:
+            target = payload["target"]
+            room = get_room_with_host(self.code)
+            array = room.ban
+
+            if (payload["action"] == "vote"):
+                if (target in array.keys()):
+                    if (self.user.get_username() not in array[target]):
+                        array[target].append(self.user.get_username())
+                    else:
+                        self.error("Already voted yes")
+                        return
+
+                    if (room.nb_player / len(array[target]) > 0.7):
+
+                        user = await sync_to_async(User.object.get)(username=target)
+                        result = await RoomService.handle_player_exit(
+                            code=self.code,
+                            user=user
+                        )
+
+                        if result:
+                            await self.channel_layer.group_send(
+                            f"player_{user.id}",
+                            {
+                                "type": "game_event",
+                                "event": "force_disconnect",
+                                "payload": {
+                                    "message": "Exit game"
+                                }
+                            })
+                
+                else:
+                    array[target] = [self.user.get_username()]
+
+            if (payload["action"] == "unvote"):
+                if (target in array.keys()):
+                    if (self.user.get_username() in array[target]):
+                        array[target].remove(self.user.get_username())
+                    else:
+                        self.error("You didn't voted to ban him") 
+                        return
+                else:
+                    self.error("There's no vote to ban him")
+                    return
+
+            Room.objects.filter(code=self.code).update(ban=array)
+
+            await self.channel_layer.group_send(
+                        f"room_{self.code}",
+                        {
+                            "type": "game_event",
+                            "event": "ban_vote",
+                            "payload": {
+                                "target": target,
+                                "nb_bote": len(array[target]),
+                            }
+                        })
+
+        except json.JSONDecodeError:
+            await self.send(text_data=json.dumps({
+                "type": "error",
+                "message": "Invalid JSON"
+            }))
