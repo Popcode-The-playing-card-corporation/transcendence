@@ -1,5 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
+import { useNotif } from "../hooks/useNotif";
+import { defaultachievement, type achievementT } from "../../utils/type/achievementType";
+import { achievementArray, getAchievement } from "../../api/http/achievements";
 
 type Props = {
 	updateachievement: boolean;
@@ -9,10 +13,9 @@ export function AchievementsPart({updateachievement}:Props) {
 
 	const navigate = useNavigate();
 	const [valid, setValid] = useState<boolean | null>(null);
-	const [achievement, setachievement] = useState(initialState)<achievementT>(defaultachievement)
+	const [achievement, setachievement] = useState<achievementT>(defaultachievement)
 	const notif = useNotif();
-	const auth = useAuth();
-const achievement = tmp_achievement.achievement;
+	const auth = useAuth()
 
 	useEffect(() => {
 
@@ -36,6 +39,7 @@ const achievement = tmp_achievement.achievement;
 	
 	}, [navigate, auth.logged_in, notif, updateachievement])
 
+	const achievement_tmp = tmp_achievement.achievement;
 	if (valid === null) {
 	  return (
 		<div className="page-content flex items-center justify-center min-h-screen">
