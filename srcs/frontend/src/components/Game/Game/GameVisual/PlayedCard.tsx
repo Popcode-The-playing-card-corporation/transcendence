@@ -3,7 +3,6 @@ import { useGame } from "../../context/GameContext";
 import { useEffect, useState } from "react";
 
 type Props = {
-  show: boolean;
   front: Texture<HTMLImageElement, TextureEventMap>,
   back: Texture<HTMLImageElement, TextureEventMap>,
   posPlayedCard: number,
@@ -11,7 +10,7 @@ type Props = {
   position: number
 }
 
-export default function PlayedCard({ show, front, back, posPlayedCard, idPlayer, position }: Props) {
+export default function PlayedCard({ front, back, posPlayedCard, idPlayer, position }: Props) {
 
   const materials = [
     new MeshPhongMaterial({ color: 0xffffff }),
@@ -35,7 +34,7 @@ export default function PlayedCard({ show, front, back, posPlayedCard, idPlayer,
     handle_wait();
   }, [idPlayer])
 
-  if (!show || (idPlayer === 0 && state.wait) || !wait) {
+  if (!state.show || (idPlayer === 0 && state.wait) || !wait) {
     return
   }
 
