@@ -43,8 +43,6 @@ class BotService:
                     if (not is_end):
                         game_state = room.game_state
                         await sync_to_async(Room.objects.filter(code=room.code).update)(round_time=(timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10))))
-                        #room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
-                        #await sync_to_async(room.save)()
                         await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             await save_room_state(room.uuid, game_state)

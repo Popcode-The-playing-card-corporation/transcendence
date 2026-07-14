@@ -42,6 +42,7 @@ export default function Board({front, back, boardRadius, distanceBoard} : Props)
           return(
             <>
               <Adversary
+			    key={adversary.room_id}
                 position={position}
                 room_id={adversary.room_id}
                 isSelf={adversary.room_id == idPlayer}

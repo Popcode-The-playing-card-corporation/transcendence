@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
   MeshPhongMaterial,
   Texture,
@@ -40,14 +40,20 @@ export default function PCard({
   const [played, setPlayed] = useState<boolean>(false);
   const [hidden, setHidden] = useState<boolean>(false);
   const cardRef = useRef<Mesh>(null!);
-  const materials = [
-    new MeshPhongMaterial({ color: 0xffffff}),
-    new MeshPhongMaterial({ color: 0xffffff}),
-    new MeshPhongMaterial({ color: 0xffffff}),
-    new MeshPhongMaterial({ color: 0xffffff}),
-    new MeshPhongMaterial({ map: front, color: overed ? "pink" : ""}),
-    new MeshPhongMaterial({ map: back}),
-  ];
+	const materials = useMemo(
+	() => [
+		new MeshPhongMaterial({ color: 0xffffff }),
+		new MeshPhongMaterial({ color: 0xffffff }),
+		new MeshPhongMaterial({ color: 0xffffff }),
+		new MeshPhongMaterial({ color: 0xffffff }),
+		new MeshPhongMaterial({
+		map: front,
+		color: overed ? "pink" : "",
+		}),
+		new MeshPhongMaterial({ map: back }),
+	],
+	[front, back, overed]
+	);
   const game = useGame();
 
   useEffect(() => {
@@ -79,6 +85,13 @@ export default function PCard({
 	
 	}, [game.state.event, game.state.message, game.state.eventID]);
 
+	useEffect(() => {
+	game.setWait(played && !hidden);
+
+	return () => {
+		game.setWait(false);
+	};
+	}, [played, hidden]);
 
   function handleDoubleClick() {
     game.playCard(card.id);
@@ -124,7 +137,6 @@ export default function PCard({
 
     // Playing card
     if (played) {
-	  game.setWait(true);
 	  const deltaY = (1 * distanceBoard + 2) - cardRef.current.position.y - 1;
       const deltaX = cardRef.current.position.x;
       const deltaZ = cardRef.current.position.z - 0;
@@ -143,9 +155,9 @@ export default function PCard({
 
       // when is finished remove card from hand
       if (
-        cardRef.current.position.z < 0.6 &&
-        cardRef.current.position.x < 0.1 &&
-        cardRef.current.position.x > -0.1
+        Math.abs(cardRef.current.position.z) < 0.6 &&
+        Math.abs(cardRef.current.position.x) < 0.1 &&
+        Math.abs(cardRef.current.position.x) < 0.1
       ) {
 		game.setWait(false);
         setHidden(true);
