@@ -255,9 +255,9 @@ export default function GameWebSocket({
 		dispatch({ type: "SET_WAIT", payload: bool })
 	}
 
-	function setShow(bool: boolean) {
-		dispatch({ type: "SET_SHOW", payload: bool })
-	}
+	// function setShow(bool: boolean) {
+	// 	dispatch({ type: "SET_SHOW", payload: bool })
+	// }
 
 	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
 		shouldReconnect: () => {
@@ -311,7 +311,7 @@ export default function GameWebSocket({
 
 
 	return (
-		<GameContext.Provider value={{ state, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage, setShow }}>
+		<GameContext.Provider value={{ state, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage }}>
 			<ModalRejoinGame />
 			{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code} />}
 		</GameContext.Provider>
