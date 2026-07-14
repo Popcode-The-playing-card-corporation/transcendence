@@ -1,21 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { useGame } from "../../context/GameContext";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 export default function BeginModal() {
   const beginModal = useRef<HTMLDialogElement>(null);
   const [displayBeginModal, setDisplayBeginModal] = useState<string | null>(
     localStorage.getItem("displayBeginModal"),
   );
-  const { state } = useGame();
 
   useEffect(() => {
     if (
-      (displayBeginModal === "yes" ||
-        displayBeginModal?.length === 0 ||
-        displayBeginModal) &&
-      state.game.boardData.round === 0
+      displayBeginModal === "yes" ||
+      displayBeginModal?.length === 0 ||
+      displayBeginModal
     ) {
-      if (displayBeginModal !== "no" || !displayBeginModal) beginModal.current?.showModal();
+      if (displayBeginModal !== "no" || !displayBeginModal)
+        beginModal.current?.showModal();
     }
   });
 
@@ -28,6 +27,12 @@ export default function BeginModal() {
 
   return (
     <div>
+      <button
+        className="btn btn-secondary btn-circle absolute top-27 right-10 z-10"
+        onClick={() => beginModal.current?.showModal()}
+      >
+        <IoMdInformationCircleOutline />
+      </button>
       <dialog
         id="endingGame"
         className="modal text-center"
@@ -50,7 +55,11 @@ export default function BeginModal() {
               kicked out of the game
             </li>
             <li>
-              You can find more informations in the little i or on the rules
+              You can find more informations in the little <IoMdInformationCircleOutline className="inline"/> in game, or on the
+              rules page
+            </li>
+            <li>
+              You can display this window again by clicking on the <IoMdInformationCircleOutline className="inline"/> in this
               page
             </li>
           </ul>
@@ -58,6 +67,7 @@ export default function BeginModal() {
             <input
               type="checkbox"
               className="checkbox"
+              defaultChecked={displayBeginModal === "yes" ? false : true}
               onChange={() =>
                 setDisplayBeginModal(
                   displayBeginModal === "" || displayBeginModal === "yes"

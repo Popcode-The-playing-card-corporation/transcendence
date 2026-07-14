@@ -5,6 +5,7 @@ import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
 import { createRoom, validateRoom } from "../../../api/http/game";
 import { useNotif } from "../../hooks/useNotif";
+import BeginModal from "../Game/GameInterface/BeginModal";
 
 type Props = {
   availableGames: availableGameT[],
@@ -48,7 +49,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
   };
 
   return (
-    <div className="mt-17 h-screen mr-15">
+    <div className="mt-27 h-screen mr-15">
       <h1 className="">Create or join a game!</h1>
       <div className="w-full flex h-screen">
         <div className="createOrJoinBtn-container w-1/3 flex flex-col justify-center items-center h-8/12">
@@ -121,6 +122,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
           </div>
         </div>
       </div>
+	  <BeginModal />
     </div>
   );
 }
