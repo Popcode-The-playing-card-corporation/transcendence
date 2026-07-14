@@ -11,16 +11,15 @@ class RoomConnectionService:
     @staticmethod
     async def handle_connect(user, code, channel_name):
 
-        old_presence = await sync_to_async(
-            lambda: User.objects.get(id=user.id).presence_game)()
-        
-        if (old_presence != 0):
-            return {"close": True, "code": 42}
-        
         await sync_to_async(
             User.objects.filter(id=user.id).update
         )(presence_game=F("presence_game") + 1)
         
+        old_presence = await sync_to_async(
+            lambda: User.objects.get(id=user.id).presence_game)()
+        
+        if (old_presence > 1):
+            return {"close": True, "code": 42}
  
         room = await sync_to_async(Room.objects.filter(code=code).first)()
 
