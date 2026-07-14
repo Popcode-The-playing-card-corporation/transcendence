@@ -80,7 +80,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
               <tbody>
                 {filteredGames.map((game) => {
                   return (
-                    <tr>
+                    <tr key={game.id}>
                       <td>{game.host.username}'s room</td>
                       <td>{game.type}</td>
                       <td>
@@ -97,7 +97,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
                             className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
                           >
                             {game.list_player.map((player) => (
-                              <li>
+                              <li key={player.id}>
                                 <a className="">
                                   <UsernameMiniProfileBtn
                                     id={player.id}

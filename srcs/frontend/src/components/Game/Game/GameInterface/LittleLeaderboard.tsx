@@ -25,6 +25,7 @@ export default function LittleLeaderboard() {
 
             return (
               <tr
+			  key={player.user_id}
                 className={
                   "h-10 border-y border-base-200" +
                   (state.game.boardData.self_id === player.room_id ? " bg-primary font-bold " : "")

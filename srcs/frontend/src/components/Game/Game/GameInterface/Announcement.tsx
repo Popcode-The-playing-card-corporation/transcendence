@@ -99,7 +99,7 @@ export default function Announcement() {
                             cards = cards.slice(0, -2);
                           }
                           return (
-                            <tr>
+                            <tr key={annonces_list.indexOf(annonce)}>
                               <td>
                                 <label className="flex  h-5 w-5 items-center cursor-pointer relative">
                                   <input

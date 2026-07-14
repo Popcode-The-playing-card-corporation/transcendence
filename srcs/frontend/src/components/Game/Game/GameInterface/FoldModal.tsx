@@ -25,7 +25,7 @@ export default function FoldModal() {
           <div className=" flex gap-2 my-6 flex-wrap justify-center bg-secondary rounded-2xl p-2">
             {lastFold.cards ? (
               lastFold.cards.map((card) => {
-                return <CardImg name={card.value + card.color} />;
+                return <CardImg name={card.value + card.color} key={card.id}/>;
               })
             ) : (
               <p>No cards to display, it's the first round!</p>

@@ -22,7 +22,7 @@ export default function HomeFriends({ friends, requests }: Props) {
                   <ul className="list-disc ms-8">
                     {friends.map((friend: friendT) => {
                       return (
-                        <li>{friend.user.username}</li>
+                        <li key={friend.id}>{friend.user.username}</li>
                       );
                     })}
                   </ul>

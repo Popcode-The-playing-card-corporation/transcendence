@@ -67,7 +67,7 @@ export default function BeginModal() {
             <input
               type="checkbox"
               className="checkbox"
-              defaultChecked={displayBeginModal === "yes" ? false : true}
+              defaultChecked={displayBeginModal === "no"? true : false}
               onChange={() =>
                 setDisplayBeginModal(
                   displayBeginModal === "" || displayBeginModal === "yes"

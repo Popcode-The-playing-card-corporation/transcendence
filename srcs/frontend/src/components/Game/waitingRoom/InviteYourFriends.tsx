@@ -109,7 +109,7 @@ export default function InviteYourFriends() {
               {friends?.length !== 0 ? (
                 friends!.map((friend) => {
                   return (
-                    <tr>
+                    <tr key={friend.id}>
                       <td>
                         {friend.user.username}
                       </td>

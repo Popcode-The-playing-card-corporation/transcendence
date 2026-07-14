@@ -46,6 +46,10 @@ export default function AdversaryHand({ setShow, room_id, angleCenter, cardHand,
     handle_less();
   }, [cardHand.nbCards, simCards, playedCard]);
 
+  useEffect(() => {
+    setShow(playedCard === null);
+  }, [playedCard, setShow]);
+
   for (let i = 0; i < simCards; i++)
     allAngle.push(angleStart + i * angleBetween);
 
@@ -79,27 +83,23 @@ export default function AdversaryHand({ setShow, room_id, angleCenter, cardHand,
             cardID = board.card.id;
           }
 
-          if (index === playedCard) {
-            setShow(false);
-          }
           return (
-            <>
-              <AdversaryCard
-                setShow={setShow}
-                angle={angle}
-                littleRadius={littleRadius}
-                front={fronts[cardID]}
-                back={back}
-                positionCard={allAngle.indexOf(angle)}
-                totalPlayer={totalPlayer}
-                posPlayedCard={posPlayedCard}
-                animate={index === playedCard}
-                resetState={resetState}
-              />
-            </>
+            <AdversaryCard
+              key={index}
+              setShow={setShow}
+              angle={angle}
+              littleRadius={littleRadius}
+              front={fronts[cardID]}
+              back={back}
+              positionCard={allAngle.indexOf(angle)}
+              totalPlayer={totalPlayer}
+              posPlayedCard={posPlayedCard}
+              animate={index === playedCard}
+              resetState={resetState}
+            />
           );
         })}
-      </mesh>
+      </mesh >
     </>
   );
 }

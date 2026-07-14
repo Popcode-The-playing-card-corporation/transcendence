@@ -37,26 +37,24 @@ export default function GlobalAnnonce() {
             <h3 className="flex justify-center pb-2 overflow-scroll scrollbar-thumb-(--accent-color)">Annonces</h3>
             {local_annonces.map((annonce) => {
               return(
-                <>
+                <div key={local_annonces.indexOf(annonce)}>
                   <div className="flex justify-center text-lg">
                     {annonce.username}
                   </div>
-                  <>
                     {annonce.cards.map((cards) => {
                       return(
-                        <div className="flex gap-1 flex-wrap justify-center pb-8 bg-secondary rounded-2xl p-2">
+                        <div className="flex gap-1 flex-wrap justify-center pb-8 bg-secondary rounded-2xl p-2" key={annonce.cards.indexOf(cards)}>
                           {
                             cards.map((card) => {
                               return(
-                                <CardImg name={card.value + card.color} />
+                                <CardImg name={card.value + card.color} key={card.id}/>
                               );
                             })
                           }
                         </div>
                       );
                     })}
-                  </>
-                </>
+                </div>
               );
             })}
           </div>
