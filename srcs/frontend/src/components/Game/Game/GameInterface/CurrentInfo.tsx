@@ -110,6 +110,18 @@ export default function CurrentInfo() {
 	handle_time();
 	}, [state.event]);
 
+  if (state.event === "game_finish") {
+	return (
+	<div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
+      <div className="flex gap-6">
+        <p className="flex items-center gap-1">
+          Game Finished!
+        </p>
+      </div>
+    </div>
+	);
+  }
+
   return (
     <div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
       <DisplayGoal

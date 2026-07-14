@@ -141,8 +141,10 @@ export default function GameWebSocket({
 				} else {
 					if (data.event === "player_disconnect" || data.event === "player_reconnect") {
 						if (data.event === "player_disconnect") {
-							if (state.settings.listPlayer.filter((player) => player.username === data.playername)[0].is_host) {
-								dispatch({type: "SET_NEXT", payload:false})
+							if (state.settings.listPlayer.filter((player) => player.username === data.playername)[0]) {
+								if (state.settings.listPlayer.filter((player) => player.username === data.playername)[0].is_host) {
+									dispatch({type: "SET_NEXT", payload:false})
+								}
 							}
 						} 
 						dispatch({type:"SET_MESSAGE", payload: payload.player_name});

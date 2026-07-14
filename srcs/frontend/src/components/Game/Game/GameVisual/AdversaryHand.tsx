@@ -46,6 +46,10 @@ export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, 
 		handle_less();
 	}, [cardHand.nbCards, simCards, playedCard]);
 
+	useEffect(() => {
+	setShow(playedCard === null);
+	}, [playedCard, setShow]);
+
   for (let i = 0; i < simCards; i++)
     allAngle.push(angleStart + i * angleBetween);
 
@@ -79,12 +83,10 @@ export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, 
             cardID = board.card.id;
           }
           
-          if (index === playedCard) {
-            setShow(false);
-          }
           return (
             <>
             <AdversaryCard
+			  key={index}
               setShow={setShow}
               angle={angle}
               littleRadius={littleRadius}
