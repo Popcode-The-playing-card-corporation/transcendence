@@ -22,7 +22,7 @@ export default function WaitingRoom({ roomCode }: { roomCode: string }) {
   }
 
   return (
-    <div className="mt-17 page-content">
+    <div className="mt-27 page-content">
       <h1>Waiting Room</h1>
       <div className="grid grid-cols-3 gap-6">
         <InfoAndActionPart roomCode={roomCode} />
