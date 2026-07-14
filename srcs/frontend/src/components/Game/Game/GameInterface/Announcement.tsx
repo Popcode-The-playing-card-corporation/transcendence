@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useGame } from "../../context/GameContext";
 import generateDeck from "../../../../utils/createDeck";
 import { GrAnnounce } from "react-icons/gr";
