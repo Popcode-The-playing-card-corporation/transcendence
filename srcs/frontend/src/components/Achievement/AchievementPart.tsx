@@ -10,7 +10,9 @@ export function AchievementPart({tmp_achievement}:{tmp_achievement:achievementT}
 		flexWrap: "wrap",
 		justifyContent: "space-between"
 	}}>
-		{achievement.map((player) => (
+		{achievement.map((player) => {
+			return (
+		<>
 			<div key={player.title} style={{ 
 				padding: "10px",
 				borderRadius: "20px",
@@ -38,7 +40,9 @@ export function AchievementPart({tmp_achievement}:{tmp_achievement:achievementT}
 
                 <progress id="file" value={player.value} max={player.max_value}/>
 			</div>
-		))}
+		</>
+		
+			);})}
 	</div>
   );
 }
