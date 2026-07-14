@@ -16,7 +16,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 1
             },
-            icon="achievements/clover.jpg",
+            icon="achievements/clover.png",
             is_hidden=False
         )
     
@@ -31,7 +31,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 3
             },
-            icon="achievements/triple_clover.jpg",
+            icon="achievements/triple_clover.png",
             is_hidden=False
         )
         
@@ -46,7 +46,7 @@ def create_achievements(apps, schema_editor):
                 "operator": "<=",
                 "value": -10
             },
-            icon="achievements/loser_1.jpg",
+            icon="achievements/loser_1.png",
             is_hidden=False
         )
     
@@ -61,7 +61,7 @@ def create_achievements(apps, schema_editor):
                 "operator": "<=",
                 "value": -42
             },
-            icon="achievements/loser_2.jpg",
+            icon="achievements/loser_2.png",
             is_hidden=False
         )
         
@@ -76,7 +76,7 @@ def create_achievements(apps, schema_editor):
                 "operator": "<=",
                 "value": -67
             },
-            icon="achievements/loser_3.jpg",
+            icon="achievements/loser_3.png",
             is_hidden=False
         )
         
@@ -91,7 +91,7 @@ def create_achievements(apps, schema_editor):
                 "operator": "<=",
                 "value": -69
             },
-            icon="achievements/loser_4.jpg",
+            icon="achievements/loser_4.png",
             is_hidden=False
         )
     
@@ -106,7 +106,7 @@ def create_achievements(apps, schema_editor):
                 "operator": "<=",
                 "value": -420
             },
-            icon="achievements/loser_5.jpg",
+            icon="achievements/loser_5.png",
             is_hidden=False
         )
     
@@ -121,7 +121,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 10
             },
-            icon="achievements/winner_1.jpg",
+            icon="achievements/winner_1.png",
             is_hidden=False
         )
     
@@ -136,7 +136,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 42
             },
-            icon="achievements/winner_2.jpg",
+            icon="achievements/winner_2.png",
             is_hidden=False
         )
         
@@ -151,7 +151,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 67
             },
-            icon="achievements/winner_3.jpg",
+            icon="achievements/winner_3.png",
             is_hidden=False
         )
         
@@ -166,7 +166,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 69
             },
-            icon="achievements/winner_4.jpg",
+            icon="achievements/winner_4.png",
             is_hidden=False
         )
     
@@ -181,7 +181,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 420
             },
-            icon="achievements/winner_5.jpg",
+            icon="achievements/winner_5.png",
             is_hidden=False
         )
         
@@ -196,7 +196,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 1
             },
-            icon="achievements/winner.jpg",
+            icon="achievements/winner.png",
             is_hidden=False
         )
         
@@ -211,7 +211,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 1
             },
-            icon="achievements/loser.jpg",
+            icon="achievements/loser.png",
             is_hidden=False
         )
         
@@ -226,7 +226,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 1
             },
-            icon="achievements/dm.jpg",
+            icon="achievements/dm.png",
             is_hidden=False
         )
     
@@ -241,7 +241,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 1
             },
-            icon="achievements/welcome.jpg",
+            icon="achievements/welcome.png",
             is_hidden=False
         )
     
@@ -256,7 +256,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 1
             },
-            icon="achievements/friendship.jpg",
+            icon="achievements/friendship.png",
             is_hidden=False
         )
         
@@ -271,7 +271,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 5
             },
-            icon="achievements/friendship_1.jpg",
+            icon="achievements/friendship_1.png",
             is_hidden=False
         )
     if not Achievement.objects.filter(code="FRIENDSHIP_2").exists():
@@ -285,7 +285,7 @@ def create_achievements(apps, schema_editor):
                 "operator": ">=",
                 "value": 42
             },
-            icon="achievements/friendship_2.jpg",
+            icon="achievements/friendship_2.png",
             is_hidden=False
         )
     
@@ -298,7 +298,7 @@ def create_achievements(apps, schema_editor):
     #            "source": "game",
     #            "type": "buur_and_neil"
     #        },
-    #        icon="achievements/skill_issue.jpg",
+    #        icon="achievements/skill_issue.png",
     #        is_hidden=False
     #    )
         

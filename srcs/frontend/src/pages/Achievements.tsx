@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { achievementPart } from "../components/Achievement/AchievementPart";
+import { AchievementPart } from "../components/Achievement/AchievementPart";
 import { defaultachievement, type achievementT } from "../utils/type/achievementType";
 import { useEffect, useState } from "react";
 import { getAchievement, achievementArray } from "../api/http/achievement";
@@ -29,15 +29,14 @@ export function Achievements({updateachievement}:Props) {
 		async function load_achievement() {
 			
 			const tmp_achievement = await getAchievement(auth.logged_in);
-			console.log(tmp_achievement)
 			if ("code" in tmp_achievement) {
 				return other_error(tmp_achievement.response);
 			}
 			setachievement(achievementArray(tmp_achievement));
-			console.log(achievement)
 			setValid(true);
 		}
 		load_achievement();
+	
 	}, [navigate, auth.logged_in, notif, updateachievement])
 
 	if (valid === null) {
@@ -58,7 +57,7 @@ export function Achievements({updateachievement}:Props) {
   return (
     <div className="page-content my-17">
       <h1>achievement</h1>
-      <achievementPart tmp_achievement={achievement}/>
+      <AchievementPart tmp_achievement={achievement}/>
     </div>
   );
 }

@@ -27,7 +27,6 @@ export async function getAchievement(logged_in:boolean) { //: Promise<friendT | 
 export function achievementArray(board:AxiosResponse<achievementRetT>) {
 	const data = board.data;
 	const achievementarr:achievement[] = [];
-	console.log(data)
 	for (const board_data of data) {
 		const achiev:achievement = {
 			img: board_data.img,
