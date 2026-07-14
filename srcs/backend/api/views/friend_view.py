@@ -238,7 +238,6 @@ def list_blocked(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_propal(request):
-#TODO test demain si y a bien pas les amis bloqué et pending
     friendships = Friendship.objects.filter(
         Q(from_user=request.user) | Q(to_user=request.user),
         Q(status="accepted") |  Q(status="pending") |  Q(status="blocked")
