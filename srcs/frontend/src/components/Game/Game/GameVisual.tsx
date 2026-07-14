@@ -20,7 +20,6 @@ export default function GameVisual() {
 
   return (
     <Canvas className="w-3/4 bg-cover rounded-2xl" linear={true} style={{ backgroundImage: `url(${bgimg})` }}>
-      <axesHelper />
       <directionalLight position={[0, 10, 7]} intensity={1.2} color={"#ffe5d5"} />
       <pointLight position={[0, 5, 5]} intensity={10} color={"#ffffff"} />
       <ambientLight />

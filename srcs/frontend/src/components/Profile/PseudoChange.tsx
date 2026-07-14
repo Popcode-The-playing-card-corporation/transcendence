@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, type KeyboardEvent } from "react";
 import { changeUsername } from "../../api/http/profile";
 import { type errorT } from "../../utils/type/errorType";
 import { useNotif } from "../hooks/useNotif";
@@ -13,6 +13,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
   const [reason, setReason] = useState<errorT>({ code: 200, response: "" });
   const notif = useNotif();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   function validate_inputs(in_name: string, old_pass: string, old_user: string | null) {
     if (in_name.trim().length === 0 && (old_pass.length === 0 && has_pass)) {
@@ -54,6 +55,10 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
     return;
   }
 
+  const handleKey = (event: KeyboardEvent) => {
+    if (event.key === "Enter")
+      buttonRef.current?.click();
+  };
 
   return (
     <div className="modal-box">
@@ -71,7 +76,13 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
             <>
               <label className="label">Password</label>
               <div className="input w-full">
-                <input type={showPassword ? "text" : "password"} value={password} onChange={passChange} placeholder="Your password" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={passChange}
+                  placeholder="Your password"
+                  onKeyDown={handleKey}
+                />
                 <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
               </div>
             </>
@@ -85,9 +96,10 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
             onChange={nameChange}
             className="input"
             placeholder="Your new username"
+            onKeyDown={handleKey}
           />
           <form className="flex justify-around">
-            <button type="button" onClick={() => updateUser(name, password, old_user)} className="btn mt-4">Change</button>
+            <button ref={buttonRef} type="button" onClick={() => updateUser(name, password, old_user)} className="btn mt-4">Change</button>
             <button type="button" onClick={() => clean_close()} className="btn mt-4">Cancel</button>
           </form>
         </fieldset>

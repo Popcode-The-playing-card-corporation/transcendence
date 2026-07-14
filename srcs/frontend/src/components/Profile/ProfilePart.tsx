@@ -15,6 +15,8 @@ export function ProfilePart({
 }) {
   const dialogPswdRef = useRef<HTMLDialogElement>(null);
   const dialogPseudoRef = useRef<HTMLDialogElement>(null);
+  const dialogPseudoRefLittle = useRef<HTMLDialogElement>(null);
+  const dialogPswdRefLittle = useRef<HTMLDialogElement>(null)
 
   return (
     <div>
@@ -93,17 +95,17 @@ export function ProfilePart({
           {realAccount.username}{" "}
           <button
             className="link ml-5"
-            onClick={() => dialogPseudoRef.current?.showModal()}
+            onClick={() => dialogPseudoRefLittle.current?.showModal()}
           >
             change
           </button>
           <dialog
             id="change_pseudo_modal"
             className="modal"
-            ref={dialogPseudoRef}
+            ref={dialogPseudoRefLittle}
           >
             <PseudoChange
-              dialogRef={dialogPseudoRef}
+              dialogRef={dialogPseudoRefLittle}
               updatedProfile={updatedProfile}
               setUpdate={setUpdate}
               old_user={realAccount.username}
@@ -122,13 +124,13 @@ export function ProfilePart({
           *******
           <button
             className="link ml-5"
-            onClick={() => dialogPswdRef.current?.showModal()}
+            onClick={() => dialogPswdRefLittle.current?.showModal()}
           >
             {" "}
             change
           </button>
-          <dialog id="change_pswd_modal" className="modal" ref={dialogPswdRef}>
-            <PswdChange dialogRef={dialogPswdRef} />
+          <dialog id="change_pswd_modal" className="modal" ref={dialogPswdRefLittle}>
+            <PswdChange dialogRef={dialogPswdRefLittle} />
           </dialog>
         </li>
         <li>
