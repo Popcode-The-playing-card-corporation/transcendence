@@ -159,12 +159,12 @@ export default function GameWebSocket({
 				if (data.message === "Need 2 players") {
 					notif?.showNotif("Game Error", "At least 2 players needed to start game", 5000);
 				} else {
-					console.debug("Error:", data.message);
+					// console.debug("Error:", data.message);
 					notif?.showNotif("Game Error", data.message, 5000);
 				}
-			} else {
+			} /*else {
 				console.debug("Unknown event: ", data)
-			}
+			}*/
 
 		},
 	
@@ -288,11 +288,11 @@ export default function GameWebSocket({
 				dispatch({type: "ADD_MESSAGE", payload: payload})
 			} else if (data.type === "history") {
 				dispatch({type: "SET_HISTORY", payload: payload})
-			} else if (data.event === "error") {
+			}/* else if (data.event === "error") {
 				console.debug("Error: ", data)
 			} else {
 				console.debug("Unknown event: ", data)
-			}
+			}*/
 		},
 
 	});
