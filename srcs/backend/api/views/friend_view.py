@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.db.models import Q
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from ..achievements.service import AchievementService
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -68,6 +69,7 @@ def send_friend_request(request, user_id):
             }
         )
         
+        AchievementService.check_user_achievements(request.user)
         return Response({"message": "Friend request sent"})
 
     except User.DoesNotExist:
@@ -102,7 +104,7 @@ def accept_friend_request(request, request_id):
                 }
             }
         )
-        
+        AchievementService.check_user_achievements(request.user)
         return Response({"message": "Friend request accepted"})
 
     except Friendship.DoesNotExist:

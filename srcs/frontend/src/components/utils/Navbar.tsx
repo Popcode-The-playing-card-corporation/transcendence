@@ -92,6 +92,16 @@ export function Navbar() {
               <MdOutlineLeaderboard /> Leaderboard
             </NavLink>
           </li>
+		  <li>
+            <NavLink
+              to="/achievements"
+              className={({ isActive }) =>
+                (isActive ? "active " : "") + "item-menu"
+              }
+            >
+              <TbCards /> Achivements
+            </NavLink>
+          </li>
           <li>
             <NavLink
               to="/profile"

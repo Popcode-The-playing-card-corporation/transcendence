@@ -7,6 +7,7 @@ from api.models import User
 from django.db.models import Max
 from django.utils import timezone
 from datetime import timedelta
+from api.achievements.service import AchievementService
 
 @sync_to_async
 def get_params(code):
@@ -227,7 +228,6 @@ def remove_player_from_room(user, code):
     except Room.DoesNotExist:
         pass
 
-
 @sync_to_async
 def get_room_with_host(code):
     return Room.objects.select_related("host").filter(code=code).first()
@@ -330,6 +330,8 @@ def end_room(uuid, data):
             stat.nb_host += 1
         user.save()
         stat.save()
+        if not user.is_bot:
+            AchievementService.check_user_achievements(user)
 
     room.status = "end"
     room.ended_at = timezone.now()
