@@ -29,7 +29,7 @@ export default function Time() {
     return () => clearInterval(intervalId);
   }, [state.game.boardData.round_time]);
 
-  if (!selfTurn || state.event === "finish_round") {
+  if (!selfTurn || state.event === "finish_round" || state.event === "game_finish") {
     return (
       <div className="flex justify-around items-center w-full min-h-12.5">
         <Chrono />

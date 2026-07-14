@@ -8,13 +8,14 @@ export default function Chrono() {
 
 	useEffect(() => {
 
-	const intervalId = setInterval(() => {
-			setStopWatch(Math.floor((new Date().getTime() - state.game.boardData.started_at.getTime()) / 1000));
-	}, 1000)
+		if (!(state.event === "game_finish")) {
+			const intervalId = setInterval(() => {
+					setStopWatch(Math.floor((new Date().getTime() - state.game.boardData.started_at.getTime()) / 1000));
+			}, 1000)
+			return () => clearInterval(intervalId)
+		}
 
-	return () => clearInterval(intervalId)
-
-	}, [state.game.boardData.started_at])
+	}, [state.game.boardData.started_at, state.event])
 	const sec = stopWatch % 60;
 	const min = Math.floor(stopWatch / 60) ;
 	return (

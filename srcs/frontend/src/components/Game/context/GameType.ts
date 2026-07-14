@@ -8,9 +8,9 @@ export type paramsT = {
 	max_player: number;
 	type: roomT;
 	timestamp: string;
-	goal:string;
-	nb_games:number;
-	nb_points:number;
+	goal: string;
+	nb_games: number;
+	nb_points: number;
 }
 
 export type GameState = {
@@ -18,16 +18,17 @@ export type GameState = {
 	connected: boolean;
 	settings: SettingsT;
 	game: GameT;
-	messages: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}[];
+	messages: { type: string, user: { id: number, username: string, avatar: string }, message: string, time: string }[];
 	event: string;
 	eventID: number;
 	message: string;
 	user: string;
 	show_annonces: boolean;
-	new_code:string | null;
+	new_code: string | null;
 	next: boolean | null;
 	host: string | null;
 	wait: boolean;
+	show: boolean;
 
 }
 
@@ -40,19 +41,20 @@ export type GameAction =
 	| { type: "SET_PARAMS"; payload: paramsT }
 	| { type: "SET_MODE"; payload: number }
 	| { type: "SET_SIZE"; payload: number }
-	| { type: "SET_HISTORY"; payload: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}[]}
-	| { type: "ADD_MESSAGE"; payload: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}}
-	| { type: "SET_USER"; payload: string}
-	| { type: "SET_EVENT"; payload: string}
-	| { type: "SET_MESSAGE"; payload:string}
-	| { type: "SET_GOAL"; payload:string}
-	| { type: "SET_NBGAME"; payload:number}
-	| { type: "SET_NBPOINT"; payload:number}
-	| { type: "SET_CODE"; payload:string | null}
-	| { type: "SET_NEXT"; payload:boolean | null}
-	| { type: "TEST_ANNONCES"}
-	| { type: "SET_HOST"; payload: string | null}
-	| { type: "SET_WAIT"; payload: boolean}
+	| { type: "SET_HISTORY"; payload: { type: string, user: { id: number, username: string, avatar: string }, message: string, time: string }[] }
+	| { type: "ADD_MESSAGE"; payload: { type: string, user: { id: number, username: string, avatar: string }, message: string, time: string } }
+	| { type: "SET_USER"; payload: string }
+	| { type: "SET_EVENT"; payload: string }
+	| { type: "SET_MESSAGE"; payload: string }
+	| { type: "SET_GOAL"; payload: string }
+	| { type: "SET_NBGAME"; payload: number }
+	| { type: "SET_NBPOINT"; payload: number }
+	| { type: "SET_CODE"; payload: string | null }
+	| { type: "SET_NEXT"; payload: boolean | null }
+	| { type: "TEST_ANNONCES" }
+	| { type: "SET_HOST"; payload: string | null }
+	| { type: "SET_WAIT"; payload: boolean }
+	| { type: "SET_SHOW"; payload: boolean }
 
 
 
@@ -63,23 +65,24 @@ export const initialState: GameState = {
 		mode: 0,
 		maxSize: 2,
 		listPlayer: [],
-		timeout: new Date(0,0,0),
+		timeout: new Date(0, 0, 0),
 		goal: "games",
 		nb_games: 3,
-		nb_points:333,
+		nb_points: 333,
 	},
 	game: {
 		boardData: default_Nboard,
-		self_cards:{hand:[], legal:[], melds:[{cards:[],points:0}]},
+		self_cards: { hand: [], legal: [], melds: [{ cards: [], points: 0 }] },
 	},
 	messages: [],
-	event:"",
-	eventID:0,
-	message:"",
+	event: "",
+	eventID: 0,
+	message: "",
 	user: "",
 	show_annonces: false,
 	new_code: null,
 	next: null,
 	host: null,
 	wait: false,
+	show: false,
 }
