@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { useGame } from "../../context/GameContext";
 import type { DetailedPointsT, playerScoreT } from "../../../../utils/type/boardDataType";
 
@@ -32,7 +32,7 @@ export default function DetailledLeaderboard() {
             <tbody className="bg-base-200">
               {detailedGame.map((game: DetailedPointsT) => {
                 return (
-                  <div key={detailedGame.indexOf(game)}>
+                  <React.Fragment key={detailedGame.indexOf(game)} >
                     {game.rounds.map((round: {players: playerScoreT[]}) => {
                       const isHidden = round.players.every(
                         (current) => current.score === 0,
@@ -43,7 +43,7 @@ export default function DetailledLeaderboard() {
                           <tr key={game.rounds.indexOf(round)}>
                             {round.players.map((player: playerScoreT) => {
                               return (
-                                <td key={player.user_id}>{player.score ? player.score : "-"}</td>
+                                <td key={round.players.indexOf(player)}>{player.score ? player.score : "-"}</td>
                               );
                             })}
                           </tr>
@@ -59,7 +59,7 @@ export default function DetailledLeaderboard() {
                     ) : (
                       <></>
                     )}
-                  </div>
+                  </React.Fragment>
                 );
               })}
               <tr className="bg-primary font-bold sticky -bottom-6">
