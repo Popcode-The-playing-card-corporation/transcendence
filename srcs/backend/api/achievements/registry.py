@@ -20,22 +20,3 @@ def get_condition_value(user, condition):
         return USER_CONDITIONS[type_](user)
 
     return 0
-
-#def check_buur_and_neil(user, context):
-#    game_state = context["game_state"]
-#    trick = context["trick"]
-#
-#    has_buur = False
-#    has_neil = False
-#
-#    for card in game_state["taken"]:
-#        if card.value == "J" and card.color == trick:
-#            has_buur = True
-#        if card == "9" and card.color == trick:
-#            has_neil = True
-#
-#    return has_buur and has_neil
-#
-#GAME_CONDITIONS = {
-#    "buur_and_neil": check_buur_and_neil,
-#}
