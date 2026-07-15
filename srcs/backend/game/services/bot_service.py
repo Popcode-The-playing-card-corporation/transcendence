@@ -143,7 +143,6 @@ class BotService:
             position=int(game_state["playing"])
         )
         if not p.is_online or not p.is_human or p.is_afk:
-            # await asyncio.sleep(2.0)
             position = str(game_state["playing"])
     
             legal = game.handleAction("legal", game_state, idPlayer= position)

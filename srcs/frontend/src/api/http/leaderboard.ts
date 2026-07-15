@@ -4,7 +4,7 @@ import host from './host'
 import type { leaderboardRetT } from '../../utils/type/leaderboardApiType';
 import type { userLB, leaderboardT, currentLB } from '../../utils/type/leaderboardType';
 
-export async function getLeaderboard(logged_in:boolean) { //: Promise<friendT | errorT>
+export async function getLeaderboard(logged_in:boolean) {
 	
 	try {
 		let res;

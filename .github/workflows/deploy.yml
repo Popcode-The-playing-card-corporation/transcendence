@@ -3,7 +3,7 @@ name: Deploy to VM
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   deploy:
@@ -33,13 +33,10 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             cd /home/ubuntu/transcendence/
-            #TODO delete git stash and git stash pop
-            #TODO change git checkout to main
-            git stash
+            
             git fetch origin
-            git checkout dev
-            git reset --hard origin/dev
-            git stash pop
+            git checkout main
+            git reset --hard origin/main
 
             make fclean
             make serv-build
@@ -53,13 +50,9 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             cd /home/ubuntu/transcendence/
-            #TODO delete git stash and git stash pop
-            #TODO change git checkout to main
 
-            git stash
             git fetch origin
-            git checkout dev
-            git reset --hard origin/dev
-            git stash pop
+            git checkout main
+            git reset --hard origin/main
 
             make serv-build

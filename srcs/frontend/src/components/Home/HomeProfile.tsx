@@ -14,10 +14,8 @@ export default function HomeProfile({ gameHistory, leaderboard }: Props) {
       <h2 className="text-center">Profile</h2>
       <div className="pt-4">
         <h3>Last games</h3>
-        {/* <div className="overflow-x-auto"> */}
         {!("code" in gameHistory) ?
           <History gameHistory={gameHistory} isHome={true} isMiniProfile={false} /> : "Error about game history in HomeProfile"}
-        {/* </div> */}
       </div>
       <div className="pt-6">
         <h3>Leaderboard</h3>

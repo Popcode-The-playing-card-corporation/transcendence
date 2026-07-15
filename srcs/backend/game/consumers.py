@@ -38,7 +38,7 @@ ACTION_HANDLERS = {
     "exit_game": "handle_exit_game",
     "patch_param": "handle_patch_param",
 }
-#TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
+
 class RoomConsumer(AsyncWebsocketConsumer):
     
     async def send_json(self, data):
@@ -46,7 +46,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     async def game_event(self, event):
         if event["event"] == "force_disconnect":
-            await self.close(code=4001)  # close WebSocket
+            await self.close(code=4001)
             return
         
         await self.send(text_data=json.dumps({
@@ -119,10 +119,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     
     async def player_afk(self, event):
-        #await self.send_json({
-        #    "event": "player_afk",
-        #    "reason": event["reason"]
-        #})
         room = await get_room_with_host(self.code)
         game = GameEngine(room.uuid)
         asyncio.create_task(self.afk_flow(room, game))
@@ -453,7 +449,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
-        #await self.send(json.dumps(result))
         
     async def handle_create_room(self, payload=None):
         if (await RoomService.check_room_status("end", self.code) == False):
@@ -477,7 +472,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
-        #await self.send(json.dumps(result))
 
     async def handle_kick(self, payload: dict):
         if (await RoomService.check_room_status("open", self.code) == False):

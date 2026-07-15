@@ -120,7 +120,7 @@ export function LoginForm({
       <div className="input w-full">
         <input
           type={showPassword ? "text" : "password"}
-          value={password} // show the password in inspector, is it okay ??
+          value={password}
           onChange={passChange}
           placeholder="..."
           onKeyDown={handleKey}

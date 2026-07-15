@@ -25,8 +25,8 @@ export function NotifPopUp() {
     return () => {
       clearInterval(intervalId);
     };
-  }, [progress, context, context?.isEnabled]); // Maybe remove context
-
+  }, [progress, context, context?.isEnabled]);
+  
   function copyCode() {
 	if (context && context.body) {
 		const code = context.body.split(" ").pop() 

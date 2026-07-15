@@ -40,7 +40,6 @@ export default function BurgerMenu({
         ref={drawerRef}
       />
       <div className="drawer-content">
-        {/* Page content here */}
         <label
           htmlFor="my-drawer-5"
           className="drawer-button btn btn-primary mr-4"
@@ -63,7 +62,6 @@ export default function BurgerMenu({
           className="drawer-overlay"
         ></label>
         <ul className="menu bg-base-200 min-h-full w-50 p-4 items-center gap-4">
-          {/* Sidebar content here */}
           <div className="flex items-center justify-between w-full mb-4">
             <li>
               <label className="swap swap-rotate">

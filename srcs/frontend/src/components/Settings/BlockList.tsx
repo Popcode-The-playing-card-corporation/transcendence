@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { getBlocked } from "../../api/http/friend";
 import { useNotif } from "../hooks/useNotif";
 import type { friendT } from "../../utils/type/friendType";
 import type { errorT } from "../../utils/type/errorType";
 import UnblockBtn from "./UnblockBtn";
 
-export default function BlockList() {
+export default function BlockList({setBlock, updatedBlock}:{setBlock:Dispatch<SetStateAction<boolean>>; updatedBlock:boolean;}) {
   const [blocklist, setBlocked] = useState<friendT[] | errorT>([]);
-  const [updatedBlocked, setUpdatedBlocked] = useState(false);
   const notif = useNotif();
   useEffect(() => {
 	
@@ -16,7 +15,7 @@ export default function BlockList() {
 		setBlocked(tmpBlocked);
 	}
 	retrieveBlocked();
-  }, [updatedBlocked]);
+  }, [updatedBlock]);
 
   if ('code' in blocklist) {
 	notif?.showNotif("Unexpected error:", "Error displaying blocked list.", 5000);
@@ -39,7 +38,7 @@ export default function BlockList() {
                 </td>
                 <td>{blocked.blocked_at}</td>
 					<td>
-						<UnblockBtn req_id={blocked.id} updatedBlocked={updatedBlocked} setUpdate={setUpdatedBlocked} profileRef={null}/>
+						<UnblockBtn req_id={blocked.id} updatedBlocked={updatedBlock} setUpdate={setBlock} profileRef={null}/>
 					</td>
               </tr>
             );

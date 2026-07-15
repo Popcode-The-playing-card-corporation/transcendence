@@ -1,6 +1,7 @@
 from ..db import save_room_state, get_player_pos, get_room_with_host
 from .stats_service import StatsService
 from game_engine.game import GameEngine
+from game_engine.player import Player
 from .score_service import ScoreService
 from game.models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
@@ -35,56 +36,22 @@ class MeldService:
             for meld in player_data.get("melds", []):
                 for card in meld["cards"]:
                     cards.append({
-                        "cardId": card["id"]
+                        "cardId": card["id"],
+                        "color": card["color"],
+                        "value": card["value"]
                     })
+
             if len(cards) > 0:
-                selected_cards_idx = await MeldService.extract_card_indexes(
-                    room,
-                    p.player,
-                    cards
-                )
+
+                points = Player().countMelds(cards, game_state["tricks"])
                 
-                selected_cards = await MeldService.extract_cards(
-                    room,
-                    p.player,
-                    player_id,
-                    cards
-                )
-                
-                if selected_cards_idx is None:
-                    return {"error": "Carte invalide"}
-        
-                valid, _ = MeldService.compute_sequences(
-                    selected_cards
-                )
-        
-                if not valid:
-                    return {
-                        "error": "Toutes les cartes doivent appartenir à des suites valides"
-                    }
-        
-                game = GameEngine(room.uuid)
-        
-                game_state = game.handleAction(
-                    "meld",
-                    game_state,
-                    idPlayer=str(player_id),
-                    meldIndex=selected_cards_idx
-                )
-    
-                points = game.handleAction(
-                    "point_meld",
-                    game_state,
-                    idPlayer=str(player_id),
-                    meldIndex=selected_cards_idx
-                )
-            
                 await ScoreService.save_meld(room.code, player_id, game_state["game"], game_state["round"], points * -1)
             
                 await StatsService.add_meld_points(
                     p.player,
                     points
                 )
+                game_state["players"][str(player_id)]["puntos"] -= points
                 await save_room_state(room.uuid, game_state)
             
             room = await get_room_with_host(room.code)
@@ -136,7 +103,7 @@ class MeldService:
     async def extract_cards(room, user, position, cards):
     
         player_cards = room.game_state["players"][str(position)]["cards"]
-    
+
         selected_cards = []
     
         for card in cards:
@@ -146,7 +113,7 @@ class MeldService:
                 room,
                 card["cardId"]
             )
-    
+
             if idx == -1:
                 return None
             if player_cards[idx] not in selected_cards:

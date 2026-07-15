@@ -138,11 +138,6 @@ export default function CurrentInfo() {
           Asked: <DisplayTrumpLogo trump={asked} />{" "}
         </p>
       </div>
-      {/* {state.game.boardData.last_fold.username.length === 0 ? null : ( */}
-      {/*   <p className="flex items-center gap-1"> */}
-      {/*     Last hand taken by: {state.game.boardData.last_fold.username} */}
-      {/*   </p> */}
-      {/* )} */}
       <DisplayWhoPlaying
         self={self}
         username={nameCurrentPlayer?.user.username}
