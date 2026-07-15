@@ -7,11 +7,10 @@ type Props = {
   front: Texture<HTMLImageElement, TextureEventMap>,
   back: Texture<HTMLImageElement, TextureEventMap>,
   posPlayedCard: number,
-  idPlayer: number,
   position: number
 }
 
-export default function PlayedCard({ show, front, back, posPlayedCard, idPlayer, position }: Props) {
+export default function PlayedCard({ show, front, back, posPlayedCard, position }: Props) {
 
 	const materials = useMemo(
 	() => [
@@ -28,25 +27,25 @@ export default function PlayedCard({ show, front, back, posPlayedCard, idPlayer,
   const { state } = useGame();
   const [wait, setWait] = useState(true);
 
+
   useEffect(() => {
     async function handle_wait() {
-      if (idPlayer === 0) {
+      if (position === 0) {
         setWait(false);
         setTimeout(() => setWait(true), 100);
       }
     }
     handle_wait();
-  }, [idPlayer])
+  }, [position])
 
-  if (!show || (idPlayer === 0 && state.wait) || !wait) {
+  if (!show || (position === 0 && state.wait) || !wait) {
     return
   }
-
 
   return (
     <>
       <mesh
-        position={[0, posPlayedCard, 0.001 * position]}
+        position={[0, posPlayedCard, 0.05 + 0.001 * position]}
         material={materials}
       >
         {<boxGeometry args={[1, 1.4, 0.001]} />}

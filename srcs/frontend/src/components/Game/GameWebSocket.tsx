@@ -83,7 +83,9 @@ export default function GameWebSocket({
       },
 
       onMessage: (event) => {
+		
         const data = JSON.parse(event.data);
+		
         if (data.type == "acknowledge") {
           return;
         }
@@ -139,12 +141,17 @@ export default function GameWebSocket({
             dispatch({ type: "SET_CODE", payload: payload.code })
             dispatch({ type: "SET_NEXT", payload: true })
           } else {
+			
             if (data.event === "player_disconnect" || data.event === "player_reconnect") {
-              if (data.event === "player_disconnect") {
-                if (state.settings.listPlayer.filter((player) => player.username === data.playername)[0].is_host) {
-                  dispatch({ type: "SET_NEXT", payload: false })
-                }
-              }
+				if (data.event === "player_disconnect") {
+				const disconnectedPlayer = state.settings.listPlayer.find(
+					(player) => player.username === data.playername
+				);
+
+				if (disconnectedPlayer?.is_host) {
+					dispatch({ type: "SET_NEXT", payload: false });
+				}
+				}
               dispatch({ type: "SET_MESSAGE", payload: payload.player_name });
             }
             if (payload.board_data) {

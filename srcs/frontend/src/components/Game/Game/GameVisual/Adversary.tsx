@@ -38,7 +38,6 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
             front={front[playedCard.card.id]}
             back={back}
             posPlayedCard={posPlayedCard}
-            idPlayer={room_id}
             position={position}
           /> : null}
         {isSelf ? null :
