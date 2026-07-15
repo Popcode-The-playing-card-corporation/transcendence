@@ -46,7 +46,7 @@ The following features are implemented on Popcards:
 - Make
 - A secrets folder in `./srcs` containing:
 	- `.env` - Please see .env.example for further guidance
-	- `django_secret.txt` - Must have a key for django, this can be anything although it is recommended you generate a key using: @Cyril
+	- `django_secret.txt` - Must have a key for django, this can be anything although it is recommended you generate new key using a generator.
 
 
 	- The following secret files must be non-empty. If they contain valid API Secret Keys that correspond to the IDs provided in the .env they will allow OAuth login for their corresponding service.
