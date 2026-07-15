@@ -150,9 +150,7 @@ export default function FilterGame({
           />
         </form>
         <label className="btn btn-circle swap swap-rotate glass bg-base-200">
-          {/* this hidden checkbox controls the state */}
           <input type="checkbox" onClick={() => setDispFilter(!dispFilter)} />
-
           <FaFilter className="swap-off fill-current mx-auto" />
           <MdClose className="swap-on fill-current text-xl" />
         </label>

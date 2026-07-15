@@ -11,63 +11,6 @@ type Props = {
 export function History({ gameHistory, isHome, isMiniProfile }: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(isHome ? 3 : 10)
-  // const fakeHistory =
-  //   [
-  //     {
-  //       game_id: 0,
-  //       start: "dnflds",
-  //       points: 4,
-  //       rank: 3,
-  //       won: true,
-  //       duration: 122,
-  //       nb_player: 2,
-  //       players: [
-  //         {
-  //           id: 0,
-  //           username: "philipeadghjadhjasdhjgajhdgaddhgahgshjadgjh",
-  //           is_host: true,
-  //           position: 1,
-  //         },
-  //         {
-  //           id: 1,
-  //           username: "philip2",
-  //           is_host: false,
-  //           position: 1,
-  //         },
-  //       ]
-  //     },
-
-  //     {
-  //       game_id: 1,
-  //       start: "dnflds",
-  //       points: 4,
-  //       rank: 3,
-  //       won: false,
-  //       duration: 122,
-  //       nb_player: 2,
-  //       players: [
-  //         {
-  //           id: 0,
-  //           username: "philipe",
-  //           is_host: true,
-  //           position: 1,
-  //         },
-  //         {
-  //           id: 1,
-  //           username: "philip2",
-  //           is_host: false,
-  //           position: 1,
-  //         },
-  //         {
-  //           id: 2,
-  //           username: "philip3",
-  //           is_host: false,
-  //           position: 2,
-  //         },
-  //       ]
-  //     }
-  //   ]
-
 
   function handleMoreLessBtn() {
     if (isMore) {
