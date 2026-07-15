@@ -19,14 +19,14 @@ export default function PrivacyPolicy() {
         <ul className="list-disc ms-8">
           <li>
             Visit our website at{" "}
-            <a href="http://www.popcards.com" target="_blank">
-              http://www.popcards.com
+            <a href="http://popcards.popcode.ch" target="_blank">
+              http://popcards.popcode.ch
             </a>{" "}
             or any website of ours that links to this Privacy Notice
           </li>
           <li>
             Use Popcards. A online platform to play the Swiss card game "La
-            Misere" with friends.
+            Misere" with friends
           </li>
           <li>
             Engage with us in other related ways, including any marketing or
@@ -70,7 +70,7 @@ export default function PrivacyPolicy() {
           the choices you make, and the products and features you use. Learn
           more about personal{" "}
           <a href="#informationCollected" className="link">
-            information you disclose to us
+            information you disclose to us.
           </a>
           <br />
           <br />
@@ -92,7 +92,7 @@ export default function PrivacyPolicy() {
           your consent. We process your information only when we have a valid
           legal reason to do so. Learn more about{" "}
           <a className="link" href="#informationProcess">
-            how we process your information{" "}
+            how we process your information{" "}.
           </a>
           <br />
           <br />{" "}
