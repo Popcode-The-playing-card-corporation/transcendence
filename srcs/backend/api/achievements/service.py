@@ -3,7 +3,6 @@ from django.utils import timezone
 from api.models import Achievement, UserAchievement
 from .checker import check
 
-#TODO maybe send notification when a succes is validate ?
 class AchievementService:
 
     @staticmethod
