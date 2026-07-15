@@ -3,6 +3,8 @@ import { useRef } from "react";
 import { AvatarSelection } from "./AvatarSelection";
 import { PswdChange } from "./PswdChange";
 import { PseudoChange } from "./PseudoChange";
+import { PswdChangeResponsive } from "./PswdChangeResponsive";
+import { PseudoChangeResponsive } from "./PseudoChangeResponsive";
 
 export function ProfilePart({
   realAccount,
@@ -104,7 +106,7 @@ export function ProfilePart({
             className="modal"
             ref={dialogPseudoRefLittle}
           >
-            <PseudoChange
+            <PseudoChangeResponsive
               dialogRef={dialogPseudoRefLittle}
               updatedProfile={updatedProfile}
               setUpdate={setUpdate}
@@ -130,7 +132,7 @@ export function ProfilePart({
             change
           </button>
           <dialog id="change_pswd_modal" className="modal" ref={dialogPswdRefLittle}>
-            <PswdChange dialogRef={dialogPswdRefLittle} />
+            <PswdChangeResponsive dialogRef={dialogPswdRefLittle} />
           </dialog>
         </li>
         <li>

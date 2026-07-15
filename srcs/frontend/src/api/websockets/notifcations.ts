@@ -47,10 +47,12 @@ type Props = {
 	setProfile: React.Dispatch<SetStateAction<boolean>>;
 	updatedProfile: boolean;
 	updateLeaderboard: boolean;
+	setBlock: React.Dispatch<SetStateAction<boolean>>;
+	updatedBlock: boolean;
 	setLeaderboard: React.Dispatch<SetStateAction<boolean>>;
 }
 
-export function Notifications({ setProfile, updatedProfile, updateLeaderboard, setLeaderboard }: Props) {
+export function Notifications({ setProfile, updatedProfile, updateLeaderboard, setBlock, updatedBlock, setLeaderboard }: Props) {
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 		default: typeof useWebSocketModule;
@@ -92,24 +94,19 @@ export function Notifications({ setProfile, updatedProfile, updateLeaderboard, s
 				} else if (data.type === "friend_invite") {
 					notif?.showNotif("Game Invite", payload.from_user + " has invited you to a game: " + payload.code, 10000);
 					handle_update_profile(auth, setProfile, updatedProfile);
-				} /*else {
-					console.debug("Notification: type not implemented. Format: ", data)
-				}*/
+				} 
 			} else if (data.event === "update") {
 				if (data.type === "friend_delete") {
 					handle_update_profile(auth, setProfile, updatedProfile);
 				} else if (data.type === "friend_block") {
 					handle_update_profile(auth, setProfile, updatedProfile); // change to update blocklist once implemented
+					setBlock(!updatedBlock);
 				} else if (data.type === "friend_online") {
 					handle_update_profile(auth, setProfile, updatedProfile);
 				} else if (data.type === "game_finished") {
 					setLeaderboard(!updateLeaderboard);
-				} /*else {
-					console.debug("Update: type not implemented. Format: ", data)
-				}*/
-			} /*else {
-				console.debug("event not implemented. Format: ", data)
-			}*/
+				} 
+			} 
 		},
 	});
 	return null;

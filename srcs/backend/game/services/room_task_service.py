@@ -25,8 +25,6 @@ class RoomTaskService:
 
     @staticmethod
     async def schedule_lobby_kick_all(room_code, delay=900):
-        #room = await sync_to_async(Room.objects.get)(code=room_code)
-
         lobby_kick_all.apply_async(args=[room_code], countdown=delay)
 
 

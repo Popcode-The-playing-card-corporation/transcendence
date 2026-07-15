@@ -58,8 +58,8 @@ export default function Chat({ setNewMessage, isAlreadyOpen, setCount }: Props) 
           </>
         );
       })}
-      <div ref={messageEndRef} className="join w-full sticky -bottom-5 pb-4 bg-base-100 " onKeyDown={handleKeyDown}>
-        <input type="text" placeholder="Type here" className="input join-item" value={message} onChange={messageChange} />
+      <div className="join w-full sticky -bottom-5 pb-4 bg-base-100 " onKeyDown={handleKeyDown}>
+        <input id="chatInput" name="chatInput" type="text" placeholder="Type here" className="input join-item" value={message} onChange={messageChange} />
         <button ref={buttonRef} className="btn join-item" onClick={handleSend} >
           <IoSend />
         </button>

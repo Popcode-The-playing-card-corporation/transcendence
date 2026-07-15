@@ -4,7 +4,7 @@ import { type errorT } from "../../utils/type/errorType";
 import { useNotif } from "../hooks/useNotif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, has_pass }: { dialogRef: React.RefObject<HTMLDialogElement | null>; updatedProfile: boolean | null; setUpdate: React.Dispatch<React.SetStateAction<boolean>> | null; old_user: string | null, has_pass: boolean }) {
+export function PseudoChangeResponsive({ dialogRef, updatedProfile, setUpdate, old_user, has_pass }: { dialogRef: React.RefObject<HTMLDialogElement | null>; updatedProfile: boolean | null; setUpdate: React.Dispatch<React.SetStateAction<boolean>> | null; old_user: string | null, has_pass: boolean }) {
 
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -78,7 +78,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
               <label className="label">
                 <div className="input w-full">
                   <input
-                    id="pswdChange"
+                    id="pswdChangeResponsive"
                     name="pswdChange"
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -96,7 +96,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
           <p>New username</p>
           <label className="label">
             <input
-              id="usernameChange"
+              id="usernameChangeResponsive"
               name="usernameChange"
               type="text"
               value={name}

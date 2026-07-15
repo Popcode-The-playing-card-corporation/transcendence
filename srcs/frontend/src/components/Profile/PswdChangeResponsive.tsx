@@ -5,7 +5,7 @@ import { useNotif } from "../hooks/useNotif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
-export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialogElement | null> }) {
+export function PswdChangeResponsive({ dialogRef }: { dialogRef: React.RefObject<HTMLDialogElement | null> }) {
 
   const [oldpass, setOld] = useState("");
   const [password1, setPassword1] = useState("");
@@ -86,7 +86,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
           <label className="label">
             <div className="input w-full">
               <input
-                id="oldPswd"
+                id="oldPswdResponsive"
                 type={showOldPassword ? "text" : "password"}
                 value={oldpass}
                 onChange={oldChange}
@@ -101,7 +101,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
           <label className="label">
             <div className="input w-full">
               <input
-                id="newPswd"
+                id="newPswdResponsive"
                 type={showNewPassword ? "text" : "password"}
                 value={password1}
                 onChange={pass1Change}
@@ -116,7 +116,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
           <label className="label">
             <div className="input w-full">
               <input
-                id="confirmNewPswd"
+                id="confirmNewPswdResponsive"
                 type={showNewConfirmPassword ? "text" : "password"}
                 value={password2}
                 onChange={pass2Change}

@@ -1,7 +1,6 @@
 import LeaderboardInGame from "./GameInterface/LeaderboardInGame";
 import GameButtons from "./GameInterface/GameButtons";
 import EndingModal from "./GameInterface/EndingModal";
-// import { type Dispatch, type SetStateAction } from "react";
 
 export default function Interface() {
 
