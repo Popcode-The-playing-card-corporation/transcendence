@@ -1,0 +1,138 @@
+import React, { useRef, useState, type KeyboardEvent } from "react";
+import { changePassword } from "../../api/http/profile";
+import type { errorT } from "../../utils/type/errorType";
+import { useNotif } from "../hooks/useNotif";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+
+export function PswdChangeResponsive({ dialogRef }: { dialogRef: React.RefObject<HTMLDialogElement | null> }) {
+
+  const [oldpass, setOld] = useState("");
+  const [password1, setPassword1] = useState("");
+  const [password2, setPassword2] = useState("");
+  const oldChange = (e: React.ChangeEvent<HTMLInputElement>) => { setOld(e.target.value); };
+  const pass1Change = (e: React.ChangeEvent<HTMLInputElement>) => { setPassword1(e.target.value); };
+  const pass2Change = (e: React.ChangeEvent<HTMLInputElement>) => { setPassword2(e.target.value); };
+  const [reason, setReason] = useState<errorT>({ code: 200, response: "" });
+  const notif = useNotif();
+  const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [showNewConfirmPassword, setShowNewConfirmPassword] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  function clean_close() {
+    setOld("");
+    setPassword1("");
+    setPassword2("");
+    setReason({ code: 200, response: "" });
+    dialogRef.current?.close();
+  }
+
+  function validate_inputs(old_pass: string, pass1: string, pass2: string) {
+
+    if (old_pass.length === 0 || pass1.length === 0 || pass2.length === 0) {
+      setReason({ code: -1, response: "All fields must be filled!" });
+      return false;
+    } else if (pass1 !== pass2) {
+      setReason({ code: -1, response: "New passwords must match!" });
+      return false;
+    } else if (pass1.length < 8) {
+      setReason({ code: -1, response: "New password must be at least 8 characters!" })
+      return false;
+    } else if (!(/[A-Z]/.test(pass1)) || !(/[a-z]/.test(pass1)) || !/[^a-zA-Z0-9]/.test(pass1)) {
+      setReason({ code: -1, response: "New password must contain at least: 1 uppercase, 1 lowercase and 1 special character" })
+      return false;
+    } else if (pass1 == old_pass) {
+      setReason({ code: -1, response: "New password cannot be the same as old password!" });
+      return false;
+    }
+    return true;
+  }
+
+  async function updatePass(old_pass: string, pass1: string, pass2: string) {
+    setReason({ code: 200, response: "" });
+
+    const check = validate_inputs(old_pass, pass1, pass2);
+    if (!check) {
+      return;
+    }
+    const res = await changePassword(old_pass, pass1, pass2);
+    if (res.code !== 200) {
+      setReason(res);
+      notif?.showNotif("Username change error:", res.response, 5000);
+      clean_close();
+      return;
+    }
+    clean_close();
+    return;
+  }
+
+  const handleKey = (event: KeyboardEvent) => {
+    if (event.key === "Enter")
+      buttonRef.current?.click();
+  };
+
+  return (
+    <div className="modal-box">
+      <h3 className="text-lg font-bold text-center">Change password</h3>
+      <p className="py-4 text-center">Enter your password and choose your new one</p>
+      {reason.code === -1 ? <p className="py-4 text-center text-error font-black">{String(reason.response)}</p> : ""}
+      {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
+      <div className="modal-action">
+        <fieldset className="fieldset border-accent rounded-box w-xs border p-4 mx-auto">
+          <legend className="fieldset-legend">Change password</legend>
+
+          <p>Old password</p>
+          <label className="label">
+            <div className="input w-full">
+              <input
+                id="oldPswdResponsive"
+                type={showOldPassword ? "text" : "password"}
+                value={oldpass}
+                onChange={oldChange}
+                placeholder="..."
+                onKeyDown={handleKey}
+              />
+              <button className="cursor-pointer " onClick={() => setShowOldPassword(!showOldPassword)}>{showOldPassword ? <FaEyeSlash /> : <FaEye />}</button>
+            </div>
+          </label>
+
+          <p>New password</p>
+          <label className="label">
+            <div className="input w-full">
+              <input
+                id="newPswdResponsive"
+                type={showNewPassword ? "text" : "password"}
+                value={password1}
+                onChange={pass1Change}
+                placeholder="..."
+                onKeyDown={handleKey}
+              />
+              <button className="cursor-pointer " onClick={() => setShowNewPassword(!showNewPassword)}>{showNewPassword ? <FaEyeSlash /> : <FaEye />}</button>
+            </div>
+          </label>
+
+          <p>Confirm new password</p>
+          <label className="label">
+            <div className="input w-full">
+              <input
+                id="confirmNewPswdResponsive"
+                type={showNewConfirmPassword ? "text" : "password"}
+                value={password2}
+                onChange={pass2Change}
+                placeholder="..."
+                onKeyDown={handleKey}
+              />
+              <button className="cursor-pointer " onClick={() => setShowNewConfirmPassword(!showNewConfirmPassword)}>{showNewConfirmPassword ? <FaEyeSlash /> : <FaEye />}</button>
+            </div>
+          </label>
+
+          <form method="dialog" className="flex justify-around">
+            <button ref={buttonRef} type="button" onClick={() => updatePass(oldpass, password1, password2)} className="btn mt-4">Change</button>
+            <button type="button" onClick={() => clean_close()} className="btn  mt-4">Cancel</button>
+          </form>
+        </fieldset>
+      </div >
+    </div >
+  );
+}
