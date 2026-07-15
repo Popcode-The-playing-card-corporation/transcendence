@@ -1,6 +1,6 @@
 export function TermsOfService() {
   return (
-    <div className="page-content mt-17 text-justify mx-50">
+    <div className="page-content mt-17 text-justify md:mx-50">
       <h1>TERMS AND CONDITIONS</h1>
       <p className="text-sm text-center">Last updated July 02, 2026</p>
       <br /><br />
