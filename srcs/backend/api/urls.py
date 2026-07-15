@@ -18,7 +18,6 @@ urlpatterns = [
 	path("login/google/", GoogleLogin, name="google_login"),
 	path("login/42/", FortyTwoLogin, name="42_login"),
 	path("login/github/", GitLogin, name="GitHub_login"),
-	# path("logout/google/", GoogleLogout.as_view()),
     
     #friend part
     path("friends/", get_friends),
@@ -37,5 +36,4 @@ urlpatterns = [
     path("room/data/<str:code>/", room_data),
     path("user/<int:user_id>/stats/", get_stat),
     path("user/<int:user_id>/history/", game_history_friend),
-    #TODO add achivment models et table to connect to user
 ]

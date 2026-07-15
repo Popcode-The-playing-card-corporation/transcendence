@@ -228,11 +228,6 @@ def login(request):
         
         return res
 
-        # return Response({
-        #     "access": str(refresh.access_token),
-        #     "refresh": str(refresh),
-        # })
-
     return Response(
         {"error": "Invalid credentials"},
         status=401
