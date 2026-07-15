@@ -149,7 +149,6 @@ def GitLogin(request):
 	user_data = requests.get("https://api.github.com/user", headers={"Authorization": f"Bearer {token}"})
 	if (user_data.status_code != 200):
 		return(Response({f"error":"error getting user data"}, status=400))
-	print(user_data)
 	emails = emails.json()
 	real_email = None
 	for email in emails:

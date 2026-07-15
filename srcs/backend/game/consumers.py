@@ -38,7 +38,7 @@ ACTION_HANDLERS = {
     "exit_game": "handle_exit_game",
     "patch_param": "handle_patch_param",
 }
-#TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
+
 class RoomConsumer(AsyncWebsocketConsumer):
     
     async def send_json(self, data):
