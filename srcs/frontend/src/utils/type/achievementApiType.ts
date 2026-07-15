@@ -7,7 +7,3 @@ export type achievementArrT = {
   is_unlock: boolean;
   rate: number;
 };
-
-export type achievementRetT = {
-  achievement: achievementArrT[];
-};

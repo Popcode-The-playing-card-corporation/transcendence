@@ -1,7 +1,6 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
 import { getError, type backendErrorT, type errorT } from '../../utils/type/errorType';
 import host from './host'
-import type { achievementRetT } from '../../utils/type/achievementApiType';
 import type { achievement, achievementT } from '../../utils/type/achievementType';
 
 export async function getAchievement(logged_in:boolean) { //: Promise<friendT | errorT>
@@ -24,7 +23,7 @@ export async function getAchievement(logged_in:boolean) { //: Promise<friendT | 
 	}
 }
 
-export function achievementArray(board:AxiosResponse<achievementRetT>) {
+export function achievementArray(board:AxiosResponse<achievement[]>) {
 	const data = board.data;
 	const achievementarr:achievement[] = [];
 	for (const board_data of data) {
