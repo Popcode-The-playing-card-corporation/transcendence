@@ -303,6 +303,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.error("Forbidden")
             return
 
+        await GameService.close_valve(self.code)
         room = await get_room_with_host(self.code)
     
         if self.user != room.host:
@@ -334,7 +335,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        game_state = await GameService.start_game(room)
+        game_state = await GameService.start_game(room) 
+        await GameService.open_valve(self.code)
 
     async def handle_play_card(self, payload):
         if (await RoomService.check_room_status("start", self.code) == False):
@@ -348,6 +350,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }))
             return 
 
+        if (await GameService.check_valve(self.code)):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "someone's already playing"
+                }))
+            return 
+
+        await GameService.close_valve(self.code)
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
 
@@ -364,13 +374,16 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "type": "error",
                     "message": "cardId not found in payload"
                 }))
+            await GameService.open_valve(self.code)
             return 
 
         if result.get("error"):
             await self.error(result["error"])
+            await GameService.open_valve(self.code)
             return
         
         if result.get("invalid"):
+            await GameService.open_valve(self.code)
             return
 
         await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_valid")
@@ -397,6 +410,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                                                        check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
                                                        )
+        await GameService.open_valve(self.code)
 
     async def handle_melds(self, payload):
         if (await RoomService.check_room_status("start", self.code) == False):

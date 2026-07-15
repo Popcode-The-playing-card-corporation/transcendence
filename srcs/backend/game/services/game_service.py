@@ -287,6 +287,9 @@ class GameService:
     async def continue_game(
         room
     ):
+        if (not await GameService.check_valve(room.code)):
+            await GameService.close_valve(room.code)
+
         game = GameEngine(room.uuid)
 
         game_state = game.handleAction(
@@ -326,4 +329,22 @@ class GameService:
             game_state = room.game_state
             await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
+        await GameService.open_valve(room.code)
         return game_state
+    
+    @staticmethod
+    async def check_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        return room.play_card
+    
+    @staticmethod
+    async def close_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        room.play_card = True
+        await sync_to_async(room.save)()
+
+    @staticmethod
+    async def open_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        room.play_card = False
+        await sync_to_async(room.save)()
