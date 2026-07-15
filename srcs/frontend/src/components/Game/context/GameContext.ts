@@ -21,7 +21,6 @@ type GameContextT = {
 	sendMessage: (action: string, message: string) => void;
 	setWait: (bool: boolean) => void;
 	show_annonces: () => void;
-	setShow: (bool: boolean) => void;
 }
 
 export const GameContext = createContext<GameContextT | null>(null);

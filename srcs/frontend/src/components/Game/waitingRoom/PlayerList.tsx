@@ -30,7 +30,7 @@ export default function PlayerList() {
         <tbody >
           {orderedPlayers.map((player:playerT) => {
             return (
-              <tr className="h-10 text-lg">
+              <tr className="h-10 text-lg" key={player.id}>
                 <td className="w-1/12">
                   {orderedPlayers.indexOf(player) + 1}
                 </td>

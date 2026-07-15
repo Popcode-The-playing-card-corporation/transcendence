@@ -100,7 +100,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
               </tr>
             </thead>
             {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-              <tbody>
+              <tbody key={game.game_id}>
                 <tr className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-y"}>
                   <td className={"px-2" + (isHome ? " bg-base-200" : " bg-base-100")}>
                     <p className="ml-2">{gameHistory.indexOf(game)}</p>
@@ -129,7 +129,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
                           :
                           (
                             game.players.map((player: playerT) => (
-                              <li className="w-38 max-w-38">
+                              <li className="w-38 max-w-38" key={player.id}>
                                 <p className="truncate">
                                   {player.username}
                                 </p>
@@ -166,7 +166,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
                 </tr>
               </thead>
               {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                <tbody>
+                <tbody key={game.game_id}>
                   <tr className={isHome ? "bg-base-100" : "bg-base-200"}>
                     <th className={(isHome ? "bg-base-200" : "bg-base-100") + " px-2"}>
                       <p>{gameHistory.indexOf(game)}</p>

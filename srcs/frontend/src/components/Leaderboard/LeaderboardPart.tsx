@@ -20,7 +20,7 @@ export function LeaderboardPart({tmp_leaderboard}:{tmp_leaderboard:leaderboardT}
           <td className="text-center">{current.score}</td>
         </tr>}
         {leaderboard.map((player) => (
-          <tr className="h-10 border-y border-base-200">
+          <tr className="h-10 border-y border-base-200" key={player.id}>
             <td className="text-center">{player.rank}</td>
             {current.username === player.username ? <td className="text-center">{player.username}</td> : <td className="text-center"><UsernameMiniProfileBtn id={player.id} name={player.username} /></td>}
             <td className="text-center">{player.score}</td>

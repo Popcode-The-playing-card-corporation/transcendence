@@ -33,7 +33,7 @@ export default function BlockList() {
         <tbody>
           {blocklist.map((blocked) => {
             return (
-              <tr>
+              <tr key={blocked.id}>
                 <td>
                   <a className="link-hover">{blocked.user.username}</a>
                 </td>

@@ -111,9 +111,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 		case "TEST_ANNONCES":
 			return { ...state, show_annonces: !state.show_annonces };
 
-		case "SET_SHOW":
-			return { ...state, show: !state.show };
-
 		default:
 			return state;
 	}

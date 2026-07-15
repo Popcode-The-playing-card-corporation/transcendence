@@ -43,31 +43,35 @@ export default function BeginModal() {
       >
         <div className="modal-box bg-(--bg-color)">
           <h2>Ready for your first game?</h2>
-          <p>Some important informations before playing:</p>
+          <p>Some important information before playing:</p>
           <br />
           <ul className="list-disc mx-4">
             <li>
-              You have <strong>15 seconds</strong> for playing, if you don't
-              play in this time a bot plays for you
+              You have <strong>15 seconds</strong> to play a card, if you don't
+              play in this time a bot plays for you. 
+			</li>
+			<li>
+			  Your time is increased to <strong>30 seconds </strong> 
+			  for the first fold of each round.
             </li>
             <li>
-              If a bot plays <strong>3 times in a row for you</strong>, you are
-              kicked out of the game
+              If a bot plays <strong>3 times in a row for you</strong>, you will be
+              kicked from the game.
             </li>
             <li>
-              You can find more informations in the little <IoMdInformationCircleOutline className="inline"/> in game, or on the
-              rules page
+              You can find more information by clicking on the <IoMdInformationCircleOutline className="inline"/> in game, or in the
+              rules page.
             </li>
             <li>
               You can display this window again by clicking on the <IoMdInformationCircleOutline className="inline"/> in this
-              page
+              page.
             </li>
           </ul>
           <label className="label mt-4">
             <input
               type="checkbox"
               className="checkbox"
-              defaultChecked={displayBeginModal === "yes" ? false : true}
+              defaultChecked={displayBeginModal === "no"? true : false}
               onChange={() =>
                 setDisplayBeginModal(
                   displayBeginModal === "" || displayBeginModal === "yes"

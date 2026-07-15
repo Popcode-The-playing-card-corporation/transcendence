@@ -59,7 +59,7 @@ export function AddFriends({
 			<tbody>
 			{recs.slice(0, 3).map((suggest) => {
 				return (
-					<tr className="h-12 text-center">
+					<tr className="h-12 text-center" key={recs.indexOf(suggest)}>
 					<td>
 					{" "}
 					<UsernameMiniProfileBtn
@@ -82,7 +82,7 @@ export function AddFriends({
 					style={{ positionAnchor: "--anchor-1" }}
 					>
 					{suggest.mutual_friends.map((player) => (
-						<li>{player.username}</li>
+						<li key={player.id}>{player.username}</li>
 					))}
 					</ul>
 					</span>
@@ -119,7 +119,7 @@ export function AddFriends({
                   </tr>
                   {searchedUsers.slice(0, 10).map((res) => {
                     return (
-                      <tr className="h-14">
+                      <tr className="h-14" key={res.id}>
                         <td><UsernameMiniProfileBtn id={res.id} name={res.username} /> </td>
                         <td>
                           <button

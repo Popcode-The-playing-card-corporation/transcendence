@@ -54,7 +54,7 @@ export default function Chat({setNewMessage, isAlreadyOpen, setCount}: Props) {
       {messages.map((message) => {
         return (
           <>
-            <ChatText info={message}/>
+            <ChatText info={message} key={messages.indexOf(message)}/>
           </>
         );
       })}

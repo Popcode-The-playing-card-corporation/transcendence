@@ -92,9 +92,9 @@ export function Notifications({ setProfile, updatedProfile, updateLeaderboard, s
 				} else if (data.type === "friend_invite") {
 					notif?.showNotif("Game Invite", payload.from_user + " has invited you to a game: " + payload.code, 10000);
 					handle_update_profile(auth, setProfile, updatedProfile);
-				} else {
+				} /*else {
 					console.debug("Notification: type not implemented. Format: ", data)
-				}
+				}*/
 			} else if (data.event === "update") {
 				if (data.type === "friend_delete") {
 					handle_update_profile(auth, setProfile, updatedProfile);
@@ -104,12 +104,12 @@ export function Notifications({ setProfile, updatedProfile, updateLeaderboard, s
 					handle_update_profile(auth, setProfile, updatedProfile);
 				} else if (data.type === "game_finished") {
 					setLeaderboard(!updateLeaderboard);
-				} else {
+				} /*else {
 					console.debug("Update: type not implemented. Format: ", data)
-				}
-			} else {
+				}*/
+			} /*else {
 				console.debug("event not implemented. Format: ", data)
-			}
+			}*/
 		},
 	});
 	return null;

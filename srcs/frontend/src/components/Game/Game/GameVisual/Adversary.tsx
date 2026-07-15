@@ -3,6 +3,7 @@ import type { adversaryT } from "../../../../utils/type/adversaryType";
 import AdversaryHand from "./AdversaryHand";
 import { type boardT, defaultBoard } from "../../../../utils/type/boardType";
 import PlayedCard from "./PlayedCard";
+import { useState } from "react";
 
 type Props = {
   position: number,
@@ -23,7 +24,7 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
     playedCard = defaultBoard;
   const centerHand = Math.cos(angleCenter / 2) * boardRadius;
   const posPlayedCard = centerHand - distanceBoard;
-
+  const [show, setShow] = useState<boolean>(true);
 
   return (
     <>
@@ -33,6 +34,7 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
       >
         {playedCard.card.id !== -1 ?
           <PlayedCard
+            show={show}
             front={front[playedCard.card.id]}
             back={back}
             posPlayedCard={posPlayedCard}
@@ -41,6 +43,7 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
           /> : null}
         {isSelf ? null :
           <AdversaryHand
+            setShow={setShow}
             room_id={room_id}
             angleCenter={angleCenter}
             cardHand={cardHand}
