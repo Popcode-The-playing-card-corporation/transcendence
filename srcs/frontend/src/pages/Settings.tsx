@@ -7,8 +7,12 @@ import { useAuth } from "../components/hooks/useAuth";
 
 export function Settings({
   setFontChoice,
+  setBlock,
+  updatedBlock,
 }: {
   setFontChoice: Dispatch<SetStateAction<string>>;
+  setBlock: Dispatch<SetStateAction<boolean>>;
+  updatedBlock: boolean;
 }) {
 	const auth = useAuth();
   return (
@@ -39,7 +43,7 @@ export function Settings({
           <h2 className="text-center">BlockList</h2>
         </div>
          <div className="collapse-content">
-		<BlockList />
+		<BlockList setBlock={setBlock} updatedBlock={updatedBlock}/>
         </div> 
       </div> : null}
     </div>

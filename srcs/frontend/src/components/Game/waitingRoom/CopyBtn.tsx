@@ -7,9 +7,7 @@ function copyCode(code: string) {
 }
   return (
     <label className="swap swap-rotate ml-2 my-auto cursor-pointer ">
-      {/* this hidden checkbox controls the state */}
       <input type="checkbox" onClick={() => copyCode(code)}/>
-
 	  <FaCopy className="swap-off fill-current mx-auto"/>
 	 <FaCheck className="swap-on fill-current text-xl"/>
     </label>

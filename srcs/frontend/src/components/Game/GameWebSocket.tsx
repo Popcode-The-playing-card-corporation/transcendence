@@ -97,7 +97,7 @@ export default function GameWebSocket({
           dispatch({ type: "SET_EVENT", payload: data.event });
           dispatch({ type: "SET_CODE", payload: null })
           dispatch({ type: "SET_NEXT", payload: null })
-          if (data.event === "player_kicked") { // Error case????
+          if (data.event === "player_kicked") {
             if (payload.message) {
               if (payload.message === "You have been kicked from the room") {
                 leaveRoom();
@@ -161,15 +161,10 @@ export default function GameWebSocket({
             notif?.showNotif("Game Error", data.message, 5000);
           }
         } else {
-          // console.debug("Error:", data.message);
           notif?.showNotif("Game Error", data.message, 5000);
         }
-      } /*else {
-				console.debug("Unknown event: ", data)
-			}*/
-
+      }
     },
-
   );
 
   function setSettings(players: playerT[], params: paramsT) {
@@ -218,7 +213,7 @@ export default function GameWebSocket({
     sendJson("melds", { cards: cards });
   }
 
-  function kickPlayer(playerId: number) { //RoomId of player/ position
+  function kickPlayer(playerId: number) {
     sendJson("kick", { playerId: playerId });
   }
 
@@ -290,13 +285,8 @@ export default function GameWebSocket({
         dispatch({ type: "ADD_MESSAGE", payload: payload })
       } else if (data.type === "history") {
         dispatch({ type: "SET_HISTORY", payload: payload })
-      }/* else if (data.event === "error") {
-				console.debug("Error: ", data)
-			} else {
-				console.debug("Unknown event: ", data)
-			}*/
+      }
     },
-
   });
 
   function sendMessage(action: string, message: string) {

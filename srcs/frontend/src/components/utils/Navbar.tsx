@@ -129,7 +129,6 @@ export function Navbar() {
           </li>
           <li>
             <label className="swap swap-rotate">
-              {/* this hidden checkbox controls the state */}
               <input
                 type="checkbox"
                 onClick={toggleTheme}
