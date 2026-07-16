@@ -37,6 +37,7 @@ ACTION_HANDLERS = {
     "kick": "handle_kick",
     "exit_game": "handle_exit_game",
     "patch_param": "handle_patch_param",
+    "afk_play": "handle_afk_play",
 }
 
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -337,6 +338,55 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         game_state = await GameService.start_game(room) 
         await GameService.open_valve(self.code)
+        
+    async def handle_afk_play(self, payload=None):
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+
+        if (await GameService.check_valve(self.code)):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "someone's already playing"
+                }))
+            return 
+
+        await GameService.close_valve(self.code)
+        room = await get_room_with_host(self.code)
+        position = await get_player_pos(self.user, room.code)
+        game = GameEngine(room.uuid)
+        
+        await BotService.play_override(game, room.code, position,
+                                                        check_end=GameService.check_game_end, 
+                                                        ask_continue=GameService.check_goal_reached
+                                                        )
+
+        await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_valid")
+
+        room = await get_room_with_host(self.code)
+        game_state = room.game_state
+
+        take_fold, game_state = await GameService.check_take_fold(game_state, room)
+        
+        game = GameEngine(room.uuid)
+        if (take_fold):
+            room = await get_room_with_host(room.code)
+            is_end, gs = await GameService.check_game_end(room, game)
+            if (not is_end):
+                room = await get_room_with_host(room.code)
+                game_state = room.game_state
+                room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+                await sync_to_async(room.save)()
+                await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
+                # await TaskService.player_afk(room.code)
+
+        game_state = await BotService.play_until_human(room, game_state, game,
+                                                       check_end=GameService.check_game_end, 
+                                                       check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.check_goal_reached
+                                                       )
+        await GameService.open_valve(self.code)
+                    
 
     async def handle_play_card(self, payload):
         if (await RoomService.check_room_status("start", self.code) == False):
@@ -408,7 +458,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
                 await sync_to_async(room.save)()
                 await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
-                await TaskService.player_afk(room.code)
+                # await TaskService.player_afk(room.code)
 
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 

@@ -61,7 +61,7 @@ class BotService:
             if p.is_human and p.is_online:
                 room = await get_room_with_host(room.code)
                 game_state = room.game_state
-                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+                # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state
 
@@ -121,7 +121,7 @@ class BotService:
             if p.is_human and p.is_online:
                 room = await get_room_with_host(room.code)
                 game_state = room.game_state
-                await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+                # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
             room = await get_room_with_host(room.code)
             
@@ -158,3 +158,32 @@ class BotService:
         
         return game_state
      
+    @staticmethod
+    async def play_override(game, room_code, position, check_end=None, ask_continue=None):
+        if not await sync_to_async(Room.objects.filter(code=room_code).exists)():
+            return game_state
+        room = await get_room_with_host(room_code)
+        game_state = room.game_state
+        is_end, gs = await check_end(room, game)
+        if is_end:
+            await ask_continue(room.code)
+            return game_state
+        
+        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+            room=room,
+            position=int(game_state["playing"])
+        )
+        
+        if p.is_human and p.position == position:    
+            legal = game.handleAction("legal", game_state, idPlayer= str(position))
+             
+            card = bot(game_state, str(position), legal, p.difficulty)
+             
+            game_state = game.handleAction("play", game_state, idPlayer= str(position), idCard= card)
+            
+            room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+            await sync_to_async(room.save)()
+
+            await save_room_state(room.uuid, game_state)
+        
+        return game_state

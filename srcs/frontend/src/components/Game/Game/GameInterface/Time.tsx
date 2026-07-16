@@ -4,12 +4,18 @@ import { useGame } from "../../context/GameContext";
 import ExitBtn from "./ExitBtn";
 
 export default function Time() {
-  const { state } = useGame();
+  const { state, afk_play } = useGame();
   const selfTurn = state.game.boardData.self_id == state.game.boardData.playing;
   const timeout = state.game.boardData.round_time;
   const [timeLeft, setTimeLeft] = useState<number>(
     Math.floor((timeout.getTime() - new Date().getTime()) / 1000),
   );
+
+  useEffect(() => {
+	if (timeLeft <= 0 && selfTurn) {
+		afk_play();
+	}
+  }, [timeLeft])
 
   useEffect(() => {
     async function setTime() {
