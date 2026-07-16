@@ -55,7 +55,7 @@ export function NotifPopUp() {
           context.resetNotif();
         }}
       >
-        <div className="top-16 fixed w-1/2 text-center bg-secondary z-100 rounded-b-4xl px-2 pb-2 shadow-2xl ">
+        <div className="top-16 fixed w-1/2 text-center bg-secondary z-10 rounded-b-4xl px-2 pb-2 shadow-2xl ">
           <div className="myProgressBar  w-full h-1 bg-secondary-content rounded-4xl my-2">
             <div
               className="h-full bg-base-200 transition-all duration-100 rounded-4xl"

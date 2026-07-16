@@ -32,7 +32,7 @@ export default function BurgerMenu({
   const drawerRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="drawer drawer-end md:hidden">
+    <div className="drawer drawer-end md:hidden z-100">
       <input
         id="my-drawer-5"
         type="checkbox"

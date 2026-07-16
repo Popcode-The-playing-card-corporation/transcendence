@@ -14,6 +14,8 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.db.models import Q
+import random
+from ..achievements.service import AchievementService
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -75,7 +77,6 @@ def user_data(request, user_id):
 
     return Response(serializer.data)
     
-
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([AllowAny])
@@ -124,7 +125,10 @@ def register(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             user.last_login = timezone.now()
-            user.save(update_fields=["last_login"])
+            if random.randint(1, 100) == 42:
+                user.clovers += 1
+            user.save(update_fields=["last_login", "clovers"])
+            AchievementService.check_user_achievements(user)
     
             refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
@@ -198,7 +202,10 @@ def login(request):
 
     if user is not None:
         user.last_login = timezone.now()
-        user.save(update_fields=["last_login"])
+        if random.randint(1, 100) == 42:
+            user.clovers += 1
+        user.save(update_fields=["last_login", "clovers"])
+        AchievementService.check_user_achievements(user)
 
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
@@ -227,11 +234,6 @@ def login(request):
 	    )
         
         return res
-
-        # return Response({
-        #     "access": str(refresh.access_token),
-        #     "refresh": str(refresh),
-        # })
 
     return Response(
         {"error": "Invalid credentials"},

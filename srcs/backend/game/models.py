@@ -101,7 +101,7 @@ class Stat(models.Model):
         ("diamond", "Diamond"),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="stat")
     win = models.IntegerField(default=0)
     lose = models.IntegerField(default=0)
     played = models.IntegerField(default=0)

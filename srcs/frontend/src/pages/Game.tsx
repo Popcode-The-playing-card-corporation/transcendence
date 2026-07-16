@@ -53,11 +53,11 @@ export function Game() {
           );
         }
       } else if (tmp_joined.message === "lobby_failed") {
-		    return other_error(
-				"Lobby Error",
-				"Do you have another lobby already open?",
-			);
-	  }
+        return other_error(
+          "Lobby Error",
+          "Do you have another lobby already open?",
+        );
+      }
 
       if (tmp_joined.room !== "") {
         setJoined(tmp_joined.room);
@@ -108,7 +108,7 @@ export function Game() {
 
   return (
     <>
-      <div className="max-md:hidden">
+      <div className="max-lg:hidden">
         {joined !== "" ? (
           <GameWebSocket key={joined} code={joined} setCode={setJoined} />
         ) : (

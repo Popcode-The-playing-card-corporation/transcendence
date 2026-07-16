@@ -36,7 +36,7 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),   # 👈 augmente ici
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
@@ -87,8 +87,6 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFCATION = "none"
 
-# BASE_APP_URL=os.getenv("BASE_APP_URL")
-# BASE_API_URI=os.getenv("BASE_API_URI")
 GOOGLE_OAUTH_CALLBACK_URL=os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
 GOOGLE_OAUTH_CLIENT_ID=os.getenv("GOOGLE_OAUTH_CLIENT_ID") 
 GOOGLE_OAUTH_CLIENT_SECRET=read_secret("google_secret")

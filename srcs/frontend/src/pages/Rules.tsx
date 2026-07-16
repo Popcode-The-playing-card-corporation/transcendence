@@ -1,6 +1,6 @@
 export function Rules() {
   return (
-    <div className="page-content mt-17 mx-50 text-justify">
+    <div className="page-content mt-17 md:mx-50 text-justify">
       <h1>Rules</h1>
       <div className="mt-10">
         <p>"La Misère" is a variant of the Swiss game known as Jass. It is a trick taking game played with 36 cards</p>

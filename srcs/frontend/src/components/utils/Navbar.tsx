@@ -15,7 +15,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useRef } from "react";
 import { IoIosMoon } from "react-icons/io";
 import BurgerMenu from "./BurgerMenu";
-const logo = "/logo.png"
+const logo = "/logo.png";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -64,11 +64,15 @@ export function Navbar() {
   return (
     <div className="navbar min-h-16 h-16 bg-primary fixed top-0 z-100">
       <div className="flex-1">
-		<li>
-        <NavLink className="text-xl item-menu p-2 flex items-center gap-2 w-fit" to="/">
-          <img src={logo} className="h-6"/>PopCards
-        </NavLink>
-		</li>
+        <li>
+          <NavLink
+            className="text-xl item-menu p-2 flex items-center gap-2 w-fit"
+            to="/"
+          >
+            <img src={logo} className="h-6" />
+            PopCards
+          </NavLink>
+        </li>
       </div>
       <div className="flex-none">
         <ul className="menu menu-horizontal gap-1 max-md:hidden">
@@ -173,7 +177,13 @@ export function Navbar() {
             </div>
           </dialog>
         </ul>
-		<BurgerMenu isActive={isActive} logout_handler={logout_handler} checkboxTheme={checkboxTheme} toggleTheme={toggleTheme} handleLogout={handleLogout}/>
+        <BurgerMenu
+          isActive={isActive}
+          logout_handler={logout_handler}
+          checkboxTheme={checkboxTheme}
+          toggleTheme={toggleTheme}
+          handleLogout={handleLogout}
+        />
       </div>
     </div>
   );

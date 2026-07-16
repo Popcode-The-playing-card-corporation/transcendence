@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+def default_condition():
+    return {
+        "type": "",
+        "operator": ">=",
+        "value": 0
+    }
+
 class User(AbstractUser):
 
     email = models.EmailField(unique=True)
@@ -16,6 +23,7 @@ class User(AbstractUser):
     google_id = models.CharField(max_length=255,default="")
     github_id = models.CharField(max_length=255,default="")
     fortytwo_id = models.CharField(max_length=255,default="")
+    clovers = models.IntegerField(default=0)
     
 class Friendship(models.Model):
     STATUS_CHOICES = [
@@ -50,7 +58,7 @@ class Achievement(models.Model):
 
     description = models.TextField()
 
-    condition = models.TextField()
+    condition = models.JSONField(default=default_condition)
 
     icon = models.CharField(
         max_length=255,
