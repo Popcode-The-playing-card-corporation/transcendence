@@ -1,7 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGame } from "../../context/GameContext";
 import generateDeck from "../../../../utils/createDeck";
-import { GrAnnounce } from "react-icons/gr";
 
 
 export default function Announcement() {
@@ -12,6 +11,17 @@ export default function Announcement() {
   const deck = generateDeck();
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const showConfirmAnnonceRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+	if (state.game.boardData.round !== 0) {
+		return ;
+	}
+	if (state.game.boardData.playing === state.game.boardData.self_id) {
+		showAnnonceRef.current?.showModal();
+	} else {
+		showAnnonceRef.current?.close();
+	}
+  }, [state.game.boardData.playing])
 
   function toggleAnnonce(index: number) {
     setCheckedAnnonces((prev) => {
@@ -39,12 +49,6 @@ export default function Announcement() {
 
   return (
     <>
-      <button
-        className="btn btn-lg btn-circle bg-base-100"
-        onClick={() => showAnnonceRef.current?.showModal()}
-      >
-        <GrAnnounce />
-      </button>
       <dialog
         id="showAnnonce"
         className="modal"
