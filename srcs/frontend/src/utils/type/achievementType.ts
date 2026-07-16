@@ -1,4 +1,5 @@
 export type achievement = {
+  code:string,
   img: string;
   title: string;
   description: string,

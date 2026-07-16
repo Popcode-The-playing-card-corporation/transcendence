@@ -60,6 +60,9 @@ class PresenceConsumer(AsyncWebsocketConsumer):
 				)
                
     async def disconnect(self, close_code):
+        if not await sync_to_async(User.objects.filter(id=self.user.id).exists)():
+            await self.close()
+            return 
         if not hasattr(self, "user") or not self.user.is_authenticated:
             return
         
