@@ -174,10 +174,12 @@ export function Friends({
           </div>
         </div>
       </div>
+	  {
+		  sortedFriends.length > 0 ?
       <table className="max-sm:mx-auto">
         <tr>
           <th className="w-10 text-left"></th>
-          <th className="max-sm:-fit sm:w-50 text-left">Name</th>
+          <th className="max-sm:min-w-14 sm:w-50 text-left">Name</th>
           <th className="max-sm:w-fit sm:w-30 text-left">Status</th>
           <th className="w-30 text-left max-sm:hidden">From</th>
         </tr>
@@ -256,6 +258,7 @@ export function Friends({
           </tr>
         ))}
       </table>
+	  : <p className="text-center">I don't have any friends, go make some!</p>}
       <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
         {sortedFriends.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
       </a>
