@@ -58,6 +58,13 @@ export function AchievementsPart({ updateachievement }: Props) {
       <div className="flex flex-wrap justify-center gap-10"
       >
         {achievement.achievement.map((player) => {
+			const percentage = player.value / player.max_value * 100;
+			const finalPercentage = () => {
+				const percFixed = Math.round(percentage) ;
+				if (percFixed > 100) return 100;
+				else if (percFixed < 0) return 0;
+				else return percFixed;
+			}
           return (
               <div
                 key={player.title}
@@ -77,6 +84,8 @@ export function AchievementsPart({ updateachievement }: Props) {
                   </div>
                 </div>
 
+				<div className="w-full">
+				<p className="text-center text-xs">{finalPercentage()}% complete</p>
                 <progress
 				className="w-full rounded-2xl bg-base-content [&::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
                   value={  player.code.startsWith("LOSER_") ? Math.max(0, -player.value) : player.value}
@@ -85,6 +94,7 @@ export function AchievementsPart({ updateachievement }: Props) {
 					{player.value / player.max_value * 100}%
 				</progress>
               </div>
+			  </div>
           );
         })}
       </div>
