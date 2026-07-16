@@ -91,7 +91,6 @@ export function AchievementsPart({ updateachievement }: Props) {
                   value={  player.code.startsWith("LOSER_") ? Math.max(0, -player.value) : player.value}
                   max={player.code.startsWith("LOSER_") ? -player.max_value : player.max_value}
                 >
-					{player.value / player.max_value * 100}%
 				</progress>
               </div>
 			  </div>
