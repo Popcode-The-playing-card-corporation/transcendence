@@ -60,6 +60,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
           <p>or</p>
           <div className="joinCode-container m-3" onKeyDown={handleKeyDown}>
             <input
+              id="inputGameCode"
               className="input input-lighter w-2/3 m-3"
               type="text"
               placeholder="enter game code here"
@@ -125,7 +126,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
           </div>
         </div>
       </div>
-	  <BeginModal />
+      <BeginModal />
     </div>
   );
 }

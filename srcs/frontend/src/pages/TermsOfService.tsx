@@ -10,7 +10,7 @@ export function TermsOfService() {
         <p>
           We are Popcode Inc ('<strong>Company</strong>', '<strong>we</strong>', '<strong>us</strong>', or '<strong>our</strong>'), a company registered in Switzerland at Rue de Lausanne 64, Ecole 42, 1020 Renens, Vaud.
           <br /><br />
-          We operate the website <a className="link" href="https://www.popcards.com">https://www.popcards.com</a>
+          We operate the website <a className="link" href="https://popcards.popcode.ch">https://popcards.popcode.com</a>
           (the '<strong>Site</strong>'), as well as any other related products and services that refer or link to these legal terms (the '<strong>Legal Terms</strong>') (collectively, the '<strong>Services</strong>').
           <br /><br />
           Play cards with your friends online!
@@ -352,7 +352,7 @@ export function TermsOfService() {
         <h2 className="text-center">11. PRIVACY POLICY</h2>
         <br />
         <p>
-          We care about data privacy and security. Please review our Privacy Policy: <a className="link" href="/PrivacyPolicy">http://www.popcards.com/PrivacyPolicy</a>. By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in Switzerland. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in Switzerland, then through your continued use of the Services, you are transferring your data to Switzerland, and you expressly consent to have your data transferred to and processed in Switzerland.
+          We care about data privacy and security. Please review our Privacy Policy: <a className="link" href="/PrivacyPolicy">http://popcards.popcode.com/PrivacyPolicy</a>. By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in Switzerland. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in Switzerland, then through your continued use of the Services, you are transferring your data to Switzerland, and you expressly consent to have your data transferred to and processed in Switzerland.
         </p>
         <br /><br />
       </div>

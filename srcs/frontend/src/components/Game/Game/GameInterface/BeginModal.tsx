@@ -4,7 +4,7 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 export default function BeginModal() {
   const beginModal = useRef<HTMLDialogElement>(null);
   const [displayBeginModal, setDisplayBeginModal] = useState<string | null>(
-    localStorage.getItem("displayBeginModal"),
+    localStorage.getItem("displayBeginModal") ?? "yes",
   );
 
   useEffect(() => {

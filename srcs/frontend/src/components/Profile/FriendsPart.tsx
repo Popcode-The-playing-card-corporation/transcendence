@@ -71,6 +71,7 @@ export function Friends({
         <label className="input my-5">
           <IoSearch className="text-2xl" />
           <input
+            id="friendSearch"
             type="search"
             required
             placeholder="Search"

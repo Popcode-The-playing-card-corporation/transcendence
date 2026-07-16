@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import MiniProfile from "./MiniProfile";
 import type { profileT } from "../../utils/type/profileType";
@@ -16,12 +15,22 @@ type Props = {
   setUpdate?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-
-export default function UsernameMiniProfileBtn({ id, name, updatedFriends, setUpdate }: Props) {
+export default function UsernameMiniProfileBtn({
+  id,
+  name,
+  updatedFriends,
+  setUpdate,
+}: Props) {
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
 
-  const [account, setAccount] = useState<profileT | errorT>({ code: 200, response: "" })
-  const [history, setHistory] = useState<historyT[] | errorT>({ code: 200, response: "" });
+  const [account, setAccount] = useState<profileT | errorT>({
+    code: 200,
+    response: "",
+  });
+  const [history, setHistory] = useState<historyT[] | errorT>({
+    code: 200,
+    response: "",
+  });
   const notif = useNotif();
   const auth = useAuth();
 
@@ -34,8 +43,11 @@ export default function UsernameMiniProfileBtn({ id, name, updatedFriends, setUp
       return;
     }
     const tmp_account = await getProfile(id);
-    if ('code' in tmp_account) {
-      Sendnotif("Profile Display Error:", "There was an error display " + name + "'s account!");
+    if ("code" in tmp_account) {
+      Sendnotif(
+        "Profile Display Error:",
+        "There was an error display " + name + "'s account!",
+      );
       return;
     }
     setAccount(tmp_account);
@@ -45,27 +57,26 @@ export default function UsernameMiniProfileBtn({ id, name, updatedFriends, setUp
     } else {
       setHistory(await historyArray(gameHistory));
     }
-    showMiniProfileRef.current?.showModal()
+    showMiniProfileRef.current?.showModal();
     return;
   }
 
-
   return (
     <>
-      <button
-        className="link-hover "
-        onClick={load_mini}
-      >
-        <span className="truncate">
-          {name}
+      <button className="link-hover" onClick={load_mini}>
+        <span className="md:hidden">
+          {name.length > 10 ? name.substring(0, 10) + "..." : name}
         </span>
-      </button >
-      <dialog
-        id="showMiniProfile"
-        className="modal"
-        ref={showMiniProfileRef}
-      >
-        <MiniProfile account={account} updatedFriends={updatedFriends} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef} />
+        <span className="max-md:hidden">{name}</span>
+      </button>
+      <dialog id="showMiniProfile" className="modal" ref={showMiniProfileRef}>
+        <MiniProfile
+          account={account}
+          updatedFriends={updatedFriends}
+          setUpdate={setUpdate}
+          history={history}
+          profileRef={showMiniProfileRef}
+        />
       </dialog>
     </>
   );
