@@ -16,7 +16,7 @@ export default function BeginModal() {
       if (displayBeginModal !== "no" || !displayBeginModal)
         beginModal.current?.showModal();
     }
-  });
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(

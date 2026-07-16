@@ -12,9 +12,11 @@ export function LeaderboardPart({
   return (
     <table className="w-full mt-10">
       <thead className="w-full">
+	  <tr>
         <th className="w-1/3">Rank</th>
         <th className="w-1/3">Username</th>
         <th className="w-1/3">Score</th>
+		</tr>
       </thead>
       <tbody className="bg-base-100">
         {current.username === "" &&

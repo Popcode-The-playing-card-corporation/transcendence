@@ -15,7 +15,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useRef } from "react";
 import { IoIosMoon } from "react-icons/io";
 import BurgerMenu from "./BurgerMenu";
-const logo = "/logo.png";
+import logo from "../../../static/logo.png";
 
 export function Navbar() {
   const navigate = useNavigate();
