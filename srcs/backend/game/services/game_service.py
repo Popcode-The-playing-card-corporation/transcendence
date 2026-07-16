@@ -1,5 +1,5 @@
 from ..db import save_room_state, get_room_with_host, start_room, count_player, end_room
-from ..models import PlayerPresence, PlayerScore, Room
+from ..models import PlayerPresence,  PlayerScore, GameLog, Room
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from django.utils import timezone
@@ -219,6 +219,11 @@ class GameService:
     
     @staticmethod
     async def ask_host_continue(room, game_state):
+        logs = await sync_to_async(list)(GameLog.objects.filter(room=room.id, round=36 / room.nb_player, game=game_state["game"]))
+        for log in logs:
+            if log.score > 0:
+                return
+
         room = await get_room_with_host(room.code)
         await save_room_state(room.uuid, game_state)
         
