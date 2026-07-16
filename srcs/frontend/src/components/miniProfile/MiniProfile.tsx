@@ -77,7 +77,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
 
   return (
     <>
-      <div className="modal-box md:w-full md:max-w-4/7">
+      <div className={"modal-box " + (account.friend?.status === "accepted" ? "md:w-full md:max-w-4/7" : "md:w-fit")}>
         <p className="text-center ">click ESC to close this window</p>
         <div className="w-full flex justify-end gap-1 mt-2">
           <div >
