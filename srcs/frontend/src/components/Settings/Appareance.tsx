@@ -72,10 +72,10 @@ export default function Appareance({
             </li>
             <li>
               <a
-                className="font-Rubik"
-                onClick={() => setFontChoice("font-Rubik")}
+                className="font-uncial "
+                onClick={() => setFontChoice("font-uncial")}
               >
-                Rubik 80s Fade
+                Uncial Antiqua
               </a>
             </li>
             <li>
