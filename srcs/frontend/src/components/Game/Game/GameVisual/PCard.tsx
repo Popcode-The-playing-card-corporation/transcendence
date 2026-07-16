@@ -195,7 +195,7 @@ export default function PCard({
       }}
       onPointerOver={(e) => {
         e.stopPropagation();
-        if (!active) setOvered(true);
+        if (!active && !played) setOvered(true);
       }}
       onPointerLeave={(e) => {
         e.stopPropagation();
