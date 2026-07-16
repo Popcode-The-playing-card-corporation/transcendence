@@ -1,5 +1,5 @@
 from asgiref.sync import sync_to_async
-from ..db import  remove_player_from_room, get_room_with_host, delete_room
+from ..db import  remove_player_from_room, get_room_with_host
 from ..serializers import RoomSerializer
 from . broadcast_service import BroadcastService
 import uuid

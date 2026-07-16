@@ -8,9 +8,11 @@ from ..serializers import RoomSerializer
 from django.db.models import Q
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from ..db import add_bot_to_room
+from ..db import add_bot_to_room, delete_room
 from ..services.broadcast_service import BroadcastService
 import uuid
+from django.utils import timezone
+from datetime import timedelta
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
@@ -55,7 +57,11 @@ def create_room(request):
                 }
             )
     
-    
+    abandoned = list(Room.objects.filter(status="abandoned"))
+    for r in abandoned:
+        if (timezone.now() > r.round_time + timedelta(minutes=15)):
+            delete_room(r)
+
     return Response(RoomSerializer(room).data, status=201)
 
 @api_view(["POST"])
