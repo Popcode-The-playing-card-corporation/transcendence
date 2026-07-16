@@ -106,27 +106,33 @@ export function LoginForm({
       ) : (
         <div></div>
       )}
-      <label className="label">Username</label>
-      <input
-        type="text"
-        value={name}
-        onChange={nameChange}
-        className="input w-full"
-        placeholder="..."
-        onKeyDown={handleKey}
-      />
-
-      <label className="label">Password</label>
-      <div className="input w-full">
+      <p>Username</p>
+      <label className="label">
         <input
-          type={showPassword ? "text" : "password"}
-          value={password} // show the password in inspector, is it okay ??
-          onChange={passChange}
+          id="usernameLogin"
+          type="text"
+          value={name}
+          onChange={nameChange}
+          className="input w-full"
           placeholder="..."
           onKeyDown={handleKey}
         />
-        <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
-      </div>
+      </label>
+
+      <p>Password</p>
+      <label className="label">
+        <div className="input w-full">
+          <input
+            id="pswdLogin"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={passChange}
+            placeholder="..."
+            onKeyDown={handleKey}
+          />
+          <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+        </div>
+      </label>
 
       <a onClick={() => setCreated(true)} className="link-hover">
         No Account? Create one here!
@@ -141,6 +147,6 @@ export function LoginForm({
       </button>
       <LoginWithService />
 
-    </fieldset>
+    </fieldset >
   );
 }

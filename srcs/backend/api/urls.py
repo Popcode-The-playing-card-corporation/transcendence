@@ -3,6 +3,7 @@ from .views.user_views import register, change_password, login, logout, user, us
 from .views.friend_view import get_friends, unblock_friend, list_propal, accept_friend_request, list_user_not_friend, block_friend, list_blocked, delete_friend_request, send_friend_request
 from .views.stat_view import get_stat, room_data, game_history, leaderboard, game_history_friend
 from .views.OAuth_view import GoogleLogin, FortyTwoLogin, GitLogin
+from .views.achievement_view import achievements
 
 urlpatterns = [
     #user part
@@ -18,7 +19,6 @@ urlpatterns = [
 	path("login/google/", GoogleLogin, name="google_login"),
 	path("login/42/", FortyTwoLogin, name="42_login"),
 	path("login/github/", GitLogin, name="GitHub_login"),
-	# path("logout/google/", GoogleLogout.as_view()),
     
     #friend part
     path("friends/", get_friends),
@@ -37,5 +37,6 @@ urlpatterns = [
     path("room/data/<str:code>/", room_data),
     path("user/<int:user_id>/stats/", get_stat),
     path("user/<int:user_id>/history/", game_history_friend),
-    #TODO add achivment models et table to connect to user
+    
+    path("achievements/", achievements),
 ]

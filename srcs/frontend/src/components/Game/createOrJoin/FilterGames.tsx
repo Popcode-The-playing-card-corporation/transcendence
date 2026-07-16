@@ -49,6 +49,7 @@ export default function FilterGame({
         <label className="input w-3/4">
           <IoSearch className="text-2xl " />
           <input
+            id="inputSearch"
             type="search"
             placeholder="Search"
             value={search}
@@ -86,6 +87,7 @@ export default function FilterGame({
           <label>
             max players
             <input
+              id="inputMaxPlayers"
               type="range"
               min="2"
               max="7"
@@ -112,9 +114,9 @@ export default function FilterGame({
             className={
               dispFilter
                 ? "btn opacity-100 transition-all duration-500" +
-                  (typeFilter === "friends_only" ? " btn-secondary" : "")
+                (typeFilter === "friends_only" ? " btn-secondary" : "")
                 : "btn opacity-0" +
-                  " transition-all duration-500 translate-x-9 "
+                " transition-all duration-500 translate-x-9 "
             }
             type="radio"
             name="filter"
@@ -126,9 +128,9 @@ export default function FilterGame({
             className={
               dispFilter
                 ? "btn transition-all duration-500" +
-                  (typeFilter === "public" ? " btn-secondary" : "")
+                (typeFilter === "public" ? " btn-secondary" : "")
                 : " btn opacity-0" +
-                  " transition-all duration-500 translate-x-5"
+                " transition-all duration-500 translate-x-5"
             }
             type="radio"
             name="filter"
@@ -145,14 +147,12 @@ export default function FilterGame({
               dispFilter
                 ? "btn transition-all duration-500"
                 : " btn opacity-0" +
-                  " transition-all duration-500 translate-x-5"
+                " transition-all duration-500 translate-x-5"
             }
           />
         </form>
         <label className="btn btn-circle swap swap-rotate glass bg-base-200">
-          {/* this hidden checkbox controls the state */}
           <input type="checkbox" onClick={() => setDispFilter(!dispFilter)} />
-
           <FaFilter className="swap-off fill-current mx-auto" />
           <MdClose className="swap-on fill-current text-xl" />
         </label>

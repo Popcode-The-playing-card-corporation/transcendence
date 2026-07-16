@@ -24,15 +24,15 @@ export default function ParameterRoom({ roomCode, updateSettings }: Props) {
         <div>
           <p>Choose the limiter : </p>
         </div>
-        <div className="col-span-2 mb-6">
-          <Limiters updateSettings={updateSettings}/>
+        <div className="col-span-2 mb-6 flex justify-center">
+          <Limiters updateSettings={updateSettings} />
         </div>
       </div>
       <div className="col-span-3 grid grid-cols-3 pt-6 border-t border-(--hover-color)">
         <div className="text-lg">
           <p>Maximum number of players : </p>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 flex justify-center">
           <RoomSize updateSettings={updateSettings} />
         </div>
       </div>
@@ -41,15 +41,15 @@ export default function ParameterRoom({ roomCode, updateSettings }: Props) {
           <div className="">
             <p>Choose the level and the number of bots you want : </p>
           </div>
-          <div className="col-span-2 mb-6">
+          <div className="col-span-2 mb-6 flex justify-center">
             <AddingBot roomCode={roomCode} />
           </div>
           <div className="col-span-3 grid grid-cols-3 pt-6 border-t border-(--hover-color)">
             <div className="text-lg">
               <p>State of the room : </p>
             </div>
-            <div className="col-span-2 mb-6">
-              <PrivatePublicSlider updateSettings={updateSettings}/>
+            <div className="col-span-2 mb-6 flex justify-center">
+              <PrivatePublicSlider updateSettings={updateSettings} />
             </div>
           </div>
         </div>

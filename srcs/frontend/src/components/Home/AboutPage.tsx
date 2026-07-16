@@ -11,7 +11,7 @@ export default function AboutPage() {
       <div id="aboutPopcards">
         <h2 className="text-center">About Popcards</h2>
         <br />
-        <p className="text-justify mx-30">
+        <p className="text-justify md:mx-30">
           Popcards is our team's implementation of the Ecole 42 common core final project ft_transcendence. It is a way for us to show off not only what we have learnt over the past two years, but also demonstrate our creativity, ability to learn, and teamwork. The subject of ft_transcendence gives us the freedom to create an original project while meeting specific requirements as stated by the subject.
         </p>
         <br /><br />
@@ -19,7 +19,7 @@ export default function AboutPage() {
       <div id="whatIsPopcards">
         <h2 className="text-center">What is Popcards</h2>
         <br />
-        <p className="text-justify mx-30">
+        <p className="text-justify md:mx-30">
           Being avid fans of card games, our team decided to create an online multiplayer platform to play the Swiss card game "La Misère". To accompany this card game, we have included social networking features, such as friend requests, leaderboards, friend profiles and more. To improve the game experience users can create custom game lobbies with customizable settings to provide a tailored experience. Users can authenticate securely either with a username and password or with OAuth via Google, Github, or the 42 Network.
           <br /> <br />
           Some of the key features that we would like to highlight are: Realtime Online Multiplayer, Secure Login with OAuth, Personalized Profiles, Friend and Relationship Management, Realtime Notifications, Match History, Statistics, and Elo Tracking.
@@ -29,7 +29,7 @@ export default function AboutPage() {
       <div id="meetTheTeam">
         <h2 className="text-center">Meet the team</h2>
         <br />
-        <p className="text-justify mx-30">
+        <p className="text-justify md:mx-30">
           The Popcode team has been together since the beginning of their 42 journey. Enjoying lunch together nearly every day, the formation into a project team occurred naturally. Having a tradition of sharing popcorn around the work space, the identity of our team was easily decided. Our first project as a team is Popcards, inspired by our daily card games we decided to bring one of our favourite card games to the online world.
         </p>
         <br />

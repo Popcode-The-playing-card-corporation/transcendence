@@ -35,6 +35,9 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
   }
 
   async function joinRoom(code: string) {
+	if (code.trim() === "") {
+		return ;
+	}
     const res = await validateRoom(code);
     if (res.code !== 200) {
       notif?.showNotif("Error Joining Room", res.response, 5000);
@@ -57,6 +60,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
           <p>or</p>
           <div className="joinCode-container m-3" onKeyDown={handleKeyDown}>
             <input
+              id="inputGameCode"
               className="input input-lighter w-2/3 m-3"
               type="text"
               placeholder="enter game code here"
@@ -80,7 +84,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
               <tbody>
                 {filteredGames.map((game) => {
                   return (
-                    <tr>
+                    <tr key={game.id}>
                       <td>{game.host.username}'s room</td>
                       <td>{game.type}</td>
                       <td>
@@ -97,7 +101,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
                             className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
                           >
                             {game.list_player.map((player) => (
-                              <li>
+                              <li key={player.id}>
                                 <a className="">
                                   <UsernameMiniProfileBtn
                                     id={player.id}
@@ -122,7 +126,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
           </div>
         </div>
       </div>
-	  <BeginModal />
+      <BeginModal />
     </div>
   );
 }

@@ -22,9 +22,9 @@ export async function getJoinedRoom() {
 	try {
 		const res = await axios.get(host.http + 'room/my/', {timeout: 2000, withCredentials:true});
 		if ("code" in res.data) {
-			return {room: res.data.code};
+			return {room: res.data.code, message: res.data.message};
 		}
-		return {room:""};
+		return {room:"", message: ""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {

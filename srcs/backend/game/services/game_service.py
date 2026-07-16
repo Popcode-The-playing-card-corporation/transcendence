@@ -1,5 +1,5 @@
 from ..db import save_room_state, get_room_with_host, start_room, count_player, end_room
-from ..models import PlayerPresence,  PlayerScore, GameLog
+from ..models import PlayerPresence,  PlayerScore, GameLog, Room
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from django.utils import timezone
@@ -55,7 +55,7 @@ class GameService:
         if p.is_human and p.is_online:
             room = await get_room_with_host(room.code)
             game_state = room.game_state
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+            # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state
     
@@ -134,13 +134,20 @@ class GameService:
             taker=taker,
             melds=melds
         )
-        finished, game_state = await GameService.check_game_end(room, game)
-
-        if finished:
-            again = await GameService.check_goal_reached(room.code)
-            return
-            
-        
+        room = await get_room_with_host(room.code)
+        game_state = room.game_state
+        take_fold, game_state = await GameService.check_take_fold(game_state, room)
+        if (take_fold):
+            room = await get_room_with_host(room.code)
+            is_end, gs = await GameService.check_game_end(room, game)
+            if (not is_end):
+                game_state = room.game_state
+                await sync_to_async(Room.objects.filter(code=room.code).update)(round_time=(timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10))))
+                await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+            else:
+                return {"end": await GameService.check_goal_reached(room.code)}
+                
+       
         room = await get_room_with_host(room.code)
         game_state = room.game_state
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
@@ -151,7 +158,7 @@ class GameService:
         if p.is_human and p.is_online:
             room = await get_room_with_host(room.code)
             game_state = room.game_state
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+            # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return {"state": state}
 
@@ -284,6 +291,9 @@ class GameService:
     async def continue_game(
         room
     ):
+        if (not await GameService.check_valve(room.code)):
+            await GameService.close_valve(room.code)
+
         game = GameEngine(room.uuid)
 
         game_state = game.handleAction(
@@ -293,7 +303,6 @@ class GameService:
         )
         
         room.game_state["game"] += 1
-        room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
         await sync_to_async(room.save)()
         await save_room_state(room.uuid, room.game_state)
 
@@ -304,7 +313,8 @@ class GameService:
         channel_layer = get_channel_layer()
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         await BroadcastService.broadcast_game(room.code, channel_layer, "game_continued")
-          
+        await sync_to_async(Room.objects.filter(code=room.code).update)(round_time=(timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10))))
+        await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
         
         game_state = await BotService.play_until_human(
             room,
@@ -321,6 +331,24 @@ class GameService:
         if p.is_human and p.is_online:
             room = await get_room_with_host(room.code)
             game_state = room.game_state
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+            # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
+        await GameService.open_valve(room.code)
         return game_state
+    
+    @staticmethod
+    async def check_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        return room.play_card
+    
+    @staticmethod
+    async def close_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        room.play_card = True
+        await sync_to_async(room.save)()
+
+    @staticmethod
+    async def open_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        room.play_card = False
+        await sync_to_async(room.save)()

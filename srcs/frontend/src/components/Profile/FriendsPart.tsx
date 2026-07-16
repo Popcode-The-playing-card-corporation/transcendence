@@ -71,6 +71,7 @@ export function Friends({
         <label className="input my-5">
           <IoSearch className="text-2xl" />
           <input
+            id="friendSearch"
             type="search"
             required
             placeholder="Search"
@@ -181,7 +182,7 @@ export function Friends({
           <th className="w-30 text-left max-sm:hidden">From</th>
         </tr>
         {sortedFriends.slice(0, nbSlice).map((friend: friendT) => (
-          <tr className="h-14">
+          <tr className="h-14" key={friend.id}>
             <td
               className={
                 (friend.user.is_online ? "text-green-400" : "") +

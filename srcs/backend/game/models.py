@@ -37,7 +37,7 @@ class Room(models.Model):
     ]
     
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    code = models.CharField(max_length=8, unique=True)
+    code = models.CharField(max_length=8, unique=True, db_collation='utf8_bin')
     host = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='hosted_rooms')
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
     game_state = models.JSONField(default=default_state)
@@ -56,6 +56,7 @@ class Room(models.Model):
     round_time = models.DateTimeField(null=True, blank=True)
     wait_schedule = models.BooleanField(default=False)
     is_paused = models.BooleanField(default=False)
+    play_card = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.code}"
@@ -101,7 +102,7 @@ class Stat(models.Model):
         ("diamond", "Diamond"),
     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="stat")
     win = models.IntegerField(default=0)
     lose = models.IntegerField(default=0)
     played = models.IntegerField(default=0)

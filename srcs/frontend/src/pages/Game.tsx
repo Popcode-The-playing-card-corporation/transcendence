@@ -45,13 +45,18 @@ export function Game() {
         if (tmp_joined.code === 401) {
           return login_error("Authentication error:", "Please log in again.");
         } else if (tmp_joined.code === 404) {
-          tmp_joined = { room: "" };
+          tmp_joined = { room: "", message: "" };
         } else {
           return other_error(
             "Error " + tmp_joined.code + ":",
             tmp_joined.response,
           );
         }
+      } else if (tmp_joined.message === "lobby_failed") {
+        return other_error(
+          "Lobby Error",
+          "Do you have another lobby already open?",
+        );
       }
 
       if (tmp_joined.room !== "") {
@@ -103,7 +108,7 @@ export function Game() {
 
   return (
     <>
-      <div className="max-md:hidden">
+      <div className="max-lg:hidden">
         {joined !== "" ? (
           <GameWebSocket key={joined} code={joined} setCode={setJoined} />
         ) : (
@@ -115,7 +120,7 @@ export function Game() {
         )}
       </div>
       <div className=" text-center md:hidden flex mt-20 justify-center flex-col gap-6 mx-10">
-        <p className="text-error font-bold">Sorry but this game is unavailabe on a little screen, go on a biggest one!</p>
+        <p className="text-error font-bold">Sorry but this game is unavailabe on a small screen, go on a larger one to play our game!</p>
 		<img className="h-50 max-w-50 mx-auto" src="/stitch-sorry.gif"/>
       </div>
     </>

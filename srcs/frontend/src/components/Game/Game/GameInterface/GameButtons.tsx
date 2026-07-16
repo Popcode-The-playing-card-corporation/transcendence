@@ -16,14 +16,12 @@ export default function GameButtons() {
   const [messageCount, setCount] = useState<number>(game.state.messages.length);
 
   function changeState(whichButton: string) {
-    if (whichButton === "chat")
-    {
+    if (whichButton === "chat") {
       if (!isChatOpen && isInfoOpen)
         setIsInfoOpen(!isInfoOpen);
       setIsChatOpen(!isChatOpen);
     }
-    else
-    {
+    else {
       if (!isInfoOpen && isChatOpen)
         setIsChatOpen(!isChatOpen);
       setIsInfoOpen(!isInfoOpen);
@@ -34,7 +32,7 @@ export default function GameButtons() {
     async function setMessage() {
       if (isChatOpen) {
         setNewMessage(false);
-      } 
+      }
     }
     setMessage();
   }, [isChatOpen])
@@ -51,24 +49,24 @@ export default function GameButtons() {
 
   return (
     <div className="h-1/2 flex p-2 flex-col justify-end">
-	{isChatOpen ? (
-		<Chat setNewMessage={setNewMessage} isAlreadyOpen={isChatOpen} setCount={setCount}/>
-	) : ""}
-	{isInfoOpen ? (
-		<FunctionnementInfos />
-	) : ""}
+      {isChatOpen ? (
+        <Chat setNewMessage={setNewMessage} isAlreadyOpen={isChatOpen} setCount={setCount} />
+      ) : ""}
+      {isInfoOpen ? (
+        <FunctionnementInfos />
+      ) : ""}
       <div className="flex gap-2 mt-2 items-center justify-between">
-	  <FoldModal />
+        <FoldModal />
         <Announcement />
-          <div className="indicator">
-            {newMessage ? (
-              <span className="indicator-item badge badge-sm bg-(--nav-color)">New</span>
-            ) : null}
-            <ChatBtn changeState={changeState} />
-          </div>
+        <div className="indicator">
+          {newMessage ? (
+            <span className="indicator-item badge badge-sm">New</span>
+          ) : null}
+          <ChatBtn changeState={changeState} />
+        </div>
         <InfoBtn changeState={changeState} />
       </div>
-    <GlobalAnnonce />
+      <GlobalAnnonce />
     </div>
   );
 }

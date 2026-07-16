@@ -141,49 +141,61 @@ export function RegisterForm({
           <div></div>
         )
       }
-      <label className="label">Username</label>
-      <input
-        type="text"
-        value={name}
-        onChange={nameChange}
-        className="input w-full"
-        placeholder="..."
-        onKeyDown={handleKey}
-      />
-
-      <label className="label">Email</label>
-      <input
-        type="email"
-        value={email}
-        onChange={emailChange}
-        className="input w-full"
-        placeholder="..."
-        onKeyDown={handleKey}
-      />
-
-      <label className="label">Password</label>
-      <div className="input w-full">
+      <p>Username</p>
+      <label className="label">
         <input
-          type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={passChange}
+          id="usernameRegister"
+          type="text"
+          value={name}
+          onChange={nameChange}
+          className="input w-full"
           placeholder="..."
           onKeyDown={handleKey}
         />
-        <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
-      </div>
+      </label>
 
-      <label className="label">Confirm password</label>
-      <div className="input w-full">
+      <p>Email</p>
+      <label className="label">
         <input
-          type={showPasswordConfirm ? "text" : "password"}
-          value={repassword}
-          onChange={repassChange}
+          id="emailRegister"
+          type="email"
+          value={email}
+          onChange={emailChange}
+          className="input w-full"
           placeholder="..."
           onKeyDown={handleKey}
         />
-        <button className="cursor-pointer " onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>{showPasswordConfirm ? <FaEyeSlash /> : <FaEye />}</button>
-      </div>
+      </label>
+
+      <p>Password</p>
+      <label className="label">
+        <div className="input w-full">
+          <input
+            id="pswdRegister"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={passChange}
+            placeholder="..."
+            onKeyDown={handleKey}
+          />
+          <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+        </div>
+      </label>
+
+      <p>Confirm password</p>
+      <label className="label">
+        <div className="input w-full">
+          <input
+            id="confirmPswdRegister"
+            type={showPasswordConfirm ? "text" : "password"}
+            value={repassword}
+            onChange={repassChange}
+            placeholder="..."
+            onKeyDown={handleKey}
+          />
+          <button className="cursor-pointer " onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>{showPasswordConfirm ? <FaEyeSlash /> : <FaEye />}</button>
+        </div>
+      </label>
 
       <a onClick={() => setCreated(false)} className="link-hover">
         Already an account? Go login here!

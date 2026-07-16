@@ -14,6 +14,8 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.db.models import Q
+import random
+from ..achievements.service import AchievementService
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -29,14 +31,14 @@ def user(request):
                     user = authenticate(username=request.user.username, password=request.data["password"])
                     if user is None:
                         return Response(
-							{"error": "Invalid credentials"},
-							status=400
-						)
+                            {"error": "Invalid credentials"},
+                            status=400
+                        )
                 else:
                      return Response(
-						{"error": "Missing information"},
-						status=400
-					)
+                        {"error": "Missing information"},
+                        status=400
+                    )
 
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
@@ -55,10 +57,10 @@ def user_data(request, user_id):
             Q(from_user=request.user, to_user=user) |
             Q(from_user=user, to_user=request.user),
             status="blocked"
-		).exists():
+        ).exists():
             return Response({
                 "error": "Display not possible"
-			}, status=403)
+            }, status=403)
     except User.DoesNotExist:
         return Response(
             {
@@ -75,7 +77,6 @@ def user_data(request, user_id):
 
     return Response(serializer.data)
     
-
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([AllowAny])
@@ -92,9 +93,9 @@ def register(request):
 
     if (re_pass != password):
         return Response(
-			{"error": (f"Passwords must match!")},
-			status=400
-		)
+            {"error": (f"Passwords must match!")},
+            status=400
+        )
     
     try:
         validate_password(password)
@@ -124,7 +125,10 @@ def register(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             user.last_login = timezone.now()
-            user.save(update_fields=["last_login"])
+            if random.randint(1, 100) == 42:
+                user.clovers += 1
+            user.save(update_fields=["last_login", "clovers"])
+            AchievementService.check_user_achievements(user)
     
             refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
@@ -140,7 +144,7 @@ def register(request):
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host
             max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
-	    )
+        )
         
         res.set_cookie(
             key='refresh_token',
@@ -150,7 +154,7 @@ def register(request):
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host
             max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
-	    )
+        )
         
         return res
         
@@ -159,23 +163,25 @@ def register(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def logout(request):
-	res = Response()
-	res.data = {'success': True}
+    if not User.objects.filter(id=request.user.id).exists():
+        return Response(status=400)
+    res = Response()
+    res.data = {'success': True}
     
-	res.delete_cookie(key="access_token")
-	res.delete_cookie(key="refresh_token")
+    res.delete_cookie(key="access_token")
+    res.delete_cookie(key="refresh_token")
     
-	return res
+    return res
     
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def delete(request):
     if request.user.presence_game != 0:
         return Response(
-			{"success": False,
-			"message": "Cannot delete account while in a game"},
-			status=400
-		)
+            {"success": False,
+            "message": "Cannot delete account while in a game"},
+            status=400
+        )
     request.user.delete()
     res = Response({"success": True})
     res.delete_cookie("access_token")
@@ -198,7 +204,10 @@ def login(request):
 
     if user is not None:
         user.last_login = timezone.now()
-        user.save(update_fields=["last_login"])
+        if random.randint(1, 100) == 42:
+            user.clovers += 1
+        user.save(update_fields=["last_login", "clovers"])
+        AchievementService.check_user_achievements(user)
 
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
@@ -214,7 +223,7 @@ def login(request):
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host
             max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
-	    )
+        )
         
         res.set_cookie(
             key='refresh_token',
@@ -224,14 +233,9 @@ def login(request):
             samesite='None', ## Cookie cannot be sent with crosssite requests (maybe in prod we should switch to secure or lax)
             path='/', ## Only sends to host that sent them and not any other host *** maybe should be changed to just refresh path but in production tbc ...
             max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]  #sets expiry for token, required otherwise token is just kept for session
-	    )
+        )
         
         return res
-
-        # return Response({
-        #     "access": str(refresh.access_token),
-        #     "refresh": str(refresh),
-        # })
 
     return Response(
         {"error": "Invalid credentials"},
@@ -250,7 +254,7 @@ def change_password(request):
         return Response(
             {"error": "Invalid account type"},
             status=400
-		)
+        )
     
     if not old_password:
         return Response(

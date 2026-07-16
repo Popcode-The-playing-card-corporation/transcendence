@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { useGame } from "../../context/GameContext";
 import type { DetailedPointsT, playerScoreT } from "../../../../utils/type/boardDataType";
 
@@ -25,14 +25,14 @@ export default function DetailledLeaderboard() {
             <thead>
               <tr className=" sticky -top-6 ">
                 {listPlayer.map((player: playerScoreT) => {
-                  return <th>{player.username}</th>;
+                  return <th key={player.user_id}>{player.username}</th>;
                 })}
               </tr>
             </thead>
             <tbody className="bg-base-200">
               {detailedGame.map((game: DetailedPointsT) => {
                 return (
-                  <>
+                  <React.Fragment key={detailedGame.indexOf(game)} >
                     {game.rounds.map((round: {players: playerScoreT[]}) => {
                       const isHidden = round.players.every(
                         (current) => current.score === 0,
@@ -40,10 +40,10 @@ export default function DetailledLeaderboard() {
 
                       if (!isHidden) {
                         return (
-                          <tr>
+                          <tr key={game.rounds.indexOf(round)}>
                             {round.players.map((player: playerScoreT) => {
                               return (
-                                <td>{player.score ? player.score : "-"}</td>
+                                <td key={round.players.indexOf(player)}>{player.score ? player.score : "-"}</td>
                               );
                             })}
                           </tr>
@@ -53,18 +53,18 @@ export default function DetailledLeaderboard() {
                     {game.is_finished ? (
                       <tr className="bg-secondary">
                         {game.total.map((player: playerScoreT) => {
-                          return <td>{player.score}</td>;
+                          return <td key={player.user_id}>{player.score}</td>;
                         })}
                       </tr>
                     ) : (
                       <></>
                     )}
-                  </>
+                  </React.Fragment>
                 );
               })}
               <tr className="bg-primary font-bold sticky -bottom-6">
                 {listPlayer.map((player: playerScoreT) => {
-                  return <td>{player.score}</td>;
+                  return <td key={player.user_id}>{player.score}</td>;
                 })}
               </tr>
             </tbody>

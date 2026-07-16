@@ -1,8 +1,8 @@
 import type { GameAction, GameState, roomT } from "./GameType";
 
-function getTime(datetime:string) {
+function getTime(datetime: string) {
 	if (datetime === "" || !datetime) {
-		return new Date(0,0,0);
+		return new Date(0, 0, 0);
 	}
 	const dateTimeParts = datetime.split(' ');
 	const time = dateTimeParts[1].split(':');
@@ -22,72 +22,94 @@ function roomToMode(type: roomT) {
 	}
 }
 
-export function gameReducer( state: GameState, action: GameAction): GameState {
-	
+export function gameReducer(state: GameState, action: GameAction): GameState {
+
 	switch (action.type) {
 		case "CONNECTED":
-			return {...state, connected:true};
+			return { ...state, connected: true };
 		case "DISCONNECTED":
-			return {...state, connected:false};
+			return { ...state, connected: false };
 		case "SET_PLAYERS":
-			return {...state , settings:
-				{...state.settings, listPlayer: action.payload}};
+			return {
+				...state, settings:
+					{ ...state.settings, listPlayer: action.payload }
+			};
 		case "SET_CARDS":
-			return {...state , game:
-				{...state.game, self_cards: action.payload}};
+			return {
+				...state, game:
+					{ ...state.game, self_cards: action.payload }
+			};
 		case "SET_BOARD":
-			return {...state , game:
-				{...state.game, boardData:
-					{...action.payload, started_at:getTime(action.payload.started_at), round_time:getTime(action.payload.round_time)}}};
+			return {
+				...state, game:
+				{
+					...state.game, boardData:
+						{ ...action.payload, started_at: getTime(action.payload.started_at), round_time: getTime(action.payload.round_time) }
+				}
+			};
 		case "SET_PARAMS":
-			return {...state , settings:
-				{...state.settings, maxSize: action.payload.max_player, 
-					mode: roomToMode(action.payload.type), timeout: getTime(action.payload.timestamp), goal: action.payload.goal}};
+			return {
+				...state, settings:
+				{
+					...state.settings, maxSize: action.payload.max_player,
+					mode: roomToMode(action.payload.type), timeout: getTime(action.payload.timestamp), goal: action.payload.goal
+				}
+			};
 		case "SET_GOAL":
-			return {...state , settings:
-				{...state.settings, goal: action.payload}};
+			return {
+				...state, settings:
+					{ ...state.settings, goal: action.payload }
+			};
 		case "SET_NBGAME":
-			return {...state , settings:
-				{...state.settings, nb_games: action.payload}};
+			return {
+				...state, settings:
+					{ ...state.settings, nb_games: action.payload }
+			};
 		case "SET_NBPOINT":
-			return {...state , settings:
-				{...state.settings, nb_points: action.payload}};
+			return {
+				...state, settings:
+					{ ...state.settings, nb_points: action.payload }
+			};
 		case "SET_MODE":
-			return {...state , settings:
-				{...state.settings, mode: action.payload}};
+			return {
+				...state, settings:
+					{ ...state.settings, mode: action.payload }
+			};
 		case "SET_SIZE":
-			return {...state , settings:
-				{...state.settings, maxSize: action.payload}};
-		
+			return {
+				...state, settings:
+					{ ...state.settings, maxSize: action.payload }
+			};
+
 		case "SET_HISTORY":
-			return {...state, messages:action.payload};
+			return { ...state, messages: action.payload };
 
 		case "ADD_MESSAGE":
-			return {...state, messages: [...state.messages, action.payload]};
+			return { ...state, messages: [...state.messages, action.payload] };
 
 		case "SET_USER":
-			return {...state, user: action.payload};
+			return { ...state, user: action.payload };
 
 		case "SET_EVENT":
-			return {...state, event: action.payload, eventID: state.eventID + 1};
-		
+			return { ...state, event: action.payload, eventID: state.eventID + 1 };
+
 		case "SET_MESSAGE":
-			return {...state, message: action.payload};
+			return { ...state, message: action.payload };
 
 		case "SET_CODE":
-			return {...state, new_code: action.payload};
+			return { ...state, new_code: action.payload };
 
 		case "SET_NEXT":
-			return {...state, next: action.payload};
+			return { ...state, next: action.payload };
 
 		case "SET_HOST":
-			return {...state, host: action.payload};
+			return { ...state, host: action.payload };
 
 		case "SET_WAIT":
-			return {...state, wait: action.payload}
+			return { ...state, wait: action.payload }
 
 		case "TEST_ANNONCES":
-			return {...state, show_annonces: !state.show_annonces};
+			return { ...state, show_annonces: !state.show_annonces };
 
 		default:
 			return state;

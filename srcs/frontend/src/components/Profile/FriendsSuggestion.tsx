@@ -27,7 +27,7 @@ export default function FriendsSuggestion({
         <tbody>
           {suggestions.slice(0, 5).map((suggest) => {
             return (
-              <tr className="h-12 text-center">
+              <tr className="h-12 text-center" key={suggest.id}>
                 <td>
                   {" "}
                   <UsernameMiniProfileBtn
@@ -38,19 +38,23 @@ export default function FriendsSuggestion({
                   <span className="text-xs">
                     <button
                       className="link-hover"
-                      popoverTarget="popover-1"
-                      style={{ anchorName: "--anchor-1" }}
+                      popoverTarget={`popover-${suggestions.indexOf(suggest) + 100}`}
+                      style={{
+                        anchorName: `--anchor-${suggestions.indexOf(suggest) + 100}`,
+                      }}
                     >
                       {suggest.mutual_friends.length} mutual friends
                     </button>
                     <ul
                       className="dropdown dropdown-content dropdown-center menu w-52 rounded-box shadow-sm"
                       popover="auto"
-                      id="popover-1"
-                      style={{ positionAnchor: "--anchor-1" }}
+                      id={`popover-${suggestions.indexOf(suggest) + 100}`}
+                      style={{
+                        positionAnchor: `--anchor-${suggestions.indexOf(suggest) + 100}`,
+                      }}
                     >
                       {suggest.mutual_friends.map((player) => (
-                        <li>{player.username}</li>
+                        <li key={player.id}>{player.username}</li>
                       ))}
                     </ul>
                   </span>

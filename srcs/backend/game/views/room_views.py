@@ -338,12 +338,14 @@ def list_room(request):
 def list_my_started_room(request):
 
     presence = PlayerPresence.objects.select_related("room").filter(
+        Q(room__status="start") | Q(room__status="open"),
         player=request.user,
-        room__status="start"
     ).first()
-
     if (not presence) :
         return Response({"message": "failed", "code": ""}, status=200)
+    
+    if (User.objects.filter(id=request.user.id).first().presence_game > 0):
+        return Response({"message": "lobby_failed", "code": ""}, status=200)
     data ={
         "message": "success",
         "code": presence.room.code,
