@@ -208,7 +208,6 @@ class RoomConnectionService:
             ).update
         )(channel_name=channel_name)
         
-        await RoomTaskService.cancel_play_for_player(room.code, user.id)
 
         
         

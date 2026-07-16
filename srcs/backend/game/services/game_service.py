@@ -117,7 +117,6 @@ class GameService:
 
         prev_tricks = copy.deepcopy(state["tricks"])
 
-        await RoomTaskService.cancel_play_for_player(room.code, user.id)
         state = game.handleAction("play", state, idPlayer=str(position), idCard=idx)
         
         room.round_time = (timezone.now() + timedelta(seconds=(25 if state["round"] == 0 else 10)))

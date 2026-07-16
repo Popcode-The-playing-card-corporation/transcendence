@@ -79,9 +79,11 @@ class RoomService:
                     result["room_code"],
                     result["user"]
                 )
-    
+            
     
             room = await get_room_with_host(code)
+            if not room:
+                return
             bots = await sync_to_async(
                 PlayerPresence.objects.filter(
                     room=room,
