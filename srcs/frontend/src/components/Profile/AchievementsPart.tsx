@@ -79,9 +79,11 @@ export function AchievementsPart({ updateachievement }: Props) {
 
                 <progress
 				className="w-full rounded-2xl bg-base-content &::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
-                  value={player.value}
-                  max={player.max_value}
-                />
+                  value={player.code.startsWith("LOSER_") ? Math.max(0, -player.value) : player.value}
+                  max={player.code.startsWith("LOSER_") ? -player.max_value : player.max_value}
+                >
+					{player.value / player.max_value * 100}%
+				</progress>
               </div>
           );
         })}

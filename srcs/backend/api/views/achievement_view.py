@@ -51,6 +51,7 @@ def achievements(request):
         max_value = condition.get("value", 1)
         
         list_achievement.append({
+            "code": achievement.code,
 		    "img": achievement.icon,
             "title": achievement.title,
             "description": achievement.description,

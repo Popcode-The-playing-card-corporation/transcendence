@@ -24,7 +24,7 @@ export function MiniHistory({ history }: Props) {
         className="fixed inset-0 hidden peer-checked:block"
       ></label>
       <div className="collapse-title font-semibold">
-        Show history of Eude
+        Show history
       </div>
       <div className="collapse-content text-sm z-1">
         <History gameHistory={history} isHome={false} isMiniProfile={true} />

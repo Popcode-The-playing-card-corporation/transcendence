@@ -1,4 +1,5 @@
 export type achievementArrT = {
+  code: string,
   img: string;
   title: string;
   description: string;
@@ -6,8 +7,4 @@ export type achievementArrT = {
   max_value: number;
   is_unlock: boolean;
   rate: number;
-};
-
-export type achievementRetT = {
-  achievement: achievementArrT[];
 };

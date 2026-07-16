@@ -33,7 +33,7 @@ export default function PlayerList() {
                 <td className="w-1/12">
                   {orderedPlayers.indexOf(player) + 1}
                 </td>
-                <td className="w-1/10">
+                <td>
                   <UsernameMiniProfileBtn id={player.id} name={player.username} />
                 </td>
                 <td>

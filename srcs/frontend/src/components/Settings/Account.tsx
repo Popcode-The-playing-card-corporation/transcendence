@@ -1,10 +1,11 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useNotif } from "../hooks/useNotif";
 import { deleteAccount } from "../../api/http/profile";
 import { useAuth } from "../hooks/useAuth";
 import { PswdChange } from "../Profile/PswdChange";
 import { PseudoChange } from "../Profile/PseudoChange";
+import { logout } from "../../api/http/login";
 
 export default function Account() {
 
@@ -14,10 +15,33 @@ export default function Account() {
 	const auth = useAuth();
 	const dialogPswdRef = useRef<HTMLDialogElement>(null);
 	const dialogPseudoRef = useRef<HTMLDialogElement>(null);
+ const current_location = useLocation();
+
+   function logout_handler() {
+		auth.setHasFriendRequest(false);
+		navigate("/login", { state: current_location.pathname });
+  	}
+
+	async function handleLogout() {
+		auth.setLogging(true);
+		const res = await logout();
+		if (res.code !== 200 && res.code !== 401) {
+		auth.setLogging(false);
+		return;
+		}
+		auth.setLoggedIn(false);
+		localStorage.removeItem("code");
+		auth.setUserID(null);
+		logout_handler();
+		setTimeout(() => {
+		auth.setLogging(false);
+		}, 500);
+	}
 
 	async function handleDelete() {
 		const res = await deleteAccount();
 		if (res.code === 200) {
+			handleLogout();
 			navigate('/');
 			notif?.showNotif("Account Deleted", "Your account has been successfully deleted.", 5000);
 		} else {

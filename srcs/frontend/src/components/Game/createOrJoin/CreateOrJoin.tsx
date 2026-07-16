@@ -35,6 +35,9 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
   }
 
   async function joinRoom(code: string) {
+	if (code.trim() === "") {
+		return ;
+	}
     const res = await validateRoom(code);
     if (res.code !== 200) {
       notif?.showNotif("Error Joining Room", res.response, 5000);
