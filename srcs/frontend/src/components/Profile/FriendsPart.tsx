@@ -258,7 +258,7 @@ export function Friends({
           </tr>
         ))}
       </table>
-	  : <p className="text-center">I don't have any friends, go make some!</p>}
+	  : <p className="text-center">You don't have any friends, go make some!</p>}
       <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
         {sortedFriends.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
       </a>
