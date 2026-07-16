@@ -14,5 +14,5 @@ class TaskService:
             room=room,
             position=int(game_state["playing"])
         )
-        if p.is_human and p.is_online:
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 25 if game_state["round"] == 0 else 10)
+        # if p.is_human and p.is_online:
+            # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 25 if game_state["round"] == 0 else 10)

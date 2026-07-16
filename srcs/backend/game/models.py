@@ -37,7 +37,7 @@ class Room(models.Model):
     ]
     
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    code = models.CharField(max_length=8, unique=True)
+    code = models.CharField(max_length=8, unique=True, db_collation='utf8_bin')
     host = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='hosted_rooms')
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
     game_state = models.JSONField(default=default_state)

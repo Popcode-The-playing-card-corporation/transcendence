@@ -201,6 +201,10 @@ export default function GameWebSocket({
     sendJson("play_card", { cardId: cardId });
   }
 
+  function afk_play() {
+    sendJson("afk_play");
+  }
+
   function continueGame() {
     sendJson("continue");
   }
@@ -308,7 +312,7 @@ export default function GameWebSocket({
 
 
   return (
-    <GameContext.Provider value={{ state, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage }}>
+    <GameContext.Provider value={{ state, afk_play, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage }}>
       <ModalRejoinGame />
       {auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code} />}
     </GameContext.Provider>
