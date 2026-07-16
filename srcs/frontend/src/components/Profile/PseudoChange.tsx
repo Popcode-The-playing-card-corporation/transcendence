@@ -33,6 +33,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
     setPassword("");
     setReason({ code: 200, response: "" });
     dialogRef.current?.close();
+    setShowPassword(false);
   }
 
   async function updateUser(in_name: string, old_pass: string, old_user: string | null) {
@@ -70,11 +71,11 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
       {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
         <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
-          <legend className="fieldset-legend">Change username</legend>
+          <legend className="fieldset-legend text-start">Change username</legend>
 
           {has_pass ?
             <>
-              <p>Password</p>
+              <p className="text-start">Password</p>
               <label className="label">
                 <div className="input w-full">
                   <input
@@ -93,7 +94,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
             : null
           }
 
-          <p>New username</p>
+          <p className="text-start">New username</p>
           <label className="label">
             <input
               id="usernameChange"

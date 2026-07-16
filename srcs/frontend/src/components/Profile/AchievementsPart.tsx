@@ -58,42 +58,42 @@ export function AchievementsPart({ updateachievement }: Props) {
       <div className="flex flex-wrap justify-center gap-10"
       >
         {achievement.achievement.map((player) => {
-			const percentage = player.value / player.max_value * 100;
-			const finalPercentage = () => {
-				const percFixed = Math.round(percentage) ;
-				if (percFixed > 100) return 100;
-				else if (percFixed < 0) return 0;
-				else return percFixed;
-			}
+          const percentage = player.value / player.max_value * 100;
+          const finalPercentage = () => {
+            const percFixed = Math.round(percentage);
+            if (percFixed > 100) return 100;
+            else if (percFixed < 0) return 0;
+            else return percFixed;
+          }
           return (
+            <div
+              key={player.title}
+              className="shadow-2xl shadow-base-300 p-4 rounded-2xl bg-base-300 flex md:flex-col flex-wrap w-fit max-md:w-full max-md:justify-center"
+            >
               <div
-                key={player.title}
-			    className="shadow-2xl shadow-base-300 p-4 rounded-2xl bg-base-300 flex md:flex-col flex-wrap w-fit max-md:justify-center"
+                className="flex mb-10 md:w-80 max-md:flex-col w-fit "
               >
-                <div
-				className="flex mb-10 md:w-80 max-md:flex-col w-fit "
-                >
-                  <img
-                    src={"/" + player.img}
-					className="max-h-20 aspect-square mr-10 max-md:max-w-20 max-md:mx-auto"
-                  />
-                  <div className="w-fit max-md:text-center">
-                    <h3>{player.title}</h3>
-                    <p>{player.description}</p>
-                    <p>obtention rate: {player.rate}%</p>
-                  </div>
+                <img
+                  src={"/" + player.img}
+                  className="max-h-20 aspect-square mr-10 max-md:max-w-20 max-md:mx-auto"
+                />
+                <div className="w-fit max-md:text-center">
+                  <h3>{player.title}</h3>
+                  <p>{player.description}</p>
+                  <p>obtention rate: {player.rate}%</p>
                 </div>
+              </div>
 
-				<div className="w-full">
-				<p className="text-center text-xs">{finalPercentage()}% complete</p>
+              <div className="w-full">
+                <p className="text-center text-xs">{finalPercentage()}% complete</p>
                 <progress
-				className="w-full rounded-2xl bg-base-content [&::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
-                  value={  player.code.startsWith("LOSER_") ? Math.max(0, -player.value) : player.value}
+                  className="w-full rounded-2xl bg-base-content [&::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
+                  value={player.code.startsWith("LOSER_") ? Math.max(0, -player.value) : player.value}
                   max={player.code.startsWith("LOSER_") ? -player.max_value : player.max_value}
                 >
-				</progress>
+                </progress>
               </div>
-			  </div>
+            </div>
           );
         })}
       </div>

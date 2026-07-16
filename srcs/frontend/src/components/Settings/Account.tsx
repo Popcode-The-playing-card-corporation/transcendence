@@ -15,26 +15,26 @@ export default function Account() {
 	const auth = useAuth();
 	const dialogPswdRef = useRef<HTMLDialogElement>(null);
 	const dialogPseudoRef = useRef<HTMLDialogElement>(null);
- const current_location = useLocation();
+	const current_location = useLocation();
 
-   function logout_handler() {
+	function logout_handler() {
 		auth.setHasFriendRequest(false);
 		navigate("/login", { state: current_location.pathname });
-  	}
+	}
 
 	async function handleLogout() {
 		auth.setLogging(true);
 		const res = await logout();
 		if (res.code !== 200 && res.code !== 401) {
-		auth.setLogging(false);
-		return;
+			auth.setLogging(false);
+			return;
 		}
 		auth.setLoggedIn(false);
 		localStorage.removeItem("code");
 		auth.setUserID(null);
 		logout_handler();
 		setTimeout(() => {
-		auth.setLogging(false);
+			auth.setLogging(false);
 		}, 500);
 	}
 
@@ -50,9 +50,9 @@ export default function Account() {
 	}
 	return (
 		<div>
-			<div className="flex flex-col w-1/3 mx-auto gap-4 text-center">
+			<div className="flex flex-col w-2/3 mx-auto gap-4 text-center max-xs:items-center">
 				<h3>Personal information</h3>
-				{auth.has_pass ? <button className="btn" onClick={() => dialogPswdRef.current?.showModal()}>Change password</button> : null}
+				{auth.has_pass ? <button className="btn " onClick={() => dialogPswdRef.current?.showModal()}>Change password</button> : null}
 				<dialog
 					id="change_pswd_modal"
 					className="modal"

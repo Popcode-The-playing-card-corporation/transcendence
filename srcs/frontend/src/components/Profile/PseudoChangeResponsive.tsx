@@ -33,6 +33,7 @@ export function PseudoChangeResponsive({ dialogRef, updatedProfile, setUpdate, o
     setPassword("");
     setReason({ code: 200, response: "" });
     dialogRef.current?.close();
+    setShowPassword(false);
   }
 
   async function updateUser(in_name: string, old_pass: string, old_user: string | null) {
