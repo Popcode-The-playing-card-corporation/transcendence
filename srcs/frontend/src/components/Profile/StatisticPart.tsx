@@ -4,6 +4,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
 
   return (
     <table className="text-left md:w-screen mx-auto">
+	<tbody>
       <tr>
         <th className="th-stats">Games played: </th>
         <td>{stats.played}</td>
@@ -70,6 +71,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
         <th className="th-stats">Game as host:</th>
         <td>{stats.nb_host}</td>
 	  </tr>
+	  </tbody>
     </table>
   );
 }
