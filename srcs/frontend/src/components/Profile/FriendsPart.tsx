@@ -177,6 +177,7 @@ export function Friends({
 	  {
 		  sortedFriends.length > 0 ?
       <table className="max-sm:mx-auto">
+		  <tbody>
         <tr>
           <th className="w-10 text-left"></th>
           <th className="max-sm:min-w-14 sm:w-50 text-left">Name</th>
@@ -257,6 +258,7 @@ export function Friends({
             </td>
           </tr>
         ))}
+		</tbody>
       </table>
 	  : <p className="text-center">You don't have any friends, go make some!</p>}
       <a className="my-auto link" onClick={() => handleMoreLessBtn()}>

@@ -175,6 +175,8 @@ def disconnected_player(room_code, player_id):
     room = Room.objects.select_related("host").filter(code=room_code).first()
     presence = PlayerPresence.objects.filter(room=room, player_id=player_id).first()
     channel_layer = get_channel_layer()
+    if not presence:
+        return
     
     if not presence.disconnected_scheduled:
         return

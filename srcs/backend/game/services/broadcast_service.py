@@ -170,7 +170,7 @@ class BroadcastService:
 				}
                 detailed_points.append(game)
                 
-            player_score = {"id":p.player.id, "username": await BroadcastService._get_username(p), "score":log.score}
+            player_score = {"user_id":p.player.id, "username": await BroadcastService._get_username(p), "score":log.score}
             
             if round_num == nb_round:
                 game['is_finished'] = True

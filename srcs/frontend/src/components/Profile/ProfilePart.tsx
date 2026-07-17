@@ -29,6 +29,7 @@ export function ProfilePart({
         </p>
       </div>
       <table className="mt-5 max-md:mx-auto max-sm:hidden">
+	  <tbody>
         <tr>
           <th className="th-profile">Username:</th>
           <td>
@@ -88,6 +89,7 @@ export function ProfilePart({
           <th className="th-profile">Last login:</th>
           <td>{realAccount.is_online ? "now" : realAccount.last_login}</td>
         </tr>
+		</tbody>
       </table>
       <ul className="sm:hidden">
         <li>

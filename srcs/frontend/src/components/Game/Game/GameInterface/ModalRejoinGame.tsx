@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useGame } from "../context/GameContext";
+import { useGame } from "../../context/GameContext";
 
 export default function ModalRejoinGame() {
   const rejoinModal = useRef<HTMLDialogElement>(null);
@@ -8,6 +8,12 @@ export default function ModalRejoinGame() {
   useEffect(() => {
     if (game.state.event === "player_reconnect" && game.state.message === game.state.user)
       rejoinModal.current?.showModal();
+    function handleModal() {
+      if (window.innerWidth < 1024)
+        rejoinModal.current?.close();
+    }
+    window.addEventListener("resize", handleModal);
+    handleModal();
   }, [game.state.event]);
 
   return (

@@ -124,10 +124,10 @@ export function Game() {
           Sorry but this game is unavailabe on a small screen, go on a larger
           one to play our game!
         </p>
-        <img
-          className="h-50 max-w-50 mx-auto rounded-2xl"
-          src="../../static/stitch-sorry.gif"
-        />
+			<img
+			className="h-50 max-w-50 mx-auto rounded-2xl"
+			src="../../static/stitch-sorry.gif"
+			/>
       </div>
     </>
   );
