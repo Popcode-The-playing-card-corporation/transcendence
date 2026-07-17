@@ -130,7 +130,7 @@ def game_history_friend(request, user_id):
 
     scores = (
         PlayerScore.objects
-        .filter(player_id=user_id, room__status="end")
+        .filter(player__player_id=user_id, room__status="end")
         .select_related("room")
         .order_by("-room__started_at")
     )
