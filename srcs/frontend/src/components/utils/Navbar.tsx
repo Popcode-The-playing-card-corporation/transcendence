@@ -62,7 +62,7 @@ export function Navbar() {
   }, [auth.theme]);
 
   return (
-    <div className="navbar min-h-16 h-16 bg-primary fixed top-0 z-100">
+    <div className={"navbar min-h-16 h-16 bg-primary fixed top-0 z-100 " + (auth.in_game ? " lg:hidden" : "")}>
       <div className="flex-1">
         <li>
           <NavLink

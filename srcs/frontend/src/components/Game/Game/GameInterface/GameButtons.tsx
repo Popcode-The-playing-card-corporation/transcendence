@@ -6,7 +6,7 @@ import Chat from "./Chat";
 import FunctionnementInfos from "./FunctionnementInfos";
 import FoldModal from "./FoldModal";
 import { useGame } from "../../context/GameContext";
-import GlobalAnnonce from "../GameVisual/GlobalAnnonce";
+import GlobalAnnonce from "../GameInterface/GlobalAnnonce";
 
 export default function GameButtons() {
   const game = useGame();
