@@ -32,6 +32,8 @@ class ScoreService:
     @staticmethod
     async def create_logs(room_code, game, round):
         room = await get_room_with_host(room_code)
+        if (room.status == "abandoned"):
+            return
         
         for player_id, player_data in room.game_state["players"].items():
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(

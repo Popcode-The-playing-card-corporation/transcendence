@@ -5,7 +5,7 @@ import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
 import { createRoom, validateRoom } from "../../../api/http/game";
 import { useNotif } from "../../hooks/useNotif";
-import BeginModal from "../Game/GameInterface/BeginModal";
+import BeginModal from "./BeginModal";
 
 type Props = {
   availableGames: availableGameT[],
@@ -35,6 +35,9 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
   }
 
   async function joinRoom(code: string) {
+    if (code.trim() === "") {
+      return;
+    }
     const res = await validateRoom(code);
     if (res.code !== 200) {
       notif?.showNotif("Error Joining Room", res.response, 5000);
@@ -57,6 +60,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
           <p>or</p>
           <div className="joinCode-container m-3" onKeyDown={handleKeyDown}>
             <input
+              id="inputGameCode"
               className="input input-lighter w-2/3 m-3"
               type="text"
               placeholder="enter game code here"
@@ -122,7 +126,7 @@ export default function CreateOrJoin({ availableGames, refreshLobby, setJoined }
           </div>
         </div>
       </div>
-	  <BeginModal />
+      <BeginModal />
     </div>
   );
 }

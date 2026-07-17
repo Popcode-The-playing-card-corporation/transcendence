@@ -12,7 +12,7 @@ import { GameContext } from "./context/GameContext";
 import type { playerT } from "../../utils/type/playerType";
 import type { cardT } from "../../utils/type/handCardsType";
 import type { boardDataNT, selfAnnonceT } from "../../utils/type/boardDataType";
-import ModalRejoinGame from "./createOrJoin/ModalRejoinGame";
+import ModalRejoinGame from "./Game/GameInterface/ModalRejoinGame";
 
 export default function GameWebSocket({
   code,
@@ -83,7 +83,9 @@ export default function GameWebSocket({
       },
 
       onMessage: (event) => {
+
         const data = JSON.parse(event.data);
+
         if (data.type == "acknowledge") {
           return;
         }
@@ -139,10 +141,15 @@ export default function GameWebSocket({
             dispatch({ type: "SET_CODE", payload: payload.code })
             dispatch({ type: "SET_NEXT", payload: true })
           } else {
+
             if (data.event === "player_disconnect" || data.event === "player_reconnect") {
               if (data.event === "player_disconnect") {
-                if (state.settings.listPlayer.filter((player) => player.username === data.playername)[0].is_host) {
-                  dispatch({ type: "SET_NEXT", payload: false })
+                const disconnectedPlayer = state.settings.listPlayer.find(
+                  (player) => player.username === data.playername
+                );
+
+                if (disconnectedPlayer?.is_host) {
+                  dispatch({ type: "SET_NEXT", payload: false });
                 }
               }
               dispatch({ type: "SET_MESSAGE", payload: payload.player_name });
@@ -192,6 +199,10 @@ export default function GameWebSocket({
 
   function playCard(cardId: number) {
     sendJson("play_card", { cardId: cardId });
+  }
+
+  function afk_play() {
+    sendJson("afk_play");
   }
 
   function continueGame() {
@@ -301,7 +312,7 @@ export default function GameWebSocket({
 
 
   return (
-    <GameContext.Provider value={{ state, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage }}>
+    <GameContext.Provider value={{ state, afk_play, setWait, nextGame, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage }}>
       <ModalRejoinGame />
       {auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code} />}
     </GameContext.Provider>

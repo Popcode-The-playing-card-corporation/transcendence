@@ -170,7 +170,7 @@ class BroadcastService:
 				}
                 detailed_points.append(game)
                 
-            player_score = {"id":p.player.id, "username": await BroadcastService._get_username(p), "score":log.score}
+            player_score = {"user_id":p.player.id, "username": await BroadcastService._get_username(p), "score":log.score}
             
             if round_num == nb_round:
                 game['is_finished'] = True
@@ -337,6 +337,8 @@ class BroadcastService:
     @staticmethod
     async def broadcast_game(room_code, channel_layer, message, user=None):
         room = await get_room_with_host(room_code)
+        if (room.status == "abandoned"):
+            return
         
         game_state = room.game_state
         

@@ -23,6 +23,7 @@ class Room(models.Model):
         ("open", "Open"),
         ("start", "Start"),
         ("end", "End"),
+        ("abandoned", "Abandoned"),
     ]
     
     TYPE_CHOICES = [
@@ -37,9 +38,9 @@ class Room(models.Model):
     ]
     
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    code = models.CharField(max_length=8, unique=True)
+    code = models.CharField(max_length=8, unique=True, db_collation='utf8_bin')
     host = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='hosted_rooms')
-    status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
+    status = models.CharField(max_length=9, choices=STATUS_CHOICES, default="open")
     game_state = models.JSONField(default=default_state)
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True)
@@ -56,6 +57,7 @@ class Room(models.Model):
     round_time = models.DateTimeField(null=True, blank=True)
     wait_schedule = models.BooleanField(default=False)
     is_paused = models.BooleanField(default=False)
+    play_card = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.code}"

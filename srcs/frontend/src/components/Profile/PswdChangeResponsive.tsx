@@ -5,7 +5,7 @@ import { useNotif } from "../hooks/useNotif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
-export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialogElement | null> }) {
+export function PswdChangeResponsive({ dialogRef }: { dialogRef: React.RefObject<HTMLDialogElement | null> }) {
 
   const [oldpass, setOld] = useState("");
   const [password1, setPassword1] = useState("");
@@ -83,13 +83,13 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
       {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
         <fieldset className="fieldset border-accent rounded-box w-xs border p-4 mx-auto">
-          <legend className="fieldset-legend text-start">Change password</legend>
+          <legend className="fieldset-legend">Change password</legend>
 
-          <p className="text-start">Old password</p>
+          <p>Old password</p>
           <label className="label">
             <div className="input w-full">
               <input
-                id="oldPswd"
+                id="oldPswdResponsive"
                 type={showOldPassword ? "text" : "password"}
                 value={oldpass}
                 onChange={oldChange}
@@ -100,11 +100,11 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
             </div>
           </label>
 
-          <p className="text-start">New password</p>
+          <p>New password</p>
           <label className="label">
             <div className="input w-full">
               <input
-                id="newPswd"
+                id="newPswdResponsive"
                 type={showNewPassword ? "text" : "password"}
                 value={password1}
                 onChange={pass1Change}
@@ -115,11 +115,11 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
             </div>
           </label>
 
-          <p className="text-start">Confirm new password</p>
+          <p>Confirm new password</p>
           <label className="label">
             <div className="input w-full">
               <input
-                id="confirmNewPswd"
+                id="confirmNewPswdResponsive"
                 type={showNewConfirmPassword ? "text" : "password"}
                 value={password2}
                 onChange={pass2Change}

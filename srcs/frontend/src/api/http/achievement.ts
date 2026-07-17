@@ -28,6 +28,7 @@ export function achievementArray(board:AxiosResponse<achievement[]>) {
 	const achievementarr:achievement[] = [];
 	for (const board_data of data) {
 		const achiev:achievement = {
+			code: board_data.code,
 			img: board_data.img,
             title: board_data.title,
             description: board_data.description,

@@ -37,6 +37,7 @@ ACTION_HANDLERS = {
     "kick": "handle_kick",
     "exit_game": "handle_exit_game",
     "patch_param": "handle_patch_param",
+    "afk_play": "handle_afk_play",
 }
 
 class RoomConsumer(AsyncWebsocketConsumer):
@@ -303,6 +304,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.error("Forbidden")
             return
 
+        await GameService.close_valve(self.code)
         room = await get_room_with_host(self.code)
     
         if self.user != room.host:
@@ -334,44 +336,30 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        game_state = await GameService.start_game(room)
-
-    async def handle_play_card(self, payload):
+        game_state = await GameService.start_game(room) 
+        await GameService.open_valve(self.code)
+        
+    async def handle_afk_play(self, payload=None):
         if (await RoomService.check_room_status("start", self.code) == False):
             await self.error("Forbidden")
             return
-        
-        if (len(payload) == 0):
+
+        if (await GameService.check_valve(self.code)):
             await self.send(text_data=json.dumps({
                     "type": "error",
-                    "message": "payload's empty"
+                    "message": "someone's already playing"
                 }))
             return 
 
+        await GameService.close_valve(self.code)
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
-
-        try:
-            result = await GameService.play_card(
-                room=room,
-                user=self.user,
-                position=position,
-                card_id=payload["cardId"]
-            )
-
-        except KeyError:
-            await self.send(text_data=json.dumps({
-                    "type": "error",
-                    "message": "cardId not found in payload"
-                }))
-            return 
-
-        if result.get("error"):
-            await self.error(result["error"])
-            return
+        game = GameEngine(room.uuid)
         
-        if result.get("invalid"):
-            return
+        await BotService.play_override(game, room.code, position,
+                                                        check_end=GameService.check_game_end, 
+                                                        ask_continue=GameService.check_goal_reached
+                                                        )
 
         await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_valid")
 
@@ -390,13 +378,94 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
                 await sync_to_async(room.save)()
                 await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
-                await TaskService.player_afk(room.code)
+                # await TaskService.player_afk(room.code)
 
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
                                                        )
+        await GameService.open_valve(self.code)
+                    
+
+    async def handle_play_card(self, payload):
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+        
+        if (len(payload) == 0):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "payload's empty"
+                }))
+            return 
+
+        if (await GameService.check_valve(self.code)):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "someone's already playing"
+                }))
+            return 
+
+        await GameService.close_valve(self.code)
+        room = await get_room_with_host(self.code)
+        position = await get_player_pos(self.user, room.code)
+
+        try:
+            result = await GameService.play_card(
+                room=room,
+                user=self.user,
+                position=position,
+                card_id=payload["cardId"]
+            )
+
+        except KeyError:
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "cardId not found in payload"
+                }))
+            await GameService.open_valve(self.code)
+            return 
+
+        if result.get("error"):
+            await self.error(result["error"])
+            await GameService.open_valve(self.code)
+            return
+        
+        if result.get("invalid"):
+            await GameService.open_valve(self.code)
+            return
+
+        if result.get("end"):
+            if (result.get("end")):
+                await GameService.open_valve(self.code)
+                return
+
+        await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_valid")
+
+        room = await get_room_with_host(self.code)
+        game_state = room.game_state
+
+        take_fold, game_state = await GameService.check_take_fold(game_state, room)
+        
+        game = GameEngine(room.uuid)
+        if (take_fold):
+            room = await get_room_with_host(room.code)
+            is_end, gs = await GameService.check_game_end(room, game)
+            if (not is_end):
+                room = await get_room_with_host(room.code)
+                game_state = room.game_state
+                room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+                await sync_to_async(room.save)()
+                await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
+                # await TaskService.player_afk(room.code)
+
+        game_state = await BotService.play_until_human(room, game_state, game,
+                                                       check_end=GameService.check_game_end, 
+                                                       check_take_fold_callback=GameService.check_take_fold,
+                                                        ask_continue=GameService.check_goal_reached
+                                                       )
+        await GameService.open_valve(self.code)
 
     async def handle_melds(self, payload):
         if (await RoomService.check_room_status("start", self.code) == False):

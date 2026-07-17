@@ -248,10 +248,11 @@ def list_propal(request):
     my_friend_ids = set()
 
     for friendship in friendships:
-        if friendship.from_user == request.user:
-            my_friend_ids.add(friendship.to_user.id)
-        else:
-            my_friend_ids.add(friendship.from_user.id)
+        if friendship.status == "accepted":
+            if friendship.from_user == request.user:
+                my_friend_ids.add(friendship.to_user.id)
+            else:
+                my_friend_ids.add(friendship.from_user.id)
 
     my_friend_ids.add(request.user.id)
 

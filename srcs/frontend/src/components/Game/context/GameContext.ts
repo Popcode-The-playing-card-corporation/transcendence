@@ -3,6 +3,7 @@ import type { GameState } from "./GameType"
 
 type GameContextT = {
 	state: GameState;
+	afk_play: () => void;
 	sendParams: (params: object) => void;
 	nextGame: (new_code: string) => void;
 	leaveRoom: () => void;

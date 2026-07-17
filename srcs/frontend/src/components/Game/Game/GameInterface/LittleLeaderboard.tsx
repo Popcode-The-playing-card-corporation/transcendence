@@ -37,7 +37,7 @@ export default function LittleLeaderboard() {
                 <td className="text-center">
                   <UsernameMiniProfileBtn
                     id={player.user_id}
-                    name={player.username}
+                    name={player.username.length > 10 ? (player.username.substring(0, 10) + "...") : player.username}
                   />
                 </td>
                 <td className="text-center">{player.score}</td>

@@ -15,7 +15,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useRef } from "react";
 import { IoIosMoon } from "react-icons/io";
 import BurgerMenu from "./BurgerMenu";
-const logo = "/logo.png";
+import logo from "../../../static/logo.png";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ export function Navbar() {
   }, [auth.theme]);
 
   return (
-    <div className="navbar min-h-16 h-16 bg-primary fixed top-0 z-100">
+    <div className={"navbar min-h-16 h-16 bg-primary fixed top-0 z-100 " + (auth.in_game ? " lg:hidden" : "")}>
       <div className="flex-1">
         <li>
           <NavLink

@@ -40,7 +40,7 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
     <BrowserRouter>
       <Presence />
       <Notifications setBlock={setBlock} updatedBlock={updatedBlock} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard} />
-      {auth.in_game ? null : <Navbar />}
+      <Navbar />
       <NotifPopUp />
       <Routes>
         <Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
@@ -49,7 +49,7 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
         <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
         <Route
           path="/settings"
-          element={<Settings setFontChoice={setFontChoice} setBlock={setBlock} updatedBlock={updatedBlock}/>}
+          element={<Settings setFontChoice={setFontChoice} setBlock={setBlock} updatedBlock={updatedBlock} />}
         />
         <Route path="/rules" element={<Rules />} />
         <Route path="/login" element={<Login />} />
@@ -60,7 +60,7 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
         <Route path="/login/github/callback" element={<GitCallback />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
-      {auth.in_game ? null : <Footer />}
+      <Footer />
     </BrowserRouter>
   );
 }

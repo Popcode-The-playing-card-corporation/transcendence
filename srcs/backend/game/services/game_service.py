@@ -1,5 +1,5 @@
 from ..db import save_room_state, get_room_with_host, start_room, count_player, end_room
-from ..models import PlayerPresence, PlayerScore, Room
+from ..models import PlayerPresence,  PlayerScore, GameLog, Room
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from django.utils import timezone
@@ -55,12 +55,14 @@ class GameService:
         if p.is_human and p.is_online:
             room = await get_room_with_host(room.code)
             game_state = room.game_state
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+            # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return game_state
     
     @staticmethod
     async def create_scores(room, game_state):
+        if (room.status == "abandoned"):
+            return
         for player_id in game_state["players"]:
             presence = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
@@ -145,8 +147,7 @@ class GameService:
                 await sync_to_async(Room.objects.filter(code=room.code).update)(round_time=(timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10))))
                 await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
             else:
-                await GameService.check_goal_reached(room.code)
-                return
+                return {"end": await GameService.check_goal_reached(room.code)}
                 
        
         room = await get_room_with_host(room.code)
@@ -159,7 +160,7 @@ class GameService:
         if p.is_human and p.is_online:
             room = await get_room_with_host(room.code)
             game_state = room.game_state
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+            # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
         return {"state": state}
 
@@ -220,6 +221,11 @@ class GameService:
     
     @staticmethod
     async def ask_host_continue(room, game_state):
+        logs = await sync_to_async(list)(GameLog.objects.filter(room=room.id, round=36 / room.nb_player, game=game_state["game"]))
+        for log in logs:
+            if log.score > 0:
+                return
+
         room = await get_room_with_host(room.code)
         await save_room_state(room.uuid, game_state)
         
@@ -287,6 +293,9 @@ class GameService:
     async def continue_game(
         room
     ):
+        if (not await GameService.check_valve(room.code)):
+            await GameService.close_valve(room.code)
+
         game = GameEngine(room.uuid)
 
         game_state = game.handleAction(
@@ -324,6 +333,24 @@ class GameService:
         if p.is_human and p.is_online:
             room = await get_room_with_host(room.code)
             game_state = room.game_state
-            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
+            # await RoomTaskService.schedule_play_for_player(room.code, p.player_id, game_state["round"], game_state["game"], 30 if game_state["round"] == 0 else 15)
             
+        await GameService.open_valve(room.code)
         return game_state
+    
+    @staticmethod
+    async def check_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        return room.play_card
+    
+    @staticmethod
+    async def close_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        room.play_card = True
+        await sync_to_async(room.save)()
+
+    @staticmethod
+    async def open_valve(code):
+        room = await sync_to_async(Room.objects.get)(code=code)
+        room.play_card = False
+        await sync_to_async(room.save)()

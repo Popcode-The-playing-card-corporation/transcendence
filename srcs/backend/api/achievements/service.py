@@ -8,8 +8,6 @@ class AchievementService:
     @staticmethod
     def check_user_achievements(user, context=None):
         context = context or {}
-        print("user : ", user)
-        print("context : ", context)
 
         unlocked_ids = UserAchievement.objects.filter(
             user=user

@@ -30,14 +30,14 @@ function DisplayWhoPlaying({
     } else {
       return (
         <p>
-          <em>{username}</em> is playing...
+          <em>{username.length > 10 ? username.substring(0, 10) + "... " : username}</em> is playing...
         </p>
       );
     }
   } else if (winner) {
-    return <p><em>{winner}</em> has taken the fold!</p>;
+    return <p><em>{winner.length > 10 ? winner.substring(0, 10) + "... " : winner}</em> has taken the fold!</p>;
   } else {
-	return <p>trick over!</p>
+    return <p>trick over!</p>
   }
 }
 
@@ -57,7 +57,7 @@ function DisplayGoal({
       if (a.score > b.score) return 0;
       else return 1;
     }
-    const currentSortedPoint = currentPoints.sort((a, b) => compareFn(a, b));
+    const currentSortedPoint = currentPoints.toSorted((a, b) => compareFn(a, b));
     const currentMaxPoint = currentSortedPoint.at(0)?.score;
 
     return (
@@ -87,39 +87,39 @@ export default function CurrentInfo() {
   const currentPoints = state.game.boardData.points;
   const [timeLeft, setTimeLeft] = useState<number>(5);
 
-	useEffect(() => {
-	async function handle_time() {
-		if (state.event !== "finish_round") {
-			setTimeLeft(5);
-			return;
-		}
-		setTimeLeft(5);
-		const intervalId = setInterval(() => {
-			setTimeLeft((prev) => {
-			if (prev <= 1) {
-				clearInterval(intervalId);
-				return 0;
-			}
+  useEffect(() => {
+    async function handle_time() {
+      if (state.event !== "finish_round") {
+        setTimeLeft(5);
+        return;
+      }
+      setTimeLeft(5);
+      const intervalId = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(intervalId);
+            return 0;
+          }
 
-			return prev - 1;
-			});
-		}, 1000);
+          return prev - 1;
+        });
+      }, 1000);
 
-		return () => clearInterval(intervalId);
-	}
-	handle_time();
-	}, [state.event]);
+      return () => clearInterval(intervalId);
+    }
+    handle_time();
+  }, [state.event]);
 
   if (state.event === "game_finish") {
-	return (
-	<div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
-      <div className="flex gap-6">
-        <p className="flex items-center gap-1">
-          Game Finished!
-        </p>
+    return (
+      <div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
+        <div className="flex gap-6">
+          <p className="flex items-center gap-1">
+            Game Finished!
+          </p>
+        </div>
       </div>
-    </div>
-	);
+    );
   }
 
   return (
@@ -141,7 +141,7 @@ export default function CurrentInfo() {
       <DisplayWhoPlaying
         self={self}
         username={nameCurrentPlayer?.user.username}
-		winner={state.game.boardData.winner}
+        winner={state.game.boardData.winner}
       />
       {state.event === "finish_round" ? (
         <p className="flex items-center gap-1">

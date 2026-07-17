@@ -4,7 +4,7 @@ import { type errorT } from "../../utils/type/errorType";
 import { useNotif } from "../hooks/useNotif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, has_pass }: { dialogRef: React.RefObject<HTMLDialogElement | null>; updatedProfile: boolean | null; setUpdate: React.Dispatch<React.SetStateAction<boolean>> | null; old_user: string | null, has_pass: boolean }) {
+export function PseudoChangeResponsive({ dialogRef, updatedProfile, setUpdate, old_user, has_pass }: { dialogRef: React.RefObject<HTMLDialogElement | null>; updatedProfile: boolean | null; setUpdate: React.Dispatch<React.SetStateAction<boolean>> | null; old_user: string | null, has_pass: boolean }) {
 
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -71,15 +71,15 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
       {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
         <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
-          <legend className="fieldset-legend text-start">Change username</legend>
+          <legend className="fieldset-legend">Change username</legend>
 
           {has_pass ?
             <>
-              <p className="text-start">Password</p>
+              <p>Password</p>
               <label className="label">
                 <div className="input w-full">
                   <input
-                    id="pswdChange"
+                    id="pswdChangeResponsive"
                     name="pswdChange"
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -94,10 +94,10 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
             : null
           }
 
-          <p className="text-start">New username</p>
+          <p>New username</p>
           <label className="label">
             <input
-              id="usernameChange"
+              id="usernameChangeResponsive"
               name="usernameChange"
               type="text"
               value={name}

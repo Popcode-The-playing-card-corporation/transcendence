@@ -7,7 +7,7 @@ export function Rules() {
         <br /> <br />
         <h2 className="text-center">Setup</h2>
         <br />
-        <p>A player deals the cards in a counter-clockwise fashion until no more cards remain in the deck, or there they can no longer be evenly distributed. The remaining cards are kept hidden.</p>
+        <p>A player deals the cards in a counter-clockwise fashion until no more cards remain in the deck, or they can no longer be evenly distributed. The remaining cards are kept hidden.</p>
         <div>
           <br /> <br />
           <h2 className="text-center">The Game</h2>

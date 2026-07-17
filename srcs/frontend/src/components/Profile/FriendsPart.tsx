@@ -71,6 +71,7 @@ export function Friends({
         <label className="input my-5">
           <IoSearch className="text-2xl" />
           <input
+            id="friendSearch"
             type="search"
             required
             placeholder="Search"
@@ -173,10 +174,13 @@ export function Friends({
           </div>
         </div>
       </div>
+	  {
+		  sortedFriends.length > 0 ?
       <table className="max-sm:mx-auto">
+		  <tbody>
         <tr>
           <th className="w-10 text-left"></th>
-          <th className="max-sm:-fit sm:w-50 text-left">Name</th>
+          <th className="max-sm:min-w-14 sm:w-50 text-left">Name</th>
           <th className="max-sm:w-fit sm:w-30 text-left">Status</th>
           <th className="w-30 text-left max-sm:hidden">From</th>
         </tr>
@@ -254,7 +258,9 @@ export function Friends({
             </td>
           </tr>
         ))}
+		</tbody>
       </table>
+	  : <p className="text-center">You don't have any friends, go make some!</p>}
       <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
         {sortedFriends.length > 10 ? (isMore ? "Show less" : "Show more") : ""}
       </a>

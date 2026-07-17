@@ -1,4 +1,5 @@
 export type achievementArrT = {
+  code: string,
   img: string;
   title: string;
   description: string;
