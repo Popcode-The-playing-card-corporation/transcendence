@@ -84,7 +84,27 @@ class BotService:
         )
         
         while (not is_end and (not p.is_human or not p.is_online) and not room.is_paused):
+            
+            player = game_state["playing"]
+            round = game_state["round"]
+            e_game = game_state["game"]
+            
             await asyncio.sleep(random.randint(1, 3))
+            
+            room = await get_room_with_host(room.code)
+            
+            if (room.status == "abandoned" or room.is_paused):
+                return room.game_state
+            
+            game_state = room.game_state
+            
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+				room=room,
+				position=int(game_state["playing"])
+			)
+            
+            if (game_state["playing"] != player or game_state['round'] != round or game_state['game'] != e_game):
+                continue
 
             if (game_state["round"] == 0):
                 melds = BroadcastService._count_melds(game_state["players"][str(game_state["playing"])]["cards"])
@@ -113,6 +133,8 @@ class BotService:
                         await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)
+            game_state = room.game_state
+            
             if (room.status == "abandoned"):
                 return game_state
             is_end, gs = await check_end(room, game)
