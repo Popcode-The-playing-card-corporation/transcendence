@@ -337,6 +337,8 @@ class BroadcastService:
     @staticmethod
     async def broadcast_game(room_code, channel_layer, message, user=None):
         room = await get_room_with_host(room_code)
+        if (room.status == "abandoned"):
+            return
         
         game_state = room.game_state
         
