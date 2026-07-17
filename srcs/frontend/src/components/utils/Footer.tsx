@@ -1,9 +1,12 @@
 import { FaGithub } from "react-icons/fa";
 import { SiOnlyfans } from "react-icons/si";
+import { useAuth } from "../hooks/useAuth";
 
 export function Footer() {
+  const auth = useAuth();
+
   return (
-    <footer className="footer sm:footer-horizontal flex max-sm:flex-wrap bg-primary p-5 mt-6 justify-between relative bottom-0">
+    <footer className={"footer sm:footer-horizontal flex max-sm:flex-wrap bg-primary p-5 mt-6 justify-between relative bottom-0" + (auth.in_game ? " lg:hidden" : "")}>
       <div className="w-full">
         <p>
           PopCode industries

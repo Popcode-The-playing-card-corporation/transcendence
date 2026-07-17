@@ -26,6 +26,15 @@ export default function EndingModal() {
     leaveRoom();
   }
 
+  useEffect(() => {
+    function handleModal() {
+      if (window.innerWidth < 1024)
+        endRef.current?.close();
+    }
+    window.addEventListener("resize", handleModal);
+    handleModal();
+  }, [])
+
   return (
     <div>
       <dialog

@@ -12,7 +12,7 @@ import { GameContext } from "./context/GameContext";
 import type { playerT } from "../../utils/type/playerType";
 import type { cardT } from "../../utils/type/handCardsType";
 import type { boardDataNT, selfAnnonceT } from "../../utils/type/boardDataType";
-import ModalRejoinGame from "./createOrJoin/ModalRejoinGame";
+import ModalRejoinGame from "./Game/GameInterface/ModalRejoinGame";
 
 export default function GameWebSocket({
   code,
@@ -83,9 +83,9 @@ export default function GameWebSocket({
       },
 
       onMessage: (event) => {
-		
+
         const data = JSON.parse(event.data);
-		
+
         if (data.type == "acknowledge") {
           return;
         }
@@ -141,17 +141,17 @@ export default function GameWebSocket({
             dispatch({ type: "SET_CODE", payload: payload.code })
             dispatch({ type: "SET_NEXT", payload: true })
           } else {
-			
-            if (data.event === "player_disconnect" || data.event === "player_reconnect") {
-				if (data.event === "player_disconnect") {
-				const disconnectedPlayer = state.settings.listPlayer.find(
-					(player) => player.username === data.playername
-				);
 
-				if (disconnectedPlayer?.is_host) {
-					dispatch({ type: "SET_NEXT", payload: false });
-				}
-				}
+            if (data.event === "player_disconnect" || data.event === "player_reconnect") {
+              if (data.event === "player_disconnect") {
+                const disconnectedPlayer = state.settings.listPlayer.find(
+                  (player) => player.username === data.playername
+                );
+
+                if (disconnectedPlayer?.is_host) {
+                  dispatch({ type: "SET_NEXT", payload: false });
+                }
+              }
               dispatch({ type: "SET_MESSAGE", payload: payload.player_name });
             }
             if (payload.board_data) {
