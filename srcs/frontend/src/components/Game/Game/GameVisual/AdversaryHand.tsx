@@ -26,6 +26,7 @@ export default function AdversaryHand({ setShow, room_id, angleCenter, cardHand,
   const littleRadius = Math.sin(angleCenter / 2) * boardRadius;
   const angleStart = - (cardHand.nbCards - 1) * angleBetween / 2;
   const allAngle: number[] = [];
+  const username = state.game.boardData.player_list[room_id].user.username;
 
   useEffect(() => {
     async function handle_continue() {
@@ -69,7 +70,7 @@ export default function AdversaryHand({ setShow, room_id, angleCenter, cardHand,
       <mesh position={[0, (-littleRadius) + factor, 0]} rotation={[0, 0, Math.PI]}>
         <Image scale={0.4} url={state.game.boardData.player_list[room_id].user.avatar} position={[-1, 0, 0]} />
         <Text fontSize={0.2}>
-          {state.game.boardData.player_list[room_id].user.username}
+          {username.length > 10 ? (username.substring(0, 10) + "...") : username}
           <meshStandardMaterial />
         </Text>
       </mesh>

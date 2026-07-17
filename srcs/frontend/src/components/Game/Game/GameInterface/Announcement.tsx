@@ -13,14 +13,14 @@ export default function Announcement() {
   const showConfirmAnnonceRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-	if (state.game.boardData.round !== 0) {
-		return ;
-	}
-	if (state.game.boardData.playing === state.game.boardData.self_id) {
-		showAnnonceRef.current?.showModal();
-	} else {
-		showAnnonceRef.current?.close();
-	}
+    if (state.game.boardData.round !== 0) {
+      return;
+    }
+    if (state.game.boardData.playing === state.game.boardData.self_id) {
+      showAnnonceRef.current?.showModal();
+    } else {
+      showAnnonceRef.current?.close();
+    }
   }, [state.game.boardData.playing])
 
   function toggleAnnonce(index: number) {
@@ -46,6 +46,15 @@ export default function Announcement() {
     annonces(res);
     setIsConfirmed(true);
   };
+
+  useEffect(() => {
+    function handleModal() {
+      if (window.innerWidth < 1024)
+        showAnnonceRef.current?.close();
+    }
+    window.addEventListener("resize", handleModal);
+    handleModal();
+  }, [])
 
   return (
     <>

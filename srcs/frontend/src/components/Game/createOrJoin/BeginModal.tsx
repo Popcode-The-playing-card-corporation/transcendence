@@ -16,6 +16,11 @@ export default function BeginModal() {
       if (displayBeginModal !== "no" || !displayBeginModal)
         beginModal.current?.showModal();
     }
+    function handleModal() {
+      if (window.innerWidth < 1024) beginModal.current?.close();
+    }
+    window.addEventListener("resize", handleModal);
+    handleModal();
   }, []);
 
   useEffect(() => {
@@ -26,7 +31,7 @@ export default function BeginModal() {
   }, [displayBeginModal]);
 
   return (
-    <div>
+    <div className="max-lg:hidden">
       <button
         className="btn btn-secondary btn-circle absolute top-27 right-10 z-10"
         onClick={() => beginModal.current?.showModal()}
@@ -48,30 +53,31 @@ export default function BeginModal() {
           <ul className="list-disc mx-4">
             <li>
               You have <strong>15 seconds</strong> to play a card, if you don't
-              play in this time a bot plays for you. 
-			</li>
-			<li>
-			  Your time is increased to <strong>30 seconds </strong> 
-			  for the first fold of each round.
+              play in this time a bot plays for you.
             </li>
             <li>
-              If a bot plays <strong>3 times in a row for you</strong>, you will be
-              kicked from the game.
+              Your time is increased to <strong>30 seconds </strong>
+              for the first fold of each round.
             </li>
             <li>
-              You can find more information by clicking on the <IoMdInformationCircleOutline className="inline"/> in game, or in the
-              rules page.
+              If a bot plays <strong>3 times in a row for you</strong>, you will
+              be kicked from the game.
             </li>
             <li>
-              You can display this window again by clicking on the <IoMdInformationCircleOutline className="inline"/> in this
-              page.
+              You can find more information by clicking on the{" "}
+              <IoMdInformationCircleOutline className="inline" /> in game, or in
+              the rules page.
+            </li>
+            <li>
+              You can display this window again by clicking on the{" "}
+              <IoMdInformationCircleOutline className="inline" /> in this page.
             </li>
           </ul>
           <label className="label mt-4">
             <input
               type="checkbox"
               className="checkbox"
-              defaultChecked={displayBeginModal === "no"? true : false}
+              defaultChecked={displayBeginModal === "no" ? true : false}
               onChange={() =>
                 setDisplayBeginModal(
                   displayBeginModal === "" || displayBeginModal === "yes"
