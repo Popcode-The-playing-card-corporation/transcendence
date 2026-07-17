@@ -25,7 +25,7 @@ export default function DetailledLeaderboard() {
             <thead>
               <tr className=" sticky -top-6 ">
                 {listPlayer.map((player: playerScoreT) => {
-                  return <th key={player.user_id}>{player.username}</th>;
+                  return <th key={player.user_id}>{player.username.length > 10 ? (player.username.substring(0, 10) + "... ") : player.username}</th>;
                 })}
               </tr>
             </thead>
@@ -33,7 +33,7 @@ export default function DetailledLeaderboard() {
               {detailedGame.map((game: DetailedPointsT) => {
                 return (
                   <React.Fragment key={detailedGame.indexOf(game)} >
-                    {game.rounds.map((round: {players: playerScoreT[]}) => {
+                    {game.rounds.map((round: { players: playerScoreT[] }) => {
                       const isHidden = round.players.every(
                         (current) => current.score === 0,
                       );
