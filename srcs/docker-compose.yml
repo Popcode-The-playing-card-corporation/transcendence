@@ -246,7 +246,47 @@ services:
       - django
     networks:
       - transcendence
-
+  redis_listener:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: redis_listener
+    profiles: [dev, prod, serv]
+  
+    command: python -m game.redis_listener_main
+  
+    depends_on:
+      redis:
+        condition: service_healthy
+      django:
+        condition: service_started
+  
+    env_file:
+      - secrets/.env
+  
+    environment:
+      DEBUG: ${DEBUG}
+      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL}
+  
+      DATABASE_ENGINE: ${DB_ENGINE}
+      DATABASE_NAME: ${DB_NAME}
+      DATABASE_USERNAME: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_PORT: ${DB_PORT}
+  
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+  
+    secrets:
+      - django_secret
+      - google_secret
+      - git_secret
+      - 42_secret
+  
+    networks:
+      - transcendence
+    
 networks:
   transcendence:
     driver: bridge
