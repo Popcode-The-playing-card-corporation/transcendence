@@ -22,6 +22,7 @@ export default function GameVisual() {
     <Canvas className="w-3/4 bg-cover rounded-2xl" linear={true} style={{ backgroundImage: `url(${bgimg})` }}>
       <directionalLight position={[0, 10, 7]} intensity={1.2} color={"#ffe5d5"} />
       <pointLight position={[0, 5, 5]} intensity={10} color={"#ffffff"} />
+      <pointLight position={[0, -5, 5]} intensity={15} color={"#ffffff"} />
       <ambientLight />
       <Board front={cardsTex} back={back} boardRadius={boardRadius} distanceBoard={distanceBoard} />
       <Hand cardsTex={cardsTex} back={back} distanceBoard={distanceBoard} />
