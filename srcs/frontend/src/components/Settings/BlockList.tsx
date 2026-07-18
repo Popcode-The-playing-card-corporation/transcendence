@@ -4,6 +4,7 @@ import { useNotif } from "../hooks/useNotif";
 import type { friendT } from "../../utils/type/friendType";
 import type { errorT } from "../../utils/type/errorType";
 import UnblockBtn from "./UnblockBtn";
+import { MdBlock } from "react-icons/md";
 
 export default function BlockList({
   setBlock,
@@ -33,6 +34,8 @@ export default function BlockList({
 
   return (
     <div className="blocklist my-3 table mx-auto w-fit">
+	{ blocklist.length <= 0 ? <p>You haven't blocked anyone go block some! With the <MdBlock className="inline" /> button</p> :
+
       <table>
         <thead>
           <tr>
@@ -61,6 +64,7 @@ export default function BlockList({
           })}
         </tbody>
       </table>
+	}
     </div>
   );
 }
