@@ -33,6 +33,7 @@ export default function FilterGame({
       },
     );
 
+
     const finalFilteredGames = filteredMaxPlayerGames.filter(
       (game: availableGameT) => {
         if (typeFilter === "All" || !typeFilter) return true;
@@ -92,7 +93,7 @@ export default function FilterGame({
               min="2"
               max="7"
               defaultValue="2"
-              onChange={(e) => setMaxPlayers(+e.target.value / 10)}
+              onChange={(e) => setMaxPlayers(+e.target.value)}
               className={
                 "range text-base-200 glass transition-all duration-500 "
               }
