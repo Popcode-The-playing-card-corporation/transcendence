@@ -309,12 +309,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
         room = await get_room_with_host(self.code)
     
         if self.user != room.host:
+            GameService.open_valve(self.code)
             return await self.error("Only host")
     
         if room.nb_player < 2:
+            GameService.open_valve(self.code)
             return await self.error("Need 2 players")
     
         if room.status == "start":
+            GameService.open_valve(self.code)
             return await self.error("Already started")
         
         players = await sync_to_async(list)(
@@ -361,6 +364,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "type": "error",
                     "message": "it's not your turn"
                 }))
+            GameService.open_valve(self.code)
             return
         
         await BotService.play_override(game, room.code, position,
