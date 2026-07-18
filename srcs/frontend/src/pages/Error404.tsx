@@ -1,4 +1,4 @@
-const image = "../../static/404-stitch.png";
+import image from "../../static/404-stitch.png";
 
 export default function Error404() {
 	return (
@@ -9,4 +9,4 @@ export default function Error404() {
 			</div>
 		</div>
 	);
-} 
+}
