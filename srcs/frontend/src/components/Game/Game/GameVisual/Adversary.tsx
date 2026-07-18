@@ -26,6 +26,8 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
   const posPlayedCard = centerHand - distanceBoard;
   const [show, setShow] = useState<boolean>(true);
 
+  console.log(playedCard.card.id);
+  
   return (
     <>
       <mesh
@@ -34,6 +36,7 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
       >
         {playedCard.card.id !== -1 ?
           <PlayedCard
+			key={playedCard.card.id}
             show={show}
             front={front[playedCard.card.id]}
             back={back}
