@@ -11,7 +11,7 @@ export default function DetailledLeaderboard() {
   return (
     <>
       <button
-        className="link-hover mt-2 px-auto"
+        className="link-hover mt-2 px-auto w-full"
         onClick={() => scoreDetailsRef.current?.showModal()}
       >
         more details

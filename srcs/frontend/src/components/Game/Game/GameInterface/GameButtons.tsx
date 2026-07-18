@@ -48,7 +48,7 @@ export default function GameButtons() {
   }, [isChatOpen, game.state.messages, game.state.user, messageCount])
 
   return (
-    <div className="h-1/2 flex p-2 flex-col justify-end">
+    <div className="flex p-2 flex-col justify-end ">
       {isChatOpen ? (
         <Chat setNewMessage={setNewMessage} isAlreadyOpen={isChatOpen} setCount={setCount} />
       ) : ""}

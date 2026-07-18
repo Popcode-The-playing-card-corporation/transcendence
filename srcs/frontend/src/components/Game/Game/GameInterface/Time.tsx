@@ -12,9 +12,9 @@ export default function Time() {
   );
 
   useEffect(() => {
-	if (timeLeft <= 0 && selfTurn) {
-		afk_play();
-	}
+    if (timeLeft <= 0 && selfTurn) {
+      afk_play();
+    }
   }, [timeLeft])
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function Time() {
 
   if (!selfTurn || state.event === "finish_round" || state.event === "game_finish") {
     return (
-      <div className="flex justify-around items-center w-full min-h-12.5">
+      <div className="flex justify-around items-center w-full min-h-12.5 pt-2">
         <Chrono />
         <ExitBtn />
       </div>
@@ -45,7 +45,7 @@ export default function Time() {
   }
 
   return (
-    <div className="flex justify-around items-center w-full">
+    <div className="flex justify-around items-center w-full pt-2">
       <div
         className="radial-progress"
         style={
