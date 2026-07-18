@@ -305,33 +305,34 @@ def end_room(uuid, data):
     elo = room.nb_player - bots
     if (room.nb_player - bots) % 2 == 1:
         elo -= 1
-    for rank, entry in enumerate(scores, start=1):
-        PlayerScore.objects.filter(
-            room=room,
-            player=entry["player"]
-        ).update(rank=rank)
-        user = User.objects.get(id=entry["player"].player_id)
-        stat = Stat.objects.get(user_id=user.id)
-
-        if not user.is_bot:
-            user.elo += elo
-        
-        if rank == 1:
-            stat.win += 1
-        else:
-            stat.lose += 1
+    if room.ended_at is None:
+        for rank, entry in enumerate(scores, start=1):
+            PlayerScore.objects.filter(
+                room=room,
+                player=entry["player"]
+            ).update(rank=rank)
+            user = User.objects.get(id=entry["player"].player_id)
+            stat = Stat.objects.get(user_id=user.id)
+    
+            if not user.is_bot:
+                user.elo += elo
             
-        stat.played += 1
-        
-        if not user.is_bot:
-            elo -= 2
+            if rank == 1:
+                stat.win += 1
+            else:
+                stat.lose += 1
+                
+            stat.played += 1
             
-        if room.host_id == user.id:
-            stat.nb_host += 1
-        user.save()
-        stat.save()
-        if not user.is_bot:
-            AchievementService.check_user_achievements(user)
+            if not user.is_bot:
+                elo -= 2
+                
+            if room.host_id == user.id:
+                stat.nb_host += 1
+            user.save()
+            stat.save()
+            if not user.is_bot:
+                AchievementService.check_user_achievements(user)
 
     room.status = "end"
     room.ended_at = timezone.now()
