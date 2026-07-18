@@ -200,14 +200,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
             game = GameEngine(room.uuid)
             await RoomTaskService.cancel_disconnected(room.code, self.user.id)
             nb_human = await get_nb_human(room.uuid)
-            if nb_human > 0:
+            if nb_human > 0 and room.is_paused:
                 await sync_to_async(
                     Room.objects.filter(code=self.code).update
                 )(is_paused=False)
                 
-            room = await get_room_with_host(room.code)
-            asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
-                                                        check_end=GameService.check_game_end, 
+                room = await get_room_with_host(room.code)
+                game = GameEngine(room.uuid)
+                asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
+															check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
                                                         ))
@@ -355,6 +356,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
         game = GameEngine(room.uuid)
+        if (position != room.game_state['playing']):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "it's not your turn"
+                }))
+            return
         
         await BotService.play_override(game, room.code, position,
                                                         check_end=GameService.check_game_end, 
