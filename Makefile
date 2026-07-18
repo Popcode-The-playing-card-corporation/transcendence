@@ -129,7 +129,8 @@ prod-build-cache: down
 
 dev-build-cache: down
 	@$(COMPOSE) build --no-cache django
-	@$(COMPOSE) build --no-cache frontend
+	@$(COMPOSE) build --no-cache game_server
+	@$(COMPOSE) build --no-cache redis_listener
 	@$(MAKE) dev-up
 
 serv-build: down

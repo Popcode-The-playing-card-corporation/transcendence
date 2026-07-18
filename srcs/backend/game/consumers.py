@@ -124,22 +124,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game = GameEngine(room.uuid)
         asyncio.create_task(self.afk_flow(room, game))
         
-    async def redis_listener(self):
-
-        pubsub = client.pubsub()
-    
-        await pubsub.subscribe(
-            f"room_events:{self.room}"
-        )
-    
-        async for message in pubsub.listen():
-    
-            if message["type"] != "message":
-                continue
-    
-            data = json.loads(message["data"])
-    
-            await self.send_json(data)
 
     async def connect(self):
         self.code = self.scope["url_route"]["kwargs"]["code"]
