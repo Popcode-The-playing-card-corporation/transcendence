@@ -50,7 +50,7 @@ class Room(models.Model):
     max_player = models.IntegerField(default=2)
     goal = models.CharField(max_length=6,choices=GOAL_CHOICES, default="games")
     nb_games = models.IntegerField(default=3)
-    nb_points = models.IntegerField(default=333)
+    nb_points = models.IntegerField(default=100)
     delete_scheduled = models.BooleanField(default=False)
     host_change_scheduled = models.BooleanField(default=False)
     cleanup_scheduled = models.BooleanField(default=False)

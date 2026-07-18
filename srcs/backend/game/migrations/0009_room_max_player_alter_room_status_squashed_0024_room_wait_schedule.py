@@ -101,7 +101,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='room',
             name='nb_points',
-            field=models.IntegerField(default=333),
+            field=models.IntegerField(default=100),
         ),
         migrations.AlterField(
             model_name='playerscore',

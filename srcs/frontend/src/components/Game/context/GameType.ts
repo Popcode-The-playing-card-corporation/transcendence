@@ -66,7 +66,7 @@ export const initialState: GameState = {
 		timeout: new Date(0, 0, 0),
 		goal: "games",
 		nb_games: 3,
-		nb_points: 333,
+		nb_points: 100,
 	},
 	game: {
 		boardData: default_Nboard,

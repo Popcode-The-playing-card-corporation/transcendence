@@ -12,9 +12,9 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
 	const nb_games = state.settings.nb_games;
 
 	function get_points(val: string) {
-		if (val === "0") return 333;
-		if (val === "1") return 666;
-		return 1000;
+		if (val === "0") return 100;
+		if (val === "1") return 300;
+		return 500;
 	}
 
 	function get_games(val: string) {
@@ -40,7 +40,7 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
           type="range"
           min="0"
           max="2"
-          value={nb_points === 333 ? "0" : nb_points === 666 ? "1" : "2"}
+          value={nb_points === 100 ? "0" : nb_points === 300 ? "1" : "2"}
           className="range [--range-progress:var(--color-secondary)] glass"
           step="1"
           onChange={(e) => handle_change(get_points(e.target.value), setNBPoints, "points")}
@@ -52,9 +52,9 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
           <span>|</span>
         </div>
         <div className="flex justify-between px-2.5 mt-2 text-xs">
-          <span>Short (333)</span>
-          <span>Medium (666)</span>
-          <span>Long (1000)</span>
+          <span>Short (100)</span>
+          <span>Medium (300)</span>
+          <span>Long (500)</span>
         </div>
       </>
     );
