@@ -26,8 +26,6 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
   const posPlayedCard = centerHand - distanceBoard;
   const [show, setShow] = useState<boolean>(true);
 
-  console.log(playedCard.card.id);
-  
   return (
     <>
       <mesh
