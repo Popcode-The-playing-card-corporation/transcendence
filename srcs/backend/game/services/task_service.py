@@ -9,6 +9,8 @@ class TaskService:
     @staticmethod
     async def player_afk(code):
         room = await get_room_with_host(code)
+        if (room.status == "abandoned"):
+            return
         game_state = await reload_game_state(code)
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
             room=room,

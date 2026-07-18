@@ -61,6 +61,8 @@ class GameService:
     
     @staticmethod
     async def create_scores(room, game_state):
+        if (room.status == "abandoned"):
+            return
         for player_id in game_state["players"]:
             presence = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,

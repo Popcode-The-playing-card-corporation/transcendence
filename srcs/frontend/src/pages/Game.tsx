@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useNotif } from "../components/hooks/useNotif";
 import { type availableGameT } from "../utils/type/availableGameType";
 import { getJoinedRoom, listRooms, validateRoom } from "../api/http/game";
+import stitch from "../../static/stitch-sorry.gif";
 
 export function Game() {
   const auth = useAuth();
@@ -126,7 +127,7 @@ export function Game() {
         </p>
 			<img
 			className="h-50 max-w-50 mx-auto rounded-2xl"
-			src="../../static/stitch-sorry.gif"
+			src={stitch}
 			/>
       </div>
     </>

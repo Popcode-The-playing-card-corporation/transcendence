@@ -57,7 +57,7 @@ function DisplayGoal({
       if (a.score > b.score) return 0;
       else return 1;
     }
-    const currentSortedPoint = currentPoints.sort((a, b) => compareFn(a, b));
+    const currentSortedPoint = currentPoints.toSorted((a, b) => compareFn(a, b));
     const currentMaxPoint = currentSortedPoint.at(0)?.score;
 
     return (

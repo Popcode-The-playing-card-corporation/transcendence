@@ -131,6 +131,12 @@ def register(request):
             AchievementService.check_user_achievements(user)
     
             refresh = RefreshToken.for_user(user)
+        else:
+            return Response(
+                {"error": (f"There was an issue registering. Please try again.")},
+                status=408
+            )
+        
         access_token = refresh.access_token
         refresh_token = refresh
         

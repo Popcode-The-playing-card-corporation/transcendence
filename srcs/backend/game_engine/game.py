@@ -279,8 +279,6 @@ class GameEngine:
 			points = 0
 			if (id == str(data["playing"])):
 				points += 5
-			if (data["tricks"] in p["shtokr"]):
-				points -= 20
 			for c in p["taken"]:
 				if (c["color"] == data["tricks"]):
 					if (c["value"] == "J"):

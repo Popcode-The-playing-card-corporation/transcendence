@@ -1,5 +1,5 @@
 from asgiref.sync import sync_to_async
-from ..db import  remove_player_from_room, get_room_with_host, delete_room
+from ..db import  remove_player_from_room, get_room_with_host
 from ..serializers import RoomSerializer
 from . broadcast_service import BroadcastService
 import uuid
@@ -121,6 +121,17 @@ class RoomService:
     @staticmethod
     async def handle_player_exit(user, code):
         room = await get_room_with_host(code)
+        nb_bots = await sync_to_async(PlayerPresence.objects.filter(
+            room=room,
+            is_human=False
+        ).count)()
+        if room.nb_player - nb_bots == 1:
+            await sync_to_async(
+                    Room.objects.filter(code=code).update
+                )(status="abandoned", is_paused=True)
+            # await delete_room(code)
+            return True
+        
         p = await sync_to_async(PlayerPresence.objects.get)(player=user, room=room)
         bots = await sync_to_async(list)(User.objects.filter(is_bot=True))
         bots_room = await sync_to_async(list)((PlayerPresence.objects.filter(is_human=False, room=room)).select_related("player"))
@@ -135,13 +146,6 @@ class RoomService:
                 valid_bots.append(bot)
                 
                 
-        nb_bots = await sync_to_async(PlayerPresence.objects.filter(
-            room=room,
-            is_human=False
-        ).count)()
-        if room.nb_player - nb_bots == 1:
-            await delete_room(code)
-            return True
         p.player = valid_bots[0]
         p.channel_name = None
         p.is_human = False

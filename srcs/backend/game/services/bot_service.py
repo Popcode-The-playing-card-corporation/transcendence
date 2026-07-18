@@ -18,6 +18,8 @@ class BotService:
     async def play_afk(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
         if not await sync_to_async(Room.objects.filter(code=room.code).exists)():
             return game_state
+        if (room.status == "abandoned"):
+            return game_state
         channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
@@ -69,6 +71,8 @@ class BotService:
     async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
         channel_layer = get_channel_layer()
         room = await get_room_with_host(room.code)
+        if (room.status == "abandoned"):
+            return game_state
         is_end, gs = await check_end(room, game)
         if is_end:
             await ask_continue(room.code)
@@ -80,7 +84,27 @@ class BotService:
         )
         
         while (not is_end and (not p.is_human or not p.is_online) and not room.is_paused):
+            
+            player = game_state["playing"]
+            round = game_state["round"]
+            e_game = game_state["game"]
+            
             await asyncio.sleep(random.randint(1, 3))
+            
+            room = await get_room_with_host(room.code)
+            
+            if (room.status == "abandoned" or room.is_paused):
+                return room.game_state
+            
+            game_state = room.game_state
+            
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+				room=room,
+				position=int(game_state["playing"])
+			)
+            
+            if (game_state["playing"] != player or game_state['round'] != round or game_state['game'] != e_game):
+                continue
 
             if (game_state["round"] == 0):
                 melds = BroadcastService._count_melds(game_state["players"][str(game_state["playing"])]["cards"])
@@ -109,6 +133,10 @@ class BotService:
                         await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)
+            game_state = room.game_state
+            
+            if (room.status == "abandoned"):
+                return game_state
             is_end, gs = await check_end(room, game)
             if is_end:
                 await ask_continue(room.code)
@@ -133,6 +161,8 @@ class BotService:
             return game_state
         room = await get_room_with_host(room_code)
         game_state = room.game_state
+        if (room.status == "abandoned"):
+            return game_state
         is_end, gs = await check_end(room, game)
         if is_end:
             await ask_continue(room.code)
