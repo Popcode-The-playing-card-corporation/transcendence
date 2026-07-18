@@ -26,6 +26,12 @@ export async function getLeaderboard(logged_in:boolean) {
 
 export function leaderboardArray(board:AxiosResponse<leaderboardRetT>) {
 	const data = board.data.leaderboard;
+	if (!Array.isArray(data)) {
+		return {
+			leaderboard: [],
+			current: { username: "", score: 0, rank: 0 },
+		};
+	}
 	const leaderboardarr:userLB[] = [];
 	for (const board_data of data) {
 		const user:userLB = {
