@@ -38,7 +38,7 @@ def achievements(request):
         unlocked = unlock_counts.get(achievement.id, 0)
 
         rate = (
-            round(unlocked * 100 / total_users, 1)
+            round((unlocked / total_users)* 100, 1)
             if total_users > 0 else 0
         )
         condition = achievement.condition
