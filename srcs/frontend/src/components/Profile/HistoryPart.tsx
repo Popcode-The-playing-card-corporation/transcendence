@@ -30,7 +30,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
         </div>
         :
         <>
-          <table className={"mt-5 mb-32 table-auto text-center w-full" + (isHome ? " max-md:hidden " : (isMiniProfile ? " max-lg:hidden" : " max-md:hidden"))} >
+          <table className={"mt-5 mb-52 table-auto text-center w-full" + (isHome ? " max-md:hidden " : (isMiniProfile ? " max-lg:hidden" : " max-md:hidden"))} >
             <thead className="text-base-content">
               <tr className="h-14">
                 <th className="th-history"></th>
@@ -53,7 +53,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
                   <td className="px-2">{game.duration}</td>
                   <td className="px-2">{game.nb_player}</td>
                   <td className="px-2">
-                    <div className={"dropdown dropdown-center " + (gameHistory.indexOf(game) === gameHistory.length - 1 ? " dropdown-top" : "")}>
+                    <div className={"dropdown dropdown-center " + (gameHistory.indexOf(game) === gameHistory.length - 1 && gameHistory.length !== 1 ? " dropdown-top" : "")}>
                       <div
                         tabIndex={0}
                         role="button"
@@ -63,7 +63,7 @@ export function History({ gameHistory, isHome, isMiniProfile }: Props) {
                       </div>
                       <ul
                         tabIndex={-1}
-                        className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm"
+                        className="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm "
                       >
                         {game.players.length === 0 ?
                           <p>
