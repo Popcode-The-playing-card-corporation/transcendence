@@ -34,6 +34,7 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
       >
         {playedCard.card.id !== -1 ?
           <PlayedCard
+			key={playedCard.card.id}
             show={show}
             front={front[playedCard.card.id]}
             back={back}
