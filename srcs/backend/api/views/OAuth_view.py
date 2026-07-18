@@ -8,6 +8,7 @@ from django.utils import timezone
 from ..models import User
 from django.conf import settings
 import requests
+import random
 
 def OAUTH_Success(user, message):
 	
@@ -60,15 +61,17 @@ def handle_db(new_email, API, id=0, new_username=""):
 		user = User.objects.get(email=new_email)
 		user.last_login = timezone.now()
 		user.has_password = False
+		if random.randint(1, 100) == 42:
+			user.clovers += 1
 		if (API == "google"):
 			user.google_id = id
-			user.save(update_fields=["google_id", "last_login", "has_password"])
+			user.save(update_fields=["google_id", "last_login", "has_password", "clovers"])
 		if (API == "github"):
 			user.github_id = id
-			user.save(update_fields=["github_id", "last_login", "has_password"])
+			user.save(update_fields=["github_id", "last_login", "has_password", "clovers"])
 		if (API == "fortytwo"):
 			user.fortytwo_id = id
-			user.save(update_fields=["fortytwo_id", "last_login", "has_password"])
+			user.save(update_fields=["fortytwo_id", "last_login", "has_password", "clovers"])
 		return (OAUTH_Success(user, "Merged accounts with email"))
 	
 	message = "Success"
@@ -81,6 +84,8 @@ def handle_db(new_email, API, id=0, new_username=""):
 	user.last_login = timezone.now()
 	user.date_joined = timezone.now()
 	user.avatar = "/avatars/avatar1.png"
+	if random.randint(1, 100) == 42:
+		user.clovers += 1
 	user.has_password = False
 	if (API == "google"):
 		user.google_id = id
