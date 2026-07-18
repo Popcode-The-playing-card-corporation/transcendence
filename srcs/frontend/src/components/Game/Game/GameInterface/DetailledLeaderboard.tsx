@@ -11,7 +11,7 @@ export default function DetailledLeaderboard() {
   return (
     <>
       <button
-        className="link-hover mt-2 px-auto"
+        className="link-hover mt-2 px-auto w-full"
         onClick={() => scoreDetailsRef.current?.showModal()}
       >
         more details
@@ -23,7 +23,7 @@ export default function DetailledLeaderboard() {
           </h3>
           <table className="table text-center bg-base-200">
             <thead>
-              <tr className=" sticky -top-6 ">
+              <tr className=" sticky -top-6 bg-base-300">
                 {listPlayer.map((player: playerScoreT) => {
                   return <th key={player.user_id}>{player.username.length > 10 ? (player.username.substring(0, 10) + "... ") : player.username}</th>;
                 })}
