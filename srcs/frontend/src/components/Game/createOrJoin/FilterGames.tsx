@@ -33,7 +33,6 @@ export default function FilterGame({
       },
     );
 
-	console.debug(filteredMaxPlayerGames)
 
     const finalFilteredGames = filteredMaxPlayerGames.filter(
       (game: availableGameT) => {
