@@ -8,6 +8,7 @@ from django.utils import timezone
 from ..models import User
 from django.conf import settings
 import requests
+from ..achievements.service import AchievementService
 import random
 
 def OAUTH_Success(user, message):
@@ -63,6 +64,7 @@ def handle_db(new_email, API, id=0, new_username=""):
 		user.has_password = False
 		if random.randint(1, 100) == 42:
 			user.clovers += 1
+		AchievementService.check_user_achievements(user)
 		if (API == "google"):
 			user.google_id = id
 			user.save(update_fields=["google_id", "last_login", "has_password", "clovers"])
@@ -86,6 +88,7 @@ def handle_db(new_email, API, id=0, new_username=""):
 	user.avatar = "/avatars/avatar1.png"
 	if random.randint(1, 100) == 42:
 		user.clovers += 1
+	AchievementService.check_user_achievements(user)
 	user.has_password = False
 	if (API == "google"):
 		user.google_id = id
