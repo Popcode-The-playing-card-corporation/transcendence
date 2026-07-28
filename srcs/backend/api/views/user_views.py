@@ -118,9 +118,9 @@ def register(request):
         return Response(errors, status=400)
     if serializer.is_valid():
         user = serializer.save()
-        AchievementService.check_user_achievements(user)
         Stat.objects.create(user=user)
         
+        AchievementService.check_user_achievements(user)
         username = user.username
 
         user = authenticate(username=username, password=password)
