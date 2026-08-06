@@ -15,6 +15,7 @@ class User(AbstractUser):
 
     avatar = models.CharField(max_length=255, default="")  ## changed to blank, it's easier for front to handle this
     is_online = models.BooleanField(default=False)
+    email_verified = models.BooleanField(default=False)
     presence = models.IntegerField(default=0)
     presence_game = models.IntegerField(default=0)
     is_bot = models.BooleanField(default=False)
@@ -24,6 +25,16 @@ class User(AbstractUser):
     github_id = models.CharField(max_length=255,default="")
     fortytwo_id = models.CharField(max_length=255,default="")
     clovers = models.IntegerField(default=0)
+    
+class EmailVerification(models.Model):
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="email_verification")
+    code_hash = models.CharField(default = "", max_length=255)
+    expires_at = models.DateTimeField()
+    attempts = models.PositiveSmallIntegerField(default = 0)
+    last_sent = models.DateTimeField()
+    
+
     
 class Friendship(models.Model):
     STATUS_CHOICES = [

@@ -1,0 +1,9 @@
+User registers / logs in
+	When creating new account is_verified automatically set to false
+If is_verified is false then user is only able to access code entry page, gets no other info from backend
+Email is automatically sent to email address with 6 digit code
+Code has to be different from other active codes
+User enters code - has five chances to enter correct code
+Code is active for 15 minutes, must be resent after that
+Resend button requires user to be authenticated and has delay on it so it can't be spammed
+Once correct code is sent is_verified is true, user can now log in seemlessly until is_verified is reset
