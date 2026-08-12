@@ -98,6 +98,11 @@ export function RegisterForm({
       auth.setHasFriendRequest(false);
     }
 
+	if (!auth.email_verified) {
+		navigate("/email_verification", {state: location.state})
+		return;
+	}
+
     if (location.state) {
       navigate(location.state, { state: location.pathname });
       return;
@@ -115,7 +120,7 @@ export function RegisterForm({
       return;
     }
 
-    const result = await registerRequest(trimmedEmail, trimmedName, password, repassword, avatar, auth.setUserID, auth.setPass);
+    const result = await registerRequest(trimmedEmail, trimmedName, password, repassword, avatar, auth.setUserID, auth.setPass, auth.setEmailVerified);
     if (result.code === 200) {
       (auth.setLoggedIn(true));
       registerSuccess();

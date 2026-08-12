@@ -4,10 +4,11 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from api.auth.authentication import OptionalJWTAuthentication
 from ..models import Room, PlayerPresence
 from api.models import User
+from ...api.views.verification_view import IsEmailVerified
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def exit_game(request, code):
     if not Room.objects.filter(code=code).exists():
         return Response({"success": False}, status=404)

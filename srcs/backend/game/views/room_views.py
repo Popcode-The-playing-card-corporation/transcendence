@@ -13,10 +13,11 @@ from ..services.broadcast_service import BroadcastService
 import uuid
 from django.utils import timezone
 from datetime import timedelta
+from ...api.views.verification_view import IsEmailVerified
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def create_room(request):
     room_code = str(uuid.uuid4())[:8]
     room = Room.objects.create(
@@ -66,7 +67,7 @@ def create_room(request):
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def add_bot(request, code, nb_bot):
     difficulty = "medium"
     if "difficulty" in request.data:
@@ -134,7 +135,7 @@ def add_bot(request, code, nb_bot):
 
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def is_presence(request):
     presence = PlayerPresence.objects.filter(
 		room__status="open",
@@ -146,7 +147,7 @@ def is_presence(request):
 
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def get_game_scorelog(request, code):
     if not Room.objects.filter(
 		code=code
@@ -329,7 +330,7 @@ def list_friend_room(request, data):
 
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def list_room(request):
     data = []
     data = list_friend_room(request, data)
@@ -340,7 +341,7 @@ def list_room(request):
 
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def list_my_started_room(request):
 
     presence = PlayerPresence.objects.select_related("room").filter(
@@ -361,7 +362,7 @@ def list_my_started_room(request):
 
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def validate_room(request, code):
     room = Room.objects.filter(
         code=code,
@@ -386,7 +387,7 @@ def validate_room(request, code):
 
 @api_view(["PATCH"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def update_params(request, code):
     if not Room.objects.filter(
         code=code
@@ -458,7 +459,7 @@ def update_params(request, code):
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def invite_friend(request, friend_id):
     if not Friendship.objects.filter(
             Q(from_user=request.user) | Q(to_user=request.user),

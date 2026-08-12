@@ -42,6 +42,7 @@ SIMPLE_JWT = {
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_TRUSTED_ORIGINS", "http://localhost:5173").split(",")
+FRONTEND_URL=CSRF_TRUSTED_ORIGINS[0]
 
 CELERY_BROKER_URL = os.environ.get(
     "CELERY_BROKER_URL",

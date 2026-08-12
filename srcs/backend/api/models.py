@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 def default_condition():
     return {
@@ -29,6 +30,7 @@ class User(AbstractUser):
 class EmailVerification(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="email_verification")
+    search_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     code_hash = models.CharField(default = "", max_length=255)
     expires_at = models.DateTimeField()
     attempts = models.PositiveSmallIntegerField(default = 0)

@@ -3,7 +3,7 @@ import { useAuth } from "../../components/hooks/useAuth";
 import { useNotif } from "../../components/hooks/useNotif";
 import { useEffect } from "react";
 
-export default function PrivateRoute({ children }: { children: React.ReactNode }) {
+export default function UnverifiedRoute({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const notif = useNotif();
   const location = useLocation();
@@ -28,8 +28,8 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     );
   }
 
-  if (!auth.email_verified) {
-	return <Navigate to="/email_verification" />;
+  if (auth.email_verified) {
+	return <Navigate to="/" replace />;
   }
 
   return children;
