@@ -63,11 +63,6 @@ export function LoginForm({
       auth.setHasFriendRequest(false);
     }
 
-	if (!auth.email_verified) {
-		navigate("/email_verification", {state: location.state})
-		return;
-	}
-
     if (location.state) {
       navigate(location.state, { state: location.pathname });
       return;
@@ -90,9 +85,15 @@ export function LoginForm({
     const result = await loginRequest(name, password, auth.setUserID, auth.setPass, auth.setEmailVerified);
     if (result.code == 200) {
       auth.setLoggedIn(true);
-      loginSuccess();
+      navigate("/email_verification", { replace: true });
       return;
     }
+
+	if (result.code === 201) {
+		auth.setLoggedIn(true);
+		loginSuccess();
+		return;
+	}
     setReason(result);
     setFailure(true);
     return;

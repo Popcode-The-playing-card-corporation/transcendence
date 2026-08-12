@@ -13,7 +13,7 @@ from ..services.broadcast_service import BroadcastService
 import uuid
 from django.utils import timezone
 from datetime import timedelta
-from ...api.views.verification_view import IsEmailVerified
+from api.views.verification_view import IsEmailVerified
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])

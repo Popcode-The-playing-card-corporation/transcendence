@@ -7,7 +7,7 @@ export default function UnverifiedRoute({ children }: { children: React.ReactNod
   const auth = useAuth();
   const notif = useNotif();
   const location = useLocation();
-
+  
   useEffect(() => {
     if (auth.logged_in === false) {
       notif?.showNotif("Authentication Error", "Please log in to access this page!", 5000);

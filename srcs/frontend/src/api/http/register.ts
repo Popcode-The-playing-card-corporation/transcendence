@@ -17,7 +17,7 @@ export async function registerRequest(in_email:string, in_user:string, in_pass:s
 		setUserID(res.data.id)
 		setPass(res.data.has_pass)
 		setEmailVerified(res.data.email_verified);
-		return {code:200, response:"success"};
+		return {code: res.data.email_verified ? 201 : 200, response: "success"};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {

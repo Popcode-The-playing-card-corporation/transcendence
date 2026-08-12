@@ -8,6 +8,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
 from rest_framework.permissions import BasePermission
+from django.core.mail import send_mail
+from django.conf import settings
+from django.core.exceptions import ValidationError
 
 class IsEmailVerified(BasePermission):
     def has_permission(self, request, view):
@@ -25,7 +28,7 @@ def create_code(user, verification):
 	verification.code_hash = code_hash
 	verification.attempts = 0
 	verification.expires_at = timezone.now() + timedelta(minutes=10)
-	verification.last_sent_at = timezone.now()
+	verification.last_sent = timezone.now()
 	verification.save()
 
 	return code
@@ -51,10 +54,10 @@ def send_code(request):
 															defaults={
 																"code_hash": "",
 																"expires_at": timezone.now(),
-																"last_sent_at": timezone.now(),
+																"last_sent": timezone.now(),
 															})
 		
-	if not created and (timezone.now() - verification.last_sent_at).total_seconds() < 60:
+	if not created and (timezone.now() - verification.last_sent).total_seconds() < 60:
 		return Response(
 			{
 				"error" : "Wait 60 seconds before requests"
@@ -64,10 +67,16 @@ def send_code(request):
 	token = create_code(user, verification)
 
 	verification_link = f"{settings.FRONTEND_URL}/verify_email?id={verification.search_id}&token={token}"
+	send_mail(
+		subject="POPCARDS: Verify your email",
+		message=f"Verify your email by clicking this link:\n\n{verification_link}",
+		from_email=settings.DEFAULT_FROM_EMAIL,
+		recipient_list=[user.email],
+		fail_silently=False,
+	)
 	return Response(
 		{
 			"success": "email sent",
-			"verification_link": verification_link
 		}
 	)
 
@@ -76,14 +85,22 @@ def send_code(request):
 def validate_code(request):
 	search_id = request.data.get("id")
 	token = request.data.get("token")
-	verification = EmailVerification.objects.get(search_id=search_id)
-	if (not verification):
+	if not search_id or not token:
 		return Response(
 			{
-				"error" : "No matching id found"
+				"error": "Invalid verification link"
 			},
 			status=400
-		)	
+		)
+	try:
+		verification = EmailVerification.objects.get(search_id=search_id)
+	except (EmailVerification.DoesNotExist, ValidationError, ValueError):
+		return Response(
+			{
+				"error": "Invalid or expired verification link"
+			},
+			status=400
+		)
 	user = verification.user
 	if user.email_verified:
 		return Response(

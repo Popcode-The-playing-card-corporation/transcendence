@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from api.auth.authentication import OptionalJWTAuthentication
 from ..models import Room, PlayerPresence
 from api.models import User
-from ...api.views.verification_view import IsEmailVerified
+from api.views.verification_view import IsEmailVerified
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
