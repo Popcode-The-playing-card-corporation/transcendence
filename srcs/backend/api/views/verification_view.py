@@ -1,4 +1,4 @@
-from ..models import User, EmailVerification
+from ..models import EmailVerification
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from datetime import timedelta
@@ -9,7 +9,6 @@ from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
 from rest_framework.permissions import BasePermission
 from django.core.mail import send_mail
-from django.conf import settings
 from django.core.exceptions import ValidationError
 
 class IsEmailVerified(BasePermission):
@@ -23,8 +22,6 @@ class IsEmailVerified(BasePermission):
 def create_code(user, verification):
 	code = token_urlsafe(32)
 	code_hash = make_password(code)
-	user.email_verified = False
-	user.save(update_fields=["email_verified"])
 	verification.code_hash = code_hash
 	verification.attempts = 0
 	verification.expires_at = timezone.now() + timedelta(minutes=10)
