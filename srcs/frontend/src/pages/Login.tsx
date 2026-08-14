@@ -11,7 +11,7 @@ export function Login() {
 
   useEffect(() => {
     if (auth.logged_in) {
-		if (!auth.email_verified) {
+		if (auth.email_verified === false) {
 		navigate("/email_verification");
 		} else {
 		navigate("/");

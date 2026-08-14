@@ -28,7 +28,7 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     );
   }
 
-  if (!auth.email_verified) {
+  if (auth.email_verified === false) {
 	return <Navigate to="/email_verification" />;
   }
 
