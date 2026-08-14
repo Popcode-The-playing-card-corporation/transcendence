@@ -134,6 +134,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if not self.user.is_authenticated:
             await self.close(code=4003)
             return
+        if not self.user.email_verified:
+            await self.close(code=4003)
+            return
 
         if not await sync_to_async(Room.objects.filter(code=self.code).exists)():
                 await self.send_json({"error": "The room does not exist"})

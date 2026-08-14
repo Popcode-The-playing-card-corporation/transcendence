@@ -11,9 +11,13 @@ export function Login() {
 
   useEffect(() => {
     if (auth.logged_in) {
-      navigate("/");
+		if (!auth.email_verified) {
+		navigate("/email_verification");
+		} else {
+		navigate("/");
+		}
     }
-  }, [auth.logged_in, navigate]);
+  }, [auth.logged_in, auth.email_verified, navigate]);
 
   return (
     <div className="page-content mt-17">

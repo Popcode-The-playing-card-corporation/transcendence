@@ -43,7 +43,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if not self.user.is_authenticated:
 			await self.close()
 			return
-		
+		if not self.user.email_verified:
+			await self.close()
+			return
+	
 		room = await sync_to_async(Room.objects.get)(code=self.code)
 		is_member = await sync_to_async(
 			PlayerPresence.objects.filter(

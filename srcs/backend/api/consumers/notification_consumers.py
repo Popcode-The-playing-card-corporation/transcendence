@@ -14,7 +14,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         if not self.user.is_authenticated:
             await self.close()
             return
-    
+        if not self.user.email_verified:
+            await self.close()
+            return
+            
         self.user_group = f"user_{self.user.id}"
     
         await self.channel_layer.group_add(

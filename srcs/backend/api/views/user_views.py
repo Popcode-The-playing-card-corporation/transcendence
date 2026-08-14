@@ -1,4 +1,4 @@
-from ..models import User, Friendship
+from ..models import User, Friendship, EmailVerification
 from django.conf import settings
 from game.models import Stat
 from rest_framework import status
@@ -14,11 +14,12 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.db.models import Q
+from .verification_view import IsEmailVerified
 import random
 from ..achievements.service import AchievementService
 
 @api_view(["GET", "PUT", "PATCH"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def user(request):
     if request.method == "GET":
         serializer = UserSerializer(request.user)
@@ -47,7 +48,7 @@ def user(request):
         return Response(serializer.errors, status=400)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def user_data(request, user_id):
 
     try:
@@ -119,6 +120,7 @@ def register(request):
     if serializer.is_valid():
         user = serializer.save()
         Stat.objects.create(user=user)
+        AchievementService.check_user_achievements(user)
         
         AchievementService.check_user_achievements(user)
         username = user.username
@@ -140,9 +142,9 @@ def register(request):
         
         access_token = refresh.access_token
         refresh_token = refresh
-        
+ 
         res = Response()
-        res.data = {'success': True,  "id":user.id, "has_pass":user.has_password}
+        res.data = {'success': True,  "id":user.id, "has_pass":user.has_password, 'email_verified':user.email_verified}
         res.set_cookie(
             key='access_token',
             value=access_token,
@@ -181,7 +183,7 @@ def logout(request):
     return res
     
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def delete(request):
     if request.user.presence_game != 0:
         return Response(
@@ -221,7 +223,7 @@ def login(request):
         refresh_token = refresh
         
         res = Response()
-        res.data = {'success': True, "id":user.id, "has_pass":user.has_password}
+        res.data = {'success': True, "id":user.id, "has_pass":user.has_password, 'email_verified':user.email_verified}
         res.set_cookie(
             key='access_token',
             value=access_token,
@@ -250,7 +252,7 @@ def login(request):
     )
 
 @api_view(["PATCH"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def change_password(request):
     old_password = request.data.get("old_password")
     new_password = request.data.get("new_password")
