@@ -4,6 +4,7 @@ from .views.friend_view import get_friends, unblock_friend, list_propal, accept_
 from .views.stat_view import get_stat, room_data, game_history, leaderboard, game_history_friend
 from .views.OAuth_view import GoogleLogin, FortyTwoLogin, GitLogin
 from .views.achievement_view import achievements
+from .views.verification_view import send_code, validate_code
 
 urlpatterns = [
     #user part
@@ -39,4 +40,7 @@ urlpatterns = [
     path("user/<int:user_id>/history/", game_history_friend),
     
     path("achievements/", achievements),
+
+	path("email_send/", send_code),
+	path("token_verify/", validate_code),
 ]

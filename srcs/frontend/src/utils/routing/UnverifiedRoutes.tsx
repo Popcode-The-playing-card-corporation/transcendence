@@ -3,11 +3,11 @@ import { useAuth } from "../../components/hooks/useAuth";
 import { useNotif } from "../../components/hooks/useNotif";
 import { useEffect } from "react";
 
-export default function PrivateRoute({ children }: { children: React.ReactNode }) {
+export default function UnverifiedRoute({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const notif = useNotif();
   const location = useLocation();
-
+  
   useEffect(() => {
     if (auth.logged_in === false) {
       notif?.showNotif("Authentication Error", "Please log in to access this page!", 5000);
@@ -28,8 +28,8 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     );
   }
 
-  if (!auth.email_verified) {
-	return <Navigate to="/email_verification" />;
+  if (auth.email_verified) {
+	return <Navigate to="/" replace />;
   }
 
   return children;

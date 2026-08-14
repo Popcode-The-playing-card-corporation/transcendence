@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from api.auth.authentication import OptionalJWTAuthentication
 from django.db.models import Q
 from rest_framework.decorators import authentication_classes
+from .verification_view import IsEmailVerified
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -66,7 +67,7 @@ def leaderboard(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def game_history(request):
 
     scores = (
@@ -101,7 +102,7 @@ def game_history(request):
     return Response(history)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def game_history_friend(request, user_id):
 
     viewer = request.user
@@ -159,7 +160,7 @@ def game_history_friend(request, user_id):
     return Response(history)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def room_data(request, code):
     try:
         room = Room.objects.get(code=code)

@@ -8,9 +8,10 @@ from django.db.models import Q
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from ..achievements.service import AchievementService
+from .verification_view import IsEmailVerified
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def get_friends(request):
     friendships = Friendship.objects.filter(
         Q(from_user=request.user) | Q(to_user=request.user),
@@ -26,7 +27,7 @@ def get_friends(request):
     return Response(serializer.data)
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def send_friend_request(request, user_id):
     try:
         target = User.objects.get(id=user_id, is_bot=False,)
@@ -76,7 +77,7 @@ def send_friend_request(request, user_id):
         return Response({"error": "User not found"}, status=404)
     
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def accept_friend_request(request, request_id):
     try:
         friendship = Friendship.objects.get(
@@ -111,7 +112,7 @@ def accept_friend_request(request, request_id):
         return Response({"error": "Request not found"}, status=404)
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def delete_friend_request(request, request_id):
     try:
         friendship = Friendship.objects.get(
@@ -142,7 +143,7 @@ def delete_friend_request(request, request_id):
         return Response({"error": "Request not found"}, status=404)
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def block_friend(request, user_id):
 
     if request.user.id == user_id:
@@ -203,7 +204,7 @@ def block_friend(request, user_id):
     })
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def unblock_friend(request, request_id):
     try:
         friendship = Friendship.objects.get(
@@ -221,7 +222,7 @@ def unblock_friend(request, request_id):
         return Response({"error": "Request not found"}, status=404)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def list_blocked(request):
     friendships = Friendship.objects.filter(
         Q(from_user=request.user) | Q(to_user=request.user),
@@ -238,7 +239,7 @@ def list_blocked(request):
     return Response(serializer.data)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def list_propal(request):
     friendships = Friendship.objects.filter(
         Q(from_user=request.user) | Q(to_user=request.user),
@@ -319,7 +320,7 @@ def list_propal(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsEmailVerified])
 def list_user_not_friend(request):
     friendships = Friendship.objects.filter(
         Q(from_user=request.user) | Q(to_user=request.user)

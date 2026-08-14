@@ -38,6 +38,8 @@ export interface AuthContextType {
 	userID: number | null;
 	has_pass: boolean;
 	hasFriendRequest: boolean;
+	email_verified: boolean;
+	setEmailVerified: React.Dispatch<SetStateAction<boolean>>;
 	setPass: React.Dispatch<SetStateAction<boolean>>;
 	setUserID: React.Dispatch<SetStateAction<number | null>>;
 	setGame: React.Dispatch<SetStateAction<boolean>>;
@@ -57,11 +59,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 	const [has_pass, setPass] = useState(true);
 	const [hasFriendRequest, setHasFriendRequest] = useState<boolean>(false);
 	const [theme, setTheme] = useState(localStorage.getItem('theme') ?? getPreferedTheme());
+	const [email_verified, setEmailVerified] = useState(false);
 
 
 	useEffect(() => {
 		async function getAuth() {
-			const auth = await checkAuth(setUserID, setPass)
+			const auth = await checkAuth(setUserID, setPass, setEmailVerified)
 			setLoggedIn(auth);
 			setChecking(false);
 			setLogging(false);
@@ -85,6 +88,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 	}, [])
 
 	return (
-		<authContext.Provider value={{ logged_in, logging, checking, in_game, userID, hasFriendRequest, has_pass, theme, setTheme, setPass, setGame, setLogging, setLoggedIn, setUserID, setHasFriendRequest }}>{children}</authContext.Provider>
+		<authContext.Provider value={{ logged_in, logging, checking, in_game, userID, hasFriendRequest, has_pass, theme, email_verified, setEmailVerified, setTheme, setPass, setGame, setLogging, setLoggedIn, setUserID, setHasFriendRequest }}>{children}</authContext.Provider>
 	)
 }

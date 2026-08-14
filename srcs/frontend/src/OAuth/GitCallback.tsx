@@ -70,6 +70,7 @@ export function GitCallback() {
 		auth.setUserID(res.data.id);
 		auth.setPass(res.data.has_pass);
 		auth.setLoggedIn(true);
+		auth.setEmailVerified(res.data.email_verified);
 		const redirect = sessionStorage.getItem("login_redirect") || "/";
 		sessionStorage.removeItem("login_redirect");
 		loginSuccess();

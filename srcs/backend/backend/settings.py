@@ -42,6 +42,7 @@ SIMPLE_JWT = {
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_TRUSTED_ORIGINS", "http://localhost:5173").split(",")
+FRONTEND_URL=CSRF_TRUSTED_ORIGINS[0]
 
 CELERY_BROKER_URL = os.environ.get(
     "CELERY_BROKER_URL",
@@ -99,6 +100,17 @@ FORTYTWO_OAUTH_CALLBACK_URL=os.getenv("FORTYTWO_OAUTH_CALLBACK_URL")
 FORTYTWO_OAUTH_CLIENT_ID=os.getenv("FORTYTWO_OAUTH_CLIENT_ID")
 FORTYTWO_OAUTH_CLIENT_SECRET=read_secret("42_secret") ## Needs to be in env
 
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 # django.contrib.sites
 SITE_ID = 1

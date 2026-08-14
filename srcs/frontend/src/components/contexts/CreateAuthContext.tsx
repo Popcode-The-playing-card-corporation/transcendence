@@ -17,6 +17,8 @@ export const authContext = createContext<AuthContextType>({
 	has_pass: true,
 	hasFriendRequest: false,
 	theme: getPreferedTheme(),
+	email_verified:false,
+	setEmailVerified: () => { },
 	setPass: () => { },
 	setGame: () => { },
 	setLogging: () => { },

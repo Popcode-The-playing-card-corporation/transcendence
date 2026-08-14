@@ -14,6 +14,9 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         if not self.user.is_authenticated:
             await self.close()
             return
+        if not self.user.email_verified:
+            await self.close()
+            return
 
         await self.accept()
         

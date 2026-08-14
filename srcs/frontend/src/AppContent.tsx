@@ -7,6 +7,7 @@ import { Navbar } from "./components/utils/Navbar";
 import { Settings } from "./pages/Settings";
 import { Rules } from "./pages/Rules";
 import { Login } from "./pages/Login";
+import { EmailVerification } from "./pages/EmailVerification";
 import { Footer } from "./components/utils/Footer";
 import { NotifPopUp } from "./components/utils/NotifPopUp";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -20,6 +21,8 @@ import { Presence } from "./api/websockets/presence";
 import { Notifications } from "./api/websockets/notifcations";
 import { useAuth } from "./components/hooks/useAuth";
 import PrivateRoute from "./utils/routing/PrivateRoutes";
+import UnverifiedRoute from "./utils/routing/UnverifiedRoutes";
+import { VerifyEmail } from "./pages/TokenVerification";
 
 function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.SetStateAction<string>> }) {
   const [updatedProfile, setProfile] = useState(false);
@@ -58,6 +61,9 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
         <Route path="/login/google/callback" element={<GoogleCallback />} />
         <Route path="/login/42/callback" element={<FortyTwoCallback />} />
         <Route path="/login/github/callback" element={<GitCallback />} />
+		<Route path="/email_verification" element={<UnverifiedRoute> <EmailVerification /> </UnverifiedRoute>} />
+		<Route path="/verify_email" element={<VerifyEmail />}
+/>
         <Route path="*" element={<Error404 />} />
       </Routes>
       <Footer />

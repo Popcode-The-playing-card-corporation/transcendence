@@ -82,12 +82,18 @@ export function LoginForm({
       return;
     }
 
-    const result = await loginRequest(name, password, auth.setUserID, auth.setPass);
+    const result = await loginRequest(name, password, auth.setUserID, auth.setPass, auth.setEmailVerified);
     if (result.code == 200) {
       auth.setLoggedIn(true);
-      loginSuccess();
+      navigate("/email_verification", { replace: true });
       return;
     }
+
+	if (result.code === 201) {
+		auth.setLoggedIn(true);
+		loginSuccess();
+		return;
+	}
     setReason(result);
     setFailure(true);
     return;

@@ -115,12 +115,18 @@ export function RegisterForm({
       return;
     }
 
-    const result = await registerRequest(trimmedEmail, trimmedName, password, repassword, avatar, auth.setUserID, auth.setPass);
+    const result = await registerRequest(trimmedEmail, trimmedName, password, repassword, avatar, auth.setUserID, auth.setPass, auth.setEmailVerified);
     if (result.code === 200) {
       (auth.setLoggedIn(true));
-      registerSuccess();
+      navigate("/email_verification", { replace: true });
       return;
     }
+	if (result.code === 201) {
+		auth.setLoggedIn(true);
+		registerSuccess();
+		return;
+	}
+
     setReason(result);
     setFailure(true);
     return;
