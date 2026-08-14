@@ -64,13 +64,19 @@ def send_code(request):
 	token = create_code(user, verification)
 
 	verification_link = f"{settings.FRONTEND_URL}/verify_email?id={verification.search_id}&token={token}"
-	send_mail(
-		subject="POPCARDS: Verify your email",
-		message=f"Verify your email by clicking this link:\n\n{verification_link}",
-		from_email=settings.DEFAULT_FROM_EMAIL,
-		recipient_list=[user.email],
-		fail_silently=False,
-	)
+	try:
+		send_mail(
+			subject="POPCARDS: Verify your email",
+			message=f"Verify your email by clicking this link:\n\n{verification_link}",
+			from_email=settings.DEFAULT_FROM_EMAIL,
+			recipient_list=[user.email],
+			fail_silently=False,
+		)
+	except Exception:
+		return Response(
+			{"error": "Unable to send verification email"},
+			status=400
+		)
 	return Response(
 		{
 			"success": "email sent",
